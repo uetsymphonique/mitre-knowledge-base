@@ -58,11 +58,6 @@ def write_tactic_markdown(data: MitreAttackData, domain: str, tactic, outdir: Pa
     parent_techniques.sort(key=lambda t: (get_tid(t), MitreAttackData.get_field(t, "name") or ""))
 
     lines = []
-    header_id = tactic_attack_id or shortname or tactic_name
-    lines.append(f"## {header_id} - {tactic_name}")
-    lines.append("")
-    lines.append(f"Techniques: {len(techniques)}")
-    lines.append("")
 
     for parent in parent_techniques:
         p_name = MitreAttackData.get_field(parent, "name")
@@ -73,18 +68,26 @@ def write_tactic_markdown(data: MitreAttackData, domain: str, tactic, outdir: Pa
         else:
             lines.append(f"### {p_name}")
         lines.append("")
-        # Parent technique description and detection
+        # Parent technique description and procedures
         p_desc = (MitreAttackData.get_field(parent, "description") or "").strip()
-        p_det = (MitreAttackData.get_field(parent, "x_mitre_detection") or "").strip()
         if p_desc:
             lines.append("Description:")
             lines.append("")
             lines.append(p_desc)
             lines.append("")
-        if p_det:
-            lines.append("Detection:")
+        parent_procs = data.get_procedure_examples_by_technique(p_id)
+        if parent_procs:
+            lines.append("Procedures:")
             lines.append("")
-            lines.append(p_det)
+            for r in parent_procs:
+                src_obj = data.get_object_by_stix_id(r.source_ref)
+                src_id = data.get_attack_id(src_obj.id) or ""
+                src_name = MitreAttackData.get_field(src_obj, "name") or ""
+                desc = (getattr(r, "description", "") or "").strip()
+                if src_id:
+                    lines.append(f"- [{src_id}] {src_name}: {desc}")
+                else:
+                    lines.append(f"- {src_name}: {desc}")
             lines.append("")
 
         sub_entries = data.get_subtechniques_of_technique(p_id)
@@ -101,16 +104,24 @@ def write_tactic_markdown(data: MitreAttackData, domain: str, tactic, outdir: Pa
                 lines.append(f"#### {s_name}")
             lines.append("")
             s_desc = (MitreAttackData.get_field(s, "description") or "").strip()
-            s_det = (MitreAttackData.get_field(s, "x_mitre_detection") or "").strip()
             if s_desc:
                 lines.append("Description:")
                 lines.append("")
                 lines.append(s_desc)
                 lines.append("")
-            if s_det:
-                lines.append("Detection:")
+            sub_procs = data.get_procedure_examples_by_technique(s_id)
+            if sub_procs:
+                lines.append("Procedures:")
                 lines.append("")
-                lines.append(s_det)
+                for r in sub_procs:
+                    src_obj = data.get_object_by_stix_id(r.source_ref)
+                    src_id = data.get_attack_id(src_obj.id) or ""
+                    src_name = MitreAttackData.get_field(src_obj, "name") or ""
+                    desc = (getattr(r, "description", "") or "").strip()
+                    if src_id:
+                        lines.append(f"- [{src_id}] {src_name}: {desc}")
+                    else:
+                        lines.append(f"- {src_name}: {desc}")
                 lines.append("")
         lines.append("")
 

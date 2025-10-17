@@ -1,7 +1,3 @@
-## TA0043 - Reconnaissance
-
-Techniques: 44
-
 ### T1589 - Gather Victim Identity Information
 
 Description:
@@ -12,13 +8,17 @@ Adversaries may gather this information in various ways, such as direct elicitat
 
 Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Phishing for Information](https://attack.mitre.org/techniques/T1598)), establishing operational resources (ex: [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [Phishing](https://attack.mitre.org/techniques/T1566) or [Valid Accounts](https://attack.mitre.org/techniques/T1078)).
 
-Detection:
+Procedures:
 
-Monitor for suspicious network traffic that could be indicative of probing for user information, such as large/iterative quantities of authentication requests originating from a single source (especially if the source is known to be associated with an adversary/botnet). Analyzing web metadata may also reveal artifacts that can be attributed to potentially malicious activity, such as referer or user-agent string HTTP/S fields.
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1004] LAPSUS$: [LAPSUS$](https://attack.mitre.org/groups/G1004) has gathered detailed information of target employees to enhance their social engineering lures.(Citation: MSTIC DEV-0537 Mar 2022)
+- [G1001] HEXANE: [HEXANE](https://attack.mitre.org/groups/G1001) has identified specific potential victims at targeted organizations.(Citation: ClearSky Siamesekitten August 2021)
+- [G1016] FIN13: [FIN13](https://attack.mitre.org/groups/G1016) has researched employees to target for social engineering attacks.(Citation: Mandiant FIN13 Aug 2022)
+- [C0022] Operation Dream Job: For [Operation Dream Job](https://attack.mitre.org/campaigns/C0022), [Lazarus Group](https://attack.mitre.org/groups/G0032) conducted extensive reconnaissance research on potential targets.(Citation: ClearSky Lazarus Aug 2020)
+- [G0050] APT32: [APT32](https://attack.mitre.org/groups/G0050) has conducted targeted surveillance against activists and bloggers.(Citation: Amnesty Intl. Ocean Lotus February 2021)
+- [G1033] Star Blizzard: [Star Blizzard](https://attack.mitre.org/groups/G1033) has identified ways to engage targets by researching potential victims' interests and social or professional contacts.(Citation: CISA Star Blizzard Advisory December 2023)
+- [C0014] Operation Wocao: During [Operation Wocao](https://attack.mitre.org/campaigns/C0014), threat actors targeted people based on their organizational roles and privileges.(Citation: FoxIT Wocao December 2019)
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has acquired mobile phone numbers of potential targets, possibly for mobile malware or additional phishing operations.(Citation: Proofpoint TA453 July2021)
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has gathered victim identify information during pre-compromise reconnaissance. (Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
 
 #### T1589.001 - Credentials
 
@@ -32,11 +32,15 @@ Credential information may also be exposed to adversaries via leaks to online or
 
 Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Phishing for Information](https://attack.mitre.org/techniques/T1598)), establishing operational resources (ex: [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Valid Accounts](https://attack.mitre.org/techniques/T1078)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has harvested user's login credentials.(Citation: Microsoft Targeting Elections September 2020)
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) gathered credentials from two victims that they then attempted to validate across 75 different websites. [Magic Hound](https://attack.mitre.org/groups/G0059) has also collected credentials from over 900 Fortinet VPN servers in the US, Europe, and Israel.(Citation: IBM ITG18 2020)(Citation: Microsoft Iranian Threat Actor Trends November 2021)
+- [G0065] Leviathan: [Leviathan](https://attack.mitre.org/groups/G0065) has collected compromised credentials to use for targeting efforts.(Citation: CISA AA21-200A APT40 July 2021)
+- [C0024] SolarWinds Compromise: For the [SolarWinds Compromise](https://attack.mitre.org/campaigns/C0024), [APT29](https://attack.mitre.org/groups/G0016) conducted credential theft operations to obtain credentials to be used for access to victim environments.(Citation: CrowdStrike StellarParticle January 2022)
+- [G1004] LAPSUS$: [LAPSUS$](https://attack.mitre.org/groups/G1004) has gathered user identities and credentials to gain initial access to a victim's organization; the group has also called an organization's help desk to reset a target's credentials.(Citation: MSTIC DEV-0537 Mar 2022)(Citation: NCC Group LAPSUS Apr 2022)
+- [G0114] Chimera: [Chimera](https://attack.mitre.org/groups/G0114) has collected credentials for the target organization from previous breaches for use in brute force attacks.(Citation: NCC Group Chimera January 2021)
+- [C0027] C0027: During [C0027](https://attack.mitre.org/campaigns/C0027), [Scattered Spider](https://attack.mitre.org/groups/G1015) sent phishing messages via SMS to steal credentials.(Citation: Crowdstrike TELCO BPO Campaign December 2022)
 
 #### T1589.002 - Email Addresses
 
@@ -48,13 +52,24 @@ Adversaries may easily gather email addresses, since they may be readily availab
 
 Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Phishing for Information](https://attack.mitre.org/techniques/T1598)), establishing operational resources (ex: [Email Accounts](https://attack.mitre.org/techniques/T1586/002)), and/or initial access (ex: [Phishing](https://attack.mitre.org/techniques/T1566) or [Brute Force](https://attack.mitre.org/techniques/T1110) via [External Remote Services](https://attack.mitre.org/techniques/T1133)).
 
-Detection:
+Procedures:
 
-Monitor for suspicious network traffic that could be indicative of probing for email addresses and/or usernames, such as large/iterative quantities of authentication requests originating from a single source (especially if the source is known to be associated with an adversary/botnet). Analyzing web metadata may also reveal artifacts that can be attributed to potentially malicious activity, such as referer or user-agent string HTTP/S fields.
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1031] Saint Bear: [Saint Bear](https://attack.mitre.org/groups/G1031) gathered victim email information in advance of phishing operations for targeted attacks.(Citation: Palo Alto Unit 42 OutSteel SaintBot February 2022 )
+- [G1036] Moonstone Sleet: [Moonstone Sleet](https://attack.mitre.org/groups/G1036) gathered victim email address information for follow-on phishing activity.(Citation: Microsoft Moonstone Sleet 2024)
+- [G0127] TA551: [TA551](https://attack.mitre.org/groups/G0127) has used spoofed company emails that were acquired from email clients on previously infected hosts to target other individuals.(Citation: Unit 42 TA551 Jan 2021)
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has targeted the personal emails of key network and IT staff at victim organizations.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
+- [C0037] Water Curupira Pikabot Distribution: [Water Curupira Pikabot Distribution](https://attack.mitre.org/campaigns/C0037) utilizes thread spoofing of existing email threads in order to execute spear phishing operations.(Citation: TrendMicro Pikabot 2024)
+- [G0032] Lazarus Group: [Lazarus Group](https://attack.mitre.org/groups/G0032) collected email addresses belonging to various departments of a targeted organization which were used in follow-on phishing campaigns.(Citation: Kaspersky ThreatNeedle Feb 2021)
+- [G0125] HAFNIUM: [HAFNIUM](https://attack.mitre.org/groups/G0125) has collected e-mail addresses for users they intended to target.(Citation: Volexity Exchange Marauder March 2021)
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has identified high-value email accounts in academia, journalism, NGO's, foreign policy, and national security for targeting.(Citation: Proofpoint TA453 July2021)(Citation: Google Iran Threats October 2021)
+- [G0122] Silent Librarian: [Silent Librarian](https://attack.mitre.org/groups/G0122) has collected e-mail addresses from targeted organizations from open Internet searches.(Citation: DOJ Iran Indictments March 2018)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has collected valid email addresses including personal accounts that were subsequently used for spearphishing and other forms of social engineering.(Citation: Malwarebytes Kimsuky June 2021)(Citation: Proofpoint TA427 April 2024)(Citation: Mandiant APT43 Full PDF Report)
+- [S0677] AADInternals: [AADInternals](https://attack.mitre.org/software/S0677) can check for the existence of user email addresses using public Microsoft APIs.(Citation: AADInternals Documentation)(Citation: Azure AD Recon)
+- [G1001] HEXANE: [HEXANE](https://attack.mitre.org/groups/G1001) has targeted executives, human resources staff, and IT personnel for spearphishing.(Citation: SecureWorks August 2019)(Citation: ClearSky Siamesekitten August 2021)
+- [G1004] LAPSUS$: [LAPSUS$](https://attack.mitre.org/groups/G1004) has gathered employee email addresses, including personal accounts, for social engineering and initial access efforts.(Citation: MSTIC DEV-0537 Mar 2022)
+- [G1011] EXOTIC LILY: [EXOTIC LILY](https://attack.mitre.org/groups/G1011) has gathered targeted individuals' e-mail addresses through open source research and website contact forms.(Citation: Google EXOTIC LILY March 2022)
+- [G0050] APT32: [APT32](https://attack.mitre.org/groups/G0050) has collected e-mail addresses for activists and bloggers in order to target them with spyware.(Citation: Amnesty Intl. Ocean Lotus February 2021)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) has obtained valid emails addresses while conducting research against target organizations that were subsequently used in spearphishing campaigns.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
 
 #### T1589.003 - Employee Names
 
@@ -64,11 +79,11 @@ Adversaries may gather employee names that can be used during targeting. Employe
 
 Adversaries may easily gather employee names, since they may be readily available and exposed via online or other accessible data sets (ex: [Social Media](https://attack.mitre.org/techniques/T1593/001) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)).(Citation: OPM Leak) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Phishing for Information](https://attack.mitre.org/techniques/T1598)), establishing operational resources (ex: [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [Phishing](https://attack.mitre.org/techniques/T1566) or [Valid Accounts](https://attack.mitre.org/techniques/T1078)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has collected victim employee name information.(Citation: KISA Operation Muzabi)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034)'s research of potential victim organizations included the identification and collection of employee information.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
+- [G0122] Silent Librarian: [Silent Librarian](https://attack.mitre.org/groups/G0122) has collected lists of names for individuals from targeted organizations.(Citation: DOJ Iran Indictments March 2018)
 
 
 ### T1590 - Gather Victim Network Information
@@ -79,11 +94,11 @@ Adversaries may gather information about the victim's networks that can be used 
 
 Adversaries may gather this information in various ways, such as direct collection actions via [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about networks may also be exposed to adversaries via online or other accessible data sets (ex: [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)).(Citation: WHOIS)(Citation: DNS Dumpster)(Citation: Circl Passive DNS) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [Trusted Relationship](https://attack.mitre.org/techniques/T1199)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has conducted extensive pre-compromise reconnaissance to learn about the target organization’s network.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
+- [G0119] Indrik Spider: [Indrik Spider](https://attack.mitre.org/groups/G0119) has downloaded tools, such as the Advanced Port Scanner utility and Lansweeper, to conduct internal reconnaissance of the victim network. [Indrik Spider](https://attack.mitre.org/groups/G0119) has also accessed the victim’s VMware VCenter, which had information about host configuration, clusters, etc.(Citation: Mandiant_UNC2165)
+- [G0125] HAFNIUM: [HAFNIUM](https://attack.mitre.org/groups/G0125) gathered the fully qualified domain names (FQDNs) for targeted Exchange servers in the victim's environment.(Citation: Volexity Exchange Marauder March 2021)
 
 #### T1590.001 - Domain Properties
 
@@ -93,11 +108,10 @@ Adversaries may gather information about the victim's network domain(s) that can
 
 Adversaries may gather this information in various ways, such as direct collection actions via [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about victim domains and their properties may also be exposed to adversaries via online or other accessible data sets (ex: [WHOIS](https://attack.mitre.org/techniques/T1596/002)).(Citation: WHOIS)(Citation: DNS Dumpster)(Citation: Circl Passive DNS) Where third-party cloud providers are in use, this information may also be exposed through publicly available API endpoints, such as GetUserRealm and autodiscover in Office 365 environments.(Citation: Azure Active Directory Reconnaisance)(Citation: Office 265 Azure Domain Availability) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596), [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593), or [Phishing for Information](https://attack.mitre.org/techniques/T1598)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [Phishing](https://attack.mitre.org/techniques/T1566)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) conducted technical reconnaissance of the Parliament of Georgia's official internet domain prior to its 2019 attack.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
+- [S0677] AADInternals: [AADInternals](https://attack.mitre.org/software/S0677) can gather information about a tenant’s domains using public Microsoft APIs.(Citation: AADInternals Documentation)(Citation: Azure AD Recon)
 
 #### T1590.002 - DNS
 
@@ -109,12 +123,6 @@ Adversaries may gather this information in various ways, such as querying or oth
 
 Adversaries may also use DNS zone transfer (DNS query type AXFR) to collect all records from a misconfigured DNS server.(Citation: Trails-DNS)(Citation: DNS-CISA)(Citation: Alexa-dns)
 
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
-
 #### T1590.003 - Network Trust Dependencies
 
 Description:
@@ -122,12 +130,6 @@ Description:
 Adversaries may gather information about the victim's network trust dependencies that can be used during targeting. Information about network trusts may include a variety of details, including second or third-party organizations/domains (ex: managed service providers, contractors, etc.) that have connected (and potentially elevated) network access.
 
 Adversaries may gather this information in various ways, such as direct elicitation via [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about network trusts may also be exposed to adversaries via online or other accessible data sets (ex: [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)).(Citation: Pentesting AD Forests) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [Trusted Relationship](https://attack.mitre.org/techniques/T1199)).
-
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
 
 #### T1590.004 - Network Topology
 
@@ -137,11 +139,11 @@ Adversaries may gather information about the victim's network topology that can 
 
 Adversaries may gather this information in various ways, such as direct collection actions via [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about network topologies may also be exposed to adversaries via online or other accessible data sets (ex: [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)).(Citation: DNS Dumpster) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1045] Salt Typhoon: [Salt Typhoon](https://attack.mitre.org/groups/G1045) has used configuration files from exploited network devices to help discover upstream and downstream network segments.(Citation: Cisco Salt Typhoon FEB 2025)
+- [G1016] FIN13: [FIN13](https://attack.mitre.org/groups/G1016) has searched for infrastructure that can provide remote access to an environment for targeting efforts.(Citation: Mandiant FIN13 Aug 2022)
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has conducted extensive reconnaissance of victim networks including identifying network topologies.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
 
 #### T1590.005 - IP Addresses
 
@@ -151,11 +153,11 @@ Adversaries may gather the victim's IP addresses that can be used during targeti
 
 Adversaries may gather this information in various ways, such as direct collection actions via [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about assigned IP addresses may also be exposed to adversaries via online or other accessible data sets (ex: [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)).(Citation: WHOIS)(Citation: DNS Dumpster)(Citation: Circl Passive DNS) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0138] Andariel: [Andariel](https://attack.mitre.org/groups/G0138) has limited its watering hole attacks to specific IP address ranges.(Citation: AhnLab Andariel Subgroup of Lazarus June 2018)
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has captured the IP addresses of visitors to their phishing sites.(Citation: Google Iran Threats October 2021)
+- [G0125] HAFNIUM: [HAFNIUM](https://attack.mitre.org/groups/G0125) has obtained IP addresses for publicly-accessible Exchange servers.(Citation: Volexity Exchange Marauder March 2021)
 
 #### T1590.006 - Network Security Appliances
 
@@ -165,11 +167,9 @@ Adversaries may gather information about the victim's network security appliance
 
 Adversaries may gather this information in various ways, such as direct collection actions via [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Phishing for Information](https://attack.mitre.org/techniques/T1598).(Citation: Nmap Firewalls NIDS) Information about network security appliances may also be exposed to adversaries via online or other accessible data sets (ex: [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)). Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has identified target network security measures as part of pre-compromise reconnaissance.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
 
 
 ### T1591 - Gather Victim Org Information
@@ -180,11 +180,14 @@ Adversaries may gather information about the victim's organization that can be u
 
 Adversaries may gather this information in various ways, such as direct elicitation via [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about an organization may also be exposed to adversaries via online or other accessible data sets (ex: [Social Media](https://attack.mitre.org/techniques/T1593/001) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)).(Citation: ThreatPost Broadvoice Leak)(Citation: SEC EDGAR Search) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Establish Accounts](https://attack.mitre.org/techniques/T1585) or [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [Phishing](https://attack.mitre.org/techniques/T1566) or [Trusted Relationship](https://attack.mitre.org/techniques/T1199)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has used large language models (LLMs) to gather information about satellite capabilities.(Citation: MSFT-AI)(Citation: OpenAI-CTI)
+- [G0032] Lazarus Group: [Lazarus Group](https://attack.mitre.org/groups/G0032) has studied publicly available information about a targeted organization to tailor spearphishing efforts against specific departments and/or individuals.(Citation: Kaspersky ThreatNeedle Feb 2021)
+- [G1036] Moonstone Sleet: [Moonstone Sleet](https://attack.mitre.org/groups/G1036) has gathered information on victim organizations through email and social media interaction.(Citation: Microsoft Moonstone Sleet 2024)
+- [C0022] Operation Dream Job: For [Operation Dream Job](https://attack.mitre.org/campaigns/C0022), [Lazarus Group](https://attack.mitre.org/groups/G0032) gathered victim organization information to identify specific targets.(Citation: ClearSky Lazarus Aug 2020)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has collected victim organization information including but not limited to organization hierarchy, functions, press releases, and others.(Citation: KISA Operation Muzabi) [Kimsuky](https://attack.mitre.org/groups/G0094) has also used large language models (LLMs) to gather information about potential targets of interest.(Citation: MSFT-AI)
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has conducted extensive reconnaissance pre-compromise to gain information about the targeted organization.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
 
 #### T1591.001 - Determine Physical Locations
 
@@ -194,11 +197,9 @@ Adversaries may gather the victim's physical location(s) that can be used during
 
 Adversaries may gather this information in various ways, such as direct elicitation via [Phishing for Information](https://attack.mitre.org/techniques/T1598). Physical locations of a target organization may also be exposed to adversaries via online or other accessible data sets (ex: [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594) or [Social Media](https://attack.mitre.org/techniques/T1593/001)).(Citation: ThreatPost Broadvoice Leak)(Citation: SEC EDGAR Search) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [Phishing](https://attack.mitre.org/techniques/T1566) or [Hardware Additions](https://attack.mitre.org/techniques/T1200)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has collected location information from visitors to their phishing sites.(Citation: Google Iran Threats October 2021)
 
 #### T1591.002 - Business Relationships
 
@@ -208,11 +209,11 @@ Adversaries may gather information about the victim's business relationships tha
 
 Adversaries may gather this information in various ways, such as direct elicitation via [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about business relationships may also be exposed to adversaries via online or other accessible data sets (ex: [Social Media](https://attack.mitre.org/techniques/T1593/001) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)).(Citation: ThreatPost Broadvoice Leak) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Establish Accounts](https://attack.mitre.org/techniques/T1585) or [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [Supply Chain Compromise](https://attack.mitre.org/techniques/T1195), [Drive-by Compromise](https://attack.mitre.org/techniques/T1189), or [Trusted Relationship](https://attack.mitre.org/techniques/T1199)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0035] Dragonfly: [Dragonfly](https://attack.mitre.org/groups/G0035) has collected open source information to identify relationships between organizations for targeting purposes.(Citation: Gigamon Berserk Bear October 2021)
+- [G1004] LAPSUS$: [LAPSUS$](https://attack.mitre.org/groups/G1004) has gathered detailed knowledge of an organization's supply chain relationships.(Citation: MSTIC DEV-0537 Mar 2022)
+- [G0034] Sandworm Team: In preparation for its attack against the 2018 Winter Olympics, [Sandworm Team](https://attack.mitre.org/groups/G0034) conducted online research of partner organizations listed on an official PyeongChang Olympics partnership site.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
 
 #### T1591.003 - Identify Business Tempo
 
@@ -222,12 +223,6 @@ Adversaries may gather information about the victim's business tempo that can be
 
 Adversaries may gather this information in various ways, such as direct elicitation via [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about business tempo may also be exposed to adversaries via online or other accessible data sets (ex: [Social Media](https://attack.mitre.org/techniques/T1593/001) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)).(Citation: ThreatPost Broadvoice Leak) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Establish Accounts](https://attack.mitre.org/techniques/T1585) or [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [Supply Chain Compromise](https://attack.mitre.org/techniques/T1195) or [Trusted Relationship](https://attack.mitre.org/techniques/T1199))
 
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
-
 #### T1591.004 - Identify Roles
 
 Description:
@@ -236,11 +231,12 @@ Adversaries may gather information about identities and roles within the victim 
 
 Adversaries may gather this information in various ways, such as direct elicitation via [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about business roles may also be exposed to adversaries via online or other accessible data sets (ex: [Social Media](https://attack.mitre.org/techniques/T1593/001) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)).(Citation: ThreatPost Broadvoice Leak) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Establish Accounts](https://attack.mitre.org/techniques/T1585) or [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [Phishing](https://attack.mitre.org/techniques/T1566)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has identified key network and IT staff members pre-compromise at targeted organizations.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
+- [G1004] LAPSUS$: [LAPSUS$](https://attack.mitre.org/groups/G1004) has gathered detailed knowledge of team structures within a target organization.(Citation: MSTIC DEV-0537 Mar 2022)
+- [C0022] Operation Dream Job: During [Operation Dream Job](https://attack.mitre.org/campaigns/C0022), [Lazarus Group](https://attack.mitre.org/groups/G0032) targeted specific individuals within an organization with tailored job vacancy announcements.(Citation: ClearSky Lazarus Aug 2020)(Citation: ESET Lazarus Jun 2020)
+- [G1001] HEXANE: [HEXANE](https://attack.mitre.org/groups/G1001) has identified executives, HR, and IT staff at victim organizations for further targeting.(Citation: SecureWorks August 2019)(Citation: ClearSky Siamesekitten August 2021)
 
 
 ### T1592 - Gather Victim Host Information
@@ -253,11 +249,9 @@ Adversaries may gather this information in various ways, such as direct collecti
 
 Adversaries may also gather victim host information via User-Agent HTTP headers, which are sent to a server to identify the application, operating system, vendor, and/or version of the requesting user agent. This can be used to inform the adversary’s follow-on action. For example, adversaries may check user agents for the requesting operating system, then only serve malware for target operating systems while ignoring others.(Citation: TrellixQakbot)
 
-Detection:
+Procedures:
 
-Internet scanners may be used to look for patterns associated with malicious content designed to collect host information from visitors.(Citation: ThreatConnect Infrastructure Dec 2020)(Citation: ATT ScanBox)
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders. Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has conducted pre-compromise reconnaissance for victim host information.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
 
 #### T1592.001 - Hardware
 
@@ -267,12 +261,6 @@ Adversaries may gather information about the victim's host hardware that can be 
 
 Adversaries may gather this information in various ways, such as direct collection actions via [Active Scanning](https://attack.mitre.org/techniques/T1595) (ex: hostnames, server banners, user agent strings) or [Phishing for Information](https://attack.mitre.org/techniques/T1598). Adversaries may also compromise sites then include malicious content designed to collect host information from visitors.(Citation: ATT ScanBox) Information about the hardware infrastructure may also be exposed to adversaries via online or other accessible data sets (ex: job postings, network maps, assessment reports, resumes, or purchase invoices). Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [Compromise Hardware Supply Chain](https://attack.mitre.org/techniques/T1195/003) or [Hardware Additions](https://attack.mitre.org/techniques/T1200)).
 
-Detection:
-
-Internet scanners may be used to look for patterns associated with malicious content designed to collect host hardware information from visitors.(Citation: ThreatConnect Infrastructure Dec 2020)(Citation: ATT ScanBox)
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders. Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
-
 #### T1592.002 - Software
 
 Description:
@@ -281,11 +269,11 @@ Adversaries may gather information about the victim's host software that can be 
 
 Adversaries may gather this information in various ways, such as direct collection actions via [Active Scanning](https://attack.mitre.org/techniques/T1595) (ex: listening ports, server banners, user agent strings) or [Phishing for Information](https://attack.mitre.org/techniques/T1598). Adversaries may also compromise sites then include malicious content designed to collect host information from visitors.(Citation: ATT ScanBox) Information about the installed software may also be exposed to adversaries via online or other accessible data sets (ex: job postings, network maps, assessment reports, resumes, or purchase invoices). Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or for initial access (ex: [Supply Chain Compromise](https://attack.mitre.org/techniques/T1195) or [External Remote Services](https://attack.mitre.org/techniques/T1133)).
 
-Detection:
+Procedures:
 
-Internet scanners may be used to look for patterns associated with malicious content designed to collect host software information from visitors.(Citation: ThreatConnect Infrastructure Dec 2020)(Citation: ATT ScanBox)
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders. Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has captured the user-agent strings from visitors to their phishing sites.(Citation: Google Iran Threats October 2021)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) has researched software code to enable supply-chain operations, most notably for the 2017 [NotPetya](https://attack.mitre.org/software/S0368) attack. [Sandworm Team](https://attack.mitre.org/groups/G0034) also collected a list of computers using specific software as part of its targeting efforts.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
+- [G0138] Andariel: [Andariel](https://attack.mitre.org/groups/G0138) has inserted a malicious script within compromised websites to collect potential victim information such as browser type, system language, Flash Player version, and other data.(Citation: TrendMicro New Andariel Tactics July 2018)
 
 #### T1592.003 - Firmware
 
@@ -295,12 +283,6 @@ Adversaries may gather information about the victim's host firmware that can be 
 
 Adversaries may gather this information in various ways, such as direct elicitation via [Phishing for Information](https://attack.mitre.org/techniques/T1598). Information about host firmware may only be exposed to adversaries via online or other accessible data sets (ex: job postings, network maps, assessment reports, resumes, or purchase invoices).(Citation: ArsTechnica Intel) Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [Supply Chain Compromise](https://attack.mitre.org/techniques/T1195) or [Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190)).
 
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
-
 #### T1592.004 - Client Configurations
 
 Description:
@@ -309,11 +291,9 @@ Adversaries may gather information about the victim's client configurations that
 
 Adversaries may gather this information in various ways, such as direct collection actions via [Active Scanning](https://attack.mitre.org/techniques/T1595) (ex: listening ports, server banners, user agent strings) or [Phishing for Information](https://attack.mitre.org/techniques/T1598). Adversaries may also compromise sites then include malicious content designed to collect host information from visitors.(Citation: ATT ScanBox) Information about the client configurations may also be exposed to adversaries via online or other accessible data sets (ex: job postings, network maps, assessment reports, resumes, or purchase invoices). Gathering this information may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [Supply Chain Compromise](https://attack.mitre.org/techniques/T1195) or [External Remote Services](https://attack.mitre.org/techniques/T1133)).
 
-Detection:
+Procedures:
 
-Internet scanners may be used to look for patterns associated with malicious content designed to collect client configuration information from visitors.(Citation: ThreatConnect Infrastructure Dec 2020)(Citation: ATT ScanBox)
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders. Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0125] HAFNIUM: [HAFNIUM](https://attack.mitre.org/groups/G0125) has interacted with Office 365 tenants to gather details regarding target's environments.(Citation: Microsoft HAFNIUM March 2020)
 
 
 ### T1593 - Search Open Websites/Domains
@@ -324,11 +304,12 @@ Adversaries may search freely available websites and/or domains for information 
 
 Adversaries may search in different online sites depending on what information they seek to gather. Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Establish Accounts](https://attack.mitre.org/techniques/T1585) or [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Phishing](https://attack.mitre.org/techniques/T1566)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has conducted pre-compromise web searches for victim information.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has used LLMs to identify think tanks, government organizations, etc. that have information.(Citation: MSFT-AI)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) researched Ukraine's unique legal entity identifier (called an "EDRPOU" number), including running queries on the EDRPOU website, in preparation for the [NotPetya](https://attack.mitre.org/software/S0368) attack. [Sandworm Team](https://attack.mitre.org/groups/G0034) has also researched third-party websites to help it craft credible spearphishing emails.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
+- [G1033] Star Blizzard: [Star Blizzard](https://attack.mitre.org/groups/G1033) has used open-source research to identify information about victims to use in targeting.(Citation: Microsoft Star Blizzard August 2022)(Citation: CISA Star Blizzard Advisory December 2023)
 
 #### T1593.001 - Social Media
 
@@ -338,11 +319,11 @@ Adversaries may search social media for information about victims that can be us
 
 Adversaries may search in different social media sites depending on what information they seek to gather. Threat actors may passively harvest data from these sites, as well as use information gathered to create fake profiles/groups to elicit victim’s into revealing specific information (i.e. [Spearphishing Service](https://attack.mitre.org/techniques/T1598/001)).(Citation: Cyware Social Media) Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Establish Accounts](https://attack.mitre.org/techniques/T1585) or [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [Spearphishing via Service](https://attack.mitre.org/techniques/T1566/003)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has used Twitter to monitor potential victims and to prepare targeted phishing e-mails.(Citation: Malwarebytes Kimsuky June 2021)
+- [G1011] EXOTIC LILY: [EXOTIC LILY](https://attack.mitre.org/groups/G1011) has copied data from social media sites to impersonate targeted individuals.(Citation: Google EXOTIC LILY March 2022)
+- [C0022] Operation Dream Job: For [Operation Dream Job](https://attack.mitre.org/campaigns/C0022), [Lazarus Group](https://attack.mitre.org/groups/G0032) used LinkedIn to identify and target employees within a chosen organization.(Citation: ESET Lazarus Jun 2020)
 
 #### T1593.002 - Search Engines
 
@@ -352,11 +333,10 @@ Adversaries may use search engines to collect information about victims that can
 
 Adversaries may craft various search engine queries depending on what information they seek to gather. Threat actors may use search engines to harvest general information about victims, as well as use specialized queries to look for spillages/leaks of sensitive information such as network details or credentials. Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Establish Accounts](https://attack.mitre.org/techniques/T1585) or [Compromise Accounts](https://attack.mitre.org/techniques/T1586)), and/or initial access (ex: [Valid Accounts](https://attack.mitre.org/techniques/T1078) or [Phishing](https://attack.mitre.org/techniques/T1566)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [C0040] APT41 DUST: [APT41 DUST](https://attack.mitre.org/campaigns/C0040) involved use of search engines to research victim servers.(Citation: Google Cloud APT41 2024)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has searched for vulnerabilities, tools, and geopolitical trends on Google to target victims.(Citation: KISA Operation Muzabi)
 
 #### T1593.003 - Code Repositories
 
@@ -368,11 +348,10 @@ Adversaries may search various public code repositories for various information 
 
 **Note:** This is distinct from [Code Repositories](https://attack.mitre.org/techniques/T1213/003), which focuses on [Collection](https://attack.mitre.org/tactics/TA0009) from private and internally hosted code repositories.
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders. 
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1004] LAPSUS$: [LAPSUS$](https://attack.mitre.org/groups/G1004) has searched public code repositories for exposed credentials.(Citation: MSTIC DEV-0537 Mar 2022)
+- [G0125] HAFNIUM: [HAFNIUM](https://attack.mitre.org/groups/G0125) has discovered leaked corporate credentials on public repositories including GitHub.(Citation: Microsoft Silk Typhoon MAR 2025)
 
 
 ### T1594 - Search Victim-Owned Websites
@@ -385,9 +364,17 @@ Adversaries may search victim-owned websites to gather actionable information. I
 
 In addition to manually browsing the website, adversaries may attempt to identify hidden directories or files that could contain additional sensitive information or vulnerable functionality. They may do this through automated activities such as [Wordlist Scanning](https://attack.mitre.org/techniques/T1595/003), as well as by leveraging files such as sitemap.xml and robots.txt.(Citation: Perez Sitemap XML 2023)(Citation: Register Robots TXT 2015)
 
-Detection:
+Procedures:
 
-Monitor for suspicious network traffic that could be indicative of adversary reconnaissance, such as rapid successions of requests indicative of web crawling and/or large quantities of requests originating from a single source (especially if the source is known to be associated with an adversary). Analyzing web metadata may also reveal artifacts that can be attributed to potentially malicious activity, such as referer or user-agent string HTTP/S fields.
+- [G0122] Silent Librarian: [Silent Librarian](https://attack.mitre.org/groups/G0122) has searched victim's websites to identify the interests and academic areas of targeted individuals and to scrape source code, branding, and organizational contact information for phishing pages.(Citation: DOJ Iran Indictments March 2018)(Citation: Phish Labs Silent Librarian)(Citation: Proofpoint TA407 September 2019)
+- [C0029] Cutting Edge: During [Cutting Edge](https://attack.mitre.org/campaigns/C0029), threat actors peformed reconnaissance of victims' internal websites via proxied connections.(Citation: Volexity Ivanti Zero-Day Exploitation January 2024)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has searched for information on the target company's website.(Citation: KISA Operation Muzabi)
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has conducted pre-compromise reconnaissance on victim-owned sites.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
+- [G1011] EXOTIC LILY: [EXOTIC LILY](https://attack.mitre.org/groups/G1011) has used contact forms on victim websites to generate phishing e-mails.(Citation: Google EXOTIC LILY March 2022)
+- [C0049] Leviathan Australian Intrusions: [Leviathan](https://attack.mitre.org/groups/G0065) enumerated compromised web application resources to identify additional endpoints and resources linkd to the website for follow-on access during [Leviathan Australian Intrusions](https://attack.mitre.org/campaigns/C0049).(Citation: CISA Leviathan 2024)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) has conducted research against potential victim websites as part of its operational planning.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
+- [G1038] TA578: [TA578](https://attack.mitre.org/groups/G1038) has filled out contact forms on victims' websites to direct them to adversary-controlled URLs.(Citation: Latrodectus APR 2024)
+- [C0040] APT41 DUST: [APT41 DUST](https://attack.mitre.org/campaigns/C0040) involved access of external victim websites for target development.(Citation: Google Cloud APT41 2024)
 
 
 ### T1595 - Active Scanning
@@ -398,13 +385,9 @@ Adversaries may execute active reconnaissance scans to gather information that c
 
 Adversaries may perform different forms of active scanning depending on what information they seek to gather. These scans can also be performed in various ways, including using native features of network protocols such as ICMP.(Citation: Botnet Scan)(Citation: OWASP Fingerprinting) Information from these scans may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190)).
 
-Detection:
+Procedures:
 
-Monitor for suspicious network traffic that could be indicative of scanning, such as large quantities originating from a single source (especially if the source is known to be associated with an adversary/botnet). Analyzing web metadata may also reveal artifacts that can be attributed to potentially malicious activity, such as referer or user-agent string HTTP/S fields.
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [C0030] Triton Safety Instrumented System Attack: In the [Triton Safety Instrumented System Attack](https://attack.mitre.org/campaigns/C0030), [TEMP.Veles](https://attack.mitre.org/groups/G0088) engaged in network reconnaissance against targets of interest.(Citation: FireEye TEMP.Veles 2018)
 
 #### T1595.001 - Scanning IP Blocks
 
@@ -414,13 +397,10 @@ Adversaries may scan victim IP blocks to gather information that can be used dur
 
 Adversaries may scan IP blocks in order to [Gather Victim Network Information](https://attack.mitre.org/techniques/T1590), such as which IP addresses are actively in use as well as more detailed information about hosts assigned these addresses. Scans may range from simple pings (ICMP requests and responses) to more nuanced scans that may reveal host software/versions via server banners or other network artifacts.(Citation: Botnet Scan) Information from these scans may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133)).
 
-Detection:
+Procedures:
 
-Monitor for suspicious network traffic that could be indicative of scanning, such as large quantities originating from a single source (especially if the source is known to be associated with an adversary/botnet).
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1003] Ember Bear: [Ember Bear](https://attack.mitre.org/groups/G1003) has targeted IP ranges for vulnerability scanning related to government and critical infrastructure organizations.(Citation: CISA GRU29155 2024)
+- [G0139] TeamTNT: [TeamTNT](https://attack.mitre.org/groups/G0139) has scanned specific lists of target IP addresses.(Citation: Trend Micro TeamTNT)
 
 #### T1595.002 - Vulnerability Scanning
 
@@ -430,13 +410,22 @@ Adversaries may scan victims for vulnerabilities that can be used during targeti
 
 These scans may also include more broad attempts to [Gather Victim Host Information](https://attack.mitre.org/techniques/T1592) that can be used to identify more commonly known, exploitable vulnerabilities. Vulnerability scans typically harvest running software and version numbers via server banners, listening ports, or other network artifacts.(Citation: OWASP Vuln Scanning) Information from these scans may reveal opportunities for other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Open Technical Databases](https://attack.mitre.org/techniques/T1596)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190)).
 
-Detection:
+Procedures:
 
-Monitor for suspicious network traffic that could be indicative of scanning, such as large quantities originating from a single source (especially if the source is known to be associated with an adversary/botnet). Analyzing web metadata may also reveal artifacts that can be attributed to potentially malicious activity, such as referer or user-agent string HTTP/S fields.
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) has scanned network infrastructure for vulnerabilities as part of its operational planning.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
+- [C0029] Cutting Edge: During [Cutting Edge](https://attack.mitre.org/campaigns/C0029), threat actors used the publicly available Interactsh tool to identify Ivanti Connect Secure VPNs vulnerable to CVE-2024-21893.(Citation: Mandiant Cutting Edge Part 3 February 2024)
+- [G0123] Volatile Cedar: [Volatile Cedar](https://attack.mitre.org/groups/G0123) has performed vulnerability scans of the target server.(Citation: CheckPoint Volatile Cedar March 2015)(Citation: ClearSky Lebanese Cedar Jan 2021)
+- [G0065] Leviathan: [Leviathan](https://attack.mitre.org/groups/G0065) has conducted reconnaissance against target networks of interest looking for vulnerable, end-of-life, or no longer maintainted devices against which to rapidly deploy exploits.(Citation: CISA Leviathan 2024)
+- [G1003] Ember Bear: [Ember Bear](https://attack.mitre.org/groups/G1003) has used publicly available tools such as MASSCAN and Acunetix for vulnerability scanning of public-facing infrastructure.(Citation: CISA GRU29155 2024)
+- [G0096] APT41: [APT41](https://attack.mitre.org/groups/G0096) used the Acunetix SQL injection vulnerability scanner in target reconnaissance operations, as well as the JexBoss tool to identify vulnerabilities in Java applications.(Citation: Rostovcev APT41 2021)
+- [G0139] TeamTNT: [TeamTNT](https://attack.mitre.org/groups/G0139) has scanned for vulnerabilities in IoT devices and other related resources such as the Docker API.(Citation: Trend Micro TeamTNT)
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has performed large-scale scans in an attempt to find vulnerable servers.(Citation: TrendMicro Pawn Storm 2019)
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has conducted widespread scanning to identify public-facing systems vulnerable to CVE-2021-44228 in Log4j and ProxyShell vulnerabilities; CVE-2021-26855, CVE-2021-26857, CVE-2021-26858, and CVE-2021-27065 in on-premises MS Exchange Servers; and CVE-2018-13379 in Fortinet FortiOS SSL VPNs.(Citation: Check Point APT35 CharmPower January 2022)(Citation: Microsoft Iranian Threat Actor Trends November 2021)
+- [G0016] APT29: [APT29](https://attack.mitre.org/groups/G0016) has conducted widespread scanning of target environments to identify vulnerabilities for exploit.(Citation: Cybersecurity Advisory SVR TTP May 2021)
+- [G1035] Winter Vivern: [Winter Vivern](https://attack.mitre.org/groups/G1035) has used remotely-hosted instances of the Acunetix vulnerability scanner.(Citation: SentinelOne WinterVivern 2023)
+- [G0143] Aquatic Panda: [Aquatic Panda](https://attack.mitre.org/groups/G0143) has used publicly accessible DNS logging services to identify servers vulnerable to Log4j (CVE 2021-44228).(Citation: CrowdStrike AQUATIC PANDA December 2021)
+- [G0035] Dragonfly: [Dragonfly](https://attack.mitre.org/groups/G0035) has scanned targeted systems for vulnerable Citrix and Microsoft Exchange services.(Citation: CISA AA20-296A Berserk Bear December 2020)
+- [G1006] Earth Lusca: [Earth Lusca](https://attack.mitre.org/groups/G1006) has scanned for vulnerabilities in the public-facing servers of their targets.(Citation: TrendMicro EarthLusca 2022)
 
 #### T1595.003 - Wordlist Scanning
 
@@ -448,13 +437,10 @@ For example, adversaries may use web content discovery tools such as Dirb, DirBu
 
 As cloud storage solutions typically use globally unique names, adversaries may also use target-specific wordlists and tools such as s3recon and GCPBucketBrute to enumerate public and private buckets on cloud infrastructure.(Citation: S3Recon GitHub)(Citation: GCPBucketBrute) Once storage objects are discovered, adversaries may leverage [Data from Cloud Storage](https://attack.mitre.org/techniques/T1530) to access valuable information that can be exfiltrated or used to escalate privileges and move laterally.
 
-Detection:
+Procedures:
 
-Monitor for suspicious network traffic that could be indicative of scanning, such as large quantities originating from a single source (especially if the source is known to be associated with an adversary/botnet). Monitor for access to S3 buckets, especially those that are not intended to be publicly accessible. 
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders. 
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0096] APT41: [APT41](https://attack.mitre.org/groups/G0096) leverages various tools and frameworks to brute-force directories on web servers.(Citation: Rostovcev APT41 2021)
+- [G0123] Volatile Cedar: [Volatile Cedar](https://attack.mitre.org/groups/G0123) has used DirBuster and GoBuster to brute force web directories and DNS subdomains.(Citation: ClearSky Lebanese Cedar Jan 2021)
 
 
 ### T1596 - Search Open Technical Databases
@@ -465,11 +451,10 @@ Adversaries may search freely available technical databases for information abou
 
 Adversaries may search in different open databases depending on what information they seek to gather. Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Trusted Relationship](https://attack.mitre.org/techniques/T1199)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has used large language models (LLMs) to assist in script development and deployment.(Citation: MSFT-AI)(Citation: OpenAI-CTI)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has used LLMs to better understand publicly reported vulnerabilities.(Citation: MSFT-AI)(Citation: OpenAI-CTI)
 
 #### T1596.001 - DNS/Passive DNS
 
@@ -479,12 +464,6 @@ Adversaries may search DNS data for information about victims that can be used d
 
 Adversaries may search DNS data to gather actionable information. Threat actors can query nameservers for a target organization directly, or search through centralized repositories of logged DNS query responses (known as passive DNS).(Citation: DNS Dumpster)(Citation: Circl Passive DNS) Adversaries may also seek and target DNS misconfigurations/leaks that reveal information about internal networks. Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Trusted Relationship](https://attack.mitre.org/techniques/T1199)).
 
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
-
 #### T1596.002 - WHOIS
 
 Description:
@@ -492,12 +471,6 @@ Description:
 Adversaries may search public WHOIS data for information about victims that can be used during targeting. WHOIS data is stored by regional Internet registries (RIR) responsible for allocating and assigning Internet resources such as domain names. Anyone can query WHOIS servers for information about a registered domain, such as assigned IP blocks, contact information, and DNS nameservers.(Citation: WHOIS)
 
 Adversaries may search WHOIS data to gather actionable information. Threat actors can use online resources or command-line utilities to pillage through WHOIS data for information about potential victims. Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Phishing for Information](https://attack.mitre.org/techniques/T1598)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Trusted Relationship](https://attack.mitre.org/techniques/T1199)).
-
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
 
 #### T1596.003 - Digital Certificates
 
@@ -507,12 +480,6 @@ Adversaries may search public digital certificate data for information about vic
 
 Adversaries may search digital certificate data to gather actionable information. Threat actors can use online resources and lookup tools to harvest information about certificates.(Citation: SSLShopper Lookup) Digital certificate data may also be available from artifacts signed by the organization (ex: certificates used from encrypted web traffic are served with content).(Citation: Medium SSL Cert) Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Phishing for Information](https://attack.mitre.org/techniques/T1598)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Trusted Relationship](https://attack.mitre.org/techniques/T1199)).
 
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
-
 #### T1596.004 - CDNs
 
 Description:
@@ -520,12 +487,6 @@ Description:
 Adversaries may search content delivery network (CDN) data about victims that can be used during targeting. CDNs allow an organization to host content from a distributed, load balanced array of servers. CDNs may also allow organizations to customize content delivery based on the requestor’s geographical region.
 
 Adversaries may search CDN data to gather actionable information. Threat actors can use online resources and lookup tools to harvest information about content servers within a CDN. Adversaries may also seek and target CDN misconfigurations that leak sensitive information not intended to be hosted and/or do not have the same protection mechanisms (ex: login portals) as the content hosted on the organization’s website.(Citation: DigitalShadows CDN) Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Acquire Infrastructure](https://attack.mitre.org/techniques/T1583) or [Compromise Infrastructure](https://attack.mitre.org/techniques/T1584)), and/or initial access (ex: [Drive-by Compromise](https://attack.mitre.org/techniques/T1189)).
-
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
 
 #### T1596.005 - Scan Databases
 
@@ -535,11 +496,11 @@ Adversaries may search within public scan databases for information about victim
 
 Adversaries may search scan databases to gather actionable information. Threat actors can use online resources and lookup tools to harvest information from these services. Adversaries may seek information about their already identified targets, or use these datasets to discover opportunities for successful breaches. Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Active Scanning](https://attack.mitre.org/techniques/T1595) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G0096] APT41: [APT41](https://attack.mitre.org/groups/G0096) uses the Chinese website fofa.su, similar to the Shodan scanning service, for passive scanning of victims.(Citation: Rostovcev APT41 2021)
+- [C0040] APT41 DUST: [APT41 DUST](https://attack.mitre.org/campaigns/C0040) used internet scan data for target development.(Citation: Google Cloud APT41 2024)
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has used FOFA, Shodan, and Censys to search for exposed victim infrastructure.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
 
 
 ### T1597 - Search Closed Sources
@@ -550,11 +511,9 @@ Adversaries may search and gather information about victims from closed (e.g., p
 
 Adversaries may search in different closed databases depending on what information they seek to gather. Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Valid Accounts](https://attack.mitre.org/techniques/T1078)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1011] EXOTIC LILY: [EXOTIC LILY](https://attack.mitre.org/groups/G1011) has searched for information on targeted individuals on business databases including RocketReach and CrunchBase.(Citation: Google EXOTIC LILY March 2022)
 
 #### T1597.001 - Threat Intel Vendors
 
@@ -564,12 +523,6 @@ Adversaries may search private data from threat intelligence vendors for informa
 
 Adversaries may search in private threat intelligence vendor data to gather actionable information. Threat actors may seek information/indicators gathered about their own campaigns, as well as those conducted by other adversaries that may align with their target industries, capabilities/objectives, or other operational concerns. Information reported by vendors may also reveal opportunities other forms of reconnaissance (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190) or [External Remote Services](https://attack.mitre.org/techniques/T1133)).
 
-Detection:
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
-
 #### T1597.002 - Purchase Technical Data
 
 Description:
@@ -578,11 +531,9 @@ Adversaries may purchase technical information about victims that can be used du
 
 Adversaries may purchase information about their already identified targets, or use purchased data to discover opportunities for successful breaches. Threat actors may gather various technical details from purchased data, including but not limited to employee contact information, credentials, or specifics regarding a victim’s infrastructure.(Citation: ZDNET Selling Data) Information from these sources may reveal opportunities for other forms of reconnaissance (ex: [Phishing for Information](https://attack.mitre.org/techniques/T1598) or [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593)), establishing operational resources (ex: [Develop Capabilities](https://attack.mitre.org/techniques/T1587) or [Obtain Capabilities](https://attack.mitre.org/techniques/T1588)), and/or initial access (ex: [External Remote Services](https://attack.mitre.org/techniques/T1133) or [Valid Accounts](https://attack.mitre.org/techniques/T1078)).
 
-Detection:
+Procedures:
 
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [G1004] LAPSUS$: [LAPSUS$](https://attack.mitre.org/groups/G1004) has purchased credentials and session tokens from criminal underground forums.(Citation: MSTIC DEV-0537 Mar 2022)
 
 
 ### T1598 - Phishing for Information
@@ -599,13 +550,13 @@ Phishing for information frequently involves social engineering techniques, such
 
 Phishing for information may also involve evasive techniques, such as removing or manipulating emails or metadata/headers from compromised accounts being abused to send messages (e.g., [Email Hiding Rules](https://attack.mitre.org/techniques/T1564/008)).(Citation: Microsoft OAuth Spam 2022)(Citation: Palo Alto Unit 42 VBA Infostealer 2014)
 
-Detection:
+Procedures:
 
-Depending on the specific method of phishing, the detections can vary. Monitor for suspicious email activity, such as numerous accounts receiving messages from a single unusual/unknown sender. Filtering based on DKIM+SPF or header analysis can help detect when the email sender is spoofed.(Citation: Microsoft Anti Spoofing)(Citation: ACSC Email Spoofing)
-
-When it comes to following links, monitor for references to uncategorized or known-bad sites. URL inspection within email (including expanding shortened links) can also help detect links leading to known malicious sites.
-
-Monitor social media traffic for suspicious activity, including messages requesting information as well as abnormal file or data transfers (especially those involving unknown, or otherwise suspicious accounts).
+- [G1015] Scattered Spider: [Scattered Spider](https://attack.mitre.org/groups/G1015) has used a combination of credential phishing and social engineering to capture one-time-password (OTP) codes.(Citation: CrowdStrike Scattered Spider BYOVD January 2023)
+- [G0128] ZIRCONIUM: [ZIRCONIUM](https://attack.mitre.org/groups/G0128) targeted presidential campaign staffers with credential phishing e-mails.(Citation: Google Election Threats October 2020)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has used tailored spearphishing emails to gather victim information including contat lists to identify additional targets.(Citation: Mandiant APT43 March 2024)
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has used spearphishing to compromise credentials.(Citation: Microsoft Targeting Elections September 2020)(Citation: Secureworks IRON TWILIGHT Active Measures March 2017)
+- [G1036] Moonstone Sleet: [Moonstone Sleet](https://attack.mitre.org/groups/G1036) has interacted with victims to gather information via email.(Citation: Microsoft Moonstone Sleet 2024)
 
 #### T1598.001 - Spearphishing Service
 
@@ -615,13 +566,9 @@ Adversaries may send spearphishing messages via third-party services to elicit s
 
 All forms of spearphishing are electronically delivered social engineering targeted at a specific individual, company, or industry. In this scenario, adversaries send messages through various social media services, personal webmail, and other non-enterprise controlled services.(Citation: ThreatPost Social Media Phishing) These services are more likely to have a less-strict security policy than an enterprise. As with most kinds of spearphishing, the goal is to generate rapport with the target or get the target's interest in some way. Adversaries may create fake social media accounts and message employees for potential job opportunities. Doing so allows a plausible reason for asking about services, policies, and information about their environment. Adversaries may also use information from previous reconnaissance efforts (ex: [Social Media](https://attack.mitre.org/techniques/T1593/001) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)) to craft persuasive and believable lures.
 
-Detection:
+Procedures:
 
-Monitor social media traffic for suspicious activity, including messages requesting information as well as abnormal file or data transfers (especially those involving unknown, or otherwise suspicious accounts).
-
-Much of this activity may have a very high occurrence and associated false positive rate, as well as potentially taking place outside the visibility of the target organization, making detection difficult for defenders.
-
-Detection efforts may be focused on related stages of the adversary lifecycle, such as during Initial Access.
+- [C0027] C0027: During [C0027](https://attack.mitre.org/campaigns/C0027), [Scattered Spider](https://attack.mitre.org/groups/G1015) sent Telegram messages impersonating IT personnel to harvest credentials.(Citation: Crowdstrike TELCO BPO Campaign December 2022)
 
 #### T1598.002 - Spearphishing Attachment
 
@@ -633,9 +580,12 @@ All forms of spearphishing are electronically delivered social engineering targe
 
 Adversaries may also use information from previous reconnaissance efforts (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)) to craft persuasive and believable lures.
 
-Detection:
+Procedures:
 
-Monitor for suspicious email activity, such as numerous accounts receiving messages from a single unusual/unknown sender. Filtering based on DKIM+SPF or header analysis can help detect when the email sender is spoofed.(Citation: Microsoft Anti Spoofing)(Citation: ACSC Email Spoofing)
+- [G0035] Dragonfly: [Dragonfly](https://attack.mitre.org/groups/G0035) has used spearphishing with Microsoft Office attachments to enable harvesting of user credentials.(Citation: US-CERT TA18-074A)
+- [G1033] Star Blizzard: [Star Blizzard](https://attack.mitre.org/groups/G1033) has sent emails to establish rapport with targets eventually sending messages with attachments containing links to credential-stealing sites.(Citation: Microsoft Star Blizzard August 2022)(Citation: CISA Star Blizzard Advisory December 2023)(Citation: StarBlizzard)(Citation: Google TAG COLDRIVER January 2024)
+- [G0121] Sidewinder: [Sidewinder](https://attack.mitre.org/groups/G0121) has sent e-mails with malicious attachments that lead victims to credential harvesting websites.(Citation: ATT Sidewinder January 2021)(Citation: Rewterz Sidewinder APT April 2020)(Citation: Cyble Sidewinder September 2020)
+- [G1008] SideCopy: [SideCopy](https://attack.mitre.org/groups/G1008) has crafted generic lures for spam campaigns to collect emails and credentials for targeting efforts.(Citation: MalwareBytes SideCopy Dec 2021)
 
 #### T1598.003 - Spearphishing Link
 
@@ -655,11 +605,24 @@ Adversaries may also send a malicious link in the form of Quick Response (QR) Co
 
 From the fake website, information is gathered in web forms and sent to the adversary. Adversaries may also use information from previous reconnaissance efforts (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)) to craft persuasive and believable lures.
 
-Detection:
+Procedures:
 
-Monitor for suspicious email activity, such as numerous accounts receiving messages from a single unusual/unknown sender. Filtering based on DKIM+SPF or header analysis can help detect when the email sender is spoofed.(Citation: Microsoft Anti Spoofing)(Citation: ACSC Email Spoofing)
-
-Monitor for references to uncategorized or known-bad sites. URL inspection within email (including expanding shortened links) can also help detect links leading to known malicious sites.
+- [G0121] Sidewinder: [Sidewinder](https://attack.mitre.org/groups/G0121) has sent e-mails with malicious links to credential harvesting websites.(Citation: ATT Sidewinder January 2021)
+- [G0129] Mustang Panda: [Mustang Panda](https://attack.mitre.org/groups/G0129) has delivered web bugs to profile their intended targets.(Citation: Proofpoint TA416 Europe March 2022)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) has crafted spearphishing emails with hyperlinks designed to trick unwitting recipients into revealing their account credentials.(Citation: US District Court Indictment GRU Unit 74455 October 2020)
+- [G0122] Silent Librarian: [Silent Librarian](https://attack.mitre.org/groups/G0122) has used links in e-mails to direct victims to credential harvesting websites designed to appear like the targeted organization's login page.(Citation: DOJ Iran Indictments March 2018)(Citation: Phish Labs Silent Librarian)(Citation: Secureworks COBALT DICKENS August 2018)(Citation: Proofpoint TA407 September 2019)(Citation: Secureworks COBALT DICKENS September 2019)(Citation: Malwarebytes Silent Librarian October 2020)
+- [S0677] AADInternals: [AADInternals](https://attack.mitre.org/software/S0677) can send phishing emails containing malicious links designed to collect users’ credentials.(Citation: AADInternals Documentation)
+- [G0128] ZIRCONIUM: [ZIRCONIUM](https://attack.mitre.org/groups/G0128) has used web beacons in e-mails to track hits to attacker-controlled URL's.(Citation: Microsoft Targeting Elections September 2020)
+- [G0050] APT32: [APT32](https://attack.mitre.org/groups/G0050) has used malicious links to direct users to web pages designed to harvest credentials.(Citation: Volexity Ocean Lotus November 2020)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has used links in e-mail to steal account information including web beacons for target profiling.(Citation: VirusBulletin Kimsuky October 2019)(Citation: Malwarebytes Kimsuky June 2021)(Citation: KISA Operation Muzabi)(Citation: Proofpoint TA427 April 2024)
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has used SMS and email messages with links designed to steal credentials or track victims.(Citation: Certfa Charming Kitten January 2021)(Citation: ClearSky Kittens Back 3 August 2020)(Citation: Proofpoint TA453 March 2021)(Citation: Proofpoint TA453 July2021)(Citation: Google Iran Threats October 2021)(Citation: Microsoft Iranian Threat Actor Trends November 2021)
+- [S0649] SMOKEDHAM: [SMOKEDHAM](https://attack.mitre.org/software/S0649) has been delivered via malicious links in phishing emails.(Citation: FireEye Shining A Light on DARKSIDE May 2021)
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has conducted credential phishing campaigns with links that redirect to credential harvesting sites.(Citation: Google TAG Ukraine Threat Landscape March 2022)(Citation: DOJ GRU Indictment Jul 2018)(Citation: ESET Zebrocy May 2019)(Citation: US District Court Indictment GRU Oct 2018)(Citation: Secureworks IRON TWILIGHT Active Measures March 2017)
+- [G1033] Star Blizzard: [Star Blizzard](https://attack.mitre.org/groups/G1033) has sent emails to establish rapport with targets eventually sending messages with links to credential-stealing sites.(Citation: Microsoft Star Blizzard August 2022)(Citation: CISA Star Blizzard Advisory December 2023)(Citation: StarBlizzard)(Citation: Google TAG COLDRIVER January 2024)
+- [G1036] Moonstone Sleet: [Moonstone Sleet](https://attack.mitre.org/groups/G1036) used spearphishing messages containing items such as tracking pixels to determine if users interacted with malicious messages.(Citation: Microsoft Moonstone Sleet 2024)
+- [G1012] CURIUM: [CURIUM](https://attack.mitre.org/groups/G1012) used malicious links to adversary-controlled resources for credential harvesting.(Citation: PWC Yellow Liderc 2023)
+- [G0035] Dragonfly: [Dragonfly](https://attack.mitre.org/groups/G0035) has used spearphishing with PDF attachments containing malicious links that redirected to credential harvesting websites.(Citation: US-CERT TA18-074A)
+- [G0040] Patchwork: [Patchwork](https://attack.mitre.org/groups/G0040) has used embedded image tags (known as web bugs) with unique, per-recipient tracking links in their emails for the purpose of identifying which recipients opened messages.(Citation: Volexity Patchwork June 2018)
 
 #### T1598.004 - Spearphishing Voice
 
@@ -672,4 +635,12 @@ All forms of phishing are electronically delivered social engineering. In this s
 Victims may also receive phishing messages that direct them to call a phone number ("callback phishing") where the adversary attempts to collect confidential information.(Citation: Avertium callback phishing)
 
 Adversaries may also use information from previous reconnaissance efforts (ex: [Search Open Websites/Domains](https://attack.mitre.org/techniques/T1593) or [Search Victim-Owned Websites](https://attack.mitre.org/techniques/T1594)) to tailor pretexts to be even more persuasive and believable for the victim.
+
+Procedures:
+
+- [C0027] C0027: During [C0027](https://attack.mitre.org/campaigns/C0027), [Scattered Spider](https://attack.mitre.org/groups/G1015) used phone calls to instruct victims to navigate to credential-harvesting websites.(Citation: Crowdstrike TELCO BPO Campaign December 2022)
+- [G1004] LAPSUS$: [LAPSUS$](https://attack.mitre.org/groups/G1004) has called victims' help desk to convince the support personnel to reset a privileged account’s credentials.(Citation: MSTIC DEV-0537 Mar 2022)
+- [G1015] Scattered Spider: During [C0027](https://attack.mitre.org/campaigns/C0027), [Scattered Spider](https://attack.mitre.org/groups/G1015) used phone calls to instruct victims to navigate to credential-harvesting websites.(Citation: Crowdstrike TELCO BPO Campaign December 2022)
+
+[Scattered Spider](https://attack.mitre.org/groups/G1015) has also called employees at target organizations and compelled them to navigate to fake login portals using adversary-in-the-middle toolkits.(Citation: MSTIC Octo Tempest Operations October 2023)
 

@@ -1,7 +1,3 @@
-## TA0008 - Lateral Movement
-
-Techniques: 23
-
 ### T1021 - Remote Services
 
 Description:
@@ -12,13 +8,15 @@ In an enterprise environment, servers and workstations can be organized into dom
 
 Legitimate applications (such as [Software Deployment Tools](https://attack.mitre.org/techniques/T1072) and other administrative programs) may utilize [Remote Services](https://attack.mitre.org/techniques/T1021) to access remote hosts. For example, Apple Remote Desktop (ARD) on macOS is native software used for remote management. ARD leverages a blend of protocols, including [VNC](https://attack.mitre.org/techniques/T1021/005) to send the screen and control buffers and [SSH](https://attack.mitre.org/techniques/T1021/004) for secure file transfer.(Citation: Remote Management MDM macOS)(Citation: Kickstart Apple Remote Desktop commands)(Citation: Apple Remote Desktop Admin Guide 3.3) Adversaries can abuse applications such as ARD to gain remote code execution and perform lateral movement. In versions of macOS prior to 10.14, an adversary can escalate an SSH session to an ARD session which enables an adversary to accept TCC (Transparency, Consent, and Control) prompts without user interaction and gain access to data.(Citation: FireEye 2019 Apple Remote Desktop)(Citation: Lockboxx ARD 2019)(Citation: Kickstart Apple Remote Desktop commands)
 
-Detection:
+Procedures:
 
-Correlate use of login activity related to remote services with unusual behavior or other malicious or suspicious activity. Adversaries will likely need to learn about an environment and the relationships between systems through Discovery techniques prior to attempting Lateral Movement. 
-
-Use of applications such as ARD may be legitimate depending on the environment and how it’s used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior using these applications. Monitor for user accounts logged into systems they would not normally access or access patterns to multiple systems over a relatively short period of time. 
-
-In macOS, you can review logs for "screensharingd" and "Authentication" event messages. Monitor network connections regarding remote management (ports tcp:3283 and tcp:5900) and for remote login (port tcp:22).(Citation: Lockboxx ARD 2019)(Citation: Apple Unified Log Analysis Remote Login and Screen Sharing)
+- [G0102] Wizard Spider: [Wizard Spider](https://attack.mitre.org/groups/G0102) has used the WebDAV protocol to execute [Ryuk](https://attack.mitre.org/software/S0446) payloads hosted on network file shares.(Citation: Mandiant FIN12 Oct 2021)
+- [S1016] MacMa: [MacMa](https://attack.mitre.org/software/S1016) can manage remote screen sessions.(Citation: ESET DazzleSpy Jan 2022)
+- [S1063] Brute Ratel C4: [Brute Ratel C4](https://attack.mitre.org/software/S1063) has the ability to use RPC for lateral movement.(Citation: Palo Alto Brute Ratel July 2022)
+- [S0437] Kivars: [Kivars](https://attack.mitre.org/software/S0437) has the ability to remotely trigger keyboard input and mouse clicks. (Citation: TrendMicro BlackTech June 2017)
+- [G0143] Aquatic Panda: [Aquatic Panda](https://attack.mitre.org/groups/G0143) used remote scheduled tasks to install malicious software on victim systems during lateral movement actions.(Citation: Crowdstrike HuntReport 2022)
+- [S0603] Stuxnet: [Stuxnet](https://attack.mitre.org/software/S0603) can propagate via peer-to-peer communication and updates using RPC.(Citation: Nicolas Falliere, Liam O Murchu, Eric Chien February 2011)
+- [G1003] Ember Bear: [Ember Bear](https://attack.mitre.org/groups/G1003) uses valid network credentials gathered through credential harvesting to move laterally within victim networks, often employing the [Impacket](https://attack.mitre.org/software/S0357) framework to do so.(Citation: Cadet Blizzard emerges as novel threat actor)
 
 #### T1021.001 - Remote Desktop Protocol
 
@@ -30,9 +28,65 @@ Remote desktop is a common feature in operating systems. It allows a user to log
 
 Adversaries may connect to a remote system over RDP/RDS to expand access if the service is enabled and allows access to accounts with known credentials. Adversaries will likely use Credential Access techniques to acquire credentials to use with RDP. Adversaries may also use RDP in conjunction with the [Accessibility Features](https://attack.mitre.org/techniques/T1546/008) or [Terminal Services DLL](https://attack.mitre.org/techniques/T1505/005) for Persistence.(Citation: Alperovitch Malware)
 
-Detection:
+Procedures:
 
-Use of RDP may be legitimate, depending on the network environment and how it is used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior with RDP. Monitor for user accounts logged into systems they would not normally access or access patterns to multiple systems over a relatively short period of time.
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has used RDP for direct remote point-and-click access.(Citation: Netscout Stolen Pencil Dec 2018)
+- [G1032] INC Ransom: [INC Ransom](https://attack.mitre.org/groups/G1032) has used RDP to move laterally.(Citation: Cybereason INC Ransomware November 2023)(Citation: Huntress INC Ransom Group August 2023)(Citation: SOCRadar INC Ransom January 2024)(Citation: Huntress INC Ransomware May 2024)
+- [S0154] Cobalt Strike: [Cobalt Strike](https://attack.mitre.org/software/S0154) can start a VNC-based remote desktop server and tunnel the connection through the already established C2 channel.(Citation: cobaltstrike manual)(Citation: Cybereason Bumblebee August 2022)
+- [S0262] QuasarRAT: [QuasarRAT](https://attack.mitre.org/software/S0262) has a module for performing remote desktop access.(Citation: GitHub QuasarRAT)(Citation: Volexity Patchwork June 2018)
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has moved laterally to the Domain Controller via RDP using a compromised account with domain administrator privileges.(Citation: CISA AA24-038A PRC Critical Infrastructure February 2024)
+- [G1023] APT5: [APT5](https://attack.mitre.org/groups/G1023) has moved laterally throughout victim environments using RDP.(Citation: Mandiant Pulse Secure Update May 2021)
+- [S0350] zwShell: [zwShell](https://attack.mitre.org/software/S0350) has used RDP for lateral movement.(Citation: McAfee Night Dragon)
+- [G0049] OilRig: [OilRig](https://attack.mitre.org/groups/G0049) has used Remote Desktop Protocol for lateral movement. The group has also used tunneling tools to tunnel RDP into the environment.(Citation: Unit42 OilRig Playbook 2023)(Citation: FireEye APT34 Webinar Dec 2017)(Citation: Crowdstrike GTR2020 Mar 2020)(Citation: Symantec Crambus OCT 2023)(Citation: Symantec Crambus OCT 2023)
+- [G0040] Patchwork: [Patchwork](https://attack.mitre.org/groups/G0040) attempted to use RDP to move laterally.(Citation: Cymmetria Patchwork)
+- [G0061] FIN8: [FIN8](https://attack.mitre.org/groups/G0061) has used RDP for lateral movement.(Citation: FireEye Know Your Enemy FIN8 Aug 2016)
+- [G1043] BlackByte: [BlackByte](https://attack.mitre.org/groups/G1043) has used RDP to access other hosts within victim networks.(Citation: Microsoft BlackByte 2023)(Citation: Cisco BlackByte 2024)
+- [S0434] Imminent Monitor: [Imminent Monitor](https://attack.mitre.org/software/S0434) has a module for performing remote desktop access.(Citation: QiAnXin APT-C-36 Feb2019)
+- [S0670] WarzoneRAT: [WarzoneRAT](https://attack.mitre.org/software/S0670) has the ability to control an infected PC using RDP.(Citation: Check Point Warzone Feb 2020)
+- [G0087] APT39: [APT39](https://attack.mitre.org/groups/G0087) has been seen using RDP for lateral movement and persistence, in some cases employing the rdpwinst tool for mangement of multiple sessions.(Citation: FireEye APT39 Jan 2019)(Citation: BitDefender Chafer May 2020)
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has used Remote Desktop Services to copy tools on targeted systems.(Citation: DFIR Report APT35 ProxyShell March 2022)(Citation: DFIR Phosphorus November 2021)
+- [G0102] Wizard Spider: [Wizard Spider](https://attack.mitre.org/groups/G0102) has used RDP for lateral movement and to deploy ransomware interactively.(Citation: CrowdStrike Grim Spider May 2019)(Citation: DHS/CISA Ransomware Targeting Healthcare October 2020)(Citation: DFIR Ryuk 2 Hour Speed Run November 2020)(Citation: Mandiant FIN12 Oct 2021)
+- [G0143] Aquatic Panda: [Aquatic Panda](https://attack.mitre.org/groups/G0143) leveraged stolen credentials to move laterally via RDP in victim environments.(Citation: Crowdstrike HuntReport 2022)
+- [S0030] Carbanak: [Carbanak](https://attack.mitre.org/software/S0030) enables concurrent Remote Desktop Protocol (RDP) sessions.(Citation: FireEye CARBANAK June 2017)
+- [C0024] SolarWinds Compromise: During the [SolarWinds Compromise](https://attack.mitre.org/campaigns/C0024), [APT29](https://attack.mitre.org/groups/G0016) used RDP sessions from public-facing systems to internal servers.(Citation: CrowdStrike StellarParticle January 2022)
+- [C0018] C0018: During [C0018](https://attack.mitre.org/campaigns/C0018), the threat actors opened a variety of ports to establish RDP connections, including ports 28035, 32467, 41578, and 46892.(Citation: Costa AvosLocker May 2022)
+- [C0029] Cutting Edge: During [Cutting Edge](https://attack.mitre.org/campaigns/C0029), threat actors used RDP with compromised credentials for lateral movement.(Citation: Volexity Ivanti Zero-Day Exploitation January 2024)
+- [G0046] FIN7: [FIN7](https://attack.mitre.org/groups/G0046) has used RDP to move laterally in victim environments.(Citation: CrowdStrike Carbon Spider August 2021)
+- [G0119] Indrik Spider: [Indrik Spider](https://attack.mitre.org/groups/G0119) has used RDP for lateral movement.(Citation: Mandiant_UNC2165)
+- [C0032] C0032: During the [C0032](https://attack.mitre.org/campaigns/C0032) campaign, [TEMP.Veles](https://attack.mitre.org/groups/G0088) utilized RDP throughout an operation.(Citation: FireEye TRITON 2019)
+- [C0038] HomeLand Justice: During [HomeLand Justice](https://attack.mitre.org/campaigns/C0038), threat actors primarily used RDP for lateral movement in the victim environment.(Citation: CISA Iran Albanian Attacks September 2022)(Citation: Microsoft Albanian Government Attacks September 2022)
+- [G0091] Silence: [Silence](https://attack.mitre.org/groups/G0091) has used RDP for lateral movement.(Citation: Group IB Silence Sept 2018)
+- [S1187] reGeorg: [reGeorg](https://attack.mitre.org/software/S1187) can be used to tunnel RDP connections.(Citation: Fortinet reGeorg MAR 2019)
+- [S0379] Revenge RAT: [Revenge RAT](https://attack.mitre.org/software/S0379) has a plugin to perform RDP access.(Citation: Cylance Shaheen Nov 2018)
+- [S0382] ServHelper: [ServHelper](https://attack.mitre.org/software/S0382) has commands for adding a remote desktop user and sending RDP traffic to the attacker through a reverse SSH tunnel.(Citation: Proofpoint TA505 Jan 2019)
+- [G1001] HEXANE: [HEXANE](https://attack.mitre.org/groups/G1001) has used remote desktop sessions for lateral movement.(Citation: SecureWorks August 2019)
+- [G0001] Axiom: [Axiom](https://attack.mitre.org/groups/G0001) has used RDP during operations.(Citation: Novetta-Axiom)
+- [G0080] Cobalt Group: [Cobalt Group](https://attack.mitre.org/groups/G0080) has used Remote Desktop Protocol to conduct lateral movement.(Citation: Group IB Cobalt Aug 2017)
+- [G1024] Akira: [Akira](https://attack.mitre.org/groups/G1024) has used RDP for lateral movement.(Citation: Cisco Akira Ransomware OCT 2024)
+- [S0461] SDBbot: [SDBbot](https://attack.mitre.org/software/S0461) has the ability to use RDP to connect to victim's machines.(Citation: Proofpoint TA505 October 2019)
+- [S0250] Koadic: [Koadic](https://attack.mitre.org/software/S0250) can enable remote desktop on the victim's machine.(Citation: Github Koadic)
+- [S0283] jRAT: [jRAT](https://attack.mitre.org/software/S0283) can support RDP control.(Citation: Kaspersky Adwind Feb 2016)
+- [G1030] Agrius: [Agrius](https://attack.mitre.org/groups/G1030) tunnels RDP traffic through deployed web shells to access victim environments via compromised accounts.(Citation: SentinelOne Agrius 2021) [Agrius](https://attack.mitre.org/groups/G1030) used the Plink tool to tunnel RDP connections for remote access and lateral movement in victim environments.(Citation: Unit42 Agrius 2023)
+- [S0385] njRAT: [njRAT](https://attack.mitre.org/software/S0385) has a module for performing remote desktop access.(Citation: Fidelis njRAT June 2013)
+- [S0583] Pysa: [Pysa](https://attack.mitre.org/software/S0583) has laterally moved using RDP connections.(Citation: CERT-FR PYSA April 2020)
+- [C0051] APT28 Nearest Neighbor Campaign: During [APT28 Nearest Neighbor Campaign](https://attack.mitre.org/campaigns/C0051), [APT28](https://attack.mitre.org/groups/G0007) used RDP for lateral movement.(Citation: Nearest Neighbor Volexity)
+- [S0192] Pupy: [Pupy](https://attack.mitre.org/software/S0192) can enable/disable RDP connection and can start a remote desktop session using a browser web socket client.(Citation: GitHub Pupy)
+- [S0334] DarkComet: [DarkComet](https://attack.mitre.org/software/S0334) can open an active screen of the victim’s machine and take control of the mouse and keyboard.(Citation: Malwarebytes DarkComet March 2018)
+- [G0037] FIN6: [FIN6](https://attack.mitre.org/groups/G0037) used RDP to move laterally in victim networks.(Citation: FireEye FIN6 April 2016)(Citation: FireEye FIN6 Apr 2019)
+- [G0051] FIN10: [FIN10](https://attack.mitre.org/groups/G0051) has used RDP to move laterally to systems in the victim environment.(Citation: FireEye FIN10 June 2017)
+- [S0412] ZxShell: [ZxShell](https://attack.mitre.org/software/S0412) has remote desktop functionality.(Citation: Talos ZxShell Oct 2014)
+- [G1016] FIN13: [FIN13](https://attack.mitre.org/groups/G1016) has remotely accessed compromised environments via Remote Desktop Services (RDS) for lateral movement.(Citation: Mandiant FIN13 Aug 2022)
+- [G0108] Blue Mockingbird: [Blue Mockingbird](https://attack.mitre.org/groups/G0108) has used Remote Desktop to log on to servers interactively and manually copy files to remote hosts.(Citation: RedCanary Mockingbird May 2020)
+- [G0045] menuPass: [menuPass](https://attack.mitre.org/groups/G0045) has used RDP connections to move across the victim network.(Citation: PWC Cloud Hopper April 2017)(Citation: District Court of NY APT10 Indictment December 2018)
+- [C0015] C0015: During [C0015](https://attack.mitre.org/campaigns/C0015), the threat actors used RDP to access specific network hosts of interest.(Citation: DFIR Conti Bazar Nov 2021)
+- [G0032] Lazarus Group: [Lazarus Group](https://attack.mitre.org/groups/G0032) malware SierraCharlie uses RDP for propagation.(Citation: Novetta Blockbuster)(Citation: Novetta Blockbuster RATs)
+- [G0022] APT3: [APT3](https://attack.mitre.org/groups/G0022) enables the Remote Desktop Protocol for persistence.(Citation: aptsim) [APT3](https://attack.mitre.org/groups/G0022) has also interacted with compromised systems to browse and copy files through RDP sessions.(Citation: Twitter Cglyer Status Update APT3 eml)
+- [G0117] Fox Kitten: [Fox Kitten](https://attack.mitre.org/groups/G0117) has used RDP to log in and move laterally in the target environment.(Citation: CISA AA20-259A Iran-Based Actor September 2020)(Citation: ClearSky Pay2Kitten December 2020)
+- [G0065] Leviathan: [Leviathan](https://attack.mitre.org/groups/G0065) has targeted RDP credentials and used it to move through the victim environment.(Citation: FireEye APT40 March 2019)
+- [G0035] Dragonfly: [Dragonfly](https://attack.mitre.org/groups/G0035) has moved laterally via RDP.(Citation: US-CERT TA18-074A)
+- [G0096] APT41: [APT41](https://attack.mitre.org/groups/G0096) used RDP for lateral movement.(Citation: FireEye APT41 Aug 2019)(Citation: Crowdstrike GTR2020 Mar 2020) [APT41](https://attack.mitre.org/groups/G0096) used NATBypass to expose local RDP ports on compromised systems to the Internet.(Citation: apt41_dcsocytec_dec2022)
+- [G0114] Chimera: [Chimera](https://attack.mitre.org/groups/G0114) has used RDP to access targeted systems.(Citation: Cycraft Chimera April 2020)
+- [G0006] APT1: The [APT1](https://attack.mitre.org/groups/G0006) group is known to have used RDP during operations.(Citation: FireEye PLA)
 
 #### T1021.002 - SMB/Windows Admin Shares
 
@@ -44,9 +98,71 @@ SMB is a file, printer, and serial port sharing protocol for Windows machines on
 
 Windows systems have hidden network shares that are accessible only to administrators and provide the ability for remote file copy and other administrative functions. Example network shares include `C$`, `ADMIN$`, and `IPC$`. Adversaries may use this technique in conjunction with administrator-level [Valid Accounts](https://attack.mitre.org/techniques/T1078) to remotely access a networked system over SMB,(Citation: Wikipedia Server Message Block) to interact with systems using remote procedure calls (RPCs),(Citation: TechNet RPC) transfer files, and run transferred binaries through remote Execution. Example execution techniques that rely on authenticated sessions over SMB/RPC are [Scheduled Task/Job](https://attack.mitre.org/techniques/T1053), [Service Execution](https://attack.mitre.org/techniques/T1569/002), and [Windows Management Instrumentation](https://attack.mitre.org/techniques/T1047). Adversaries can also use NTLM hashes to access administrator shares on systems with [Pass the Hash](https://attack.mitre.org/techniques/T1550/002) and certain configuration and patch levels.(Citation: Microsoft Admin Shares)
 
-Detection:
+Procedures:
 
-Ensure that proper logging of accounts used to log into systems is turned on and centrally collected. Windows logging is able to collect success/failure for accounts that may be used to move laterally and can be collected using tools such as Windows Event Forwarding. (Citation: Lateral Movement Payne)(Citation: Windows Event Forwarding Payne) Monitor remote login events and associated SMB activity for file transfers and remote process execution. Monitor the actions of remote users who connect to administrative shares. Monitor for use of tools and commands to connect to remote shares, such as [Net](https://attack.mitre.org/software/S0039), on the command-line interface and Discovery techniques that could be used to find remotely accessible systems.(Citation: Medium Detecting WMI Persistence)
+- [S0575] Conti: [Conti](https://attack.mitre.org/software/S0575) can spread via SMB and encrypts files on different hosts, potentially compromising an entire network.(Citation: Cybereason Conti Jan 2021)(Citation: CarbonBlack Conti July 2020)
+- [G1009] Moses Staff: [Moses Staff](https://attack.mitre.org/groups/G1009) has used batch scripts that can enable SMB on a compromised host.(Citation: Checkpoint MosesStaff Nov 2021)
+- [G0028] Threat Group-1314: [Threat Group-1314](https://attack.mitre.org/groups/G0028) actors mapped network drives using <code>net use</code>.(Citation: Dell TG-1314)
+- [C0049] Leviathan Australian Intrusions: [Leviathan](https://attack.mitre.org/groups/G0065) used remote shares to move laterally through victim networks during [Leviathan Australian Intrusions](https://attack.mitre.org/campaigns/C0049).(Citation: CISA Leviathan 2024)
+- [S0698] HermeticWizard: [HermeticWizard](https://attack.mitre.org/software/S0698) can use a list of hardcoded credentials to to authenticate via NTLMSSP to the SMB shares on remote systems.(Citation: ESET Hermetic Wizard March 2022)
+- [G0143] Aquatic Panda: [Aquatic Panda](https://attack.mitre.org/groups/G0143) used remote shares to enable lateral movement in victim environments.(Citation: Crowdstrike HuntReport 2022)
+- [S0367] Emotet: [Emotet](https://attack.mitre.org/software/S0367) has leveraged the Admin$, C$, and IPC$ shares for lateral movement. (Citation: Malwarebytes Emotet Dec 2017)(Citation: Binary Defense Emotes Wi-Fi Spreader)
+- [S0350] zwShell: [zwShell](https://attack.mitre.org/software/S0350) has been copied over network shares to move laterally.(Citation: McAfee Night Dragon)
+- [S0446] Ryuk: [Ryuk](https://attack.mitre.org/software/S0446) has used the C$ network share for lateral movement.(Citation: Bleeping Computer - Ryuk WoL)
+- [S0029] PsExec: [PsExec](https://attack.mitre.org/software/S0029), a tool that has been used by adversaries, writes programs to the <code>ADMIN$</code> network share to execute commands on remote systems.(Citation: PsExec Russinovich)
+- [G0102] Wizard Spider: [Wizard Spider](https://attack.mitre.org/groups/G0102) has used SMB to drop Cobalt Strike Beacon on a domain controller for lateral movement.(Citation: DFIR Ryuk 2 Hour Speed Run November 2020)(Citation: DFIR Ryuk's Return October 2020)
+- [S0140] Shamoon: [Shamoon](https://attack.mitre.org/software/S0140) accesses network share(s), enables share access to the target device, copies an executable payload to the target system, and uses a [Scheduled Task/Job](https://attack.mitre.org/techniques/T1053) to execute the malware.(Citation: FireEye Shamoon Nov 2016)
+- [G0096] APT41: [APT41](https://attack.mitre.org/groups/G0096) has transferred implant files using Windows Admin Shares and the Server Message Block (SMB) protocol, then executes files through Windows Management Instrumentation (WMI).(Citation: Crowdstrike GTR2020 Mar 2020)(Citation: apt41_dcsocytec_dec2022)
+- [S1073] Royal: [Royal](https://attack.mitre.org/software/S1073) can use SMB to connect to move laterally.(Citation: Cybereason Royal December 2022)
+- [G0004] Ke3chang: [Ke3chang](https://attack.mitre.org/groups/G0004) actors have been known to copy files to the network shares of other computers to move laterally.(Citation: Mandiant Operation Ke3chang November 2014)(Citation: NCC Group APT15 Alive and Strong)
+- [S0368] NotPetya: [NotPetya](https://attack.mitre.org/software/S0368) can use [PsExec](https://attack.mitre.org/software/S0029), which interacts with the <code>ADMIN$</code> network share to execute commands on remote systems.(Citation: Talos Nyetya June 2017)(Citation: US-CERT NotPetya 2017)(Citation: PsExec Russinovich)
+- [G0010] Turla: [Turla](https://attack.mitre.org/groups/G0010) used <code>net use</code> commands to connect to lateral systems within a network.(Citation: Kaspersky Turla)
+- [S0659] Diavol: [Diavol](https://attack.mitre.org/software/S0659) can spread throughout a network via SMB prior to encryption.(Citation: Fortinet Diavol July 2021)
+- [S0089] BlackEnergy: [BlackEnergy](https://attack.mitre.org/software/S0089) has run a plug-in on a victim to spread through the local network by using [PsExec](https://attack.mitre.org/software/S0029) and accessing admin shares.(Citation: Securelist BlackEnergy Nov 2014)
+- [C0024] SolarWinds Compromise: During the [SolarWinds Compromise](https://attack.mitre.org/campaigns/C0024), [APT29](https://attack.mitre.org/groups/G0016) used administrative accounts to connect over SMB to targeted users.(Citation: CrowdStrike StellarParticle January 2022)
+- [G1016] FIN13: [FIN13](https://attack.mitre.org/groups/G1016) has leveraged SMB to move laterally within a compromised network via application servers and SQL servers.(Citation: Sygnia Elephant Beetle Jan 2022)
+- [G0114] Chimera: [Chimera](https://attack.mitre.org/groups/G0114) has used Windows admin shares to move laterally.(Citation: Cycraft Chimera April 2020)(Citation: NCC Group Chimera January 2021)
+- [G0117] Fox Kitten: [Fox Kitten](https://attack.mitre.org/groups/G0117) has used valid accounts to access SMB shares.(Citation: CISA AA20-259A Iran-Based Actor September 2020)
+- [G1040] Play: [Play](https://attack.mitre.org/groups/G1040) has used [Cobalt Strike](https://attack.mitre.org/software/S0154) to move laterally via SMB.(Citation: Trend Micro Ransomware Spotlight Play July 2023)
+- [S1063] Brute Ratel C4: [Brute Ratel C4](https://attack.mitre.org/software/S1063) has the ability to use SMB to pivot in compromised networks.(Citation: Palo Alto Brute Ratel July 2022)(Citation: MDSec Brute Ratel August 2022)(Citation: Dark Vortex Brute Ratel C4)
+- [S0672] Zox: [Zox](https://attack.mitre.org/software/S0672) has the ability to use SMB for communication.(Citation: Novetta-Axiom)
+- [S1212] RansomHub: [RansomHub](https://attack.mitre.org/software/S1212) can use credentials provided in its configuration to move laterally from the infected machine over SMBv2.(Citation: Group-IB RansomHub FEB 2025)
+- [S0608] Conficker: [Conficker](https://attack.mitre.org/software/S0608) variants spread through NetBIOS share propagation.(Citation: SANS Conficker)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) has copied payloads to the `ADMIN$` share of remote systems and run <code>net use</code> to connect to network shares.(Citation: Dragos Crashoverride 2018)(Citation: Microsoft Prestige ransomware October 2022)
+- [C0014] Operation Wocao: During [Operation Wocao](https://attack.mitre.org/campaigns/C0014), threat actors used [Impacket](https://attack.mitre.org/software/S0357)'s smbexec.py as well as accessing the C$ and IPC$ shares to move laterally.(Citation: FoxIT Wocao December 2019)
+- [S0038] Duqu: Adversaries can instruct [Duqu](https://attack.mitre.org/software/S0038) to spread laterally by copying itself to shares it has enumerated and for which it has obtained legitimate credentials (via keylogging or other means). The remote host is then infected by using the compromised credentials to schedule a task on remote machines that executes the malware.(Citation: Symantec W32.Duqu)
+- [S0236] Kwampirs: [Kwampirs](https://attack.mitre.org/software/S0236) copies itself over network shares to move laterally on a victim network.(Citation: Symantec Orangeworm April 2018)
+- [G1022] ToddyCat: [ToddyCat](https://attack.mitre.org/groups/G1022) has used locally mounted network shares for lateral movement through targated environments.(Citation: Kaspersky ToddyCat Check Logs October 2023)
+- [G0022] APT3: [APT3](https://attack.mitre.org/groups/G0022) will copy files over to Windows Admin Shares (like ADMIN$) as part of lateral movement.(Citation: Symantec Buckeye)
+- [C0048] Operation MidnightEclipse: During [Operation MidnightEclipse](https://attack.mitre.org/campaigns/C0048), threat actors used SMB to pivot internally in victim networks.(Citation: Volexity UPSTYLE 2024)
+- [S0039] Net: Lateral movement can be done with [Net](https://attack.mitre.org/software/S0039) through <code>net use</code> commands to connect to the on remote systems.(Citation: Savill 1999)
+- [G0061] FIN8: [FIN8](https://attack.mitre.org/groups/G0061) has attempted to map to C$ on enumerated hosts to test the scope of their current credentials/context. [FIN8](https://attack.mitre.org/groups/G0061) has also used smbexec from the [Impacket](https://attack.mitre.org/software/S0357) suite for lateral movement.(Citation: FireEye Know Your Enemy FIN8 Aug 2016)(Citation: Bitdefender Sardonic Aug 2021)
+- [C0038] HomeLand Justice: During [HomeLand Justice](https://attack.mitre.org/campaigns/C0038), threat actors used SMB for lateral movement.(Citation: CISA Iran Albanian Attacks September 2022)(Citation: Microsoft Albanian Government Attacks September 2022)
+- [C0029] Cutting Edge: During [Cutting Edge](https://attack.mitre.org/campaigns/C0029), threat actors moved laterally using compromised credentials to connect to internal Windows systems with SMB.(Citation: Volexity Ivanti Zero-Day Exploitation January 2024)
+- [S0019] Regin: The [Regin](https://attack.mitre.org/software/S0019) malware platform can use Windows admin shares to move laterally.(Citation: Kaspersky Regin)
+- [G0108] Blue Mockingbird: [Blue Mockingbird](https://attack.mitre.org/groups/G0108) has used Windows Explorer to manually copy malicious files to remote hosts over SMB.(Citation: RedCanary Mockingbird May 2020)
+- [G0050] APT32: [APT32](https://attack.mitre.org/groups/G0050) used [Net](https://attack.mitre.org/software/S0039) to use Windows' hidden network shares to copy their tools to remote machines for execution.(Citation: Cybereason Cobalt Kitty 2017)
+- [S0603] Stuxnet: [Stuxnet](https://attack.mitre.org/software/S0603) propagates to available network shares.(Citation: Nicolas Falliere, Liam O Murchu, Eric Chien February 2011)
+- [G1021] Cinnamon Tempest: [Cinnamon Tempest](https://attack.mitre.org/groups/G1021) has used SMBexec for lateral movement.(Citation: Sygnia Emperor Dragonfly October 2022)
+- [S1199] LockBit 2.0: [LockBit 2.0](https://attack.mitre.org/software/S1199) has the ability to move laterally via SMB.(Citation: Palo Alto Lockbit 2.0 JUN 2022)(Citation: SentinelOne LockBit 2.0)
+- [S0154] Cobalt Strike: [Cobalt Strike](https://attack.mitre.org/software/S0154) can use Window admin shares (C$ and ADMIN$) for lateral movement.(Citation: Cobalt Strike TTPs Dec 2017)(Citation: Trend Micro Black Basta October 2022)
+- [G1043] BlackByte: [BlackByte](https://attack.mitre.org/groups/G1043) used SMB file shares to distribute payloads throughout victim networks, including BlackByte ransomware variants during wormable operations.(Citation: Picus BlackByte 2022)(Citation: Microsoft BlackByte 2023)(Citation: Cisco BlackByte 2024)
+- [G1047] Velvet Ant: [Velvet Ant](https://attack.mitre.org/groups/G1047) has transferred tools within victim environments using SMB.(Citation: Sygnia VelvetAnt 2024A)
+- [S1180] BlackByte Ransomware: [BlackByte Ransomware](https://attack.mitre.org/software/S1180) uses mapped shared folders to transfer ransomware payloads via SMB.(Citation: Trustwave BlackByte 2021)
+- [S1187] reGeorg: [reGeorg](https://attack.mitre.org/software/S1187) has the ability to tunnel SMB sessions.(Citation: Fortinet reGeorg MAR 2019)
+- [S0365] Olympic Destroyer: [Olympic Destroyer](https://attack.mitre.org/software/S0365) uses [PsExec](https://attack.mitre.org/software/S0029) to interact with the <code>ADMIN$</code> network share to execute commands on remote systems.(Citation: Talos Olympic Destroyer 2018)(Citation: PsExec Russinovich)
+- [C0051] APT28 Nearest Neighbor Campaign: During [APT28 Nearest Neighbor Campaign](https://attack.mitre.org/campaigns/C0051), [APT28](https://attack.mitre.org/groups/G0007) leveraged SMB to transfer files and move laterally.(Citation: Nearest Neighbor Volexity)
+- [G0071] Orangeworm: [Orangeworm](https://attack.mitre.org/groups/G0071) has copied its backdoor across open network shares, including ADMIN$, C$WINDOWS, D$WINDOWS, and E$WINDOWS.(Citation: Symantec Orangeworm April 2018)
+- [S1202] LockBit 3.0: [LockBit 3.0](https://attack.mitre.org/software/S1202) can use SMB for lateral movement.(Citation: Joint Cybersecurity Advisory LockBit 3.0 MAR 2023)
+- [G0032] Lazarus Group: [Lazarus Group](https://attack.mitre.org/groups/G0032) malware SierraAlfa accesses the <code>ADMIN$</code> share via SMB to conduct lateral movement.(Citation: Novetta Blockbuster)(Citation: Novetta Blockbuster RATs)
+- [S0056] Net Crawler: [Net Crawler](https://attack.mitre.org/software/S0056) uses Windows admin shares to establish authenticated sessions to remote systems over SMB as part of lateral movement.(Citation: Cylance Cleaver)
+- [S0532] Lucifer: [Lucifer](https://attack.mitre.org/software/S0532) can infect victims by brute forcing SMB.(Citation: Unit 42 Lucifer June 2020)
+- [C0025] 2016 Ukraine Electric Power Attack: During the [2016 Ukraine Electric Power Attack](https://attack.mitre.org/campaigns/C0025), [Sandworm Team](https://attack.mitre.org/groups/G0034) utilized `net use` to connect to network shares.(Citation: Dragos Crashoverride 2018)
+- [G0009] Deep Panda: [Deep Panda](https://attack.mitre.org/groups/G0009) uses net.exe to connect to network shares using <code>net use</code> commands with compromised credentials.(Citation: Alperovitch 2014)
+- [S0504] Anchor: [Anchor](https://attack.mitre.org/software/S0504) can support windows execution via SMB shares.(Citation: Medium Anchor DNS July 2020)
+- [G0087] APT39: [APT39](https://attack.mitre.org/groups/G0087) has used SMB for lateral movement.(Citation: Symantec Chafer February 2018)
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has mapped network drives using [Net](https://attack.mitre.org/software/S0039) and administrator credentials.(Citation: Cybersecurity Advisory GRU Brute Force Campaign July 2021)
+- [G1046] Storm-1811: [Storm-1811](https://attack.mitre.org/groups/G1046) has attempted to move laterally in victim environments via SMB using [Impacket](https://attack.mitre.org/software/S0357).(Citation: rapid7-email-bombing)
 
 #### T1021.003 - Distributed Component Object Model
 
@@ -60,11 +176,11 @@ Permissions to interact with local and remote server COM objects are specified b
 
 Through DCOM, adversaries operating in the context of an appropriately privileged user can remotely obtain arbitrary and even direct shellcode execution through Office applications(Citation: Enigma Outlook DCOM Lateral Movement Nov 2017) as well as other Windows objects that contain insecure methods.(Citation: Enigma MMC20 COM Jan 2017)(Citation: Enigma DCOM Lateral Movement Jan 2017) DCOM can also execute macros in existing documents(Citation: Enigma Excel DCOM Sept 2017) and may also invoke [Dynamic Data Exchange](https://attack.mitre.org/techniques/T1559/002) (DDE) execution directly through a COM created instance of a Microsoft Office application(Citation: Cyberreason DCOM DDE Lateral Movement Nov 2017), bypassing the need for a malicious document. DCOM can be used as a method of remotely interacting with [Windows Management Instrumentation](https://attack.mitre.org/techniques/T1047). (Citation: MSDN WMI)
 
-Detection:
+Procedures:
 
-Monitor for COM objects loading DLLs and other modules not typically associated with the application.(Citation: Enigma Outlook DCOM Lateral Movement Nov 2017) Enumeration of COM objects, via [Query Registry](https://attack.mitre.org/techniques/T1012) or [PowerShell](https://attack.mitre.org/techniques/T1059/001), may also proceed malicious use.(Citation: Fireeye Hunting COM June 2019)(Citation: Enigma MMC20 COM Jan 2017) Monitor for spawning of processes associated with COM objects, especially those invoked by a user different than the one currently logged on.
-
-Monitor for any influxes or abnormal increases in DCOM related Distributed Computing Environment/Remote Procedure Call (DCE/RPC) traffic (typically over port 135).
+- [S0363] Empire: [Empire](https://attack.mitre.org/software/S0363) can utilize <code>Invoke-DCOM</code> to leverage remote COM execution for lateral movement.(Citation: Github PowerShell Empire)
+- [S0692] SILENTTRINITY: [SILENTTRINITY](https://attack.mitre.org/software/S0692) can use `System` namespace methods to execute lateral movement using DCOM.(Citation: GitHub SILENTTRINITY Modules July 2019)
+- [S0154] Cobalt Strike: [Cobalt Strike](https://attack.mitre.org/software/S0154) can deliver Beacon payloads for lateral movement by leveraging remote COM execution.(Citation: Cobalt Strike DCOM Jan 2017)
 
 #### T1021.004 - SSH
 
@@ -74,13 +190,32 @@ Adversaries may use [Valid Accounts](https://attack.mitre.org/techniques/T1078) 
 
 SSH is a protocol that allows authorized users to open remote shells on other computers. Many Linux and macOS versions come with SSH installed by default, although typically disabled until the user enables it. On ESXi, SSH can be enabled either directly on the host (e.g., via `vim-cmd hostsvc/enable_ssh`) or via vCenter.(Citation: Sygnia ESXi Ransomware 2025)(Citation: TrendMicro ESXI Ransomware)(Citation: Sygnia Abyss Locker 2025) The SSH server can be configured to use standard password authentication or public-private keypairs in lieu of or in addition to a password. In this authentication scenario, the user’s public key must be in a special file on the computer running the server that lists which keypairs are allowed to login as that user (i.e., [SSH Authorized Keys](https://attack.mitre.org/techniques/T1098/004)).
 
-Detection:
+Procedures:
 
-Use of SSH may be legitimate depending on the environment and how it’s used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior with SSH. Monitor for user accounts logged into systems they would not normally access or access patterns to multiple systems over a relatively short period of time.
-
-On macOS systems <code>log show --predicate 'process = "sshd"'</code> can be used to review incoming SSH connection attempts for suspicious activity. The command <code>log show --info --predicate 'process = "ssh" or eventMessage contains "ssh"'</code> can be used to review outgoing SSH connection activity.(Citation: Apple Unified Log Analysis Remote Login and Screen Sharing)
-
-On Linux systems SSH activity can be found in the logs located in <code>/var/log/auth.log</code> or <code>/var/log/secure</code> depending on the distro you are using.
+- [G0046] FIN7: [FIN7](https://attack.mitre.org/groups/G0046) has used SSH to move laterally through victim environments.(Citation: CrowdStrike Carbon Spider August 2021)
+- [G0032] Lazarus Group: [Lazarus Group](https://attack.mitre.org/groups/G0032) used SSH and the PuTTy PSCP utility to gain access to a restricted segment of a compromised network.(Citation: Kaspersky ThreatNeedle Feb 2021)
+- [G0065] Leviathan: [Leviathan](https://attack.mitre.org/groups/G0065) used ssh for internal reconnaissance.(Citation: FireEye APT40 March 2019)
+- [C0029] Cutting Edge: During [Cutting Edge](https://attack.mitre.org/campaigns/C0029), threat actors used SSH for lateral movement.(Citation: Volexity Ivanti Zero-Day Exploitation January 2024)
+- [C0032] C0032: During the [C0032](https://attack.mitre.org/campaigns/C0032) campaign, [TEMP.Veles](https://attack.mitre.org/groups/G0088) relied on encrypted SSH-based tunnels to transfer tools and for remote command/program execution.(Citation: FireEye TRITON 2019)
+- [G0098] BlackTech: [BlackTech](https://attack.mitre.org/groups/G0098) has used Putty for remote access.(Citation: Symantec Palmerworm Sep 2020)
+- [S0363] Empire: [Empire](https://attack.mitre.org/software/S0363) contains modules for executing commands over SSH as well as in-memory VNC agent injection.(Citation: Github PowerShell Empire)
+- [G0143] Aquatic Panda: [Aquatic Panda](https://attack.mitre.org/groups/G0143) used SSH with captured user credentials to move laterally in victim environments.(Citation: Crowdstrike HuntReport 2022)
+- [S0154] Cobalt Strike: [Cobalt Strike](https://attack.mitre.org/software/S0154) can SSH to a remote service.(Citation: Cobalt Strike TTPs Dec 2017)(Citation: Cobalt Strike Manual 4.3 November 2020)
+- [S1187] reGeorg: [reGeorg](https://attack.mitre.org/software/S1187) can communicate using SSH through an HTTP tunnel.(Citation: Fortinet reGeorg MAR 2019)
+- [G0036] GCMAN: [GCMAN](https://attack.mitre.org/groups/G0036) uses Putty for lateral movement.(Citation: Securelist GCMAN)
+- [S0599] Kinsing: [Kinsing](https://attack.mitre.org/software/S0599) has used SSH for lateral movement.(Citation: Aqua Kinsing April 2020)
+- [G0117] Fox Kitten: [Fox Kitten](https://attack.mitre.org/groups/G0117) has used the PuTTY and Plink tools for lateral movement.(Citation: CISA AA20-259A Iran-Based Actor September 2020)
+- [G0139] TeamTNT: [TeamTNT](https://attack.mitre.org/groups/G0139) has used SSH to connect back to victim machines.(Citation: Intezer TeamTNT September 2020) [TeamTNT](https://attack.mitre.org/groups/G0139) has also used SSH to transfer tools and payloads onto victim hosts and execute them.(Citation: Cisco Talos Intelligence Group)
+- [G1046] Storm-1811: [Storm-1811](https://attack.mitre.org/groups/G1046) has used OpenSSH to establish an SSH tunnel to victims for persistent access.(Citation: Microsoft Storm-1811 2024)
+- [G1045] Salt Typhoon: [Salt Typhoon](https://attack.mitre.org/groups/G1045) has modified the loopback address on compromised switches and used them as the source of SSH connections to additional devices within the target environment, allowing them to bypass access control lists (ACLs).(Citation: Cisco Salt Typhoon FEB 2025)
+- [G0049] OilRig: [OilRig](https://attack.mitre.org/groups/G0049) has used Putty to access compromised systems.(Citation: Unit42 OilRig Playbook 2023)
+- [G1023] APT5: [APT5](https://attack.mitre.org/groups/G1023) has used SSH for lateral movement in compromised environments including for enabling access to ESXi host servers.(Citation: Mandiant Pulse Secure Update May 2021)
+- [C0049] Leviathan Australian Intrusions: [Leviathan](https://attack.mitre.org/groups/G0065) used SSH brute force techniques to move laterally within victim environments during [Leviathan Australian Intrusions](https://attack.mitre.org/campaigns/C0049).(Citation: CISA Leviathan 2024)
+- [G1016] FIN13: [FIN13](https://attack.mitre.org/groups/G1016) has remotely accessed compromised environments via secure shell (SSH) for lateral movement.(Citation: Mandiant FIN13 Aug 2022)
+- [G0045] menuPass: [menuPass](https://attack.mitre.org/groups/G0045) has used Putty Secure Copy Client (PSCP) to transfer data.(Citation: PWC Cloud Hopper April 2017)
+- [G0119] Indrik Spider: [Indrik Spider](https://attack.mitre.org/groups/G0119) has used SSH for lateral movement.(Citation: Mandiant_UNC2165)
+- [G0106] Rocke: [Rocke](https://attack.mitre.org/groups/G0106) has spread its coinminer via SSH.(Citation: Anomali Rocke March 2019)
+- [G0087] APT39: [APT39](https://attack.mitre.org/groups/G0087) used secure shell (SSH) to move laterally among their targets.(Citation: FireEye APT39 Jan 2019)
 
 #### T1021.005 - VNC
 
@@ -92,13 +227,19 @@ VNC differs from [Remote Desktop Protocol](https://attack.mitre.org/techniques/T
 
 Adversaries may abuse VNC to perform malicious actions as the logged-on user such as opening documents, downloading files, and running arbitrary commands. An adversary could use VNC to remotely control and monitor a system to collect data and information to pivot to other systems within the network. Specific VNC libraries/implementations have also been susceptible to brute force attacks and memory usage exploitation.(Citation: Hijacking VNC)(Citation: macOS root VNC login without authentication)(Citation: VNC Vulnerabilities)(Citation: Offensive Security VNC Authentication Check)(Citation: Attacking VNC Servers PentestLab)(Citation: Havana authentication bug)
 
-Detection:
+Procedures:
 
-Use of VNC may be legitimate depending on the environment and how it’s used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior using VNC.
-
-On macOS systems <code>log show --predicate 'process = "screensharingd" and eventMessage contains "Authentication:"'</code> can be used to review incoming VNC connection attempts for suspicious activity.(Citation: Apple Unified Log Analysis Remote Login and Screen Sharing)
-
-Monitor for use of built-in debugging environment variables (such as those containing credentials or other sensitive information) as well as test/default users on VNC servers, as these can leave openings for adversaries to abuse.(Citation: Gnome Remote Desktop grd-settings)(Citation: Gnome Remote Desktop gschema)
+- [S0412] ZxShell: [ZxShell](https://attack.mitre.org/software/S0412) supports functionality for VNC sessions.(Citation: Talos ZxShell Oct 2014)
+- [G0047] Gamaredon Group: [Gamaredon Group](https://attack.mitre.org/groups/G0047) has used VNC tools, including UltraVNC, to remotely interact with compromised hosts.(Citation: Symantec Shuckworm January 2022)(Citation: Microsoft Actinium February 2022)(Citation: Unit 42 Gamaredon February 2022)
+- [G0046] FIN7: [FIN7](https://attack.mitre.org/groups/G0046) has used TightVNC to control compromised hosts.(Citation: CrowdStrike Carbon Spider August 2021)
+- [S1014] DanBot: [DanBot](https://attack.mitre.org/software/S1014) can use VNC for remote access to targeted systems.(Citation: ClearSky Siamesekitten August 2021)
+- [S0484] Carberp: [Carberp](https://attack.mitre.org/software/S0484) can start a remote VNC session by downloading a new plugin.(Citation: Prevx Carberp March 2011)
+- [G0036] GCMAN: [GCMAN](https://attack.mitre.org/groups/G0036) uses VNC for lateral movement.(Citation: Securelist GCMAN)
+- [G0117] Fox Kitten: [Fox Kitten](https://attack.mitre.org/groups/G0117) has installed TightVNC server and client on compromised servers and endpoints for lateral movement.(Citation: CISA AA20-259A Iran-Based Actor September 2020)
+- [S0266] TrickBot: [TrickBot](https://attack.mitre.org/software/S0266) has used a VNC module to monitor the victim and collect information to pivot to valuable systems on the network (Citation: Trickbot VNC module July 2021)(Citation: Bitdefender Trickbot VNC module Whitepaper 2021)
+- [S0279] Proton: [Proton](https://attack.mitre.org/software/S0279) uses VNC to connect into systems.(Citation: objsee mac malware 2017)
+- [S0670] WarzoneRAT: [WarzoneRAT](https://attack.mitre.org/software/S0670) has the ability of performing remote desktop access via a VNC console.(Citation: Check Point Warzone Feb 2020)
+- [S1160] Latrodectus: [Latrodectus](https://attack.mitre.org/software/S1160) has routed C2 traffic using Keyhole VNC.(Citation: Palo Alto Latrodectus Activity June 2024)
 
 #### T1021.006 - Windows Remote Management
 
@@ -108,9 +249,17 @@ Adversaries may use [Valid Accounts](https://attack.mitre.org/techniques/T1078) 
 
 WinRM is the name of both a Windows service and a protocol that allows a user to interact with a remote system (e.g., run an executable, modify the Registry, modify services).(Citation: Microsoft WinRM) It may be called with the `winrm` command or by any number of programs such as PowerShell.(Citation: Jacobsen 2014) WinRM  can be used as a method of remotely interacting with [Windows Management Instrumentation](https://attack.mitre.org/techniques/T1047).(Citation: MSDN WMI)
 
-Detection:
+Procedures:
 
-Monitor use of WinRM within an environment by tracking service execution. If it is not normally used or is disabled, then this may be an indicator of suspicious behavior.  Monitor processes created and actions taken by the WinRM process or a WinRM invoked script to correlate it with other related events.(Citation: Medium Detecting Lateral Movement) Also monitor for remote WMI connection attempts (typically over port 5985 when using HTTP and 5986 for HTTPS).
+- [G1016] FIN13: [FIN13](https://attack.mitre.org/groups/G1016) has leveraged `WMI` to move laterally within a compromised network via application servers and SQL servers.(Citation: Sygnia Elephant Beetle Jan 2022)
+- [S1063] Brute Ratel C4: [Brute Ratel C4](https://attack.mitre.org/software/S1063) can use WinRM for pivoting.(Citation: Palo Alto Brute Ratel July 2022)
+- [G0114] Chimera: [Chimera](https://attack.mitre.org/groups/G0114) has used WinRM for lateral movement.(Citation: NCC Group Chimera January 2021)
+- [C0024] SolarWinds Compromise: During the [SolarWinds Compromise](https://attack.mitre.org/campaigns/C0024), [APT29](https://attack.mitre.org/groups/G0016) used WinRM via PowerShell to execute commands and payloads on remote hosts.(Citation: Symantec RAINDROP January 2021)
+- [S0154] Cobalt Strike: [Cobalt Strike](https://attack.mitre.org/software/S0154) can use <code>WinRM</code> to execute a payload on a remote host.(Citation: cobaltstrike manual)(Citation: Cobalt Strike Manual 4.3 November 2020)
+- [C0048] Operation MidnightEclipse: During [Operation MidnightEclipse](https://attack.mitre.org/campaigns/C0048), threat actors used WinRM to move laterally in targeted networks.(Citation: Volexity UPSTYLE 2024)
+- [S0692] SILENTTRINITY: [SILENTTRINITY](https://attack.mitre.org/software/S0692) tracks `TrustedHosts` and can move laterally to these targets via WinRM.(Citation: GitHub SILENTTRINITY Modules July 2019)
+- [G0027] Threat Group-3390: [Threat Group-3390](https://attack.mitre.org/groups/G0027) has used WinRM to enable remote execution.(Citation: SecureWorks BRONZE UNION June 2017)
+- [G0102] Wizard Spider: [Wizard Spider](https://attack.mitre.org/groups/G0102) has used Window Remote Management to move laterally through a victim network.(Citation: DHS/CISA Ransomware Targeting Healthcare October 2020)
 
 #### T1021.007 - Cloud Services
 
@@ -121,6 +270,14 @@ Adversaries may log into accessible cloud services within a compromised environm
 Many enterprises federate centrally managed user identities to cloud services, allowing users to login with their domain credentials in order to access the cloud control plane. Similarly, adversaries may connect to available cloud services through the web console or through the cloud command line interface (CLI) (e.g., [Cloud API](https://attack.mitre.org/techniques/T1059/009)), using commands such as <code>Connect-AZAccount</code> for Azure PowerShell, <code>Connect-MgGraph</code> for Microsoft Graph PowerShell, and <code>gcloud auth login</code> for the Google Cloud CLI.
 
 In some cases, adversaries may be able to authenticate to these services via [Application Access Token](https://attack.mitre.org/techniques/T1550/001) instead of a username and password.
+
+Procedures:
+
+- [C0027] C0027: During [C0027](https://attack.mitre.org/campaigns/C0027), [Scattered Spider](https://attack.mitre.org/groups/G1015) used compromised Azure credentials for credential theft activity and lateral movement to on-premises systems.(Citation: Crowdstrike TELCO BPO Campaign December 2022)
+- [G0016] APT29: [APT29](https://attack.mitre.org/groups/G0016) has leveraged compromised high-privileged on-premises accounts synced to Office 365 to move laterally into a cloud environment, including through the use of Azure AD PowerShell.(Citation: Mandiant Remediation and Hardening Strategies for Microsoft 365)
+- [G1015] Scattered Spider: During [C0027](https://attack.mitre.org/campaigns/C0027), [Scattered Spider](https://attack.mitre.org/groups/G1015) used compromised Azure credentials for credential theft activity and lateral movement to on-premises systems.(Citation: Crowdstrike TELCO BPO Campaign December 2022)
+
+Scattered Spider has also leveraged pre-existing AWS EC2 instances for lateral movement and data collection purposes.(Citation: CISA Scattered Spider Advisory November 2023)
 
 #### T1021.008 - Direct Cloud VM Connections
 
@@ -147,15 +304,14 @@ Network infrastructure devices may also have configuration management tools that
 
 The permissions required for this action vary by system configuration; local credentials may be sufficient with direct access to the third-party system, or specific domain credentials may be required. However, the system may require an administrative account to log in or to access specific functionality.
 
-Detection:
+Procedures:
 
-Detection methods will vary depending on the type of third-party software or system and how it is typically used. 
-
-The same investigation process can be applied here as with other potentially malicious activities where the distribution vector is initially unknown but the resulting activity follows a discernible pattern. Analyze the process execution trees, historical activities from the third-party application (such as what types of files are usually pushed), and the resulting activities or events from the file/binary/script pushed to systems. 
-
-Often these third-party applications will have logs of their own that can be collected and correlated with other data from the environment. Ensure that third-party application logs are on-boarded to the enterprise logging system and the logs are regularly reviewed. Audit software deployment logs and look for suspicious or unauthorized activity. A system not typically used to push software to clients that suddenly is used for such a task outside of a known admin function may be suspicious. Monitor account login activity on these applications to detect suspicious/abnormal usage.
-
-Perform application deployment at regular times so that irregular deployment activity stands out. Monitor process activity that does not correlate to known good software. Monitor account login activity on the deployment system.
+- [G0050] APT32: [APT32](https://attack.mitre.org/groups/G0050) compromised McAfee ePO to move laterally by distributing malware as a software deployment task.(Citation: FireEye APT32 May 2017)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) has used the commercially available tool RemoteExec for agentless remote code execution.(Citation: Microsoft Prestige ransomware October 2022)
+- [G0091] Silence: [Silence](https://attack.mitre.org/groups/G0091) has used RAdmin, a remote software tool used to remotely control workstations and ATMs.(Citation: Group IB Silence Sept 2018)
+- [S0041] Wiper: It is believed that a patch management system for an anti-virus product commonly installed among targeted companies was used to distribute the [Wiper](https://attack.mitre.org/software/S0041) malware.(Citation: Dell Wiper)
+- [G0028] Threat Group-1314: [Threat Group-1314](https://attack.mitre.org/groups/G0028) actors used a victim's endpoint management platform, Altiris, for lateral movement.(Citation: Dell TG-1314)
+- [C0018] C0018: During [C0018](https://attack.mitre.org/campaigns/C0018), the threat actors used PDQ Deploy to move [AvosLocker](https://attack.mitre.org/software/S1053) and tools across the network.(Citation: Cisco Talos Avos Jun 2022)
 
 
 ### T1080 - Taint Shared Content
@@ -168,11 +324,20 @@ A directory share pivot is a variation on this technique that uses several other
 
 Adversaries may also compromise shared network directories through binary infections by appending or prepending its code to the healthy binary on the shared network directory. The malware may modify the original entry point (OEP) of the healthy binary to ensure that it is executed before the legitimate code. The infection could continue to spread via the newly infected file when it is executed by a remote system. These infections may target both binary and non-binary formats that end with extensions including, but not limited to, .EXE, .DLL, .SCR, .BAT, and/or .VBS.
 
-Detection:
+Procedures:
 
-Processes that write or overwrite many files to a network shared directory may be suspicious. Monitor processes that are executed from removable media for malicious or abnormal activity such as network connections due to Command and Control and possible network Discovery techniques.
-
-Frequently scan shared network directories for malicious files, hidden files, .LNK files, and other file types that may not typical exist in directories used to share specific types of content.
+- [S0132] H1N1: [H1N1](https://attack.mitre.org/software/S0132) has functionality to copy itself to network shares.(Citation: Cisco H1N1 Part 2)
+- [G0012] Darkhotel: [Darkhotel](https://attack.mitre.org/groups/G0012) used a virus that propagates by infecting executables stored on shared drives.(Citation: Kaspersky Darkhotel)
+- [G1039] RedCurl: [RedCurl](https://attack.mitre.org/groups/G1039) has placed modified LNK files on network drives for lateral movement.(Citation: group-ib_redcurl1)(Citation: group-ib_redcurl2)
+- [S0458] Ramsay: [Ramsay](https://attack.mitre.org/software/S0458) can spread itself by infecting other portable executable files on networks shared drives.(Citation: Eset Ramsay May 2020)
+- [G0047] Gamaredon Group: [Gamaredon Group](https://attack.mitre.org/groups/G0047) has injected malicious macros into all Word and Excel documents on mapped network drives.(Citation: ESET Gamaredon June 2020)
+- [G0060] BRONZE BUTLER: [BRONZE BUTLER](https://attack.mitre.org/groups/G0060) has placed malware on file shares and given it the same name as legitimate documents on the share.(Citation: Secureworks BRONZE BUTLER Oct 2017)
+- [S0260] InvisiMole: [InvisiMole](https://attack.mitre.org/software/S0260) can replace legitimate software or documents in the compromised network with their trojanized versions, in an attempt to propagate itself within the network.(Citation: ESET InvisiMole June 2020)
+- [G1021] Cinnamon Tempest: [Cinnamon Tempest](https://attack.mitre.org/groups/G1021) has deployed ransomware from a batch file in a network share.(Citation: Microsoft Ransomware as a Service)
+- [S0575] Conti: [Conti](https://attack.mitre.org/software/S0575) can spread itself by infecting other remote machines via network shared drives.(Citation: Cybereason Conti Jan 2021)(Citation: CarbonBlack Conti July 2020)
+- [S0133] Miner-C: [Miner-C](https://attack.mitre.org/software/S0133) copies itself into the public folder of Network Attached Storage (NAS) devices and infects new victims who open the file.(Citation: Softpedia MinerC)
+- [S0603] Stuxnet: [Stuxnet](https://attack.mitre.org/software/S0603) infects remote servers via network shares and by infecting WinCC database views with malicious code.(Citation: Nicolas Falliere, Liam O Murchu, Eric Chien February 2011)
+- [S0386] Ursnif: [Ursnif](https://attack.mitre.org/software/S0386) has copied itself to and infected files in network drives for propagation.(Citation: TrendMicro Ursnif Mar 2015)(Citation: TrendMicro Ursnif File Dec 2014)
 
 
 ### T1091 - Replication Through Removable Media
@@ -183,9 +348,33 @@ Adversaries may move onto systems, possibly those on disconnected or air-gapped 
 
 Mobile devices may also be used to infect PCs with malware if connected via USB.(Citation: Exploiting Smartphone USB ) This infection may be achieved using devices (Android, iOS, etc.) and, in some instances, USB charging cables.(Citation: Windows Malware Infecting Android)(Citation: iPhone Charging Cable Hack) For example, when a smartphone is connected to a system, it may appear to be mounted similar to a USB-connected disk drive. If malware that is compatible with the connected system is on the mobile device, the malware could infect the machine (especially if Autorun features are enabled).
 
-Detection:
+Procedures:
 
-Monitor file access on removable media. Detect processes that execute from removable media after it is mounted or when initiated by a user. If a remote access tool is used in this manner to move laterally, then additional actions are likely to occur after execution, such as opening network connections for Command and Control and system and network information Discovery.
+- [S0143] Flame: [Flame](https://attack.mitre.org/software/S0143) contains modules to infect USB sticks and spread laterally to other Windows systems the stick is plugged into using Autorun functionality.(Citation: Kaspersky Flame)
+- [S0028] SHIPSHAPE: [APT30](https://attack.mitre.org/groups/G0013) may have used the [SHIPSHAPE](https://attack.mitre.org/software/S0028) malware to move onto air-gapped networks. [SHIPSHAPE](https://attack.mitre.org/software/S0028) targets removable drives to spread to other systems by modifying the drive to use Autorun to execute or by hiding legitimate document files and copying an executable to the folder with the same name as the legitimate document.(Citation: FireEye APT30)
+- [G1014] LuminousMoth: [LuminousMoth](https://attack.mitre.org/groups/G1014) has used malicious DLLs to spread malware to connected removable USB drives on infected machines.(Citation: Kaspersky LuminousMoth July 2021)(Citation: Bitdefender LuminousMoth July 2021)
+- [S0130] Unknown Logger: [Unknown Logger](https://attack.mitre.org/software/S0130) is capable of spreading to USB devices.(Citation: Forcepoint Monsoon)
+- [G1007] Aoqin Dragon: [Aoqin Dragon](https://attack.mitre.org/groups/G1007) has used a dropper that employs a worm infection strategy using a removable device to breach a secure network environment.(Citation: SentinelOne Aoqin Dragon June 2022)
+- [S0062] DustySky: [DustySky](https://attack.mitre.org/software/S0062) searches for removable media and duplicates itself onto it.(Citation: DustySky)
+- [S0132] H1N1: [H1N1](https://attack.mitre.org/software/S0132) has functionality to copy itself to removable media.(Citation: Cisco H1N1 Part 2)
+- [G0012] Darkhotel: [Darkhotel](https://attack.mitre.org/groups/G0012)'s selective infector modifies executables stored on removable media as a method of spreading across computers.(Citation: Kaspersky Darkhotel)
+- [S0603] Stuxnet: [Stuxnet](https://attack.mitre.org/software/S0603) can propagate via removable media using an autorun.inf file or the CVE-2010-2568 LNK vulnerability.(Citation: Nicolas Falliere, Liam O Murchu, Eric Chien February 2011)
+- [G0129] Mustang Panda: [Mustang Panda](https://attack.mitre.org/groups/G0129) has used a customized [PlugX](https://attack.mitre.org/software/S0013) variant which could spread through USB connections.(Citation: Avira Mustang Panda January 2020)
+- [S1130] Raspberry Robin: [Raspberry Robin](https://attack.mitre.org/software/S1130) has historically used infected USB media to spread to new victims.(Citation: TrendMicro RaspberryRobin 2022)(Citation: RedCanary RaspberryRobin 2022)
+- [S0092] Agent.btz: [Agent.btz](https://attack.mitre.org/software/S0092) drops itself onto removable media devices and creates an autorun.inf file with an instruction to run that file. When the device is inserted into another system, it opens autorun.inf and loads the malware.(Citation: ThreatExpert Agent.btz)
+- [S0385] njRAT: [njRAT](https://attack.mitre.org/software/S0385) can be configured to spread via removable drives.(Citation: Fidelis njRAT June 2013)(Citation: Trend Micro njRAT 2018)
+- [S0452] USBferry: [USBferry](https://attack.mitre.org/software/S0452) can copy its installer to attached USB storage devices.(Citation: TrendMicro Tropic Trooper May 2020)
+- [S0023] CHOPSTICK: Part of [APT28](https://attack.mitre.org/groups/G0007)'s operation involved using [CHOPSTICK](https://attack.mitre.org/software/S0023) modules to copy itself to air-gapped machines and using files written to USB sticks to transfer data and command traffic.(Citation: FireEye APT28)(Citation: Microsoft SIR Vol 19)(Citation: Secureworks IRON TWILIGHT Active Measures March 2017)
+- [S0115] Crimson: [Crimson](https://attack.mitre.org/software/S0115) can spread across systems by infecting removable media.(Citation: Kaspersky Transparent Tribe August 2020)
+- [G0046] FIN7: [FIN7](https://attack.mitre.org/groups/G0046) actors have mailed USB drives to potential victims containing malware that downloads and installs various backdoors, including in some cases for ransomware operations.(Citation: FBI Flash FIN7 USB)
+- [S0458] Ramsay: [Ramsay](https://attack.mitre.org/software/S0458) can spread itself by infecting other portable executable files on removable drives.(Citation: Eset Ramsay May 2020)
+- [S0650] QakBot: [QakBot](https://attack.mitre.org/software/S0650) has the ability to use removable drives to spread through compromised networks.(Citation: Trend Micro Qakbot May 2020)
+- [S1074] ANDROMEDA: [ANDROMEDA](https://attack.mitre.org/software/S1074) has been spread via infected USB keys.(Citation: Mandiant Suspected Turla Campaign February 2023)
+- [S0136] USBStealer: [USBStealer](https://attack.mitre.org/software/S0136) drops itself onto removable media and relies on Autorun to execute the malicious file when a user opens the removable media on another system.(Citation: ESET Sednit USBStealer 2014)
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) uses a tool to infect connected USB devices and transmit itself to air-gapped computers when the infected USB device is inserted.(Citation: Microsoft SIR Vol 19)
+- [S0608] Conficker: [Conficker](https://attack.mitre.org/software/S0608) variants used the Windows AUTORUN feature to spread through USB propagation.(Citation: SANS Conficker)(Citation: Trend Micro Conficker)
+- [S0386] Ursnif: [Ursnif](https://attack.mitre.org/software/S0386) has copied itself to and infected removable drives for propagation.(Citation: TrendMicro Ursnif Mar 2015)(Citation: TrendMicro Ursnif File Dec 2014)
+- [G0081] Tropic Trooper: [Tropic Trooper](https://attack.mitre.org/groups/G0081) has attempted to transfer [USBferry](https://attack.mitre.org/software/S0452) from an infected USB device by copying an Autorun function to the target machine.(Citation: TrendMicro Tropic Trooper May 2020)
 
 
 ### T1210 - Exploitation of Remote Services
@@ -200,9 +389,32 @@ There are several well-known vulnerabilities that exist in common services such 
 
 Depending on the permissions level of the vulnerable remote service an adversary may achieve [Exploitation for Privilege Escalation](https://attack.mitre.org/techniques/T1068) as a result of lateral movement exploitation as well.
 
-Detection:
+Procedures:
 
-Detecting software exploitation may be difficult depending on the tools available. Software exploits may not always succeed or may cause the exploited process to become unstable or crash. Also look for behavior on the endpoint system that might indicate successful compromise, such as abnormal behavior of the processes. This could include suspicious files written to disk, evidence of [Process Injection](https://attack.mitre.org/techniques/T1055) for attempts to hide execution, evidence of [Discovery](https://attack.mitre.org/tactics/TA0007), or other unusual network traffic that may indicate additional tools transferred to the system.
+- [S0143] Flame: [Flame](https://attack.mitre.org/software/S0143) can use MS10-061 to exploit a print spooler vulnerability in a remote system with a shared printer in order to move laterally.(Citation: Kaspersky Flame)(Citation: Kaspersky Flame Functionality)
+- [S0366] WannaCry: [WannaCry](https://attack.mitre.org/software/S0366) uses an exploit in SMBv1 to spread itself to other remote systems on a network.(Citation: LogRhythm WannaCry)(Citation: FireEye WannaCry 2017)(Citation: US-CERT WannaCry 2017)
+- [G0102] Wizard Spider: [Wizard Spider](https://attack.mitre.org/groups/G0102) has exploited or attempted to exploit Zerologon (CVE-2020-1472) and EternalBlue (MS17-010) vulnerabilities.(Citation: FireEye KEGTAP SINGLEMALT October 2020)(Citation: DFIR Ryuk's Return October 2020)(Citation: DFIR Ryuk in 5 Hours October 2020)
+- [G0117] Fox Kitten: [Fox Kitten](https://attack.mitre.org/groups/G0117) has exploited known vulnerabilities in remote services including RDP.(Citation: ClearkSky Fox Kitten February 2020)(Citation: CrowdStrike PIONEER KITTEN August 2020)(Citation: ClearSky Pay2Kitten December 2020)
+- [G1006] Earth Lusca: [Earth Lusca](https://attack.mitre.org/groups/G1006) has used [Mimikatz](https://attack.mitre.org/software/S0002) to exploit a domain controller via the ZeroLogon exploit (CVE-2020-1472).(Citation: TrendMicro EarthLusca 2022)
+- [S0603] Stuxnet: [Stuxnet](https://attack.mitre.org/software/S0603) propagates using the MS10-061 Print Spooler and MS08-067 Windows Server Service vulnerabilities.(Citation: Nicolas Falliere, Liam O Murchu, Eric Chien February 2011)
+- [S0650] QakBot: [QakBot](https://attack.mitre.org/software/S0650) can move laterally using worm-like functionality through exploitation of SMB.(Citation: Crowdstrike Qakbot October 2020)
+- [S0367] Emotet: [Emotet](https://attack.mitre.org/software/S0367) has been seen exploiting SMB via a vulnerability exploit like EternalBlue (MS17-010) to achieve lateral movement and propagation.(Citation: Symantec Emotet Jul 2018)(Citation: US-CERT Emotet Jul 2018)(Citation: Secureworks Emotet Nov 2018)(Citation: Red Canary Emotet Feb 2019)
+- [S0363] Empire: [Empire](https://attack.mitre.org/software/S0363) has a limited number of built-in modules for exploiting remote SMB, JBoss, and Jenkins servers.(Citation: Github PowerShell Empire)
+- [S0606] Bad Rabbit: [Bad Rabbit](https://attack.mitre.org/software/S0606) used the EternalRomance SMB exploit to spread through victim networks.(Citation: Secure List Bad Rabbit)
+- [S0368] NotPetya: [NotPetya](https://attack.mitre.org/software/S0368) can use two exploits in SMBv1, EternalBlue and EternalRomance, to spread itself to other remote systems on the network.(Citation: Talos Nyetya June 2017)(Citation: US-CERT NotPetya 2017)(Citation: US District Court Indictment GRU Unit 74455 October 2020)
+- [G1003] Ember Bear: [Ember Bear](https://attack.mitre.org/groups/G1003) has used exploits for vulnerabilities such as MS17-010, also known as `Eternal Blue`, during operations.(Citation: CISA GRU29155 2024)
+- [S0260] InvisiMole: [InvisiMole](https://attack.mitre.org/software/S0260) can spread within a network via the BlueKeep (CVE-2019-0708) and EternalBlue (CVE-2017-0144) vulnerabilities in RDP and SMB respectively.(Citation: ESET InvisiMole June 2020)
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) exploited a Windows SMB Remote Code Execution Vulnerability to conduct lateral movement.(Citation: FireEye APT28)(Citation: FireEye APT28 Hospitality Aug 2017)(Citation: MS17-010 March 2017)
+- [S0608] Conficker: [Conficker](https://attack.mitre.org/software/S0608) exploited the MS08-067 Windows vulnerability for remote code execution through a crafted RPC request.(Citation: SANS Conficker)
+- [S0378] PoshC2: [PoshC2](https://attack.mitre.org/software/S0378) contains a module for exploiting SMB via EternalBlue.(Citation: GitHub PoshC2)
+- [S0532] Lucifer: [Lucifer](https://attack.mitre.org/software/S0532) can exploit multiple vulnerabilities including EternalBlue (CVE-2017-0144) and EternalRomance (CVE-2017-0144).(Citation: Unit 42 Lucifer June 2020)
+- [G0131] Tonto Team: [Tonto Team](https://attack.mitre.org/groups/G0131) has used EternalBlue exploits for lateral movement.(Citation: TrendMicro Tonto Team October 2020)
+- [G0045] menuPass: [menuPass](https://attack.mitre.org/groups/G0045) has used tools to exploit the ZeroLogon vulnerability (CVE-2020-1472).(Citation: Symantec Cicada November 2020)
+- [S0266] TrickBot: [TrickBot](https://attack.mitre.org/software/S0266) utilizes EternalBlue and EternalRomance exploits for lateral movement in the modules wormwinDll, wormDll, mwormDll, nwormDll, tabDll.(Citation: ESET Trickbot Oct 2020)
+- [G0035] Dragonfly: [Dragonfly](https://attack.mitre.org/groups/G0035) has exploited a Windows Netlogon vulnerability (CVE-2020-1472) to obtain access to Windows Active Directory servers.(Citation: CISA AA20-296A Berserk Bear December 2020)
+- [G0069] MuddyWater: [MuddyWater](https://attack.mitre.org/groups/G0069) has exploited the Microsoft Netlogon vulnerability (CVE-2020-1472).(Citation: DHS CISA AA22-055A MuddyWater February 2022)
+- [G0027] Threat Group-3390: [Threat Group-3390](https://attack.mitre.org/groups/G0027) has exploited MS17-010 to move laterally to other systems on the network.(Citation: Unit42 Emissary Panda May 2019)
+- [G0046] FIN7: [FIN7](https://attack.mitre.org/groups/G0046) has exploited ZeroLogon (CVE-2020-1472) against vulnerable domain controllers.(Citation: CrowdStrike Carbon Spider August 2021)
 
 
 ### T1534 - Internal Spearphishing
@@ -215,9 +427,13 @@ For example, adversaries may leverage [Spearphishing Attachment](https://attack.
 
 Adversaries may also leverage internal chat apps, such as Microsoft Teams, to spread malicious content or engage users in attempts to capture sensitive information and/or credentials.(Citation: Int SP - chat apps)
 
-Detection:
+Procedures:
 
-Network intrusion detection systems and email gateways usually do not scan internal email, but an organization can leverage the journaling-based solution which sends a copy of emails to a security service for offline analysis or incorporate service-integrated solutions using on-premise or API-based integrations to help detect internal spearphishing campaigns.(Citation: Trend Micro When Phishing Starts from the Inside 2017)
+- [G0047] Gamaredon Group: [Gamaredon Group](https://attack.mitre.org/groups/G0047) has used an Outlook VBA module on infected systems to send phishing emails with malicious attachments to other employees within the organization.(Citation: ESET Gamaredon June 2020)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has sent internal spearphishing emails for lateral movement after stealing victim information.(Citation: KISA Operation Muzabi)
+- [C0022] Operation Dream Job: During [Operation Dream Job](https://attack.mitre.org/campaigns/C0022), [Lazarus Group](https://attack.mitre.org/groups/G0032) conducted internal spearphishing from within a compromised organization.(Citation: ClearSky Lazarus Aug 2020)
+- [G0065] Leviathan: [Leviathan](https://attack.mitre.org/groups/G0065) has conducted internal spearphishing within the victim's environment for lateral movement.(Citation: CISA AA21-200A APT40 July 2021)
+- [G1001] HEXANE: [HEXANE](https://attack.mitre.org/groups/G1001) has conducted internal spearphishing attacks against executives, HR, and IT personnel to gain information and access.(Citation: SecureWorks August 2019)
 
 
 ### T1550 - Use Alternate Authentication Material
@@ -230,9 +446,10 @@ Authentication processes generally require a valid identity (e.g., username) alo
 
 Caching alternate authentication material allows the system to verify an identity has successfully authenticated without asking the user to reenter authentication factor(s). Because the alternate authentication must be maintained by the system—either in memory or on disk—it may be at risk of being stolen through [Credential Access](https://attack.mitre.org/tactics/TA0006) techniques. By stealing alternate authentication material, adversaries are able to bypass system access controls and authenticate to systems without knowing the plaintext password or any additional authentication factors.
 
-Detection:
+Procedures:
 
-Configure robust, consistent account activity audit policies across the enterprise and with externally accessible services.(Citation: TechNet Audit Policy) Look for suspicious account behavior across systems that share accounts, either user, admin, or service accounts. Examples: one account logged into multiple systems simultaneously; multiple accounts logged into the same machine simultaneously; accounts logged in at odd times or outside of business hours. Activity may be from interactive login sessions or process ownership from accounts being used to execute binaries on a remote system as a particular account. Correlate other security systems with login information (e.g., a user has an active login session but has not entered the building or does not have VPN access).
+- [C0024] SolarWinds Compromise: During the [SolarWinds Compromise](https://attack.mitre.org/campaigns/C0024), [APT29](https://attack.mitre.org/groups/G0016) used forged SAML tokens that allowed the actors to impersonate users and bypass MFA, enabling [APT29](https://attack.mitre.org/groups/G0016) to access enterprise cloud applications and services.(Citation: Microsoft 365 Defender Solorigate)(Citation: Secureworks IRON RITUAL Profile)
+- [S0661] FoggyWeb: [FoggyWeb](https://attack.mitre.org/software/S0661) can allow abuse of a compromised AD FS server's SAML token.(Citation: MSTIC FoggyWeb September 2021)
 
 #### T1550.001 - Application Access Token
 
@@ -250,9 +467,13 @@ Compromised access tokens may be used as an initial step in compromising other s
 
 Direct API access through a token negates the effectiveness of a second authentication factor and may be immune to intuitive countermeasures like changing passwords.  For example, in AWS environments, an adversary who compromises a user’s AWS API credentials may be able to use the `sts:GetFederationToken` API call to create a federated user session, which will have the same permissions as the original user but may persist even if the original user credentials are deactivated.(Citation: Crowdstrike AWS User Federation Persistence) Additionally, access abuse over an API channel can be difficult to detect even from the service provider end, as the access can still align well with a legitimate workflow.
 
-Detection:
+Procedures:
 
-Monitor access token activity for abnormal use and permissions granted to unusual or suspicious applications and APIs. Additionally, administrators should review logs for calls to the AWS Security Token Service (STS) and usage of GCP service accounts in order to identify anomalous actions.(Citation: AWS Logging IAM Calls)(Citation: GCP Monitoring Service Account Usage)
+- [S0683] Peirates: [Peirates](https://attack.mitre.org/software/S0683) can use stolen service account tokens to perform its operations. It also enables adversaries to switch between valid service accounts.(Citation: Peirates GitHub)
+- [S1023] CreepyDrive: [CreepyDrive](https://attack.mitre.org/software/S1023) can use legitimate OAuth refresh tokens to authenticate with OneDrive.(Citation: Microsoft POLONIUM June 2022)
+- [C0024] SolarWinds Compromise: During the [SolarWinds Compromise](https://attack.mitre.org/campaigns/C0024), [APT29](https://attack.mitre.org/groups/G0016) used compromised service principals to make changes to the Office 365 environment.(Citation: CrowdStrike StellarParticle January 2022)
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has used several malicious applications that abused OAuth access tokens to gain access to target email accounts, including Gmail and Yahoo Mail.(Citation: Trend Micro Pawn Storm OAuth 2017)
+- [G0125] HAFNIUM: [HAFNIUM](https://attack.mitre.org/groups/G0125) has abused service principals with administrative permissions for data exfiltration.(Citation: Microsoft Silk Typhoon MAR 2025)
 
 #### T1550.002 - Pass the Hash
 
@@ -264,11 +485,28 @@ When performing PtH, valid password hashes for the account being used are captur
 
 Adversaries may also use stolen password hashes to "overpass the hash." Similar to PtH, this involves using a password hash to authenticate as a user but also uses the password hash to create a valid Kerberos ticket. This ticket can then be used to perform [Pass the Ticket](https://attack.mitre.org/techniques/T1550/003) attacks.(Citation: Stealthbits Overpass-the-Hash)
 
-Detection:
+Procedures:
 
-Audit all logon and credential use events and review for discrepancies. Unusual remote logins that correlate with other suspicious activity (such as writing and executing binaries) may indicate malicious activity. NTLM LogonType 3 authentications that are not associated to a domain login and are not anonymous logins are suspicious.
-
-Event ID 4768 and 4769 will also be generated on the Domain Controller when a user requests a new ticket granting ticket or service ticket. These events combined with the above activity may be indicative of an overpass the hash attempt.(Citation: Stealthbits Overpass-the-Hash)
+- [G0050] APT32: [APT32](https://attack.mitre.org/groups/G0050) has used pass the hash for lateral movement.(Citation: Cybereason Cobalt Kitty 2017)
+- [S0154] Cobalt Strike: [Cobalt Strike](https://attack.mitre.org/software/S0154) can perform pass the hash.(Citation: Cobalt Strike TTPs Dec 2017)
+- [S0122] Pass-The-Hash Toolkit: [Pass-The-Hash Toolkit](https://attack.mitre.org/software/S0122) can perform pass the hash.(Citation: Mandiant APT1)
+- [G0007] APT28: [APT28](https://attack.mitre.org/groups/G0007) has used pass the hash for lateral movement.(Citation: Microsoft SIR Vol 19)
+- [G0143] Aquatic Panda: [Aquatic Panda](https://attack.mitre.org/groups/G0143) used a registry edit to enable a Windows feature called <code>RestrictedAdmin</code> in victim environments. This change allowed [Aquatic Panda](https://attack.mitre.org/groups/G0143) to leverage "pass the hash" mechanisms as the alteration allows for RDP connections with a valid account name and hash only, without possessing a cleartext password value.(Citation: Crowdstrike HuntReport 2022)
+- [G0114] Chimera: [Chimera](https://attack.mitre.org/groups/G0114) has dumped password hashes for use in pass the hash authentication attacks.(Citation: NCC Group Chimera January 2021)
+- [G0006] APT1: The [APT1](https://attack.mitre.org/groups/G0006) group is known to have used pass the hash.(Citation: Mandiant APT1)
+- [G0102] Wizard Spider: [Wizard Spider](https://attack.mitre.org/groups/G0102) has used the `Invoke-SMBExec` PowerShell cmdlet to execute the pass-the-hash technique and utilized stolen password hashes to move laterally.(Citation: Mandiant FIN12 Oct 2021)
+- [S0376] HOPLIGHT: [HOPLIGHT](https://attack.mitre.org/software/S0376) has been observed loading several APIs associated with Pass the Hash.(Citation: US-CERT HOPLIGHT Apr 2019)
+- [S0378] PoshC2: [PoshC2](https://attack.mitre.org/software/S0378) has a number of modules that leverage pass the hash for lateral movement.(Citation: GitHub PoshC2)
+- [S0002] Mimikatz: [Mimikatz](https://attack.mitre.org/software/S0002)'s <code>SEKURLSA::Pth</code> module can impersonate a user, with only a password hash, to execute arbitrary commands.(Citation: Adsecurity Mimikatz Guide)(Citation: NCSC Joint Report Public Tools)(Citation: Cobalt Strike Manual 4.3 November 2020)
+- [G0096] APT41: [APT41](https://attack.mitre.org/groups/G0096) uses tools such as [Mimikatz](https://attack.mitre.org/software/S0002) to enable lateral movement via captured password hashes.(Citation: Rostovcev APT41 2021)
+- [G0094] Kimsuky: [Kimsuky](https://attack.mitre.org/groups/G0094) has used pass the hash for authentication to remote access software used in C2.(Citation: CISA AA20-301A Kimsuky)
+- [S0363] Empire: [Empire](https://attack.mitre.org/software/S0363) can perform pass the hash attacks.(Citation: Github PowerShell Empire)
+- [G1016] FIN13: [FIN13](https://attack.mitre.org/groups/G1016) has used the PowerShell utility `Invoke-SMBExec` to execute the pass the hash method for lateral movement within an compromised environment.(Citation: Mandiant FIN13 Aug 2022)
+- [G1003] Ember Bear: [Ember Bear](https://attack.mitre.org/groups/G1003) has used pass-the-hash techniques for lateral movement in victim environments.(Citation: CISA GRU29155 2024)
+- [S1081] BADHATCH: [BADHATCH](https://attack.mitre.org/software/S1081) can perform pass the hash on compromised machines with x64 versions.(Citation: BitDefender BADHATCH Mar 2021)
+- [S0488] CrackMapExec: [CrackMapExec](https://attack.mitre.org/software/S0488) can pass the hash to authenticate via SMB.(Citation: CME Github September 2018)
+- [C0002] Night Dragon: During [Night Dragon](https://attack.mitre.org/campaigns/C0002), threat actors used pass-the-hash tools to obtain authenticated access to sensitive internal desktops and servers.(Citation: McAfee Night Dragon)
+- [G0093] GALLIUM: [GALLIUM](https://attack.mitre.org/groups/G0093) used dumped hashes to authenticate to other machines via pass the hash.(Citation: Cybereason Soft Cell June 2019)
 
 #### T1550.003 - Pass the Ticket
 
@@ -284,11 +522,14 @@ A [Golden Ticket](https://attack.mitre.org/techniques/T1558/001) can be obtained
 
 Adversaries may also create a valid Kerberos ticket using other user information, such as stolen password hashes or AES keys. For example, "overpassing the hash" involves using a NTLM password hash to authenticate as a user (i.e. [Pass the Hash](https://attack.mitre.org/techniques/T1550/002)) while also using the password hash to create a valid Kerberos ticket.(Citation: Stealthbits Overpass-the-Hash)
 
-Detection:
+Procedures:
 
-Audit all Kerberos authentication and credential use events and review for discrepancies. Unusual remote authentication events that correlate with other suspicious activity (such as writing and executing binaries) may indicate malicious activity.
-
-Event ID 4769 is generated on the Domain Controller when using a golden ticket after the KRBTGT password has been reset twice, as mentioned in the mitigation section. The status code 0x1F indicates the action has failed due to "Integrity check on decrypted field failed" and indicates misuse by a previously invalidated golden ticket.(Citation: CERT-EU Golden Ticket Protection)
+- [S0053] SeaDuke: Some [SeaDuke](https://attack.mitre.org/software/S0053) samples have a module to use pass the ticket with Kerberos for authentication.(Citation: Symantec Seaduke 2015)
+- [G0016] APT29: [APT29](https://attack.mitre.org/groups/G0016) used Kerberos ticket attacks for lateral movement.(Citation: Mandiant No Easy Breach)
+- [S0002] Mimikatz: [Mimikatz](https://attack.mitre.org/software/S0002)’s <code>LSADUMP::DCSync</code> and <code>KERBEROS::PTT</code> modules implement the three steps required to extract the krbtgt account hash and create/use Kerberos tickets.(Citation: Adsecurity Mimikatz Guide)(Citation: AdSecurity Kerberos GT Aug 2015)(Citation: Harmj0y DCSync Sept 2015)(Citation: NCSC Joint Report Public Tools)
+- [S0192] Pupy: [Pupy](https://attack.mitre.org/software/S0192) can also perform pass-the-ticket.(Citation: GitHub Pupy)
+- [G0050] APT32: [APT32](https://attack.mitre.org/groups/G0050) successfully gained remote access by using pass the ticket.(Citation: Cybereason Cobalt Kitty 2017)
+- [G0060] BRONZE BUTLER: [BRONZE BUTLER](https://attack.mitre.org/groups/G0060) has created forged Kerberos Ticket Granting Ticket (TGT) and Ticket Granting Service (TGS) tickets to maintain administrative access.(Citation: Secureworks BRONZE BUTLER Oct 2017)
 
 #### T1550.004 - Web Session Cookie
 
@@ -300,9 +541,10 @@ Authentication cookies are commonly used in web applications, including cloud-ba
 
 There have been examples of malware targeting session cookies to bypass multi-factor authentication systems.(Citation: Unit 42 Mac Crypto Cookies January 2019)
 
-Detection:
+Procedures:
 
-Monitor for anomalous access of websites and cloud-based applications by the same user in different locations or by different systems that do not match expected configurations.
+- [G1033] Star Blizzard: [Star Blizzard](https://attack.mitre.org/groups/G1033) has bypassed multi-factor authentication on victim email accounts by using session cookies stolen using EvilGinx.(Citation: CISA Star Blizzard Advisory December 2023)
+- [C0024] SolarWinds Compromise: During the [SolarWinds Compromise](https://attack.mitre.org/campaigns/C0024), [APT29](https://attack.mitre.org/groups/G0016) used stolen cookies to access cloud resources and a forged `duo-sid` cookie to bypass MFA set on an email account.(Citation: Volexity SolarWinds)(Citation: CrowdStrike StellarParticle January 2022)
 
 
 ### T1563 - Remote Service Session Hijacking
@@ -312,12 +554,6 @@ Description:
 Adversaries may take control of preexisting sessions with remote services to move laterally in an environment. Users may use valid credentials to log into a service specifically designed to accept remote connections, such as telnet, SSH, and RDP. When a user logs into a service, a session will be established that will allow them to maintain a continuous interaction with that service.
 
 Adversaries may commandeer these sessions to carry out actions on remote systems. [Remote Service Session Hijacking](https://attack.mitre.org/techniques/T1563) differs from use of [Remote Services](https://attack.mitre.org/techniques/T1021) because it hijacks an existing session rather than creating a new session using [Valid Accounts](https://attack.mitre.org/techniques/T1078).(Citation: RDP Hijacking Medium)(Citation: Breach Post-mortem SSH Hijack)
-
-Detection:
-
-Use of these services may be legitimate, depending upon the network environment and how it is used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior with that service. Monitor for user accounts logged into systems they would not normally access or access patterns to multiple systems over a relatively short period of time.
-
-Monitor for processes and command-line arguments associated with hijacking service sessions.
 
 #### T1563.001 - SSH Hijacking
 
@@ -329,10 +565,6 @@ In order to move laterally from a compromised host, adversaries may take advanta
 
 [SSH Hijacking](https://attack.mitre.org/techniques/T1563/001) differs from use of [SSH](https://attack.mitre.org/techniques/T1021/004) because it hijacks an existing SSH session rather than creating a new session using [Valid Accounts](https://attack.mitre.org/techniques/T1078).
 
-Detection:
-
-Use of SSH may be legitimate, depending upon the network environment and how it is used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior with SSH. Monitor for user accounts logged into systems they would not normally access or access patterns to multiple systems over a relatively short period of time. Also monitor user SSH-agent socket files being used by different users.
-
 #### T1563.002 - RDP Hijacking
 
 Description:
@@ -341,11 +573,10 @@ Adversaries may hijack a legitimate user’s remote desktop session to move late
 
 Adversaries may perform RDP session hijacking which involves stealing a legitimate user's remote session. Typically, a user is notified when someone else is trying to steal their session. With System permissions and using Terminal Services Console, `c:\windows\system32\tscon.exe [session number to be stolen]`, an adversary can hijack a session without the need for credentials or prompts to the user.(Citation: RDP Hijacking Korznikov) This can be done remotely or locally and with active or disconnected sessions.(Citation: RDP Hijacking Medium) It can also lead to [Remote System Discovery](https://attack.mitre.org/techniques/T1018) and Privilege Escalation by stealing a Domain Admin or higher privileged account session. All of this can be done by using native Windows commands, but it has also been added as a feature in red teaming tools.(Citation: Kali Redsnarf)
 
-Detection:
+Procedures:
 
-Consider monitoring processes for `tscon.exe` usage and monitor service creation that uses `cmd.exe /k` or `cmd.exe /c` in its arguments to detect RDP session hijacking.
-
-Use of RDP may be legitimate, depending on the network environment and how it is used. Other factors, such as access patterns and activity that occurs after a remote login, may indicate suspicious or malicious behavior with RDP.
+- [S0366] WannaCry: [WannaCry](https://attack.mitre.org/software/S0366) enumerates current remote desktop sessions and tries to execute the malware on each session.(Citation: LogRhythm WannaCry)
+- [G0001] Axiom: [Axiom](https://attack.mitre.org/groups/G0001) has targeted victims with remote administration tools including RDP.(Citation: Novetta-Axiom)
 
 
 ### T1570 - Lateral Tool Transfer
@@ -358,7 +589,52 @@ Adversaries may copy files between internal victim systems to support lateral mo
 
 Files can also be transferred using native or otherwise present tools on the victim system, such as scp, rsync, curl, sftp, and [ftp](https://attack.mitre.org/software/S0095). In some cases, adversaries may be able to leverage [Web Service](https://attack.mitre.org/techniques/T1102)s such as Dropbox or OneDrive to copy files from one machine to another via shared, automatically synced folders.(Citation: Dropbox Malware Sync)
 
-Detection:
+Procedures:
 
-Monitor for file creation and files transferred within a network using protocols such as SMB or FTP. Unusual processes with internal network connections creating files on-system may be suspicious. Consider monitoring for abnormal usage of utilities and command-line arguments that may be used in support of remote transfer of files. Considering monitoring for alike file hashes or characteristics (ex: filename) that are created on multiple hosts.
+- [S0367] Emotet: [Emotet](https://attack.mitre.org/software/S0367) has copied itself to remote systems using the `service.exe` filename.(Citation: Binary Defense Emotes Wi-Fi Spreader)
+- [S1139] INC Ransomware: [INC Ransomware](https://attack.mitre.org/software/S1139) can push its encryption executable to multiple endpoints within compromised infrastructure.(Citation: Huntress INC Ransom Group August 2023)
+- [S1068] BlackCat: [BlackCat](https://attack.mitre.org/software/S1068) can replicate itself across connected servers via `psexec`.(Citation: Microsoft BlackCat Jun 2022)
+- [S1132] IPsec Helper: [IPsec Helper](https://attack.mitre.org/software/S1132) can download additional payloads from command and control nodes and execute them.(Citation: SentinelOne Agrius 2021)
+- [G0050] APT32: [APT32](https://attack.mitre.org/groups/G0050) has deployed tools after moving laterally using administrative accounts.(Citation: Cybereason Cobalt Kitty 2017)
+- [G1007] Aoqin Dragon: [Aoqin Dragon](https://attack.mitre.org/groups/G1007) has spread malware in target networks by copying modules to folders masquerading as removable devices.(Citation: SentinelOne Aoqin Dragon June 2022)
+- [S0457] Netwalker: Operators deploying [Netwalker](https://attack.mitre.org/software/S0457) have used psexec to copy the [Netwalker](https://attack.mitre.org/software/S0457) payload across accessible systems.(Citation: Sophos Netwalker May 2020)
+- [S0190] BITSAdmin: [BITSAdmin](https://attack.mitre.org/software/S0190) can be used to create [BITS Jobs](https://attack.mitre.org/techniques/T1197) to upload and/or download files from SMB file servers.(Citation: Microsoft About BITS)
+- [G0051] FIN10: [FIN10](https://attack.mitre.org/groups/G0051) has deployed Meterpreter stagers and SplinterRAT instances in the victim network after moving laterally.(Citation: FireEye FIN10 June 2017)
+- [S0095] ftp: [ftp](https://attack.mitre.org/software/S0095) may be abused by adversaries to transfer tools or files between systems within a compromised environment.(Citation: Microsoft FTP)(Citation: Linux FTP)
+- [S0404] esentutl: [esentutl](https://attack.mitre.org/software/S0404) can be used to copy files to/from a remote share.(Citation: LOLBAS Esentutl)
+- [G1003] Ember Bear: [Ember Bear](https://attack.mitre.org/groups/G1003) retrieves follow-on payloads direct from adversary-owned infrastructure for deployment on compromised hosts.(Citation: Cadet Blizzard emerges as novel threat actor)
+- [S0532] Lucifer: [Lucifer](https://attack.mitre.org/software/S0532) can use [certutil](https://attack.mitre.org/software/S0160) for propagation on Windows hosts within intranets.(Citation: Unit 42 Lucifer June 2020)
+- [G1017] Volt Typhoon: [Volt Typhoon](https://attack.mitre.org/groups/G1017) has copied web shells between servers in targeted environments.(Citation: Secureworks BRONZE SILHOUETTE May 2023)
+- [G1047] Velvet Ant: [Velvet Ant](https://attack.mitre.org/groups/G1047) transferred files laterally within victim networks through the [Impacket](https://attack.mitre.org/software/S0357) toolkit.(Citation: Sygnia VelvetAnt 2024A)
+- [G0102] Wizard Spider: [Wizard Spider](https://attack.mitre.org/groups/G0102) has used stolen credentials to copy tools into the <code>%TEMP%</code> directory of domain controllers.(Citation: CrowdStrike Grim Spider May 2019)
+- [G0010] Turla: [Turla](https://attack.mitre.org/groups/G0010) RPC backdoors can be used to transfer files to/from victim machines on the local network.(Citation: ESET Turla PowerShell May 2019)(Citation: Symantec Waterbug Jun 2019)
+- [C0018] C0018: During [C0018](https://attack.mitre.org/campaigns/C0018), the threat actors transferred the SoftPerfect Network Scanner and other tools to machines in the network using AnyDesk and PDQ Deploy.(Citation: Cisco Talos Avos Jun 2022)(Citation: Costa AvosLocker May 2022)
+- [S1180] BlackByte Ransomware: [BlackByte Ransomware](https://attack.mitre.org/software/S1180) spreads itself laterally by writing the JavaScript launcher file to mapped shared folders.(Citation: Trustwave BlackByte 2021)
+- [C0025] 2016 Ukraine Electric Power Attack: During the [2016 Ukraine Electric Power Attack](https://attack.mitre.org/campaigns/C0025), [Sandworm Team](https://attack.mitre.org/groups/G0034) used `move` to transfer files to a network share.(Citation: Dragos Crashoverride 2018)
+- [S0361] Expand: [Expand](https://attack.mitre.org/software/S0361) can be used to download or upload a file over a network share.(Citation: LOLBAS Expand)
+- [G1043] BlackByte: [BlackByte](https://attack.mitre.org/groups/G1043) transfered tools such as [Cobalt Strike](https://attack.mitre.org/software/S0154) and the AnyDesk remote access tool during operations using SMB shares.(Citation: Picus BlackByte 2022)
+- [G0114] Chimera: [Chimera](https://attack.mitre.org/groups/G0114) has copied tools between compromised hosts using SMB.(Citation: NCC Group Chimera January 2021)
+- [S0365] Olympic Destroyer: [Olympic Destroyer](https://attack.mitre.org/software/S0365) attempts to copy itself to remote machines on the network.(Citation: Talos Olympic Destroyer 2018)
+- [C0014] Operation Wocao: During [Operation Wocao](https://attack.mitre.org/campaigns/C0014), threat actors used SMB to copy files to and from target systems.(Citation: FoxIT Wocao December 2019)
+- [C0034] 2022 Ukraine Electric Power Attack: During the [2022 Ukraine Electric Power Attack](https://attack.mitre.org/campaigns/C0034), [Sandworm Team](https://attack.mitre.org/groups/G0034) used a Group Policy Object (GPO) to copy [CaddyWiper](https://attack.mitre.org/software/S0693)'s executable `msserver.exe` from a staging server to a local hard drive before deployment.(Citation: Mandiant-Sandworm-Ukraine-2022)
+- [G0093] GALLIUM: [GALLIUM](https://attack.mitre.org/groups/G0093) has used [PsExec](https://attack.mitre.org/software/S0029) to move laterally between hosts in the target network.(Citation: Microsoft GALLIUM December 2019)
+- [S0140] Shamoon: [Shamoon](https://attack.mitre.org/software/S0140) attempts to copy itself to remote machines on the network.(Citation: Palo Alto Shamoon Nov 2016)
+- [G1046] Storm-1811: [Storm-1811](https://attack.mitre.org/groups/G1046) has used the [Impacket](https://attack.mitre.org/software/S0357) toolset to move and remotely execute payloads to other hosts in victim networks.(Citation: rapid7-email-bombing)
+- [G0059] Magic Hound: [Magic Hound](https://attack.mitre.org/groups/G0059) has copied tools within a compromised network using RDP.(Citation: DFIR Phosphorus November 2021)
+- [G1032] INC Ransom: [INC Ransom](https://attack.mitre.org/groups/G1032) has used a rapid succession of copy commands to install a file encryption executable across multiple endpoints within compromised infrastructure.(Citation: Huntress INC Ransom Group August 2023)(Citation: Secureworks GOLD IONIC April 2024)
+- [S0029] PsExec: [PsExec](https://attack.mitre.org/software/S0029) can be used to download or upload a file over a network share.(Citation: PsExec Russinovich)
+- [S0698] HermeticWizard: [HermeticWizard](https://attack.mitre.org/software/S0698) can copy files to other machines on a compromised network.(Citation: ESET Hermetic Wizard March 2022)
+- [S0062] DustySky: [DustySky](https://attack.mitre.org/software/S0062) searches for network drives and removable media and duplicates itself onto them.(Citation: DustySky)
+- [C0038] HomeLand Justice: During [HomeLand Justice](https://attack.mitre.org/campaigns/C0038), threat actors initiated a process named Mellona.exe to spread the [ROADSWEEP](https://attack.mitre.org/software/S1150) file encryptor and a persistence script to a list of internal machines.(Citation: CISA Iran Albanian Attacks September 2022)
+- [S0357] Impacket: [Impacket](https://attack.mitre.org/software/S0357) has used its `wmiexec` command, leveraging Windows Management Instrumentation, to remotely stage and execute payloads in victim networks.(Citation: Sygnia VelvetAnt 2024A)
+- [G0034] Sandworm Team: [Sandworm Team](https://attack.mitre.org/groups/G0034) has used `move` to transfer files to a network share and has copied payloads--such as [Prestige](https://attack.mitre.org/software/S1058) ransomware--to an Active Directory Domain Controller and distributed via the Default Domain Group Policy Object.(Citation: Dragos Crashoverride 2018)(Citation: Microsoft Prestige ransomware October 2022) Additionally, [Sandworm Team](https://attack.mitre.org/groups/G0034) has transferred an ISO file into the OT network to gain initial access.(Citation: Mandiant-Sandworm-Ukraine-2022)
+- [C0028] 2015 Ukraine Electric Power Attack: During the [2015 Ukraine Electric Power Attack](https://attack.mitre.org/campaigns/C0028), [Sandworm Team](https://attack.mitre.org/groups/G0034) moved their tools laterally within the corporate network and between the ICS and corporate network. (Citation: Booz Allen Hamilton)
+- [S1017] OutSteel: [OutSteel](https://attack.mitre.org/software/S1017) can download the [Saint Bot](https://attack.mitre.org/software/S1018) malware for follow-on execution.(Citation: Palo Alto Unit 42 OutSteel SaintBot February 2022 )
+- [G1030] Agrius: [Agrius](https://attack.mitre.org/groups/G1030) downloaded some payloads for follow-on execution from legitimate filesharing services such as <code>ufile.io</code> and <code>easyupload.io</code>.(Citation: CheckPoint Agrius 2023)
+- [S0372] LockerGoga: [LockerGoga](https://attack.mitre.org/software/S0372) has been observed moving around the victim network via SMB, indicating the actors behind this ransomware are manually copying files form computer to computer instead of self-propagating.(Citation: Unit42 LockerGoga 2019)
+- [S0603] Stuxnet: [Stuxnet](https://attack.mitre.org/software/S0603) uses an RPC server that contains a file dropping routine and support for payload version updates for P2P communications within a victim network.(Citation: Nicolas Falliere, Liam O Murchu, Eric Chien February 2011)
+- [C0015] C0015: During [C0015](https://attack.mitre.org/campaigns/C0015), the threat actors used WMI to load [Cobalt Strike](https://attack.mitre.org/software/S0154) onto additional hosts within a compromised network.(Citation: DFIR Conti Bazar Nov 2021)
+- [G0096] APT41: [APT41](https://attack.mitre.org/groups/G0096) uses remote shares to move and remotely execute payloads during lateral movemement.(Citation: Rostovcev APT41 2021)
+- [S0106] cmd: [cmd](https://attack.mitre.org/software/S0106) can be used to copy files to/from a remotely connected internal system.(Citation: TechNet Copy)
+- [S0366] WannaCry: [WannaCry](https://attack.mitre.org/software/S0366) attempts to copy itself to remote computers after gaining access via an SMB exploit.(Citation: LogRhythm WannaCry)
 
