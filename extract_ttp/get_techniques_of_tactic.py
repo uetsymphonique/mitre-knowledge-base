@@ -39,7 +39,13 @@ def select_tactics(data: MitreAttackData, domain: str, mode: str, tactic_names: 
     return selected
 
 
-def write_tactic_markdown(data: MitreAttackData, domain: str, tactic, outdir: Path):
+def write_tactic_markdown(
+    data: MitreAttackData,
+    domain: str,
+    tactic,
+    outdir: Path,
+    description_only: bool,
+):
     tactic_name = MitreAttackData.get_field(tactic, "name")
     shortname = MitreAttackData.get_field(tactic, "x_mitre_shortname")
     stix_id = MitreAttackData.get_field(tactic, "id")
@@ -75,20 +81,21 @@ def write_tactic_markdown(data: MitreAttackData, domain: str, tactic, outdir: Pa
             lines.append("")
             lines.append(p_desc)
             lines.append("")
-        parent_procs = data.get_procedure_examples_by_technique(p_id)
-        if parent_procs:
-            lines.append("Procedures:")
-            lines.append("")
-            for r in parent_procs:
-                src_obj = data.get_object_by_stix_id(r.source_ref)
-                src_id = data.get_attack_id(src_obj.id) or ""
-                src_name = MitreAttackData.get_field(src_obj, "name") or ""
-                desc = (getattr(r, "description", "") or "").strip()
-                if src_id:
-                    lines.append(f"- [{src_id}] {src_name}: {desc}")
-                else:
-                    lines.append(f"- {src_name}: {desc}")
-            lines.append("")
+        if not description_only:
+            parent_procs = data.get_procedure_examples_by_technique(p_id)
+            if parent_procs:
+                lines.append("Procedures:")
+                lines.append("")
+                for r in parent_procs:
+                    src_obj = data.get_object_by_stix_id(r.source_ref)
+                    src_id = data.get_attack_id(src_obj.id) or ""
+                    src_name = MitreAttackData.get_field(src_obj, "name") or ""
+                    desc = (getattr(r, "description", "") or "").strip()
+                    if src_id:
+                        lines.append(f"- [{src_id}] {src_name}: {desc}")
+                    else:
+                        lines.append(f"- {src_name}: {desc}")
+                lines.append("")
 
         sub_entries = data.get_subtechniques_of_technique(p_id)
         sub_techniques = [e["object"] for e in sub_entries if e.get("object") and e["object"]["id"] in technique_ids]
@@ -109,20 +116,21 @@ def write_tactic_markdown(data: MitreAttackData, domain: str, tactic, outdir: Pa
                 lines.append("")
                 lines.append(s_desc)
                 lines.append("")
-            sub_procs = data.get_procedure_examples_by_technique(s_id)
-            if sub_procs:
-                lines.append("Procedures:")
-                lines.append("")
-                for r in sub_procs:
-                    src_obj = data.get_object_by_stix_id(r.source_ref)
-                    src_id = data.get_attack_id(src_obj.id) or ""
-                    src_name = MitreAttackData.get_field(src_obj, "name") or ""
-                    desc = (getattr(r, "description", "") or "").strip()
-                    if src_id:
-                        lines.append(f"- [{src_id}] {src_name}: {desc}")
-                    else:
-                        lines.append(f"- {src_name}: {desc}")
-                lines.append("")
+            if not description_only:
+                sub_procs = data.get_procedure_examples_by_technique(s_id)
+                if sub_procs:
+                    lines.append("Procedures:")
+                    lines.append("")
+                    for r in sub_procs:
+                        src_obj = data.get_object_by_stix_id(r.source_ref)
+                        src_id = data.get_attack_id(src_obj.id) or ""
+                        src_name = MitreAttackData.get_field(src_obj, "name") or ""
+                        desc = (getattr(r, "description", "") or "").strip()
+                        if src_id:
+                            lines.append(f"- [{src_id}] {src_name}: {desc}")
+                        else:
+                            lines.append(f"- {src_name}: {desc}")
+                    lines.append("")
         lines.append("")
 
     # Filename: prefer ATT&CK ID + shortname
@@ -160,6 +168,11 @@ def main():
     parser.add_argument("--mode", choices=["all", "tactic"], required=True, help="Select all tactics or a provided list")
     parser.add_argument("--tactics", nargs="*", default=[], help="Tactic names or shortnames (for mode=tactic). Accepts multiple or comma-separated.")
     parser.add_argument("--outdir", default="tactics", help="Output directory for Markdown files")
+    parser.add_argument(
+        "--description-only",
+        action="store_true",
+        help="Only include descriptions; omit procedures",
+    )
     args = parser.parse_args()
 
     data = MitreAttackData(args.stix)
@@ -168,7 +181,13 @@ def main():
     outdir = Path(args.outdir)
     written = []
     for tactic in selected:
-        fname = write_tactic_markdown(data, args.domain, tactic, outdir)
+        fname = write_tactic_markdown(
+            data,
+            args.domain,
+            tactic,
+            outdir,
+            description_only=args.description_only,
+        )
         written.append(fname)
 
     print(f"Wrote {len(written)} files to {outdir.resolve()}")
