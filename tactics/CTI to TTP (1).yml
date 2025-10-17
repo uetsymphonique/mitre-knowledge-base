@@ -1,0 +1,1940 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: CTI to TTP
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.2.6@e2665624a156f52160927bceac9e169bd7e5ae6b936ae82575e14c90af390e6e
+    version: null
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - remote_url
+      - local_file
+      enabled: true
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: document-extractor
+      id: 1760537392297-source-1760631834179-target
+      selected: false
+      source: '1760537392297'
+      sourceHandle: source
+      target: '1760631834179'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: llm
+      id: 1760631834179-source-1760631010166-target
+      selected: false
+      source: '1760631834179'
+      sourceHandle: source
+      target: '1760631010166'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: document-extractor
+      id: 1760537392297-source-1760632851135-target
+      selected: false
+      source: '1760537392297'
+      sourceHandle: source
+      target: '1760632851135'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: llm
+      id: 1760632851135-source-1760631010166-target
+      selected: false
+      source: '1760632851135'
+      sourceHandle: source
+      target: '1760631010166'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: iteration
+      id: 1760631010166-source-1760636768488-target
+      selected: false
+      source: '1760631010166'
+      sourceHandle: source
+      target: '1760636768488'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-true-1760637102784-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: 'true'
+      target: '1760637102784'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-fbc428f9-d96a-4b47-8b0a-7dcf759cf15b-1760637127295-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: fbc428f9-d96a-4b47-8b0a-7dcf759cf15b
+      target: '1760637127295'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-d7ee1f5f-ff77-44bd-b130-7a0a62e1cd8b-1760637176558-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: d7ee1f5f-ff77-44bd-b130-7a0a62e1cd8b
+      target: '1760637176558'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-373eb89e-e4b6-48d3-94e9-75bc22a61336-1760637233343-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: 373eb89e-e4b6-48d3-94e9-75bc22a61336
+      target: '1760637233343'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-7d49e592-3e13-47cf-95f7-9f2863f0838b-1760637274630-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: 7d49e592-3e13-47cf-95f7-9f2863f0838b
+      target: '1760637274630'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-a1109e4c-68a3-4c63-ae8a-43bc9d9ca0c4-1760637410343-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: a1109e4c-68a3-4c63-ae8a-43bc9d9ca0c4
+      target: '1760637410343'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-f4515664-4bd2-423b-bc10-dcba76ac7762-1760637529038-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: f4515664-4bd2-423b-bc10-dcba76ac7762
+      target: '1760637529038'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-95feb737-575d-4725-ab08-0bdb53414cf0-1760637611437-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: 95feb737-575d-4725-ab08-0bdb53414cf0
+      target: '1760637611437'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-b814ec20-af31-49a9-86cb-7cbc3d09383b-1760637648493-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: b814ec20-af31-49a9-86cb-7cbc3d09383b
+      target: '1760637648493'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-ff3fb724-3b1a-4253-8623-4fee6ec4af51-1760637678756-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: ff3fb724-3b1a-4253-8623-4fee6ec4af51
+      target: '1760637678756'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-204bb064-2f32-4670-b5a8-9637fe52019f-1760637706076-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: 204bb064-2f32-4670-b5a8-9637fe52019f
+      target: '1760637706076'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-bf24f53d-8e5c-4bff-863b-0536062afc64-1760637743172-target
+      selected: false
+      source: '1760636804176'
+      sourceHandle: bf24f53d-8e5c-4bff-863b-0536062afc64
+      target: '1760637743172'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-7d89a62f-f087-48b5-b3c5-bb8bc808e7ab-1760637868011-target
+      source: '1760636804176'
+      sourceHandle: 7d89a62f-f087-48b5-b3c5-bb8bc808e7ab
+      target: '1760637868011'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: if-else
+        targetType: document-extractor
+      id: 1760636804176-bd8e46aa-dac3-46bf-8ddd-b20b2a7a3636-1760637906934-target
+      source: '1760636804176'
+      sourceHandle: bd8e46aa-dac3-46bf-8ddd-b20b2a7a3636
+      target: '1760637906934'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637102784-source-1760637953123-target
+      source: '1760637102784'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637176558-source-1760637953123-target
+      source: '1760637176558'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637274630-source-1760637953123-target
+      source: '1760637274630'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637529038-source-1760637953123-target
+      source: '1760637529038'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637611437-source-1760637953123-target
+      source: '1760637611437'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637678756-source-1760637953123-target
+      source: '1760637678756'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637743172-source-1760637953123-target
+      source: '1760637743172'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637127295-source-1760637953123-target
+      source: '1760637127295'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637233343-source-1760637953123-target
+      source: '1760637233343'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637410343-source-1760637953123-target
+      source: '1760637410343'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637648493-source-1760637953123-target
+      source: '1760637648493'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637706076-source-1760637953123-target
+      source: '1760637706076'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637868011-source-1760637953123-target
+      source: '1760637868011'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: document-extractor
+        targetType: variable-aggregator
+      id: 1760637906934-source-1760637953123-target
+      source: '1760637906934'
+      sourceHandle: source
+      target: '1760637953123'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: variable-aggregator
+        targetType: llm
+      id: 1760637953123-source-1760638723049-target
+      source: '1760637953123'
+      sourceHandle: source
+      target: '1760638723049'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: end
+      id: 1760636768488-source-1760636011899-target
+      source: '1760636768488'
+      sourceHandle: source
+      target: '1760636011899'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: iteration-start
+        targetType: code
+      id: 1760636768488start-source-1760639570293-target
+      source: 1760636768488start
+      sourceHandle: source
+      target: '1760639570293'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        sourceType: code
+        targetType: if-else
+      id: 1760639570293-source-1760636804176-target
+      source: '1760639570293'
+      sourceHandle: source
+      target: '1760636804176'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    nodes:
+    - data:
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - image
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          default: ''
+          hint: ''
+          label: report
+          max_length: 1
+          options: []
+          placeholder: ''
+          required: true
+          type: file-list
+          variable: report
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          default:
+          - base64Url: ''
+            id: 0ba86057-d369-4169-89b3-3b49787730be
+            name: tactics.md
+            originalFile: {}
+            progress: 100
+            size: 8043
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 8307a830-5e7b-4ba8-b04b-ea4ce0774ed0
+          hint: ''
+          label: mitre_tactics
+          max_length: 1
+          options: []
+          placeholder: ''
+          required: false
+          type: file-list
+          variable: mitre_tactics
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: 63a0ac3f-255a-45fd-a9d9-5e85d7db9cb2
+            name: TA0043-reconnaissance.md
+            originalFile: {}
+            progress: 100
+            size: 88419
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 6037b8c8-dfbc-4008-a6d1-a91eed9f9f35
+          hint: ''
+          label: reconnaissance
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: reconnaissance
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: 3d3ab6c3-0cd1-4adc-8c20-98debde8cce5
+            name: TA0042-resource-development.md
+            originalFile: {}
+            progress: 100
+            size: 97124
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: f097aada-aa76-47cd-acc1-b14e835272ab
+          hint: ''
+          label: resource_development
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: resource_development
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: fd7fa142-ab61-4f2f-896e-3b9fd8ecc198
+            name: TA0001-initial-access.md
+            originalFile: {}
+            progress: 100
+            size: 46667
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: f52cd127-39a8-4a9b-9d9e-86b4a3841343
+          hint: ''
+          label: initial_access
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: initial_access
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: a49f4558-b369-4377-abec-a5208db34740
+            name: TA0002-execution.md
+            originalFile: {}
+            progress: 100
+            size: 90480
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 879e028a-2c68-4c79-8935-ed17fdb9932f
+          hint: ''
+          label: execution
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: execution
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: c6f5c430-1de6-43fb-9c15-9db359753edb
+            name: TA0003-persistence.md
+            originalFile: {}
+            progress: 100
+            size: 278365
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 2124868d-250b-45be-aea4-81e9186b43d0
+          hint: ''
+          label: persistence
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: persistence
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: daa74b4d-eaa4-44cc-b3e7-0ce4b27c9821
+            name: TA0004-privilege-escalation.md
+            originalFile: {}
+            progress: 100
+            size: 269163
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: a3e0da85-e2a0-4aa1-b50e-1c5669386d5f
+          hint: ''
+          label: privilege_escalation
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: privilege_escalation
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: cc23a8c8-00ee-46db-bcef-fd8f3ce0a8d4
+            name: TA0006-credential-access.md
+            originalFile: {}
+            progress: 100
+            size: 142740
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 487b4957-cc7a-478a-93e2-965fdb0121e9
+          hint: ''
+          label: credential_access
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: credential_access
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: 6641a38e-f2c7-499a-8eae-a4d316f45add
+            name: TA0007-discovery.md
+            originalFile: {}
+            progress: 100
+            size: 98119
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: f7f123ab-3969-4a51-9430-a9b13fba7afc
+          hint: ''
+          label: discovery
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: discovery
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: 9211f6ad-2f62-41a6-8c0a-bbe61176f034
+            name: TA0008-lateral-movement.md
+            originalFile: {}
+            progress: 100
+            size: 48893
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 2784e72e-7ab2-470e-b7b1-32c2a3c38006
+          hint: ''
+          label: lateral_movement
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: lateral_movement
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: 023f5d2e-c496-4fa0-bab2-d2cfc68e0ea0
+            name: TA0009-collection.md
+            originalFile: {}
+            progress: 100
+            size: 73297
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: cc0f6323-ee5d-4cc5-a283-444425c3ca8e
+          hint: ''
+          label: collection
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: collection
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: 45b287ab-7233-4c1c-89c8-e25c6e3f22ff
+            name: TA0011-command-and-control.md
+            originalFile: {}
+            progress: 100
+            size: 71784
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 31d2e023-c0fd-4047-b129-26f56182bdfd
+          hint: ''
+          label: command_and_control
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: command_and_control
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: 636543ea-53d0-44ad-9cb1-69d9b8ca7937
+            name: TA0010-exfiltration.md
+            originalFile: {}
+            progress: 100
+            size: 21728
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 79444854-486f-4a20-b6dd-a68c8ad11b3c
+          hint: ''
+          label: exfiltration
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: exfiltration
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: aa709a0f-a1d7-4ed2-8ef1-c4d6c3a342e8
+            name: TA0040-impact.md
+            originalFile: {}
+            progress: 100
+            size: 63309
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: b34155bd-feff-4a6f-8ed0-5b95cc496d8d
+          hint: ''
+          label: impact
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: impact
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - document
+          allowed_file_upload_methods:
+          - local_file
+          default:
+            base64Url: ''
+            id: 9dcfef0a-cd28-457c-b37f-da10146c04f4
+            name: TA0005-defense-evasion.md
+            originalFile: {}
+            progress: 100
+            size: 465764
+            supportFileType: document
+            transferMethod: local_file
+            type: ''
+            uploadedId: 6423688c-1fac-4c4d-bc63-af47d70c009c
+          hint: ''
+          label: defense_evasion
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: false
+          type: file
+          variable: defense_evasion
+      height: 478
+      id: '1760537392297'
+      position:
+        x: -53
+        y: 100
+      positionAbsolute:
+        x: -53
+        y: 100
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1760632851135'
+          - text
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: chatgpt-4o-latest
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: e71eb076-49ce-446e-a19a-aaef3113423b
+          role: system
+          text: "You are a top-tier purple teamer specializing in reading threat intelligence\
+            \ reports and extracting adversary behaviors, then mapping them to MITRE\
+            \ ATT&CK tactics.\n\n**TASK:**\nThoroughly analyze the report text provided\
+            \ below. For EACH technical behavior you identify, create a JSON object\
+            \ containing:\n1.  `behavior`: The exact sentences from the report describing\
+            \ that behavior. (in detail)\n2.  `tactic`: The most appropriate MITRE\
+            \ ATT&CK Tactic that corresponds to the **GOAL** of the behavior. (tactics\
+            \ are listed in {{#context#}})\n3.  `reason`: A short, clear sentence\
+            \ explaining the choice of tactic.\n\nYou must return a single JSON object\
+            \ with a single key \"ttps\" which contains a list of your findings. Ensure\
+            \ your output is strictly valid JSON.\n\n**EXAMPLE:**\n\n**Input Text\
+            \ Example:**\n\"After a successful intrusion via a phishing email with\
+            \ a malicious attachment, the attacker created a scheduled task named\
+            \ 'UpdateCheck' to ensure the malware re-executes on every system startup.\
+            \ They also used PowerShell to download additional tools from the C2 server.\"\
+            \n\n**Output JSON Example:**\n```json\n{\n  \"ttps\": [\n    {\n     \
+            \ \"behavior\": \"a successful intrusion via a phishing email with a malicious\
+            \ attachment\",\n      \"tactic\": \"Initial Access\",\n      \"reason\"\
+            : \"This behavior describes the method the adversary used to gain initial\
+            \ entry into the system.\"\n    },\n    {\n      \"behavior\": \"created\
+            \ a scheduled task named 'UpdateCheck' to ensure the malware re-executes\
+            \ on every system startup\",\n      \"tactic\": \"Persistence\",\n   \
+            \   \"reason\": \"The goal of creating a scheduled task is to maintain\
+            \ presence and access on the system across reboots.\"\n    },\n    {\n\
+            \      \"behavior\": \"used PowerShell to download additional tools from\
+            \ the C2 server\",\n      \"tactic\": \"Command and Control\",\n     \
+            \ \"reason\": \"This behavior involves fetching tools/payloads from adversary-controlled\
+            \ infrastructure, which is part of the command and control channel.\"\n\
+            \    }\n  ]\n}\nreport here: {{#1760631834179.text#}}"
+        selected: false
+        structured_output:
+          schema:
+            description: A list of adversary behaviors extracted from a report, mapped
+              to ATT&CK tactics.
+            properties:
+              ttps:
+                items:
+                  properties:
+                    behavior:
+                      description: The original sentences from the report that accurately
+                        describes the adversary's behavior.
+                      type: string
+                    tactic:
+                      description: The name of the MITRE ATT&CK Tactic corresponding
+                        to the behavior.
+                      enum:
+                      - TA0043 - Reconnaissance
+                      - TA0042 - Resource Development
+                      - TA0001 - Initial Access
+                      - TA0002 - Execution
+                      - TA0003 - Persistence
+                      - TA0004 - Privilege Escalation
+                      - TA0005 - Defense Evasion
+                      - TA0006 - Credential Access
+                      - TA0007 - Discovery
+                      - TA0008 - Lateral Movement
+                      - TA0009 - Collection
+                      - TA0011 - Command and Control
+                      - TA0010 - Exfiltration
+                      - TA0040 - Impact
+                      type: string
+                    tactic_reason:
+                      description: A brief explanation of why this behavior was mapped
+                        to that specific tactic.
+                      type: string
+                  required:
+                  - behavior
+                  - tactic
+                  - reason
+                  type: object
+                type: array
+            required:
+            - ttps
+            title: Extracted TTP List
+            type: object
+        structured_output_enabled: true
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 94
+      id: '1760631010166'
+      position:
+        x: 523.2143460128418
+        y: 100
+      positionAbsolute:
+        x: 523.2143460128418
+        y: 100
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_array_file: true
+        selected: false
+        title: Extract report
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - report
+      height: 92
+      id: '1760631834179'
+      position:
+        x: 242
+        y: 43
+      positionAbsolute:
+        x: 242
+        y: 43
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_array_file: true
+        selected: false
+        title: Extract ATT&CK tactics
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - mitre_tactics
+      height: 92
+      id: '1760632851135'
+      position:
+        x: 242
+        y: 186
+      positionAbsolute:
+        x: 242
+        y: 186
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        outputs:
+        - value_selector:
+          - '1760636768488'
+          - output
+          value_type: array[string]
+          variable: output
+        selected: false
+        title: End
+        type: end
+      height: 88
+      id: '1760636011899'
+      position:
+        x: 2683.265379325566
+        y: 440.3856976255248
+      positionAbsolute:
+        x: 2683.265379325566
+        y: 440.3856976255248
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        error_handle_mode: terminated
+        height: 1142
+        is_parallel: false
+        iterator_input_type: object
+        iterator_selector:
+        - '1760631010166'
+        - structured_output
+        - ttps
+        output_selector:
+        - '1760638723049'
+        - structured_output
+        output_type: array[object]
+        parallel_nums: 10
+        selected: false
+        start_node_id: 1760636768488start
+        title: Iteration
+        type: iteration
+        width: 1974.6572941241382
+      height: 1142
+      id: '1760636768488'
+      position:
+        x: 514.5265391623334
+        y: 447.73868553482953
+      positionAbsolute:
+        x: 514.5265391623334
+        y: 447.73868553482953
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 1975
+      zIndex: 1
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1760636768488start
+      parentId: '1760636768488'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 538.5265391623334
+        y: 515.7386855348295
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: 41f37b19-c3db-4aaa-a882-f5fc7607aa81
+            value: TA0001
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: 'true'
+          logical_operator: and
+        - case_id: fbc428f9-d96a-4b47-8b0a-7dcf759cf15b
+          conditions:
+          - comparison_operator: contains
+            id: 57eaa77e-4d29-427d-ad15-1d5337e7b1b0
+            value: TA0002
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: fbc428f9-d96a-4b47-8b0a-7dcf759cf15b
+          logical_operator: and
+        - case_id: d7ee1f5f-ff77-44bd-b130-7a0a62e1cd8b
+          conditions:
+          - comparison_operator: contains
+            id: e289becf-4120-4a3e-abe2-ad18f877e07f
+            value: TA0003
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: d7ee1f5f-ff77-44bd-b130-7a0a62e1cd8b
+          logical_operator: and
+        - case_id: 373eb89e-e4b6-48d3-94e9-75bc22a61336
+          conditions:
+          - comparison_operator: contains
+            id: 50b537cd-0367-4e93-b29e-eae0b7c3cec2
+            value: TA0004
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: 373eb89e-e4b6-48d3-94e9-75bc22a61336
+          logical_operator: and
+        - case_id: 7d49e592-3e13-47cf-95f7-9f2863f0838b
+          conditions:
+          - comparison_operator: contains
+            id: db7a03c5-7aad-4cbd-802f-0bfdafc23016
+            value: TA0005
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: 7d49e592-3e13-47cf-95f7-9f2863f0838b
+          logical_operator: and
+        - case_id: a1109e4c-68a3-4c63-ae8a-43bc9d9ca0c4
+          conditions:
+          - comparison_operator: contains
+            id: 92e6c0cf-3bf1-45e3-b4a5-eaa404f4cbec
+            value: TA0006
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: a1109e4c-68a3-4c63-ae8a-43bc9d9ca0c4
+          logical_operator: and
+        - case_id: f4515664-4bd2-423b-bc10-dcba76ac7762
+          conditions:
+          - comparison_operator: contains
+            id: c546344e-5950-41c5-9405-98eb9915bb07
+            value: TA0007
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: f4515664-4bd2-423b-bc10-dcba76ac7762
+          logical_operator: and
+        - case_id: 95feb737-575d-4725-ab08-0bdb53414cf0
+          conditions:
+          - comparison_operator: contains
+            id: ad20961b-74ca-4635-87bb-bc5a40671fd8
+            value: TA0008
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: 95feb737-575d-4725-ab08-0bdb53414cf0
+          logical_operator: and
+        - case_id: b814ec20-af31-49a9-86cb-7cbc3d09383b
+          conditions:
+          - comparison_operator: contains
+            id: 6be67c67-4f4b-4c25-a4e2-0f51ecce11f1
+            value: TA0009
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: b814ec20-af31-49a9-86cb-7cbc3d09383b
+          logical_operator: and
+        - case_id: ff3fb724-3b1a-4253-8623-4fee6ec4af51
+          conditions:
+          - comparison_operator: contains
+            id: 6949afe6-581e-40f0-a6a9-8d74204ddd7d
+            value: TA0010
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: ff3fb724-3b1a-4253-8623-4fee6ec4af51
+          logical_operator: and
+        - case_id: 204bb064-2f32-4670-b5a8-9637fe52019f
+          conditions:
+          - comparison_operator: contains
+            id: ed6cc05e-d4df-46af-8bc2-560e881fb679
+            value: TA0011
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: 204bb064-2f32-4670-b5a8-9637fe52019f
+          logical_operator: and
+        - case_id: bf24f53d-8e5c-4bff-863b-0536062afc64
+          conditions:
+          - comparison_operator: contains
+            id: 14f294b9-1e8a-4f31-99ae-e5583d61b246
+            value: TA0040
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: bf24f53d-8e5c-4bff-863b-0536062afc64
+          logical_operator: and
+        - case_id: 7d89a62f-f087-48b5-b3c5-bb8bc808e7ab
+          conditions:
+          - comparison_operator: contains
+            id: f6512bb8-c3bf-4aae-b075-ee25f251723f
+            value: TA0042
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: 7d89a62f-f087-48b5-b3c5-bb8bc808e7ab
+          logical_operator: and
+        - case_id: bd8e46aa-dac3-46bf-8ddd-b20b2a7a3636
+          conditions:
+          - comparison_operator: contains
+            id: 32014462-c575-481d-ad8e-b8b20ee71d7a
+            value: TA0043
+            varType: string
+            variable_selector:
+            - '1760639570293'
+            - stringified_ttp
+          id: bd8e46aa-dac3-46bf-8ddd-b20b2a7a3636
+          logical_operator: and
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: IF/ELSE
+        type: if-else
+      height: 748
+      id: '1760636804176'
+      parentId: '1760636768488'
+      position:
+        x: 428
+        y: 65.89483810206889
+      positionAbsolute:
+        x: 942.5265391623334
+        y: 513.6335236368984
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Initial Access
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - initial_access
+      height: 92
+      id: '1760637102784'
+      parentId: '1760636768488'
+      position:
+        x: 727.3609841784544
+        y: 65
+      positionAbsolute:
+        x: 1241.8875233407878
+        y: 512.7386855348295
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Execution
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - execution
+      height: 92
+      id: '1760637127295'
+      parentId: '1760636768488'
+      position:
+        x: 1081.5015329329165
+        y: 104.77260571832335
+      positionAbsolute:
+        x: 1596.0280720952499
+        y: 552.5112912531529
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Persistence
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - persistence
+      height: 92
+      id: '1760637176558'
+      parentId: '1760636768488'
+      position:
+        x: 724.7580755451015
+        y: 164.42595490065673
+      positionAbsolute:
+        x: 1239.284614707435
+        y: 612.1646404354863
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Privilege Escalation
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - privilege_escalation
+      height: 92
+      id: '1760637233343'
+      parentId: '1760636768488'
+      position:
+        x: 1083.1331775328788
+        y: 213.8353774859969
+      positionAbsolute:
+        x: 1597.6597166952122
+        y: 661.5740630208264
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Defense Evasion
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - defense_evasion
+      height: 92
+      id: '1760637274630'
+      parentId: '1760636768488'
+      position:
+        x: 722.064331460241
+        y: 264.6737645087395
+      positionAbsolute:
+        x: 1236.5908706225744
+        y: 712.412450043569
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Credential Access
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - credential_access
+      height: 92
+      id: '1760637410343'
+      parentId: '1760636768488'
+      position:
+        x: 1074.794536852422
+        y: 319.36121873717116
+      positionAbsolute:
+        x: 1589.3210760147554
+        y: 767.0999042720007
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Discovery
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - discovery
+      height: 92
+      id: '1760637529038'
+      parentId: '1760636768488'
+      position:
+        x: 723.8054325868329
+        y: 361.95418871538743
+      positionAbsolute:
+        x: 1238.3319717491663
+        y: 809.692874250217
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Lateral Movement
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - lateral_movement
+      height: 92
+      id: '1760637611437'
+      parentId: '1760636768488'
+      position:
+        x: 722.48592467606
+        y: 466.5640304999296
+      positionAbsolute:
+        x: 1237.0124638383934
+        y: 914.3027160347591
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Collection
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - collection
+      height: 92
+      id: '1760637648493'
+      parentId: '1760636768488'
+      position:
+        x: 1080.0725684955132
+        y: 420.74997045636223
+      positionAbsolute:
+        x: 1594.5991076578466
+        y: 868.4886559911918
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Exfiltration
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - exfiltration
+      height: 92
+      id: '1760637678756'
+      parentId: '1760636768488'
+      position:
+        x: 721.1664167652873
+        y: 563.2568248198344
+      positionAbsolute:
+        x: 1235.6929559276207
+        y: 1010.9955103546639
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Command and Control
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - command_and_control
+      height: 92
+      id: '1760637706076'
+      parentId: '1760636768488'
+      position:
+        x: 1081.3920764062864
+        y: 530.6378438839959
+      positionAbsolute:
+        x: 1595.9186155686198
+        y: 978.3765294188254
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Impact
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - impact
+      height: 92
+      id: '1760637743172'
+      parentId: '1760636768488'
+      position:
+        x: 719.8469088545144
+        y: 661.2691270505121
+      positionAbsolute:
+        x: 1234.3734480168478
+        y: 1109.0078125853415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Resource Development
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - resource_development
+      height: 92
+      id: '1760637868011'
+      parentId: '1760636768488'
+      position:
+        x: 1084.0310922278322
+        y: 641.8452252224025
+      positionAbsolute:
+        x: 1598.5576313901656
+        y: 1089.583910757232
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        is_array_file: false
+        iteration_id: '1760636768488'
+        selected: false
+        title: Reconnaissance
+        type: document-extractor
+        variable_selector:
+        - '1760537392297'
+        - reconnaissance
+      height: 92
+      id: '1760637906934'
+      parentId: '1760636768488'
+      position:
+        x: 1080.0725684955132
+        y: 763.2399530135083
+      positionAbsolute:
+        x: 1594.5991076578466
+        y: 1210.9786385483378
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        advanced_settings:
+          group_enabled: false
+          groups:
+          - groupId: ab48e946-adbb-4204-80bf-6f7b67062ac0
+            group_name: Group1
+            output_type: file
+            variables:
+            - - '1760637102784'
+              - text
+            - - '1760637127295'
+              - text
+            - - '1760637176558'
+              - text
+            - - '1760637274630'
+              - text
+            - - '1760637233343'
+              - text
+            - - '1760637410343'
+              - text
+            - - '1760637648493'
+              - text
+            - - '1760637706076'
+              - text
+            - - '1760637906934'
+              - text
+            - - '1760637868011'
+              - text
+            - - '1760637529038'
+              - text
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        output_type: string
+        selected: false
+        title: Variable Aggregator
+        type: variable-aggregator
+        variables:
+        - - '1760637102784'
+          - text
+        - - '1760637176558'
+          - text
+        - - '1760637274630'
+          - text
+        - - '1760637529038'
+          - text
+        - - '1760637611437'
+          - text
+        - - '1760637678756'
+          - text
+        - - '1760637743172'
+          - text
+        - - '1760637127295'
+          - text
+        - - '1760637233343'
+          - text
+        - - '1760637410343'
+          - text
+        - - '1760637648493'
+          - text
+        - - '1760637706076'
+          - text
+        - - '1760637868011'
+          - text
+        - - '1760637906934'
+          - text
+      height: 446
+      id: '1760637953123'
+      parentId: '1760636768488'
+      position:
+        x: 1438.4084365180504
+        y: 306.46994767143894
+      positionAbsolute:
+        x: 1952.9349756803838
+        y: 754.2086332062685
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1760637953123'
+          - output
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gpt-4o
+          provider: langgenius/openai/openai
+        prompt_template:
+        - id: c46a0a07-75c6-451b-8c8e-a85b9919e35c
+          role: system
+          text: "You are a senior MITRE ATT&CK analyst, specializing in mapping adversary\
+            \ behaviors to specific techniques.\n\n**TASK:**\nBased on the provided,\
+            \ partially-mapped TTP object, complete it by performing the following\
+            \ steps:\n1.  **Copy** the `behavior`, `tactic`, and `reason` fields.\
+            \ Rename the `reason` field to `tactic_reason`.\n2.  **Analyze and search**\
+            \ your ATT&CK knowledge base to find the single most specific **Technique**\
+            \ or **Sub-technique** that matches the behavior within the given tactic's\
+            \ scope. (Technique pool: {{#context#}})\n3.  **Add** the new fields:\
+            \ `technique_id`, `technique_name`, and `technique_reason`.\n\n**INPUT\
+            \ CONTEXT:**\n- **TTP Object to Enrich:** `{{#1760636768488.item#}}`\n\
+            \n**OUTPUT REQUIREMENTS:**\nReturn a single, valid JSON object that conforms\
+            \ to the required schema.\n\n**EXAMPLE:**\n\n**Input (`item` variable\
+            \ from the loop):**\n```json\n{\n  \"behavior\": \"created a scheduled\
+            \ task named 'UpdateCheck' to ensure the malware re-executes on every\
+            \ system startup\",\n  \"tactic\": \"Persistence\",\n  \"reason\": \"\
+            The goal of creating a scheduled task is to maintain presence and access\
+            \ on the system across reboots.\"\n}\n\n**output:**\n```json\n{\n  \"\
+            behavior\": \"created a scheduled task named 'UpdateCheck' to ensure the\
+            \ malware re-executes on every system startup\",\n  \"tactic\": \"Persistence\"\
+            ,\n  \"tactic_reason\": \"The goal of creating a scheduled task is to\
+            \ maintain presence and access on the system across reboots.\",\n  \"\
+            technique_id\": \"T1053.005\",\n  \"technique_name\": \"Scheduled Task\"\
+            ,\n  \"technique_reason\": \"The behavior directly involves the creation\
+            \ of a Windows Scheduled Task, which is the specific implementation of\
+            \ the Scheduled Task/Job technique for persistence on Windows.\"\n}"
+        selected: true
+        structured_output:
+          schema:
+            $schema: http://json-schema.org/draft-07/schema#
+            description: A complete TTP object, containing information from the Tactic
+              mapping and enriched with the Technique mapping details.
+            properties:
+              behavior:
+                description: The original sentences from the report that accurately
+                  describes the adversary's behavior.
+                type: string
+              tactic:
+                description: The name of the MITRE ATT&CK Tactic corresponding to
+                  the behavior.
+                type: string
+              tactic_reason:
+                description: A brief explanation of why this behavior was mapped to
+                  that specific tactic.
+                type: string
+              technique_id:
+                description: The unique ID of the mapped ATT&CK Technique or Sub-technique
+                  (e.g., T1053.005).
+                type: string
+              technique_name:
+                description: The official name of the mapped ATT&CK Technique or Sub-technique.
+                type: string
+              technique_reason:
+                description: A brief justification for selecting this specific technique.
+                type: string
+            required:
+            - behavior
+            - tactic
+            - tactic_reason
+            - technique_id
+            - technique_name
+            - technique_reason
+            title: Enriched TTP Object
+            type: object
+        structured_output_enabled: true
+        title: 'Mapping Techniques '
+        type: llm
+        vision:
+          enabled: false
+      height: 94
+      id: '1760638723049'
+      parentId: '1760636768488'
+      position:
+        x: 1716.6572941241382
+        y: 346.05518499462573
+      positionAbsolute:
+        x: 2231.183833286472
+        y: 793.7938705294553
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        code: "def main(item) -> str:\n  import json\n  stringified_ttp = json.dumps(item,\
+          \ ensure_ascii=False, indent=2)\n  return {\"stringified_ttp\": stringified_ttp}"
+        code_language: python3
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1760636768488'
+        outputs:
+          stringified_ttp:
+            children: null
+            type: string
+        selected: false
+        title: Code
+        type: code
+        variables:
+        - value_selector:
+          - '1760636768488'
+          - item
+          value_type: string
+          variable: item
+      height: 52
+      id: '1760639570293'
+      parentId: '1760636768488'
+      position:
+        x: 128
+        y: 65
+      positionAbsolute:
+        x: 642.5265391623334
+        y: 512.7386855348295
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    viewport:
+      x: 83.26406645352631
+      y: 76.95926106818145
+      zoom: 0.43527528164806234
+  rag_pipeline_variables: []
