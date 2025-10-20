@@ -123,6 +123,12 @@ def main():
         default="json",
         help="Output format: json (structured) or stringify (human-readable .txt)",
     )
+    parser.add_argument(
+        "--stringify-chunk-size",
+        type=int,
+        default=None,
+        help="When --format stringify: split output into chunks of at most N objects",
+    )
     args = parser.parse_args()
 
     md_files = collect_md_files(args.inputs)
@@ -176,10 +182,17 @@ def main():
             # Write NDJSON-style: one JSON object per line, compact
             if out_path.suffix.lower() != ".txt":
                 out_path = out_path.with_suffix(".txt")
-            lines = [
-                json.dumps(obj, ensure_ascii=False, separators=(",", ":")) for obj in all_objects
-            ]
-            out_path.write_text("\n".join(lines), encoding="utf-8")
+            lines = [json.dumps(obj, ensure_ascii=False, separators=(",", ":")) for obj in all_objects]
+            chunk_size = args.stringify_chunk_size if args.stringify_chunk_size and args.stringify_chunk_size > 0 else None
+            if chunk_size:
+                base = out_path.parent / out_path.stem
+                for i in range(0, len(lines), chunk_size):
+                    part_idx = i // chunk_size + 1
+                    part_path = Path(f"{base}.part{part_idx}.txt")
+                    part_path.write_text("\n".join(lines[i : i + chunk_size]), encoding="utf-8")
+                print(f"Stringify chunks written with chunk size {chunk_size}")
+            else:
+                out_path.write_text("\n".join(lines), encoding="utf-8")
         else:
             # JSON output
             with out_path.open("w", encoding="utf-8") as f:
@@ -197,11 +210,16 @@ def main():
         objects = parse_markdown(md_path)
         total_objects += len(objects)
         if args.format == "stringify":
-            out_path = outdir / (md_path.stem + ".txt")
-            lines = [
-                json.dumps(obj, ensure_ascii=False, separators=(",", ":")) for obj in objects
-            ]
-            out_path.write_text("\n".join(lines), encoding="utf-8")
+            lines = [json.dumps(obj, ensure_ascii=False, separators=(",", ":")) for obj in objects]
+            chunk_size = args.stringify_chunk_size if args.stringify_chunk_size and args.stringify_chunk_size > 0 else None
+            if chunk_size:
+                for i in range(0, len(lines), chunk_size):
+                    part_idx = i // chunk_size + 1
+                    out_path = outdir / f"{md_path.stem}.part{part_idx}.txt"
+                    out_path.write_text("\n".join(lines[i : i + chunk_size]), encoding="utf-8")
+            else:
+                out_path = outdir / (md_path.stem + ".txt")
+                out_path.write_text("\n".join(lines), encoding="utf-8")
         else:
             out_path = outdir / (md_path.stem + ".json")
             with out_path.open("w", encoding="utf-8") as f:
