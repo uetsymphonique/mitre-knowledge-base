@@ -44,7 +44,9 @@ def write_tactic_markdown(
     domain: str,
     tactic,
     outdir: Path,
-    description_only: bool,
+    include_detection: bool,
+    include_procedures: bool,
+    procedures_top: int | None,
 ):
     tactic_name = MitreAttackData.get_field(tactic, "name")
     shortname = MitreAttackData.get_field(tactic, "x_mitre_shortname")
@@ -74,15 +76,24 @@ def write_tactic_markdown(
         else:
             lines.append(f"### {p_name}")
         lines.append("")
-        # Parent technique description and procedures
+        # Parent technique description, detection, and procedures (conditional)
         p_desc = (MitreAttackData.get_field(parent, "description") or "").strip()
         if p_desc:
             lines.append("Description:")
             lines.append("")
             lines.append(p_desc)
             lines.append("")
-        if not description_only:
+        if include_detection:
+            p_det = (MitreAttackData.get_field(parent, "x_mitre_detection") or "").strip()
+            if p_det:
+                lines.append("Detection:")
+                lines.append("")
+                lines.append(p_det)
+                lines.append("")
+        if include_procedures:
             parent_procs = data.get_procedure_examples_by_technique(p_id)
+            if procedures_top is not None and procedures_top > 0:
+                parent_procs = parent_procs[:procedures_top]
             if parent_procs:
                 lines.append("Procedures:")
                 lines.append("")
@@ -105,10 +116,11 @@ def write_tactic_markdown(
             s_name = MitreAttackData.get_field(s, "name")
             s_id = MitreAttackData.get_field(s, "id")
             s_tid = data.get_attack_id(s_id) or ""
+            full_sub_name = f"{p_name}: {s_name}" if s_name else p_name
             if s_tid:
-                lines.append(f"#### {s_tid} - {s_name}")
+                lines.append(f"#### {s_tid} - {full_sub_name}")
             else:
-                lines.append(f"#### {s_name}")
+                lines.append(f"#### {full_sub_name}")
             lines.append("")
             s_desc = (MitreAttackData.get_field(s, "description") or "").strip()
             if s_desc:
@@ -116,8 +128,17 @@ def write_tactic_markdown(
                 lines.append("")
                 lines.append(s_desc)
                 lines.append("")
-            if not description_only:
+            if include_detection:
+                s_det = (MitreAttackData.get_field(s, "x_mitre_detection") or "").strip()
+                if s_det:
+                    lines.append("Detection:")
+                    lines.append("")
+                    lines.append(s_det)
+                    lines.append("")
+            if include_procedures:
                 sub_procs = data.get_procedure_examples_by_technique(s_id)
+                if procedures_top is not None and procedures_top > 0:
+                    sub_procs = sub_procs[:procedures_top]
                 if sub_procs:
                     lines.append("Procedures:")
                     lines.append("")
@@ -168,10 +189,13 @@ def main():
     parser.add_argument("--mode", choices=["all", "tactic"], required=True, help="Select all tactics or a provided list")
     parser.add_argument("--tactics", nargs="*", default=[], help="Tactic names or shortnames (for mode=tactic). Accepts multiple or comma-separated.")
     parser.add_argument("--outdir", default="tactics", help="Output directory for Markdown files")
+    parser.add_argument("--detection", action="store_true", help="Include Detection sections")
+    parser.add_argument("--procedures", action="store_true", help="Include Procedures sections")
     parser.add_argument(
-        "--description-only",
-        action="store_true",
-        help="Only include descriptions; omit procedures",
+        "--procedures-top",
+        type=int,
+        default=None,
+        help="Limit number of procedure examples per (sub)technique",
     )
     args = parser.parse_args()
 
@@ -180,13 +204,17 @@ def main():
 
     outdir = Path(args.outdir)
     written = []
+    top_n = args.procedures_top if args.procedures_top and args.procedures_top > 0 else None
+
     for tactic in selected:
         fname = write_tactic_markdown(
             data,
             args.domain,
             tactic,
             outdir,
-            description_only=args.description_only,
+            include_detection=args.detection,
+            include_procedures=args.procedures,
+            procedures_top=top_n,
         )
         written.append(fname)
 
