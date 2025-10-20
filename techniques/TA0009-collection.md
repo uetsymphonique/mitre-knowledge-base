@@ -1,0 +1,1533 @@
+### T1005 - Data from Local System
+
+Description:
+
+Adversaries may search local system sources, such as file systems, configuration files, local databases, or virtual machine files, to find files of interest and sensitive data prior to Exfiltration. Adversaries may do this using a Command and Scripting Interpreter, such as cmd as well as a Network Device CLI, which have functionality to interact with the file system to gather information. Adversaries may also use Automated Collection on the local system.
+
+Detection:
+
+Monitor processes and command-line arguments for actions that could be taken to collect files from a system. Remote access tools with built-in features may interact directly with the Windows API to gather data. Further, Network Device CLI commands may also be used to collect files such as configuration files with built-in features native to the network device platform. Monitor CLI activity for unexpected or unauthorized use commands being run by non-standard users from non-standard locations. Data may also be acquired through Windows system management tools such as Windows Management Instrumentation and PowerShell. For network infrastructure devices, collect AAA logging to monitor `show` commands that view configuration files.
+
+Procedures:
+
+- [S1196] Troll Stealer: Troll Stealer gathers information from infected systems such as SSH information from the victim's `.ssh` directory. Troll Stealer collects information from local FileZilla installations and Microsoft Sticky Note.
+- [G0094] Kimsuky: Kimsuky has collected Office, PDF, and HWP documents from its victims.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has exfiltrated files stolen from local systems.
+- [S0238] Proxysvc: Proxysvc searches the local system and gathers data.
+- [S0502] Drovorub: Drovorub can transfer files from the victim machine.
+- [S0498] Cryptoistic: Cryptoistic can retrieve files from the local file system.
+- [S0653] xCaon: xCaon has uploaded files from victims' machines.
+- [G1004] LAPSUS$: LAPSUS$ uploaded sensitive files, information, and credentials from a targeted organization for extortion or public release.
+- [C0048] Operation MidnightEclipse: During Operation MidnightEclipse, threat actors stole saved cookies and login data from targeted systems.
+- [G0087] APT39: APT39 has used various tools to steal files from the compromised host.
+- [S0650] QakBot: QakBot can use a variety of commands, including esentutl.exe to steal sensitive data from Internet Explorer and Microsoft Edge, to acquire information that is subsequently exfiltrated.
+- [S1043] ccf32: ccf32 can collect files from a compromised host.
+- [S0567] Dtrack: Dtrack can collect a variety of information from victim machines.
+- [S0239] Bankshot: Bankshot collects files from the local system.
+- [S0128] BADNEWS: When it first starts, BADNEWS crawls the victim's local drives and collects documents with the following extensions: .doc, .docx, .pdf, .ppt, .pptx, and .txt.
+- [G0125] HAFNIUM: HAFNIUM has collected data and files from a compromised machine.
+- [S1064] SVCReady: SVCReady can collect data from an infected host.
+- [S0448] Rising Sun: Rising Sun has collected data and files from a compromised host.
+- [S0197] PUNCHTRACK: PUNCHTRACK scrapes memory for properly formatted payment card data.
+- [S0020] China Chopper: China Chopper's server component can upload local files.
+- [G0001] Axiom: Axiom has collected data from a compromised network.
+- [G0049] OilRig: OilRig has used PowerShell to upload files from compromised systems.
+- [S0022] Uroburos: Uroburos can use its `Get` command to exfiltrate specified files from the compromised system.
+- [S0340] Octopus: Octopus can exfiltrate files from the system using a documents collector tool.
+- [S0036] FLASHFLOOD: FLASHFLOOD searches for interesting files (either a default or customized set of file extensions) on the local system. FLASHFLOOD will scan the My Recent Documents, Desktop, Temporary Internet Files, and TEMP directories. FLASHFLOOD also collects information stored in the Windows Address Book.
+- [S0598] P.A.S. Webshell: P.A.S. Webshell has the ability to copy files on a compromised host.
+- [G1022] ToddyCat: ToddyCat has run scripts to collect documents from targeted hosts.
+- [S0154] Cobalt Strike: Cobalt Strike can collect data from a local system.
+- [G0124] Windigo: Windigo has used a script to gather credentials in files left on disk by OpenSSH backdoors.
+- [S0632] GrimAgent: GrimAgent can collect data and files from a compromised host.
+- [S1090] NightClub: NightClub can use a file monitor to steal specific files from targeted systems.
+- [S0630] Nebulae: Nebulae has the capability to upload collected files to C2.
+- [S0356] KONNI: KONNI has stored collected information and discovered processes in a tmp file.
+- [S0670] WarzoneRAT: WarzoneRAT can collect data from a compromised host.
+- [S1031] PingPull: PingPull can collect data from a compromised host.
+- [S0194] PowerSploit: PowerSploit contains a collection of Exfiltration modules that can access data from local files, volumes, and processes.
+- [C0002] Night Dragon: During Night Dragon, the threat actors collected files and other data from compromised systems.
+- [S1113] RAPIDPULSE: RAPIDPULSE retrieves files from the victim system via encrypted commands sent to the web shell.
+- [G0117] Fox Kitten: Fox Kitten has searched local system resources to access sensitive documents.
+- [S0572] Caterpillar WebShell: Caterpillar WebShell has a module to collect information from the local database.
+- [G0138] Andariel: Andariel has collected large numbers of files from compromised network systems for later extraction.
+- [G1039] RedCurl: RedCurl has collected data from the local disk of compromised hosts.
+- [S1025] Amadey: Amadey can collect information from a compromised host.
+- [S0520] BLINDINGCAN: BLINDINGCAN has uploaded files from victim machines.
+- [G0006] APT1: APT1 has collected files from a local victim.
+- [G0093] GALLIUM: GALLIUM collected data from the victim's local system, including password hashes from the SAM hive in the Registry.
+- [S0615] SombRAT: SombRAT has collected data and files from a compromised host.
+- [G0016] APT29: APT29 has stolen data from compromised hosts.
+- [G0032] Lazarus Group: Lazarus Group has collected data and files from compromised networks.
+- [S0458] Ramsay: Ramsay can collect Microsoft Word documents from the target's file system, as well as .txt, .doc, and .xls files from the Internet Explorer cache.
+- [S1148] Raccoon Stealer: Raccoon Stealer collects data from victim machines based on configuration information received from command and control nodes.
+- [S0652] MarkiRAT: MarkiRAT can upload data from the victim's machine to the C2 server.
+- [G0047] Gamaredon Group: Gamaredon Group has collected files from infected systems and uploaded them to a C2 server.
+- [G1030] Agrius: Agrius gathered data from database and other critical servers in victim environments, then used wiping mechanisms as an anti-analysis and anti-forensics mechanism.
+- [S1017] OutSteel: OutSteel can collect information from a compromised host.
+- [S0514] WellMess: WellMess can send files from the victim machine to C2.
+- [G0037] FIN6: FIN6 has collected and exfiltrated payment card data from compromised systems.
+- [S1160] Latrodectus: Latrodectus can collect data from a compromised host using a stealer module.
+- [G0143] Aquatic Panda: Aquatic Panda captured local Windows security event log data from victim machines using the wevtutil utility to extract contents to an evtx output file.
+- [S1060] Mafalda: Mafalda can collect files and information from a compromised host.
+- [S0663] SysUpdate: SysUpdate can collect information and files from a compromised host.
+- [S0248] yty: yty collects files with the following extensions: .ppt, .pptx, .pdf, .doc, .docx, .xls, .xlsx, .docm, .rtf, .inp, .xlsm, .csv, .odt, .pps, .vcf and sends them back to the C2 server.
+- [S1039] Bumblebee: Bumblebee can capture and compress stolen credentials from the Registry and volume shadow copies.
+- [S0634] EnvyScout: EnvyScout can collect sensitive NTLM material from a compromised host.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors exfiltrated files and directories of interest from the targeted system.
+- [G0010] Turla: Turla RPC backdoors can upload files from victim machines.
+- [S0203] Hydraq: Hydraq creates a backdoor through which remote attackers can read data from files.
+- [S0559] SUNBURST: SUNBURST collected information from a compromised host.
+- [S0661] FoggyWeb: FoggyWeb can retrieve configuration data from a compromised AD FS server.
+- [S0687] Cyclops Blink: Cyclops Blink can upload files from a compromised host.
+- [S1012] PowerLess: PowerLess has the ability to exfiltrate data, including Chrome and Edge browser database files, from compromised machines.
+- [G0096] APT41: APT41 has uploaded files and data from a compromised host.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can collect files from compromised hosts.
+- [S0694] DRATzarus: DRATzarus can collect information from a compromised host.
+- [C0015] C0015: During C0015, the threat actors obtained files and data from the compromised network.
+- [S1085] Sardonic: Sardonic has the ability to collect data from a compromised machine to deliver to the attacker.
+- [S1111] DarkGate: DarkGate has stolen `sitemanager.xml` and `recentservers.xml` from `%APPDATA%\FileZilla\` if present.
+- [S1146] MgBot: MgBot includes modules for collecting files from local systems based on a given set of properties and filenames.
+- [S0564] BlackMould: BlackMould can copy files on a compromised host.
+- [S0079] MobileOrder: MobileOrder exfiltrates data collected from the victim mobile device.
+- [S0412] ZxShell: ZxShell can transfer files from a compromised host.
+- [S0534] Bazar: Bazar can retrieve information from the infected machine.
+- [S0646] SpicyOmelette: SpicyOmelette has collected data and other information from a compromised host.
+- [S1089] SharpDisco: SharpDisco has dropped a recent-files stealer plugin to `C:\Users\Public\WinSrcNT\It11.exe`.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group used malicious Trojans and DLL files to exfiltrate data from an infected host.
+- [S1014] DanBot: DanBot can upload files from compromised hosts.
+- [S0260] InvisiMole: InvisiMole can collect data from the system, and can monitor changes in specified directories.
+- [S0115] Crimson: Crimson can collect information from a compromised host.
+- [S0533] SLOTHFULMEDIA: SLOTHFULMEDIA has uploaded files and information from victim machines.
+- [S0622] AppleSeed: AppleSeed can collect data on a compromised host.
+- [S1016] MacMa: MacMa can collect then exfiltrate files from the compromised system.
+- [S1110] SLIGHTPULSE: SLIGHTPULSE can read files specified on the local system.
+- [G1014] LuminousMoth: LuminousMoth has collected files and data from compromised machines.
+- [G0067] APT37: APT37 has collected data from victims' local systems.
+- [S1131] NPPSPY: NPPSPY records data entered from the local system logon at Winlogon to capture credentials in cleartext.
+- [S0696] Flagpro: Flagpro can collect data from a compromised host, including Windows authentication information.
+- [S0011] Taidoor: Taidoor can upload data and files from a victim's machine.
+- [S1022] IceApple: IceApple can collect files, passwords, and other data from a compromised host.
+- [S0083] Misdat: Misdat has collected files and data from a compromised host.
+- [S0671] Tomiris: Tomiris has the ability to collect recent files matching a hardcoded list of extensions prior to exfiltration.
+- [G0035] Dragonfly: Dragonfly has collected data from local victim systems.
+- [G1012] CURIUM: CURIUM has exfiltrated data from a compromised machine.
+- [S1019] Shark: Shark can upload files to its C2.
+- [S1065] Woody RAT: Woody RAT can collect information from a compromised host.
+- [S0658] XCSSET: XCSSET collects contacts and application data from files in Desktop, Documents, Downloads, Dropbox, and WeChat folders.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 extracted files from compromised networks.
+- [G0007] APT28: APT28 has retrieved internal documents from machines inside victim environments, including by using Forfiles to stage documents before exfiltration.
+- [S0651] BoxCaon: BoxCaon can upload files from a compromised host.
+- [S1063] Brute Ratel C4: Brute Ratel C4 has the ability to upload files from a compromised system.
+- [S1029] AuTo Stealer: AuTo Stealer can collect data such as PowerPoint files, Word documents, Excel files, PDF files, text files, database files, and image files from an infected machine.
+- [S0461] SDBbot: SDBbot has the ability to access the file system on a compromised host.
+- [S0262] QuasarRAT: QuasarRAT can retrieve files from compromised client machines.
+- [S0386] Ursnif: Ursnif has collected files from victim machines, including certificates and cookies.
+- [S0090] Rover: Rover searches for files on local drives based on a predefined list of file extensions.
+- [S0503] FrameworkPOS: FrameworkPOS can collect elements related to credit card data from process memory.
+- [C0017] C0017: During C0017, APT41 collected information related to compromised machines as well as Personal Identifiable Information (PII) from victim networks.
+- [S0274] Calisto: Calisto can collect data from user directories.
+- [S0266] TrickBot: TrickBot collects local files and information from the victim’s local machine.
+- [S0268] Bisonal: Bisonal has collected information from a compromised host.
+- [G0100] Inception: Inception used a file hunting plugin to collect .txt, .pdf, .xls or .doc files from the infected host.
+- [S1050] PcShare: PcShare can collect files and information from a compromised host.
+- [S1026] Mongall: Mongall has the ability to upload files from victim's machines.
+- [S1132] IPsec Helper: IPsec Helper can identify specific files and folders for follow-on exfiltration.
+- [G0004] Ke3chang: Ke3chang gathered information and files from local directories for exfiltration.
+- [G0040] Patchwork: Patchwork collected and exfiltrated files from the infected system.
+- [S0665] ThreatNeedle: ThreatNeedle can collect data and files from a compromised host.
+- [S1159] DUSTTRAP: DUSTTRAP can gather data from infected systems.
+- [G0022] APT3: APT3 will identify Microsoft Office documents on the victim's computer.
+- [S0395] LightNeuron: LightNeuron can collect files from a local system.
+- [S0169] RawPOS: RawPOS dumps memory from specific processes on a victim system, parses the dumped files, and scrapes them for credit card data.
+- [S1021] DnsSystem: DnsSystem can upload files from infected machines after receiving a command with `uploaddd` in the string.
+- [S0193] Forfiles: Forfiles can be used to act on (ex: copy, move, etc.) files/directories in a system during (ex: copy files into a staging area before).
+- [S0512] FatDuke: FatDuke can copy files and directories from a compromised host.
+- [S1020] Kevin: Kevin can upload logs and other data from a compromised host.
+- [S0645] Wevtutil: Wevtutil can be used to export events from a specific log.
+- [S0223] POWERSTATS: POWERSTATS can upload files from compromised hosts.
+- [S0610] SideTwist: SideTwist has the ability to upload files from a compromised host.
+- [S0690] Green Lambert: Green Lambert can collect data from a compromised host.
+- [S1059] metaMain: metaMain can collect files and system information from a compromised host.
+- [S0691] Neoichor: Neoichor can upload files from a victim's machine.
+- [S0672] Zox: Zox has the ability to upload files from a targeted system.
+- [S0673] DarkWatchman: DarkWatchman can collect files from a compromised host.
+- [S0666] Gelsemium: Gelsemium can collect data from a compromised host.
+- [S1015] Milan: Milan can upload files from a compromised host.
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors collected data from compromised hosts.
+- [S1101] LoFiSe: LoFiSe can collect files of interest from targeted systems.
+- [S0642] BADFLICK: BADFLICK has uploaded files from victims' machines.
+- [S0674] CharmPower: CharmPower can collect data and files from a compromised host.
+- [S0084] Mis-Type: Mis-Type has collected files and data from a compromised host.
+- [S0594] Out1: Out1 can copy files and Registry data from compromised hosts.
+- [G0027] Threat Group-3390: Threat Group-3390 ran a command to compile an archive of file types of interest from the victim user's directories.
+- [S1023] CreepyDrive: CreepyDrive can upload files to C2 from victim machines.
+- [S0237] GravityRAT: GravityRAT steals files with the following extensions: .docx, .doc, .pptx, .ppt, .xlsx, .xls, .rtf, and .pdf.
+- [S0492] CookieMiner: CookieMiner has retrieved iPhone text messages from iTunes phone backup files.
+- [S0686] QuietSieve: QuietSieve can collect files from a compromised host.
+- [S0452] USBferry: USBferry can collect information from an air-gapped host machine.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors stole the running configuration and cache data from targeted Ivanti Connect Secure VPNs.
+- [S0668] TinyTurla: TinyTurla can upload files from a compromised host.
+- [S0409] Machete: Machete searches the File system for files of interest.
+- [C0001] Frankenstein: During Frankenstein, the threat actors used Empire to gather various local system information.
+- [G0046] FIN7: FIN7 has collected files and other sensitive information from a compromised network.
+- [S1200] StealBit: StealBit can upload data and files to the LockBit victim-shaming site.
+- [S0517] Pillowmint: Pillowmint has collected credit card data using native API functions.
+- [S0477] Goopy: Goopy has the ability to exfiltrate documents from infected systems.
+- [S0012] PoisonIvy: PoisonIvy creates a backdoor through which remote attackers can steal system information.
+- [S0500] MCMD: MCMD has the ability to upload files from an infected device.
+- [G1003] Ember Bear: Ember Bear gathers victim system information such as enumerating the volume of a given device or extracting system and security event logs for analysis.
+- [C0004] CostaRicto: During CostaRicto, the threat actors collected data and files from compromised networks.
+- [S0662] RCSession: RCSession can collect data from a compromised host.
+- [S1044] FunnyDream: FunnyDream can upload files from victims' machines.
+- [S0015] Ixeshe: Ixeshe can collect data from a local system.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D has the ability to upload files from a compromised host.
+- [S0538] Crutch: Crutch can exfiltrate files from compromised systems.
+- [S0250] Koadic: Koadic can download files off the target system to send back to the server.
+- [G0038] Stealth Falcon: Stealth Falcon malware gathers data from the local victim system.
+- [S0240] ROKRAT: ROKRAT can collect host data and specific file types.
+- [G0082] APT38: APT38 has collected data from a compromised host.
+- [S0381] FlawedAmmyy: FlawedAmmyy has collected information and files from a compromised machine.
+- [G1017] Volt Typhoon: Volt Typhoon has stolen files from a sensitive file server and the Active Directory database from targeted environments, and used Wevtutil to extract event log information.
+- [S0211] Linfo: Linfo creates a backdoor through which remote attackers can obtain data from local systems.
+- [S0444] ShimRat: ShimRat has the capability to upload collected files to a C2.
+- [S0048] PinchDuke: PinchDuke collects user files from the compromised host based on predefined file extensions.
+- [S0667] Chrommme: Chrommme can collect data from a local system.
+- [S0050] CosmicDuke: CosmicDuke steals user files from local hard drives with file extensions that match a predefined list.
+- [S0337] BadPatch: BadPatch collects files from the local system that have the following extensions, then prepares them for exfiltration: .xls, .xlsx, .pdf, .mdb, .rar, .zip, .doc, .docx.
+- [S0404] esentutl: esentutl can be used to collect data from local file systems.
+- [S0009] Hikit: Hikit can upload files from compromised machines.
+- [S1013] ZxxZ: ZxxZ can collect data from a compromised host.
+- [G0045] menuPass: menuPass has collected various files from the compromised computers.
+- [G0102] Wizard Spider: Wizard Spider has collected data from a compromised host prior to exfiltration.
+- [S0265] Kazuar: Kazuar uploads files from a specified directory to the C2 server.
+- [S0208] Pasam: Pasam creates a backdoor through which remote attackers can retrieve files.
+- [S0526] KGH_SPY: KGH_SPY can send a file containing victim system information to C2.
+- [G0059] Magic Hound: Magic Hound has used a web shell to exfiltrate a ZIP file containing a dump of LSASS memory on a compromised machine.
+- [S0467] TajMahal: TajMahal has the ability to steal documents from the local system including the print spooler queue.
+- [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors collected data, files, and other information from compromised networks.
+- [G0070] Dark Caracal: Dark Caracal collected complete contents of the 'Pictures' folder from compromised Windows systems.
+- [S1037] STARWHALE: STARWHALE can collect data from an infected local host.
+- [S1075] KOPILUWAK: KOPILUWAK can gather information from compromised hosts.
+- [S0660] Clambling: Clambling can collect information from a compromised host.
+- [S0515] WellMail: WellMail can exfiltrate files from the victim machine.
+- [S0629] RainyDay: RainyDay can use a file exfiltration tool to collect recently changed files on a compromised host.
+- [S1034] StrifeWater: StrifeWater can collect data from a compromised host.
+- [S0234] Bandook: Bandook can collect local files from the system .
+- [G0034] Sandworm Team: Sandworm Team has exfiltrated internal documents, files, and other data from compromised hosts.
+- [S1028] Action RAT: Action RAT can collect local data from an infected machine.
+- [S1102] Pcexter: Pcexter can upload files from targeted systems.
+- [G1016] FIN13: FIN13 has gathered stolen credentials, sensitive data such as point-of-sale (POS), and ATM data from a compromised network before exfiltration.
+- [S0385] njRAT: njRAT can collect data from a local system.
+- [S1099] Samurai: Samurai can leverage an exfiltration module to download arbitrary files from compromised machines.
+- [S1018] Saint Bot: Saint Bot can collect files and information from a compromised host.
+- [C0026] C0026: During C0026, the threat actors collected documents from compromised hosts.
+
+
+### T1025 - Data from Removable Media
+
+Description:
+
+Adversaries may search connected removable media on computers they have compromised to find files of interest. Sensitive data can be collected from any removable media (optical disk drive, USB memory, etc.) connected to the compromised system prior to Exfiltration. Interactive command shells may be in use, and common functionality within cmd may be used to gather information. Some adversaries may also use Automated Collection on removable media.
+
+Detection:
+
+Monitor processes and command-line arguments for actions that could be taken to collect files from a system's connected removable media. Remote access tools with built-in features may interact directly with the Windows API to gather data. Data may also be acquired through Windows system management tools such as Windows Management Instrumentation and PowerShell.
+
+Procedures:
+
+- [S0136] USBStealer: Once a removable media device is inserted back into the first victim, USBStealer collects data from it that was exfiltrated from a second victim.
+- [S0260] InvisiMole: InvisiMole can collect jpeg files from connected MTP devices.
+- [S0456] Aria-body: Aria-body has the ability to collect data from USB devices.
+- [G0049] OilRig: OilRig has used Wireshark’s usbcapcmd utility to capture USB traffic.
+- [S0569] Explosive: Explosive can scan all .exe files located in the USB drive.
+- [S0237] GravityRAT: GravityRAT steals files based on an extension list if a USB drive is connected to the system.
+- [S0090] Rover: Rover searches for files on attached removable drives based on a predefined list of file extensions every five seconds.
+- [S1146] MgBot: MgBot includes modules capable of gathering information from USB thumb drives and CD-ROMs on the victim machine given a list of provided criteria.
+- [G0047] Gamaredon Group: A Gamaredon Group file stealer has the capability to steal data from newly connected logical volumes on a system, including USB drives.
+- [G0007] APT28: An APT28 backdoor may collect the entire contents of an inserted USB device.
+- [S0125] Remsec: Remsec has a package that collects documents from any inserted USB sticks.
+- [S0128] BADNEWS: BADNEWS copies files with certain extensions from USB devices to a predefined directory.
+- [S0113] Prikormka: Prikormka contains a module that collects documents with certain extensions from removable media or fixed drives connected via USB.
+- [S0538] Crutch: Crutch can monitor removable drives and exfiltrate files matching a given extension list.
+- [S0115] Crimson: Crimson contains a module to collect data from removable drives.
+- [S0409] Machete: Machete can find, encrypt, and upload files from fixed and removable drives.
+- [S0644] ObliqueRAT: ObliqueRAT has the ability to extract data from removable devices connected to the endpoint.
+- [G0010] Turla: Turla RPC backdoors can collect files from USB thumb drives.
+- [S0467] TajMahal: TajMahal has the ability to steal written CD images and files of interest from previously connected removable drives when they become available again.
+- [S0036] FLASHFLOOD: FLASHFLOOD searches for interesting files (either a default or customized set of file extensions) on removable media and copies them to a staging area. The default file types copied would include data copied to the drive by SPACESHIP.
+- [S0622] AppleSeed: AppleSeed can find and collect data from removable media devices.
+- [S1044] FunnyDream: The FunnyDream FilePakMonitor component has the ability to collect files from removable devices.
+- [S0458] Ramsay: Ramsay can collect data from removable media and stage it for exfiltration.
+- [S0050] CosmicDuke: CosmicDuke steals user files from removable media with file extensions and keywords that match a predefined list.
+
+
+### T1039 - Data from Network Shared Drive
+
+Description:
+
+Adversaries may search network shares on computers they have compromised to find files of interest. Sensitive data can be collected from remote systems via shared network drives (host shared directory, network file server, etc.) that are accessible from the current system prior to Exfiltration. Interactive command shells may be in use, and common functionality within cmd may be used to gather information.
+
+Detection:
+
+Monitor processes and command-line arguments for actions that could be taken to collect files from a network share. Remote access tools with built-in features may interact directly with the Windows API to gather data. Data may also be acquired through Windows system management tools such as Windows Management Instrumentation and PowerShell.
+
+Procedures:
+
+- [G1039] RedCurl: RedCurl has collected data about network drives.
+- [S0050] CosmicDuke: CosmicDuke steals user files from network shared drives with file extensions and keywords that match a predefined list.
+- [G0007] APT28: APT28 has collected files from network shared drives.
+- [G0047] Gamaredon Group: Gamaredon Group malware has collected Microsoft Office documents from mapped network drives.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has exfiltrated files stolen from file shares.
+- [S0554] Egregor: Egregor can collect any files found in the enumerated drivers before sending it to its C2 channel.
+- [G0054] Sowbug: Sowbug extracted Word documents from a file server on a victim network.
+- [S0458] Ramsay: Ramsay can collect data from network drives and stage it for exfiltration.
+- [S0128] BADNEWS: When it first starts, BADNEWS crawls the victim's mapped drives and collects documents with the following extensions: .doc, .docx, .pdf, .ppt, .pptx, and .txt.
+- [G0114] Chimera: Chimera has collected data of interest from network shares.
+- [G0045] menuPass: menuPass has collected data from remote systems by mounting network shares with net use and using Robocopy to transfer data.
+- [C0015] C0015: During C0015, the threat actors collected files from network shared drives prior to network encryption.
+- [G0117] Fox Kitten: Fox Kitten has searched network shares to access sensitive documents.
+
+
+### T1056.001 - Input Capture: Keylogging
+
+Description:
+
+Adversaries may log user keystrokes to intercept credentials as the user types them. Keylogging is likely to be used to acquire credentials for new access opportunities when OS Credential Dumping efforts are not effective, and may require an adversary to intercept keystrokes on a system for a substantial period of time before credentials can be successfully captured. In order to increase the likelihood of capturing credentials quickly, an adversary may also perform actions such as clearing browser cookies to force users to reauthenticate to systems. Keylogging is the most prevalent type of input capture, with many different ways of intercepting keystrokes. Some methods include: * Hooking API callbacks used for processing keystrokes. Unlike Credential API Hooking, this focuses solely on API functions intended for processing keystroke data. * Reading raw keystroke data from the hardware buffer. * Windows Registry modifications. * Custom drivers. * Modify System Image may provide adversaries with hooks into the operating system of network devices to read raw keystrokes for login sessions.
+
+Detection:
+
+Keyloggers may take many forms, possibly involving modification to the Registry and installation of a driver, setting a hook, or polling to intercept keystrokes. Commonly used API calls include `SetWindowsHook`, `GetKeyState`, and `GetAsyncKeyState`. Monitor the Registry and file system for such changes, monitor driver installs, and look for common keylogging API calls. API calls alone are not an indicator of keylogging, but may provide behavioral data that is useful when combined with other information such as new files written to disk and unusual processes.
+
+Procedures:
+
+- [G0059] Magic Hound: Magic Hound malware is capable of keylogging.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors obtained the password for the victim's password manager via a custom keylogger.
+- [S0021] Derusbi: Derusbi is capable of logging keystrokes.
+- [S1012] PowerLess: PowerLess can use a module to log keystrokes.
+- [S0643] Peppy: Peppy can log keystrokes on compromised hosts.
+- [S0670] WarzoneRAT: WarzoneRAT has the capability to install a live and offline keylogger, including through the use of the `GetAsyncKeyState` Windows API.
+- [S0038] Duqu: Duqu can track key presses with a keylogger module.
+- [S0283] jRAT: jRAT has the capability to log keystrokes from the victim’s machine, both offline and online.
+- [S0455] Metamorfo: Metamorfo has a command to launch a keylogger and capture keystrokes on the victim’s machine.
+- [S0045] ADVSTORESHELL: ADVSTORESHELL can perform keylogging.
+- [S1146] MgBot: MgBot includes keylogger payloads focused on the QQ chat application.
+- [G0087] APT39: APT39 has used tools for capturing keystrokes.
+- [S0149] MoonWind: MoonWind has a keylogger.
+- [S0152] EvilGrab: EvilGrab has the capability to capture keystrokes.
+- [S0161] XAgentOSX: XAgentOSX contains keylogging functionality that will monitor for active application windows and write them to the log, it can handle special characters, and it will buffer by default 50 characters before sending them out over the C2 infrastructure.
+- [S0363] Empire: Empire includes keylogging capabilities for Windows, Linux, and macOS systems.
+- [S0339] Micropsia: Micropsia has keylogging capabilities.
+- [S0113] Prikormka: Prikormka contains a keylogger module that collects keystrokes and the titles of foreground windows.
+- [G0082] APT38: APT38 used a Trojan called KEYLIME to capture keystrokes from the victim’s machine.
+- [S0410] Fysbis: Fysbis can perform keylogging.
+- [S0194] PowerSploit: PowerSploit's Get-Keystrokes Exfiltration module can log keystrokes.
+- [S0379] Revenge RAT: Revenge RAT has a plugin for keylogging.
+- [G1017] Volt Typhoon: Volt Typhoon has created and accessed a file named rult3uil.log on compromised domain controllers to capture keypresses and command execution.
+- [S0167] Matryoshka: Matryoshka is capable of keylogging.
+- [G0130] Ajax Security Team: Ajax Security Team has used CWoolger and MPK, custom-developed malware, which recorded all keystrokes on an infected system.
+- [S0381] FlawedAmmyy: FlawedAmmyy can collect keyboard events.
+- [S0148] RTM: RTM can record keystrokes from both the keyboard and virtual keyboard.
+- [S0454] Cadelspy: Cadelspy has the ability to log keystrokes on the compromised host.
+- [S0567] Dtrack: Dtrack’s dropper contains a keylogging executable.
+- [S0434] Imminent Monitor: Imminent Monitor has a keylogging module.
+- [S0261] Catchamas: Catchamas collects keystrokes from the victim’s machine.
+- [S0154] Cobalt Strike: Cobalt Strike can track key presses with a keylogger module.
+- [S0033] NetTraveler: NetTraveler contains a keylogger.
+- [G0007] APT28: APT28 has used tools to perform keylogging.
+- [S0262] QuasarRAT: QuasarRAT has a built-in keylogger.
+- [S0125] Remsec: Remsec contains a keylogger component.
+- [S1159] DUSTTRAP: DUSTTRAP can perform keylogging operations.
+- [S0072] OwaAuth: OwaAuth captures and DES-encrypts credentials before writing the username and password to a log file, C:\log.txt.
+- [S0234] Bandook: Bandook contains keylogging capabilities.
+- [S0240] ROKRAT: ROKRAT can use `SetWindowsHookEx` and `GetKeyNameText` to capture keystrokes.
+- [G0012] Darkhotel: Darkhotel has used a keylogger.
+- [S0019] Regin: Regin contains a keylogger.
+- [S0013] PlugX: PlugX has a module for capturing keystrokes per process including window titles.
+- [S0533] SLOTHFULMEDIA: SLOTHFULMEDIA has a keylogging capability.
+- [S0414] BabyShark: BabyShark has a PowerShell-based remote administration ability that can implement a PowerShell or C# based keylogger.
+- [S0257] VERMIN: VERMIN collects keystrokes from the victim machine.
+- [S0128] BADNEWS: When it first starts, BADNEWS spawns a new thread to log keystrokes.
+- [S0012] PoisonIvy: PoisonIvy contains a keylogger.
+- [S0652] MarkiRAT: MarkiRAT can capture all keystrokes on a compromised host.
+- [S0595] ThiefQuest: ThiefQuest uses the CGEventTap functions to perform keylogging.
+- [S0348] Cardinal RAT: Cardinal RAT can log keystrokes.
+- [S0375] Remexi: Remexi gathers and exfiltrates keystrokes from the machine.
+- [S0260] InvisiMole: InvisiMole can capture keystrokes on a compromised host.
+- [S0213] DOGCALL: DOGCALL is capable of logging keystrokes.
+- [S0253] RunningRAT: RunningRAT captures keystrokes and sends them back to the C2 server.
+- [S0569] Explosive: Explosive has leveraged its keylogging capabilities to gain access to administrator accounts on target servers.
+- [G0045] menuPass: menuPass has used key loggers to steal usernames and passwords.
+- [S0622] AppleSeed: AppleSeed can use GetKeyState and GetKeyboardState to capture keystrokes on the victim’s machine.
+- [S1207] XLoader: XLoader can capture keystrokes from the victim machine.
+- [S0115] Crimson: Crimson can use a module to perform keylogging on compromised hosts.
+- [S0062] DustySky: DustySky contains a keylogger.
+- [S0378] PoshC2: PoshC2 has modules for keystroke logging and capturing credentials from spoofed Outlook authentication messages.
+- [S1050] PcShare: PcShare has the ability to capture keystrokes.
+- [G1023] APT5: APT5 has used malware with keylogging capabilities to monitor the communications of targeted entities.
+- [G0131] Tonto Team: Tonto Team has used keylogging tools in their operations.
+- [S0337] BadPatch: BadPatch has a keylogging capability.
+- [S0447] Lokibot: Lokibot has the ability to capture input on the compromised host via keylogging.
+- [S0625] Cuba: Cuba logs keystrokes via polling by using GetKeyState and VkKeyScan functions.
+- [S0662] RCSession: RCSession has the ability to capture keystrokes on a compromised host.
+- [S0387] KeyBoy: KeyBoy installs a keylogger for intercepting credentials and keystrokes.
+- [S1122] Mispadu: Mispadu can log keystrokes on the victim's machine.
+- [S0170] Helminth: The executable version of Helminth has a module to log keystrokes.
+- [G0027] Threat Group-3390: Threat Group-3390 actors installed a credential logger on Microsoft Exchange servers. Threat Group-3390 also leveraged the reconnaissance framework, ScanBox, to capture keystrokes.
+- [S0050] CosmicDuke: CosmicDuke uses a keylogger.
+- [S0373] Astaroth: Astaroth logs keystrokes from the victim's machine.
+- [S0649] SMOKEDHAM: SMOKEDHAM can continuously capture keystrokes.
+- [S0094] Trojan.Karagany: Trojan.Karagany can capture keystrokes on a compromised host.
+- [S0201] JPIN: JPIN contains a custom keylogger.
+- [S0018] Sykipot: Sykipot contains keylogging functionality to steal passwords.
+- [S1111] DarkGate: DarkGate will spawn a thread on execution to capture all keyboard events and write them to a predefined log file.
+- [S1044] FunnyDream: The FunnyDream Keyrecord component can capture keystrokes.
+- [S1066] DarkTortilla: DarkTortilla can download a keylogging module.
+- [S0437] Kivars: Kivars has the ability to initiate keylogging on the infected host.
+- [G0032] Lazarus Group: Lazarus Group malware KiloAlfa contains keylogging functionality.
+- [S0531] Grandoreiro: Grandoreiro can log keystrokes on the victim's machine.
+- [S0192] Pupy: Pupy uses a keylogger to capture keystrokes it then sends back to the server after it is stopped.
+- [S0030] Carbanak: Carbanak logs key strokes for configured processes and sends them back to the C2 server.
+- [G0043] Group5: Malware used by Group5 is capable of capturing keystrokes.
+- [S0338] Cobian RAT: Cobian RAT has a feature to perform keylogging on the victim’s machine.
+- [S0331] Agent Tesla: Agent Tesla can log keystrokes on the victim’s machine.
+- [G0068] PLATINUM: PLATINUM has used several different keyloggers.
+- [G0085] FIN4: FIN4 has captured credentials via fake Outlook Web App (OWA) login pages and has also used a .NET based keylogger.
+- [S0058] SslMM: SslMM creates a new thread implementing a keylogging facility using Windows Keyboard Accelerators.
+- [S0023] CHOPSTICK: CHOPSTICK is capable of performing keylogging.
+- [S1090] NightClub: NightClub can use a plugin for keylogging.
+- [G0034] Sandworm Team: Sandworm Team has used a keylogger to capture keystrokes by using the SetWindowsHookEx function.
+- [S0660] Clambling: Clambling can capture keystrokes on a compromised host.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP has the ability to support keylogging.
+- [S0247] NavRAT: NavRAT logs the keystrokes on the targeted system.
+- [S0385] njRAT: njRAT is capable of logging keystrokes.
+- [S0336] NanoCore: NanoCore can perform keylogging on the victim’s machine.
+- [S0279] Proton: Proton uses a keylogger to capture keystrokes.
+- [S0409] Machete: Machete logs keystrokes from the victim’s machine.
+- [G0094] Kimsuky: Kimsuky has used a PowerShell-based keylogger as well as a tool called MECHANICAL to log keystrokes.
+- [G0049] OilRig: OilRig has employed keyloggers including KEYPUNCH and LONGWATCH.
+- [S0438] Attor: One of Attor's plugins can collect user credentials via capturing keystrokes and can capture keystrokes pressed within the window of the injected process.
+- [G1044] APT42: APT42 has used custom malware to log keystrokes.
+- [S0070] HTTPBrowser: HTTPBrowser is capable of capturing keystrokes on victims.
+- [G0054] Sowbug: Sowbug has used keylogging tools.
+- [S0248] yty: yty uses a keylogger plugin to gather keystrokes.
+- [S1016] MacMa: MacMa can use Core Graphics Event Taps to intercept user keystrokes from any text input field and saves them to text files. Text input fields include Spotlight, Finder, Safari, Mail, Messages, and other apps that have text fields for passwords.
+- [S0089] BlackEnergy: BlackEnergy has run a keylogger plug-in on a victim.
+- [S0593] ECCENTRICBANDWAGON: ECCENTRICBANDWAGON can capture and store keystrokes.
+- [S0032] gh0st RAT: gh0st RAT has a keylogger.
+- [S0076] FakeM: FakeM contains a keylogger module.
+- [S0198] NETWIRE: NETWIRE can perform keylogging.
+- [S0332] Remcos: Remcos has a command for keylogging.
+- [S0650] QakBot: QakBot can capture keystrokes on a compromised host.
+- [S0342] GreyEnergy: GreyEnergy has a module to harvest pressed keystrokes.
+- [G1001] HEXANE: HEXANE has used a PowerShell-based keylogger named `kl.ps1`.
+- [C0028] 2015 Ukraine Electric Power Attack: During the 2015 Ukraine Electric Power Attack, Sandworm Team gathered account credentials via a BlackEnergy keylogger plugin.
+- [S0187] Daserf: Daserf can log keystrokes.
+- [S0004] TinyZBot: TinyZBot contains keylogger functionality.
+- [S0439] Okrum: Okrum was seen using a keylogger tool to capture keystrokes.
+- [S0334] DarkComet: DarkComet has a keylogging capability.
+- [G0050] APT32: APT32 has abused the PasswordChangeNotify to monitor for and capture account password changes.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors modified a JavaScript file on the Web SSL VPN component of Ivanti Connect Secure devices to keylog credentials.
+- [S0673] DarkWatchman: DarkWatchman can track key presses with a keylogger module.
+- [S0330] Zeus Panda: Zeus Panda can perform keylogging on the victim’s machine by hooking the functions TranslateMessage and WM_KEYDOWN.
+- [S0017] BISCUIT: BISCUIT can capture keystrokes.
+- [S1059] metaMain: metaMain has the ability to log keyboard events.
+- [S0088] Kasidet: Kasidet has the ability to initiate keylogging.
+- [S0282] MacSpy: MacSpy captures keystrokes.
+- [S0692] SILENTTRINITY: SILENTTRINITY has a keylogging capability.
+- [S0356] KONNI: KONNI has the capability to perform keylogging.
+- [S0526] KGH_SPY: KGH_SPY can perform keylogging by polling the GetAsyncKeyState() function.
+- [S0130] Unknown Logger: Unknown Logger is capable of recording keystrokes.
+- [G0022] APT3: APT3 has used a keylogging tool that records keystrokes in encrypted files.
+- [S0467] TajMahal: TajMahal has the ability to capture keystrokes on an infected host.
+- [G1016] FIN13: FIN13 has logged the keystrokes of victims to escalate privileges.
+- [S0412] ZxShell: ZxShell has a feature to capture a remote computer's keystrokes using a keylogger.
+- [G0004] Ke3chang: Ke3chang has used keyloggers.
+- [S0090] Rover: Rover has keylogging functionality.
+- [G0096] APT41: APT41 used a keylogger called GEARSHIFT on a target system.
+- [S1087] AsyncRAT: AsyncRAT can capture keystrokes on the victim’s machine.
+- [S0428] PoetRAT: PoetRAT has used a Python tool named klog.exe for keylogging.
+
+### T1056.002 - Input Capture: GUI Input Capture
+
+Description:
+
+Adversaries may mimic common operating system GUI components to prompt users for credentials with a seemingly legitimate prompt. When programs are executed that need additional privileges than are present in the current user context, it is common for the operating system to prompt the user for proper credentials to authorize the elevated privileges for the task (ex: Bypass User Account Control). Adversaries may mimic this functionality to prompt users for credentials with a seemingly legitimate prompt for a number of reasons that mimic normal usage, such as a fake installer requiring additional access or a fake malware removal suite. This type of prompt can be used to collect credentials via various languages such as AppleScript and PowerShell. On Linux systems adversaries may launch dialog boxes prompting users for credentials from malicious shell scripts or the command line (i.e. Unix Shell). Adversaries may also mimic common software authentication requests, such as those from browsers or email clients. This may also be paired with user activity monitoring (i.e., Browser Information Discovery and/or Application Window Discovery) to spoof prompts when users are naturally accessing sensitive sites/data.
+
+Detection:
+
+Monitor process execution for unusual programs as well as malicious instances of Command and Scripting Interpreter that could be used to prompt users for credentials. For example, command/script history including abnormal parameters (such as requests for credentials and/or strings related to creating password prompts) may be malicious. Inspect and scrutinize input prompts for indicators of illegitimacy, such as non-traditional banners, text, timing, and/or sources.
+
+Procedures:
+
+- [S0279] Proton: Proton prompts users for their credentials.
+- [S0278] iKitten: iKitten prompts the user for their credentials.
+- [S0455] Metamorfo: Metamorfo has displayed fake forms on top of banking sites to intercept credentials from victims.
+- [S0274] Calisto: Calisto presents an input prompt asking for the user's login and password.
+- [S0276] Keydnap: Keydnap prompts the users for credentials.
+- [G1039] RedCurl: RedCurl prompts the user for credentials through a Microsoft Outlook pop-up.
+- [S0482] Bundlore: Bundlore prompts the user for their credentials.
+- [G0085] FIN4: FIN4 has presented victims with spoofed Windows Authentication prompts to collect their credentials.
+- [S0281] Dok: Dok prompts the user for credentials.
+- [S1122] Mispadu: Mispadu can monitor browser activity for online banking actions and display full-screen overlay images to block user access to the intended site or present additional data fields.
+- [S0658] XCSSET: XCSSET prompts the user to input credentials using a native macOS dialog box leveraging the system process /Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment.
+- [S0692] SILENTTRINITY: SILENTTRINITY's `credphisher.py` module can prompt a current user for their credentials.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer has captured passwords by prompting victims with a “macOS needs to access System Settings” GUI window.
+
+### T1056.003 - Input Capture: Web Portal Capture
+
+Description:
+
+Adversaries may install code on externally facing portals, such as a VPN login page, to capture and transmit credentials of users who attempt to log into the service. For example, a compromised login page may log provided user credentials before logging the user in to the service. This variation on input capture may be conducted post-compromise using legitimate administrative access as a backup measure to maintain network access through External Remote Services and Valid Accounts or as part of the initial compromise by exploitation of the externally facing web service.
+
+Detection:
+
+File monitoring may be used to detect changes to files in the Web directory for organization login pages that do not match with authorized updates to the Web server's content.
+
+Procedures:
+
+- [G1035] Winter Vivern: Winter Vivern registered and hosted domains to allow for creation of web pages mimicking legitimate government email logon sites to collect logon information.
+- [C0030] Triton Safety Instrumented System Attack: In the Triton Safety Instrumented System Attack, TEMP.Veles captured credentials as they were being changed by redirecting text-based login codes to websites they controlled.
+- [S1116] WARPWIRE: WARPWIRE can capture credentials submitted during the web logon process in order to access layer seven applications such as RDP.
+- [S1022] IceApple: The IceApple OWA credential logger can monitor for OWA authentication requests and log the credentials.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors modified the JavaScript loaded by the Ivanti Connect Secure login page to capture credentials entered.
+
+### T1056.004 - Input Capture: Credential API Hooking
+
+Description:
+
+Adversaries may hook into Windows application programming interface (API) functions and Linux system functions to collect user credentials. Malicious hooking mechanisms may capture API or function calls that include parameters that reveal user authentication credentials. Unlike Keylogging, this technique focuses specifically on API functions that include parameters that reveal user credentials. In Windows, hooking involves redirecting calls to these functions and can be implemented via: * **Hooks procedures**, which intercept and execute designated code in response to events such as messages, keystrokes, and mouse inputs. * **Import address table (IAT) hooking**, which use modifications to a process’s IAT, where pointers to imported API functions are stored. * **Inline hooking**, which overwrites the first bytes in an API function to redirect code flow. In Linux and macOS, adversaries may hook into system functions via the `LD_PRELOAD` (Linux) or `DYLD_INSERT_LIBRARIES` (macOS) environment variables, which enables loading shared libraries into a program’s address space. For example, an adversary may capture credentials by hooking into the `libc read` function leveraged by SSH or SCP.
+
+Detection:
+
+Monitor for calls to the `SetWindowsHookEx` and `SetWinEventHook` functions, which install a hook procedure. Also consider analyzing hook chains (which hold pointers to hook procedures for each type of hook) using tools or by programmatically examining internal kernel structures. Rootkits detectors can also be used to monitor for various types of hooking activity. Verify integrity of live processes by comparing code in memory to that of corresponding static binaries, specifically checking for jumps and other instructions that redirect code flow. Also consider taking snapshots of newly started processes to compare the in-memory IAT to the real addresses of the referenced functions.
+
+Procedures:
+
+- [S0330] Zeus Panda: Zeus Panda hooks processes by leveraging its own IAT hooked functions.
+- [S1154] VersaMem: VersaMem hooked and overrided Versa's built-in authentication method, `setUserPassword`, to intercept plaintext credentials when submitted to the server.
+- [S0484] Carberp: Carberp has hooked several Windows API functions to steal credentials.
+- [S0182] FinFisher: FinFisher hooks processes by modifying IAT pointers to CreateWindowEx.
+- [S0386] Ursnif: Ursnif has hooked APIs to perform a wide variety of information theft, such as monitoring traffic from browsers.
+- [S0412] ZxShell: ZxShell hooks several API functions to spawn system threads.
+- [G0068] PLATINUM: PLATINUM is capable of using Windows hook interfaces for information gathering such as credential access.
+- [S0251] Zebrocy: Zebrocy installs an application-defined Windows hook to get notified when a network drive has been attached, so it can then use the hook to call its RecordToFile file stealing method.
+- [S0416] RDFSNIFFER: RDFSNIFFER hooks several Win32 API functions to hijack elements of the remote system management user-interface.
+- [S0363] Empire: Empire contains some modules that leverage API hooking to carry out tasks, such as netripper.
+- [S0266] TrickBot: TrickBot has the ability to capture RDP credentials by capturing the CredEnumerateA API
+- [S0353] NOKKI: NOKKI uses the Windows call SetWindowsHookEx and begins injecting it into every GUI process running on the victim's machine.
+
+
+### T1074.001 - Data Staged: Local Data Staging
+
+Description:
+
+Adversaries may stage collected data in a central location or directory on the local system prior to Exfiltration. Data may be kept in separate files or combined into one file through techniques such as Archive Collected Data. Interactive command shells may be used, and common functionality within cmd and bash may be used to copy data into a staging location. Adversaries may also stage collected data in various available formats/locations of a system, including local storage databases/repositories or the Windows Registry.
+
+Detection:
+
+Processes that appear to be reading files from disparate locations and writing them to the same directory or file may be an indication of data being staged, especially if they are suspected of performing encryption or compression on the files, such as 7zip, RAR, ZIP, or zlib. Monitor publicly writeable directories, central locations, and commonly used staging directories (recycle bin, temp folders, etc.) to regularly check for compressed or encrypted data that may be indicative of staging. Monitor processes and command-line arguments for actions that could be taken to collect and combine files. Remote access tools with built-in features may interact directly with the Windows API to gather and copy to a location. Data may also be acquired and staged through Windows system management tools such as Windows Management Instrumentation and PowerShell. Consider monitoring accesses and modifications to local storage repositories (such as the Windows Registry), especially from suspicious processes that could be related to malicious data collection.
+
+Procedures:
+
+- [G1046] Storm-1811: Storm-1811 has locally staged captured credentials for subsequent manual exfiltration.
+- [S0264] OopsIE: OopsIE stages the output from command execution and collected files in specific folders before exfiltration.
+- [S1029] AuTo Stealer: AuTo Stealer can store collected data from an infected host to a file named `Hostname_UserName.txt` prior to exfiltration.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can store captured screenshots to disk including to a covert store named `APPX.%x%x%x%x%x.tmp` where `%x` is a random value.
+- [C0049] Leviathan Australian Intrusions: Leviathan stored captured credential material on local log files on victim systems during Leviathan Australian Intrusions.
+- [S1110] SLIGHTPULSE: SLIGHTPULSE has piped the output from executed commands to `/tmp/1`.
+- [S0567] Dtrack: Dtrack can save collected data to disk, different file formats, and network shares.
+- [S1196] Troll Stealer: Troll Stealer encrypts gathered information on victim devices prior to exfiltrating it through command and control infrastructure.
+- [S1015] Milan: Milan has saved files prior to upload from a compromised host to folders beginning with the characters `a9850d2f`.
+- [S0247] NavRAT: NavRAT writes multiple outputs to a TMP file using the >> method.
+- [G0027] Threat Group-3390: Threat Group-3390 has locally staged encrypted archives for later exfiltration efforts.
+- [G0121] Sidewinder: Sidewinder has collected stolen files in a temporary folder in preparation for exfiltration.
+- [S0386] Ursnif: Ursnif has used tmp files to stage gathered information.
+- [S1044] FunnyDream: FunnyDream can stage collected information including screen captures and logged keystrokes locally.
+- [C0032] C0032: During the C0032 campaign, TEMP.Veles used staging folders that are infrequently used by legitimate users or processes to store data for exfiltration and tool deployment.
+- [G0053] FIN5: FIN5 scripts save memory dump data into a specific directory on hosts in the victim environment.
+- [S0024] Dyre: Dyre has the ability to create files in a TEMP folder to act as a database to store information.
+- [S0337] BadPatch: BadPatch stores collected data in log files before exfiltration.
+- [S0673] DarkWatchman: DarkWatchman can stage local data in the Windows Registry.
+- [C0006] Operation Honeybee: During Operation Honeybee, stolen data was copied into a text file using the format `From (- --).txt` prior to compression, encoding, and exfiltration.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors staged archived files in a temporary directory prior to exfiltration.
+- [G0040] Patchwork: Patchwork copied all targeted files to a directory called index that was eventually uploaded to the C&C server.
+- [S1059] metaMain: metaMain has stored the collected system files in a working directory.
+- [S1060] Mafalda: Mafalda can place retrieved files into a destination directory.
+- [S1016] MacMa: MacMa has stored collected files locally before exfiltration.
+- [S0335] Carbon: Carbon creates a base directory that contains the files and folders that are collected.
+- [S0458] Ramsay: Ramsay can stage data prior to exfiltration in %APPDATA%\Microsoft\UserSetting and %APPDATA%\Microsoft\UserSetting\MediaCache.
+- [C0015] C0015: During C0015, PowerView's file share enumeration results were stored in the file `c:\ProgramData\found_shares.txt`.
+- [G1023] APT5: APT5 has staged data on compromised systems prior to exfiltration often in `C:\Users\Public`.
+- [G0030] Lotus Blossom: Lotus Blossom has locally staged compressed and archived data for follow-on exfiltration.
+- [G0139] TeamTNT: TeamTNT has aggregated collected credentials in text files before exfiltrating.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer has staged collected application data from Safari, Notes, and Keychain to `/var/folder`.
+- [S0260] InvisiMole: InvisiMole determines a working directory where it stores all the gathered data about the compromised machine.
+- [G0119] Indrik Spider: Indrik Spider has stored collected data in a .tmp file.
+- [G1030] Agrius: Agrius has used the folder, C:\\windows\\temp\\s\\, to stage data for exfiltration.
+- [S1042] SUGARDUMP: SUGARDUMP has stored collected data under `%%\\CrashLog.txt`.
+- [S0045] ADVSTORESHELL: ADVSTORESHELL stores output from command execution in a .dat file in the %TEMP% directory.
+- [G0032] Lazarus Group: Lazarus Group malware IndiaIndia saves information gathered about the victim to a file that is saved in the %TEMP% directory, then compressed, encrypted, and uploaded to a C2 server.
+- [S0667] Chrommme: Chrommme can store captured system information locally prior to exfiltration.
+- [S0038] Duqu: Modules can be pushed to and executed by Duqu that copy data to a staging area, compress it, and XOR encrypt it.
+- [S0438] Attor: Attor has staged collected data in a central upload directory prior to exfiltration.
+- [G0114] Chimera: Chimera has staged stolen data locally on compromised hosts.
+- [S0629] RainyDay: RainyDay can use a file exfiltration tool to copy files to C:\ProgramData\Adobe\temp prior to exfiltration.
+- [G0069] MuddyWater: MuddyWater has stored a decoy PDF file within a victim's `%temp%` folder.
+- [C0017] C0017: During C0017, APT41 copied the local `SAM` and `SYSTEM` Registry hives to a staging directory.
+- [S0249] Gold Dragon: Gold Dragon stores information gathered from the endpoint in a file named 1.hwp.
+- [C0051] APT28 Nearest Neighbor Campaign: During APT28 Nearest Neighbor Campaign, APT28 staged captured credential information in the C:\ProgramData directory.
+- [S0409] Machete: Machete stores files and logs in a folder on the local drive.
+- [S0094] Trojan.Karagany: Trojan.Karagany can create directories to store plugin output and stage data for exfiltration.
+- [S0012] PoisonIvy: PoisonIvy stages collected data in a text file.
+- [S0062] DustySky: DustySky created folders in temp directories to host collected files before exfiltration.
+- [S1104] SLOWPULSE: SLOWPULSE can write logged ACE credentials to `/home/perl/PAUS.pm` in append mode, using the format string `%s:%s\n`.
+- [S0395] LightNeuron: LightNeuron can store email data in files and directories specified in its configuration, such as C:\Windows\ServiceProfiles\NetworkService\appdata\Local\Temp\.
+- [S1012] PowerLess: PowerLess can stage stolen browser data in `C:\\Windows\\Temp\\cup.tmp` and keylogger data in `C:\\Windows\\Temp\\Report.06E17A5A-7325-4325-8E5D-E172EBA7FC5BK`.
+- [G0022] APT3: APT3 has been known to stage files for exfiltration in a single location.
+- [S1213] Lumma Stealer: Lumma Stealer has configured a custom user data directory such as a folder within `%USERPROFILE%\AppData\Roaming` for staging data.
+- [S0650] QakBot: QakBot has stored stolen emails and other data into new folders prior to exfiltration.
+- [S0503] FrameworkPOS: FrameworkPOS can identifiy payment card track data on the victim and copy it to a local file in a subdirectory of C:\Windows\.
+- [S1101] LoFiSe: LoFiSe can save files to be evaluated for further exfiltration in the `C:\Programdata\Microsoft\` and `C:\windows\temp\` folders.
+- [S1043] ccf32: ccf32 can temporarily store files in a hidden directory on the local host.
+- [G0102] Wizard Spider: Wizard Spider has staged ZIP files in local directories such as, `C:\PerfLogs\1\` and `C:\User\1\` prior to exfiltration.
+- [S0340] Octopus: Octopus has stored collected information in the Application Data directory on a compromised host.
+- [S0196] PUNCHBUGGY: PUNCHBUGGY has saved information to a random temp file before exfil.
+- [C0040] APT41 DUST: APT41 DUST involved exporting data from Oracle databases to local CSV files prior to exfiltration.
+- [C0044] Juicy Mix: During Juicy Mix, OilRig used browser data and credential stealer tools to stage stolen files named Cupdate, Eupdate, and IUpdate in the %TEMP% directory.
+- [S0149] MoonWind: MoonWind saves information from its keylogging routine as a .zip file in the present working directory.
+- [S0170] Helminth: Helminth creates folders to store output from batch scripts prior to sending the information to its C2 server.
+- [S0090] Rover: Rover copies files from removable drives to C:\system.
+- [S0035] SPACESHIP: SPACESHIP identifies files with certain extensions and copies them to a directory in the user's profile.
+- [S0081] Elise: Elise creates a file in AppData\Local\Microsoft\Windows\Explorer and stores all harvested data in that file.
+- [S0615] SombRAT: SombRAT can store harvested data in a custom database under the %TEMP% directory.
+- [G0094] Kimsuky: Kimsuky has staged collected data files under C:\Program Files\Common Files\System\Ole DB\.
+- [G0087] APT39: APT39 has utilized tools to aggregate data prior to exfiltration.
+- [G0093] GALLIUM: GALLIUM compressed and staged files in multi-part archives in the Recycle Bin prior to exfiltration.
+- [S0443] MESSAGETAP: MESSAGETAP stored targeted SMS messages that matched its target list in CSV files on the compromised system.
+- [S0261] Catchamas: Catchamas stores the gathered data from the machine in .db files and .bmp files under four separate locations.
+- [S0169] RawPOS: Data captured by RawPOS is placed in a temporary file under a directory named "memdump".
+- [S0647] Turian: Turian can store copied files in a specific directory prior to exfiltration.
+- [S1168] SampleCheck5000: SampleCheck5000 can log the output from C2 commands in an encrypted and compressed format on disk prior to exfiltration.
+- [G0065] Leviathan: Leviathan has used C:\Windows\Debug and C:\Perflogs as staging directories.
+- [S0644] ObliqueRAT: ObliqueRAT can copy specific files, webcam captures, and screenshots to local directories.
+- [G0045] menuPass: menuPass stages data prior to exfiltration in multi-part archives, often saved in the Recycle Bin.
+- [C0048] Operation MidnightEclipse: During Operation MidnightEclipse, threat actors copied files to the web application folder on compromised devices for exfiltration.
+- [G0135] BackdoorDiplomacy: BackdoorDiplomacy has copied files of interest to the main drive's recycle bin.
+- [S0251] Zebrocy: Zebrocy stores all collected information in a single file before exfiltration.
+- [S1210] Sagerunex: Sagerunex gathers host information and stages it locally as a RAR file prior to exfiltration. Sagerunex stores logged data in an encrypted file located at `%TEMP%/TS_FB56.tmp` during execution.
+- [S0353] NOKKI: NOKKI can collect data from the victim and stage it in LOCALAPPDATA%\MicroSoft Updatea\uplog.tmp.
+- [S0652] MarkiRAT: MarkiRAT can store collected data locally in a created .nfo file.
+- [G0129] Mustang Panda: Mustang Panda has stored collected credential files in c:\windows\temp prior to exfiltration. Mustang Panda has also stored documents for exfiltration in a hidden folder on USB drives.
+- [S0147] Pteranodon: Pteranodon creates various subdirectories under %Temp%\reports\% and copies files to those subdirectories. It also creates a folder at C:\Users\\AppData\Roaming\Microsoft\store to store screenshot JPEG files.
+- [S0343] Exaramel for Windows: Exaramel for Windows specifies a path to store files scheduled for exfiltration.
+- [S0622] AppleSeed: AppleSeed can stage files in a central location prior to exfiltration.
+- [S1090] NightClub: NightClub has copied captured files and keystrokes to the `%TEMP%` directory of compromised hosts.
+- [S1172] OilBooster: OilBooster can stage files in the `tempFiles` directory for exfiltration.
+- [S0128] BADNEWS: BADNEWS copies documents under 15MB found on the victim system to is the user's %temp%\SMB\ folder. It also copies files from USB devices to a predefined directory.
+- [S0274] Calisto: Calisto uses a hidden directory named .calisto to store data from the victim’s machine before exfiltration.
+- [S0526] KGH_SPY: KGH_SPY can save collected system information to a file named "info" before exfiltration.
+- [S0538] Crutch: Crutch has staged stolen files in the C:\AMD\Temp directory.
+- [S0113] Prikormka: Prikormka creates a directory, %USERPROFILE%\AppData\Local\SKC\, which is used to store collected log files.
+- [S0265] Kazuar: Kazuar stages command output and collected data in files before exfiltration.
+- [S0084] Mis-Type: Mis-Type has temporarily stored collected information to the files `“%AppData%\{Unique Identifier}\HOSTRURKLSR”` and `“%AppData%\{Unique Identifier}\NEWERSSEMP”`.
+- [S1124] SocGholish: SocGholish can send output from `whoami` to a local temp file using the naming convention `rad.tmp`.
+- [G0035] Dragonfly: Dragonfly has created a directory named "out" in the user's %AppData% folder and copied files to it.
+- [S0651] BoxCaon: BoxCaon has created a working folder for collected files that it sends to the C2 server.
+- [S0198] NETWIRE: NETWIRE has the ability to write collected data to a file created in the ./LOGS directory.
+- [S0036] FLASHFLOOD: FLASHFLOOD stages data it copies from the local system or removable drives in the "%WINDIR%\$NtUninstallKB885884$\" directory.
+- [S1154] VersaMem: VersaMem staged captured credentials locally at `/tmp/.temp.data`.
+- [G1016] FIN13: FIN13 has utilized the following temporary folders on compromised Windows and Linux systems for their operations prior to exfiltration: `C:\Windows\Temp` and `/tmp`.
+- [G0007] APT28: APT28 has stored captured credential information in a file named pi.log.
+- [S1075] KOPILUWAK: KOPILUWAK has piped the results from executed C2 commands to `%TEMP%\result2.dat` on the local machine.
+- [S0373] Astaroth: Astaroth collects data in a plaintext file named r1.log before exfiltration.
+- [S1037] STARWHALE: STARWHALE has stored collected data in a file called `stari.txt`.
+- [S0197] PUNCHTRACK: PUNCHTRACK aggregates collected data in a tmp file.
+- [S0593] ECCENTRICBANDWAGON: ECCENTRICBANDWAGON has stored keystrokes and screenshots within the %temp%\GoogleChrome, %temp%\Downloads, and %temp%\TrendMicroUpdate directories.
+- [G1017] Volt Typhoon: Volt Typhoon has saved stolen files including the `ntds.dit` database and the `SYSTEM` and `SECURITY` Registry hives locally to the `C:\Windows\Temp\` directory.
+- [S1109] PACEMAKER: PACEMAKER has written extracted data to `tmp/dsserver-check.statementcounters`.
+- [S1142] LunarMail: LunarMail can create a directory in `%TEMP%\` to stage data prior to exfilration.
+- [S0136] USBStealer: USBStealer collects files matching certain criteria from the victim and stores them in a local directory for later exfiltration.
+
+### T1074.002 - Data Staged: Remote Data Staging
+
+Description:
+
+Adversaries may stage data collected from multiple systems in a central location or directory on one system prior to Exfiltration. Data may be kept in separate files or combined into one file through techniques such as Archive Collected Data. Interactive command shells may be used, and common functionality within cmd and bash may be used to copy data into a staging location. In cloud environments, adversaries may stage data within a particular instance or virtual machine before exfiltration. An adversary may Create Cloud Instance and stage data in that instance. By staging data on one system prior to Exfiltration, adversaries can minimize the number of connections made to their C2 server and better evade detection.
+
+Detection:
+
+Processes that appear to be reading files from disparate locations and writing them to the same directory or file may be an indication of data being staged, especially if they are suspected of performing encryption or compression on the files, such as 7zip, RAR, ZIP, or zlib. Monitor publicly writeable directories, central locations, and commonly used staging directories (recycle bin, temp folders, etc.) to regularly check for compressed or encrypted data that may be indicative of staging. Monitor processes and command-line arguments for actions that could be taken to collect and combine files. Remote access tools with built-in features may interact directly with the Windows API to gather and copy to a location. Data may also be acquired and staged through Windows system management tools such as Windows Management Instrumentation and PowerShell.
+
+Procedures:
+
+- [G0114] Chimera: Chimera has staged stolen data on designated servers in the target environment.
+- [G1041] Sea Turtle: Sea Turtle staged collected email archives in the public web directory of a website that was accessible from the internet.
+- [S1043] ccf32: ccf32 has copied files to a remote machine infected with Chinoxy or another backdoor.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 staged data and files in password-protected archives on a victim's OWA server.
+- [G0045] menuPass: menuPass has staged data on remote MSP systems or other victim networks prior to exfiltration.
+- [G0061] FIN8: FIN8 aggregates staged data from a network into a single location.
+- [G0065] Leviathan: Leviathan has staged data remotely prior to exfiltration.
+- [G0007] APT28: APT28 has staged archives of collected data on a target's Outlook Web Access (OWA) server.
+- [G1019] MoustachedBouncer: MoustachedBouncer has used plugins to save captured screenshots to `.\AActdata\` on an SMB share.
+- [G1022] ToddyCat: ToddyCat manually transferred collected files to an exfiltration host using xcopy.
+- [G0037] FIN6: FIN6 actors have compressed data from remote systems and moved it to another staging system before exfiltration.
+- [C0002] Night Dragon: During Night Dragon, threat actors copied files to company web servers and subsequently downloaded them.
+- [G0027] Threat Group-3390: Threat Group-3390 has moved staged encrypted archives to Internet-facing servers that had previously been compromised with China Chopper prior to exfiltration.
+
+
+### T1113 - Screen Capture
+
+Description:
+
+Adversaries may attempt to take screen captures of the desktop to gather information over the course of an operation. Screen capturing functionality may be included as a feature of a remote access tool used in post-compromise operations. Taking a screenshot is also typically possible through native utilities or API calls, such as CopyFromScreen, xwd, or screencapture.
+
+Detection:
+
+Monitoring for screen capture behavior will depend on the method used to obtain data from the operating system and write output files. Detection methods could include collecting information from unusual processes using API calls used to obtain image data, and monitoring for image files written to disk. The sensor data may need to be correlated with other events to identify malicious activity, depending on the legitimacy of this behavior within a given network environment.
+
+Procedures:
+
+- [S0147] Pteranodon: Pteranodon can capture screenshots at a configurable interval.
+- [S0417] GRIFFON: GRIFFON has used a screenshot module that can be used to take a screenshot of the remote system.
+- [S0044] JHUHUGIT: A JHUHUGIT variant takes screenshots by simulating the user pressing the "Take Screenshot" key (VK_SCREENSHOT), accessing the screenshot saved in the clipboard, and converting it to a JPG image.
+- [S0331] Agent Tesla: Agent Tesla can capture screenshots of the victim’s desktop.
+- [G0035] Dragonfly: Dragonfly has performed screen captures of victims, including by using a tool, scr.exe (which matched the hash of ScreenUtil).
+- [S0192] Pupy: Pupy can drop a mouse-logger that will take small screenshots around at each click and then send back to the server.
+- [S0199] TURNEDUP: TURNEDUP is capable of taking screenshots.
+- [S0094] Trojan.Karagany: Trojan.Karagany can take a desktop screenshot and save the file into \ProgramData\Mail\MailAg\shot.png.
+- [S0182] FinFisher: FinFisher takes a screenshot of the screen and displays it on top of all other windows for few seconds in an apparent attempt to hide some messages showed by the system during the setup process.
+- [S1207] XLoader: XLoader can capture screenshots on compromised hosts.
+- [S0338] Cobian RAT: Cobian RAT has a feature to perform screen capture.
+- [S0128] BADNEWS: BADNEWS has a command to take a screenshot and send it to the C2 server.
+- [S0458] Ramsay: Ramsay can take screenshots every 30 seconds as well as when an external removable storage device is connected.
+- [S0089] BlackEnergy: BlackEnergy is capable of taking screenshots.
+- [S1196] Troll Stealer: Troll Stealer can capture screenshots from victim machines.
+- [S0030] Carbanak: Carbanak performs desktop video recording and captures screenshots of the desktop and sends it to the C2 server.
+- [S0644] ObliqueRAT: ObliqueRAT can capture a screenshot of the current screen.
+- [S0660] Clambling: Clambling has the ability to capture screenshots.
+- [S1213] Lumma Stealer: Lumma Stealer has taken screenshots of victim machines.
+- [S1050] PcShare: PcShare can take screen shots of a compromised machine.
+- [S0363] Empire: Empire is capable of capturing screenshots on Windows and macOS systems.
+- [S1122] Mispadu: Mispadu has the ability to capture screenshots on compromised hosts.
+- [S0235] CrossRAT: CrossRAT is capable of taking screen captures.
+- [S0113] Prikormka: Prikormka contains a module that captures screenshots of the victim's desktop.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has used a tool to capture screenshots.
+- [S0017] BISCUIT: BISCUIT has a command to periodically take screenshots of the system.
+- [S1016] MacMa: MacMa has used Apple’s Core Graphic APIs, such as `CGWindowListCreateImageFromArray`, to capture the user's screen and open windows.
+- [S1081] BADHATCH: BADHATCH can take screenshots and send them to an actor-controlled C2 server.
+- [S1185] LightSpy: LightSpy uses Apple's built-in AVFoundation Framework library to access the user's camera and screen. It uses the `AVCaptureStillImage` to take a picture using the user's camera and the `AVCaptureScreen` to take a screenshot or record the user's screen for a specified period of time.
+- [S0385] njRAT: njRAT can capture screenshots of the victim’s machines.
+- [S0647] Turian: Turian has the ability to take screenshots.
+- [G0047] Gamaredon Group: Gamaredon Group's malware can take screenshots of the compromised computer every minute.
+- [S0351] Cannon: Cannon can take a screenshot of the desktop.
+- [S0251] Zebrocy: A variant of Zebrocy captures screenshots of the victim’s machine in JPEG and BMP format.
+- [S0467] TajMahal: TajMahal has the ability to take screenshots on an infected host including capturing content from windows of instant messaging applications.
+- [S0154] Cobalt Strike: Cobalt Strike's Beacon payload is capable of capturing screenshots.
+- [S0546] SharpStage: SharpStage has the ability to capture the victim's screen.
+- [S0260] InvisiMole: InvisiMole can capture screenshots of not only the entire screen, but of each separate window open, in case they are overlapping.
+- [G0049] OilRig: OilRig has a tool called CANDYKING to capture a screenshot of user's desktop.
+- [G0007] APT28: APT28 has used tools to take screenshots from victims.
+- [S0153] RedLeaves: RedLeaves can capture screenshots.
+- [S0692] SILENTTRINITY: SILENTTRINITY can take a screenshot of the current desktop.
+- [S0495] RDAT: RDAT can take a screenshot on the infected system.
+- [S0330] Zeus Panda: Zeus Panda can take screenshots of the victim’s machine.
+- [S0412] ZxShell: ZxShell can capture screenshots.
+- [G1019] MoustachedBouncer: MoustachedBouncer has used plugins to take screenshots on targeted systems.
+- [S0216] POORAIM: POORAIM can perform screen capturing.
+- [S0662] RCSession: RCSession can capture screenshots from a compromised host.
+- [S0275] UPPERCUT: UPPERCUT can capture desktop screenshots in the PNG format and send them to the C2 server.
+- [S1063] Brute Ratel C4: Brute Ratel C4 can take screenshots on compromised hosts.
+- [G0115] GOLD SOUTHFIELD: GOLD SOUTHFIELD has used the remote monitoring and management tool ConnectWise to obtain screen captures from victim's machines.
+- [S0680] LitePower: LitePower can take system screenshots and save them to `%AppData%`.
+- [S0337] BadPatch: BadPatch captures screenshots in .jpg format and then exfiltrates them.
+- [S0456] Aria-body: Aria-body has the ability to capture screenshots on compromised hosts.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer can run `screencapture` to collect screenshots from compromised hosts.
+- [S0476] Valak: Valak has the ability to take screenshots on a compromised host.
+- [G1044] APT42: APT42 has used malware, such as GHAMBAR and POWERPOST, to take screenshots.
+- [S1159] DUSTTRAP: DUSTTRAP can capture screenshots.
+- [S0090] Rover: Rover takes screenshots of the compromised system's desktop and saves them to C:\system\screenshot.bmp for exfiltration every 60 minutes.
+- [S0681] Lizar: Lizar can take JPEG screenshots of an infected system.
+- [G0059] Magic Hound: Magic Hound malware can take a screenshot and upload the file to its C2 server.
+- [S1209] Quick Assist: Quick Assist allows for the remote administrator to take screenshots of the running system.
+- [S0643] Peppy: Peppy can take screenshots on targeted systems.
+- [S0187] Daserf: Daserf can take screenshots.
+- [S0004] TinyZBot: TinyZBot contains screen capture functionality.
+- [G0069] MuddyWater: MuddyWater has used malware that can capture screenshots of the victim’s machine.
+- [S0115] Crimson: Crimson contains a command to perform screen captures.
+- [G1035] Winter Vivern: Winter Vivern delivered PowerShell scripts capable of taking screenshots of victim machines.
+- [S0023] CHOPSTICK: CHOPSTICK has the capability to capture screenshots.
+- [S0086] ZLib: ZLib has the ability to obtain screenshots of the compromised system.
+- [S0050] CosmicDuke: CosmicDuke takes periodic screenshots and exfiltrates them.
+- [S0438] Attor: Attor's has a plugin that captures screenshots of the target applications.
+- [G0091] Silence: Silence can capture victim screen activity.
+- [S1059] metaMain: metaMain can take and save screenshots.
+- [G1017] Volt Typhoon: Volt Typhoon has obtained a screenshot of the victim's system using the gdi32.dll and gdiplus.dll libraries.
+- [S1064] SVCReady: SVCReady can take a screenshot from an infected host.
+- [S0194] PowerSploit: PowerSploit's Get-TimedScreenshot Exfiltration module can take screenshots at regular intervals.
+- [S0143] Flame: Flame can take regular screenshots when certain applications are open that are sent to the command and control server.
+- [S1034] StrifeWater: StrifeWater has the ability to take screen captures.
+- [S0257] VERMIN: VERMIN can perform screen captures of the victim’s machine.
+- [S1156] Manjusaka: Manjusaka can take screenshots of the victim desktop.
+- [S0386] Ursnif: Ursnif has used hooked APIs to take screenshots.
+- [S1065] Woody RAT: Woody RAT has the ability to take a screenshot of the infected host desktop using Windows GDI+.
+- [S0582] LookBack: LookBack can take desktop screenshots.
+- [S0593] ECCENTRICBANDWAGON: ECCENTRICBANDWAGON can capture screenshots and store them locally.
+- [S1060] Mafalda: Mafalda can take a screenshot of the target machine and save it to a file.
+- [S0437] Kivars: Kivars has the ability to capture screenshots on the infected host.
+- [S0633] Sliver: Sliver can take screenshots of the victim’s active display.
+- [S0213] DOGCALL: DOGCALL is capable of capturing screenshots of the victim's machine.
+- [G0043] Group5: Malware used by Group5 is capable of watching the victim's screen.
+- [S0663] SysUpdate: SysUpdate has the ability to capture screenshots.
+- [S0398] HyperBro: HyperBro has the ability to take screenshots.
+- [S1044] FunnyDream: The FunnyDream ScreenCap component can take screenshots on a compromised host.
+- [S1201] TRANSLATEXT: TRANSLATEXT has the ability to capture screenshots of new browser tabs, based on the presence of the `Capture` flag.
+- [G0087] APT39: APT39 has used a screen capture utility to take screenshots on a compromised host.
+- [S0667] Chrommme: Chrommme has the ability to capture screenshots.
+- [S0277] FruitFly: FruitFly takes screenshots of the user's desktop.
+- [S0332] Remcos: Remcos takes automated screenshots of the infected machine.
+- [S1090] NightClub: NightClub can load a module to call `CreateCompatibleDC` and `GdipSaveImageToStream` for screen capture.
+- [S0381] FlawedAmmyy: FlawedAmmyy can capture screenshots.
+- [S0167] Matryoshka: Matryoshka is capable of performing screen captures.
+- [S1148] Raccoon Stealer: Raccoon Stealer can capture screenshots from victim systems.
+- [S0062] DustySky: DustySky captures PNG screenshots of the main screen.
+- [S0234] Bandook: Bandook is capable of taking an image of and uploading the current desktop.
+- [S0203] Hydraq: Hydraq includes a component based on the code of VNC that can stream a live feed of the desktop of an infected host.
+- [S0629] RainyDay: RainyDay has the ability to capture screenshots.
+- [S0088] Kasidet: Kasidet has the ability to initiate keylogging and screen captures.
+- [S0356] KONNI: KONNI can take screenshots of the victim’s machine.
+- [S0032] gh0st RAT: gh0st RAT can capture the victim’s screen remotely.
+- [S0265] Kazuar: Kazuar captures screenshots of the victim’s screen.
+- [S0152] EvilGrab: EvilGrab has the capability to capture screenshots.
+- [S0151] HALFBAKED: HALFBAKED can obtain screenshots from the victim.
+- [S0455] Metamorfo: Metamorfo can collect screenshots of the victim’s machine.
+- [S0248] yty: yty collects screenshots of the victim machine.
+- [S0339] Micropsia: Micropsia takes screenshots every 90 seconds by calling the Gdi32.BitBlt API.
+- [S0649] SMOKEDHAM: SMOKEDHAM can capture screenshots of the victim’s desktop.
+- [S0013] PlugX: PlugX allows the operator to capture screenshots.
+- [S0387] KeyBoy: KeyBoy has a command to perform screen grabbing.
+- [S0273] Socksbot: Socksbot can take screenshots.
+- [G0094] Kimsuky: Kimsuky has captured browser screenshots using TRANSLATEXT.
+- [S0161] XAgentOSX: XAgentOSX contains the takeScreenShot (along with startTakeScreenShot and stopTakeScreenShot) functions to take screenshots using the CGGetActiveDisplayList, CGDisplayCreateImage, and NSImage:initWithCGImage methods.
+- [S0271] KEYMARBLE: KEYMARBLE can capture screenshots of the victim’s machine.
+- [S0591] ConnectWise: ConnectWise can take screenshots on remote hosts.
+- [S1142] LunarMail: LunarMail can capture screenshots from compromised hosts.
+- [S0240] ROKRAT: ROKRAT can capture screenshots of the infected system using the `gdi32` library.
+- [S0379] Revenge RAT: Revenge RAT has a plugin for screen capture.
+- [S0021] Derusbi: Derusbi is capable of performing screen captures.
+- [S0198] NETWIRE: NETWIRE can capture the victim's screen.
+- [S0279] Proton: Proton captures the content of the desktop with the screencapture binary.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can capture screenshots on targeted systems using a timer and either upload them or store them to disk.
+- [S0622] AppleSeed: AppleSeed can take screenshots on a compromised host by calling a series of APIs.
+- [S0375] Remexi: Remexi takes screenshots of windows of interest.
+- [S0217] SHUTTERSPEED: SHUTTERSPEED can capture screenshots.
+- [S0428] PoetRAT: PoetRAT has the ability to take screen captures.
+- [S0454] Cadelspy: Cadelspy has the ability to capture screenshots and webcam photos.
+- [S0098] T9000: T9000 can take screenshots of the desktop and target application windows, saving them to user directories as one byte XOR encrypted .dat files.
+- [S0674] CharmPower: CharmPower has the ability to capture screenshots.
+- [S0484] Carberp: Carberp can capture display screenshots with the screens_dll.dll plugin.
+- [S0657] BLUELIGHT: BLUELIGHT has captured a screenshot of the display every 30 seconds for the first 5 minutes after initiating a C2 loop, and then once every five minutes thereafter.
+- [S0282] MacSpy: MacSpy can capture screenshots of the desktop over multiple monitors.
+- [S0533] SLOTHFULMEDIA: SLOTHFULMEDIA has taken a screenshot of a victim's desktop, named it "Filter3.jpg", and stored it in the local directory.
+- [S0270] RogueRobin: RogueRobin has a command named $screenshot that may be responsible for taking screenshots of the victim machine.
+- [S0631] Chaes: Chaes can capture screenshots of the infected machine.
+- [S0223] POWERSTATS: POWERSTATS can retrieve screenshots from compromised hosts.
+- [S0283] jRAT: jRAT has the capability to take screenshots of the victim’s machine.
+- [S0592] RemoteUtilities: RemoteUtilities can take screenshots on a compromised host.
+- [G0070] Dark Caracal: Dark Caracal took screenshots using their Windows malware.
+- [S0184] POWRUNER: POWRUNER can capture a screenshot from a victim.
+- [S1087] AsyncRAT: AsyncRAT has the ability to view the screen on compromised hosts.
+- [S0344] Azorult: Azorult can capture screenshots of the victim’s machines.
+- [S0431] HotCroissant: HotCroissant has the ability to do real time screen viewing on an infected host.
+- [S0380] StoneDrill: StoneDrill can take screenshots.
+- [S0261] Catchamas: Catchamas captures screenshots based on specific keywords in the window’s title.
+- [S1107] NKAbuse: NKAbuse can take screenshots of the victim machine.
+- [G0046] FIN7: FIN7 captured screenshots and desktop video recordings.
+- [S0348] Cardinal RAT: Cardinal RAT can capture screenshots.
+- [S0658] XCSSET: XCSSET saves a screen capture of the victim's system with a numbered filename and .jpg extension. Screen captures are taken at specified intervals based on the system.
+- [S0340] Octopus: Octopus can capture screenshots of the victims’ machine.
+- [S0148] RTM: RTM can capture screenshots.
+- [S0686] QuietSieve: QuietSieve has taken screenshots every five minutes and saved them to the user's local Application Data folder under `Temp\SymbolSourceSymbols\icons` or `Temp\ModeAuto\icons`.
+- [S0409] Machete: Machete captures screenshots.
+- [S0163] Janicab: Janicab captured screenshots and sent them out to a C2 server.
+- [S0652] MarkiRAT: MarkiRAT can capture screenshots that are initially saved as ‘scr.jpg’.
+
+
+### T1114.001 - Email Collection: Local Email Collection
+
+Description:
+
+Adversaries may target user email on local systems to collect sensitive information. Files containing email data can be acquired from a user’s local system, such as Outlook storage or cache files. Outlook stores data locally in offline data files with an extension of .ost. Outlook 2010 and later supports .ost file sizes up to 50GB, while earlier versions of Outlook support up to 20GB. IMAP accounts in Outlook 2013 (and earlier) and POP accounts use Outlook Data Files (.pst) as opposed to .ost, whereas IMAP accounts in Outlook 2016 (and later) use .ost files. Both types of Outlook data files are typically stored in `C:\Users\\Documents\Outlook Files` or `C:\Users\\AppData\Local\Microsoft\Outlook`.
+
+Detection:
+
+Monitor processes and command-line arguments for actions that could be taken to gather local email files. Monitor for unusual processes accessing local email files. Remote access tools with built-in features may interact directly with the Windows API to gather information. Information may also be acquired through Windows system management tools such as Windows Management Instrumentation and PowerShell.
+
+Procedures:
+
+- [S1142] LunarMail: LunarMail can capture the recipients of sent email messages from compromised accounts.
+- [G1039] RedCurl: RedCurl has collected emails to use in future phishing campaigns.
+- [S0226] Smoke Loader: Smoke Loader searches through Outlook files and directories (e.g., inbox, sent, templates, drafts, archives, etc.).
+- [S0650] QakBot: QakBot can target and steal locally stored emails to support thread hijacking phishing campaigns.
+- [G1041] Sea Turtle: Sea Turtle collected email archives from victim environments.
+- [S0192] Pupy: Pupy can interact with a victim’s Outlook session and look through folders and emails.
+- [S0030] Carbanak: Carbanak searches recursively for Outlook personal storage tables (PST) files within user directories and sends them back to the C2 server.
+- [G0006] APT1: APT1 uses two utilities, GETMAIL and MAPIGET, to steal email. GETMAIL extracts emails from archived Outlook .pst files.
+- [S0115] Crimson: Crimson contains a command to collect and exfiltrate emails from Outlook.
+- [C0002] Night Dragon: During Night Dragon, threat actors used RAT malware to exfiltrate email archives.
+- [S0363] Empire: Empire has the ability to collect emails on a target system.
+- [G0114] Chimera: Chimera has harvested data from victim's e-mail including through execution of wmic /node: process call create "cmd /c copy c:\Users\\\backup.pst c:\windows\temp\backup.pst" copy "i:\\\My Documents\.pst" copy.
+- [S0526] KGH_SPY: KGH_SPY can harvest data from mail clients.
+- [G0059] Magic Hound: Magic Hound has collected .PST archives.
+- [S0050] CosmicDuke: CosmicDuke searches for Microsoft Outlook data files with extensions .pst and .ost for collection and exfiltration.
+- [S0594] Out1: Out1 can parse e-mails on a target machine.
+- [G1035] Winter Vivern: Winter Vivern delivered malicious JavaScript payloads capable of exfiltrating email messages from exploited email servers.
+- [S0367] Emotet: Emotet has been observed leveraging a module that scrapes email data from Outlook.
+
+### T1114.002 - Email Collection: Remote Email Collection
+
+Description:
+
+Adversaries may target an Exchange server, Office 365, or Google Workspace to collect sensitive information. Adversaries may leverage a user's credentials and interact directly with the Exchange server to acquire information from within a network. Adversaries may also access externally facing Exchange services, Office 365, or Google Workspace to access email using credentials or access tokens. Tools such as MailSniper can be used to automate searches for specific keywords.
+
+Detection:
+
+Monitor for unusual login activity from unknown or abnormal locations, especially for privileged accounts (ex: Exchange administrator account).
+
+Procedures:
+
+- [G0004] Ke3chang: Ke3chang has used compromised credentials and a .NET tool to dump data from Microsoft Exchange mailboxes.
+- [S0413] MailSniper: MailSniper can be used for searching through email in Exchange and Office 365 environments.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 collected emails from specific individuals, such as executives and IT staff, using `New-MailboxExportRequest` followed by `Get-MailboxExportRequest`.
+- [G0007] APT28: APT28 has collected emails from victim Microsoft Exchange servers.
+- [G1033] Star Blizzard: Star Blizzard has remotely accessed victims' email accounts to steal messages and attachments.
+- [G0006] APT1: APT1 uses two utilities, GETMAIL and MAPIGET, to steal email. MAPIGET steals email still on Exchange servers that has not yet been archived.
+- [C0038] HomeLand Justice: During HomeLand Justice, threat actors made multiple HTTP POST requests to the Exchange servers of the victim organization to transfer data.
+- [S0395] LightNeuron: LightNeuron collects Exchange emails matching rules specified in its configuration.
+- [G0016] APT29: APT29 has collected emails from targeted mailboxes within a compromised Azure AD tenant and compromised Exchange servers, including via Exchange Web Services (EWS) API requests.
+- [S0053] SeaDuke: Some SeaDuke samples have a module to extract email from Microsoft Exchange servers using compromised credentials.
+- [G0125] HAFNIUM: HAFNIUM has used web shells and MSGraph to export mailbox data.
+- [S0476] Valak: Valak can collect sensitive mailing information from Exchange servers, including credentials and the domain certificate of an enterprise.
+- [G0059] Magic Hound: Magic Hound has exported emails from compromised Exchange servers including through use of the cmdlet `New-MailboxExportRequest.`
+- [G0114] Chimera: Chimera has harvested data from remote mailboxes including through execution of \\\c$\Users\\AppData\Local\Microsoft\Outlook*.ost.
+- [G0035] Dragonfly: Dragonfly has accessed email accounts using Outlook Web Access.
+- [G0085] FIN4: FIN4 has accessed and hijacked online email communications using stolen credentials.
+- [G0077] Leafminer: Leafminer used a tool called MailSniper to search through the Exchange server mailboxes for keywords.
+- [G0094] Kimsuky: Kimsuky has used tools such as the MailFetch mail crawler to collect victim emails (excluding spam) from online services via IMAP.
+
+### T1114.003 - Email Collection: Email Forwarding Rule
+
+Description:
+
+Adversaries may setup email forwarding rules to collect sensitive information. Adversaries may abuse email forwarding rules to monitor the activities of a victim, steal information, and further gain intelligence on the victim or the victim’s organization to use as part of further exploits or operations. Furthermore, email forwarding rules can allow adversaries to maintain persistent access to victim's emails even after compromised credentials are reset by administrators. Most email clients allow users to create inbox rules for various email functions, including forwarding to a different recipient. These rules may be created through a local email application, a web interface, or by command-line interface. Messages can be forwarded to internal or external recipients, and there are no restrictions limiting the extent of this rule. Administrators may also create forwarding rules for user accounts with the same considerations and outcomes. Any user or administrator within the organization (or adversary with valid credentials) can create rules to automatically forward all received messages to another recipient, forward emails to different locations based on the sender, and more. Adversaries may also hide the rule by making use of the Microsoft Messaging API (MAPI) to modify the rule properties, making it hidden and not visible from Outlook, OWA or most Exchange Administration tools. In some environments, administrators may be able to enable email forwarding rules that operate organization-wide rather than on individual inboxes. For example, Microsoft Exchange supports transport rules that evaluate all mail an organization receives against user-specified conditions, then performs a user-specified action on mail that adheres to those conditions. Adversaries that abuse such features may be able to enable forwarding on all or specific mail an organization receives.
+
+Detection:
+
+Detection is challenging because all messages forwarded because of an auto-forwarding rule have the same presentation as a manually forwarded message. It is also possible for the user to not be aware of the addition of such an auto-forwarding rule and not suspect that their account has been compromised; email-forwarding rules alone will not affect the normal usage patterns or operations of the email account. This is especially true in cases with hidden auto-forwarding rules. This makes it only possible to reliably detect the existence of a hidden auto-forwarding rule by examining message tracking logs or by using a MAPI editor to notice the modified rule property values. Auto-forwarded messages generally contain specific detectable artifacts that may be present in the header; such artifacts would be platform-specific. Examples include `X-MS-Exchange-Organization-AutoForwarded` set to true, `X-MailFwdBy` and `X-Forwarded-To`. The `forwardingSMTPAddress` parameter used in a forwarding process that is managed by administrators and not by user actions. All messages for the mailbox are forwarded to the specified SMTP address. However, unlike typical client-side rules, the message does not appear as forwarded in the mailbox; it appears as if it were sent directly to the specified destination mailbox. High volumes of emails that bear the `X-MS-Exchange-Organization-AutoForwarded` header (indicating auto-forwarding) without a corresponding number of emails that match the appearance of a forwarded message may indicate that further investigation is needed at the administrator level rather than user-level.
+
+Procedures:
+
+- [G0122] Silent Librarian: Silent Librarian has set up auto forwarding rules on compromised e-mail accounts.
+- [G1004] LAPSUS$: LAPSUS$ has set an Office 365 tenant level mail transport rule to send all mail in and out of the targeted organization to the newly created account.
+- [G1033] Star Blizzard: Star Blizzard has abused email forwarding rules to monitor the activities of a victim, steal information, and maintain persistent access after compromised credentials are reset.
+- [G0094] Kimsuky: Kimsuky has set auto-forward rules on victim's e-mail accounts.
+
+
+### T1115 - Clipboard Data
+
+Description:
+
+Adversaries may collect data stored in the clipboard from users copying information within or between applications. For example, on Windows adversaries can access clipboard data by using clip.exe or Get-Clipboard. Additionally, adversaries may monitor then replace users’ clipboard with their data (e.g., Transmitted Data Manipulation). macOS and Linux also have commands, such as pbpaste, to grab clipboard contents.
+
+Detection:
+
+Access to the clipboard is a legitimate function of many applications on an operating system. If an organization chooses to monitor for this behavior, then the data will likely need to be correlated against other suspicious or non-user-driven activity.
+
+Procedures:
+
+- [S0331] Agent Tesla: Agent Tesla can steal data from the victim’s clipboard.
+- [G0087] APT39: APT39 has used tools capable of stealing contents of the clipboard.
+- [S0148] RTM: RTM collects data from the clipboard.
+- [S0692] SILENTTRINITY: SILENTTRINITY can monitor Clipboard text and can use `System.Windows.Forms.Clipboard.GetText()` to collect data from the clipboard.
+- [S0334] DarkComet: DarkComet can steal data from the clipboard.
+- [S0373] Astaroth: Astaroth collects information from the clipboard by using the OpenClipboard() and GetClipboardData() libraries.
+- [S0004] TinyZBot: TinyZBot contains functionality to collect information from the clipboard.
+- [S0363] Empire: Empire can harvest clipboard data on both Windows and macOS systems.
+- [S0438] Attor: Attor has a plugin that collects data stored in the Windows clipboard by using the OpenClipboard and GetClipboardData APIs.
+- [S0332] Remcos: Remcos steals and modifies data from the clipboard.
+- [S0257] VERMIN: VERMIN collects data stored in the clipboard.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors collected clipboard data in plaintext.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can capture content from the clipboard.
+- [S0356] KONNI: KONNI had a feature to steal data from the clipboard.
+- [S0375] Remexi: Remexi collects text from the clipboard.
+- [S0282] MacSpy: MacSpy can steal clipboard contents.
+- [S0454] Cadelspy: Cadelspy has the ability to steal data from the clipboard.
+- [S0250] Koadic: Koadic can retrieve the current content of the user clipboard.
+- [S0050] CosmicDuke: CosmicDuke copies and exfiltrates the clipboard contents every 30 seconds.
+- [S1207] XLoader: XLoader can collect data stored in the victim's clipboard.
+- [S0660] Clambling: Clambling has the ability to capture and store clipboard data.
+- [S1066] DarkTortilla: DarkTortilla can download a clipboard information stealer module.
+- [S0455] Metamorfo: Metamorfo has a function to hijack data from the clipboard by monitoring the contents of the clipboard and replacing the cryptocurrency wallet with the attacker's.
+- [S0409] Machete: Machete hijacks the clipboard data by creating an overlapped window that listens to keyboard events.
+- [S0044] JHUHUGIT: A JHUHUGIT variant accesses a screenshot saved in the clipboard and converts it to a JPG image.
+- [S0240] ROKRAT: ROKRAT can extract clipboard data from a compromised host.
+- [S1146] MgBot: MgBot can capture clipboard data.
+- [S0531] Grandoreiro: Grandoreiro can capture clipboard data from a compromised host.
+- [S0170] Helminth: The executable version of Helminth has a module to log clipboard contents.
+- [S0261] Catchamas: Catchamas steals data stored in the clipboard.
+- [S0283] jRAT: jRAT can capture clipboard data.
+- [S0569] Explosive: Explosive has a function to use the OpenClipboard wrapper.
+- [G0082] APT38: APT38 used a Trojan called KEYLIME to collect data from the clipboard.
+- [S1111] DarkGate: DarkGate starts a thread on execution that captures clipboard data and logs it to a predefined log file.
+- [G0049] OilRig: OilRig has used infostealer tools to copy clipboard data.
+- [S0330] Zeus Panda: Zeus Panda can hook GetClipboardData function to watch for clipboard pastes to collect.
+- [S0530] Melcoz: Melcoz can monitor content saved to the clipboard.
+- [S0253] RunningRAT: RunningRAT contains code to open and copy data from the clipboard.
+- [S1122] Mispadu: Mispadu has the ability to capture and replace Bitcoin wallet data in the clipboard on a compromised host.
+- [S0381] FlawedAmmyy: FlawedAmmyy can collect clipboard data.
+- [S0652] MarkiRAT: MarkiRAT can capture clipboard content.
+- [S0467] TajMahal: TajMahal has the ability to steal data from the clipboard of an infected host.
+
+
+### T1119 - Automated Collection
+
+Description:
+
+Once established within a system or network, an adversary may use automated techniques for collecting internal data. Methods for performing this technique could include use of a Command and Scripting Interpreter to search for and copy information fitting set criteria such as file type, location, or name at specific time intervals. In cloud-based environments, adversaries may also use cloud APIs, data pipelines, command line interfaces, or extract, transform, and load (ETL) services to automatically collect data. This functionality could also be built into remote access tools. This technique may incorporate use of other techniques such as File and Directory Discovery and Lateral Tool Transfer to identify and move files, as well as Cloud Service Dashboard and Cloud Storage Object Discovery to identify resources in cloud environments.
+
+Detection:
+
+Depending on the method used, actions could include common file system commands and parameters on the command-line interface within batch files or scripts. A sequence of actions like this may be unusual, depending on the system and network environment. Automated collection may occur along with other techniques such as Data Staged. As such, file access monitoring that shows an unusual process performing sequential file opens and potentially copy actions to another location on the file system for many files at once may indicate automated collection behavior. Remote access tools with built-in features may interact directly with the Windows API to gather data. Data may also be acquired through Windows system management tools such as Windows Management Instrumentation and PowerShell, as well as through cloud APIs and command line interfaces.
+
+Procedures:
+
+- [S0098] T9000: T9000 searches removable storage devices for files with a pre-defined list of file extensions (e.g. * .doc, *.ppt, *.xls, *.docx, *.pptx, *.xlsx). Any matching files are encrypted and written to a local user directory.
+- [S0090] Rover: Rover automatically collects files from the local system and removable drives based on a predefined list of file extensions on a regular timeframe.
+- [S0339] Micropsia: Micropsia executes an RAR tool to recursively archive files based on a predefined list of file extensions (*.xls, *.xlsx, *.csv, *.odt, *.doc, *.docx, *.ppt, *.pptx, *.pdf, *.mdb, *.accdb, *.accde, *.txt).
+- [S1043] ccf32: ccf32 can be used to automatically collect files from a compromised host.
+- [S1111] DarkGate: DarkGate searches for stored credentials associated with cryptocurrency wallets and notifies the command and control server when identified.
+- [G0047] Gamaredon Group: Gamaredon Group has deployed scripts on compromised systems that automatically scan for interesting documents.
+- [S0244] Comnie: Comnie executes a batch script to store discovery information in %TEMP%\info.dat and then uploads the temporarily file to the remote C2 server.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors used a script to collect information about the infected system.
+- [S0684] ROADTools: ROADTools automatically gathers data from Azure AD environments using the Azure Graph API.
+- [S0198] NETWIRE: NETWIRE can automatically archive collected data.
+- [G1003] Ember Bear: Ember Bear engages in mass collection from compromised systems during intrusions.
+- [G1039] RedCurl: RedCurl has used batch scripts to collect data.
+- [S0378] PoshC2: PoshC2 contains a module for recursively parsing through files and directories to gather valid credit card numbers.
+- [S0428] PoetRAT: PoetRAT used file system monitoring to track modification and enable automatic exfiltration.
+- [S0363] Empire: Empire can automatically gather the username, domain name, machine name, and other information from a compromised system.
+- [G0006] APT1: APT1 used a batch script to perform a series of discovery techniques and saves it to a text file.
+- [S0238] Proxysvc: Proxysvc automatically collects data about the victim and sends it to the control server.
+- [S0128] BADNEWS: BADNEWS monitors USB devices and copies files with certain extensions to a predefined directory.
+- [S0467] TajMahal: TajMahal has the ability to index and compress files into a send queue for exfiltration.
+- [G0004] Ke3chang: Ke3chang has performed frequent and scheduled data collection from victim networks.
+- [G0053] FIN5: FIN5 scans processes on all victim systems in the environment and uses automated scripts to pull back the results.
+- [S0257] VERMIN: VERMIN saves each collected file with the automatically generated format {0:dd-MM-yyyy}.txt .
+- [G0125] HAFNIUM: HAFNIUM has used MSGraph to exfiltrate data from email, OneDrive, and SharePoint.
+- [G1030] Agrius: Agrius used a custom tool, sql.net4.exe, to query SQL databases and then identify and extract personally identifiable information.
+- [S0455] Metamorfo: Metamorfo has automatically collected mouse clicks, continuous screenshots on the machine, and set timers to collect the contents of the clipboard and website browsing.
+- [G0007] APT28: APT28 used a publicly available tool to gather and compress multiple documents on the DCCC and DNC networks.
+- [S0466] WindTail: WindTail can identify and add files that possess specific file extensions to an array for archiving.
+- [S0136] USBStealer: For all non-removable drives on a victim, USBStealer executes automated collection of certain files for later exfiltration.
+- [S0622] AppleSeed: AppleSeed has automatically collected data from USB drives, keystrokes, and screen images before exfiltration.
+- [S0476] Valak: Valak can download a module to search for and build a report of harvested credential data.
+- [S1017] OutSteel: OutSteel can automatically scan for and collect files with specific extensions.
+- [S0395] LightNeuron: LightNeuron can be configured to automatically collect files under a specified directory.
+- [S0239] Bankshot: Bankshot recursively generates a list of files within a directory and sends them back to the control server.
+- [S1109] PACEMAKER: PACEMAKER can enter a loop to read `/proc/` entries every 2 seconds in order to read a target application's memory.
+- [S0491] StrongPity: StrongPity has a file searcher component that can automatically collect and archive files based on a predefined list of file extensions.
+- [S1044] FunnyDream: FunnyDream can monitor files for changes and automatically collect them.
+- [C0040] APT41 DUST: APT41 DUST used tools such as SQLULDR2 and PINEGROVE to gather local system and database information.
+- [G1035] Winter Vivern: Winter Vivern delivered a PowerShell script capable of recursively scanning victim machines looking for various file types before exfiltrating identified files via HTTP.
+- [S0438] Attor: Attor has automatically collected data about the compromised system.
+- [G0142] Confucius: Confucius has used a file stealer to steal documents and images with the following extensions: txt, pdf, png, jpg, doc, xls, xlm, odp, ods, odt, rtf, ppt, xlsx, xlsm, docx, pptx, and jpeg.
+- [C0046] ArcaneDoor: ArcaneDoor included collection of packet capture and system configuration information.
+- [G0049] OilRig: OilRig has used automated collection.
+- [S0458] Ramsay: Ramsay can conduct an initial scan for Microsoft Word documents on the local system, removable media, and connected network drives, before tagging and collecting them. It can continue tagging documents to collect with follow up scans.
+- [S1148] Raccoon Stealer: Raccoon Stealer collects files and directories from victim systems based on configuration data downloaded from command and control servers.
+- [S0148] RTM: RTM monitors browsing activity and automatically captures screenshots if a victim browses to a URL matching one of a list of strings.
+- [C0001] Frankenstein: During Frankenstein, the threat actors used Empire to automatically gather the username, domain name, machine name, and other system information.
+- [G0037] FIN6: FIN6 has used a script to iterate through a list of compromised PoS systems, copy and remove data to a log file, and to bind to events from the submit payment button.
+- [G0040] Patchwork: Patchwork developed a file stealer to search C:\ and collect files with certain extensions. Patchwork also executed a script to enumerate all drives, store them as a list, and upload generated files to the C2 server.
+- [G0081] Tropic Trooper: Tropic Trooper has collected information automatically using the adversary's USBferry attack.
+- [G0121] Sidewinder: Sidewinder has used tools to automatically collect system and network configuration information.
+- [G0114] Chimera: Chimera has used custom DLLs for continuous retrieval of data from memory.
+- [S0597] GoldFinder: GoldFinder logged and stored information related to the route or hops a packet took from a compromised machine to a hardcoded C2 server, including the target C2 URL, HTTP response/status code, HTTP response headers and values, and data received from the C2 node.
+- [G0027] Threat Group-3390: Threat Group-3390 ran a command to compile an archive of file types of interest from the victim user's directories.
+- [S0699] Mythic: Mythic supports scripting of file downloads from agents.
+- [S1213] Lumma Stealer: Lumma Stealer has automated collection of various information including cryptocurrency wallet details.
+- [G0129] Mustang Panda: Mustang Panda used custom batch scripts to collect files automatically from a targeted system.
+- [S0260] InvisiMole: InvisiMole can sort and collect specific documents as well as generate a list of all files on a newly inserted drive and store them in an encrypted file.
+- [S0538] Crutch: Crutch can automatically monitor removable drives in a loop and copy interesting files.
+- [S0170] Helminth: A Helminth VBScript receives a batch script to execute a set of commands in a command prompt.
+- [S1078] RotaJakiro: Depending on the Linux distribution, RotaJakiro executes a set of commands to collect device information and sends the collected information to the C2 server.
+- [S1131] NPPSPY: NPPSPY collection is automatically recorded to a specified file on the victim machine.
+- [S1091] Pacu: Pacu can automatically collect data, such as CloudFormation templates, EC2 user data, AWS Inspector reports, and IAM credential reports.
+- [S0251] Zebrocy: Zebrocy scans the system and automatically collects files with the following extensions: .doc, .docx, ,.xls, .xlsx, .pdf, .pptx, .rar, .zip, .jpg, .jpeg, .bmp, .tiff, .kum, .tlg, .sbx, .cr, .hse, .hsf, and .lhz.
+- [S1183] StrelaStealer: StrelaStealer attempts to identify and collect mail login data from Thunderbird and Outlook following execution.
+- [G0045] menuPass: menuPass has used the Csvde tool to collect Active Directory files and data.
+- [S1101] LoFiSe: LoFiSe can collect all the files from the working directory every three hours and place them into a password-protected archive for further exfiltration.
+- [S0445] ShimRatReporter: ShimRatReporter gathered information automatically, without instruction from a C2, related to the user and host machine that is compiled into a report and sent to the operators.
+- [S0443] MESSAGETAP: MESSAGETAP checks two files, keyword_parm.txt and parm.txt, for instructions on how to target and save data parsed and extracted from SMS message data from the network traffic. If an SMS message contained either a phone number, IMSI number, or keyword that matched the predefined list, it is saved to a CSV file for later theft by the threat actor.
+
+
+### T1123 - Audio Capture
+
+Description:
+
+An adversary can leverage a computer's peripheral devices (e.g., microphones and webcams) or applications (e.g., voice and video call services) to capture audio recordings for the purpose of listening into sensitive conversations to gather information. Malware or scripts may be used to interact with the devices through an available API provided by the operating system or an application to capture audio. Audio files may be written to disk and exfiltrated later.
+
+Detection:
+
+Detection of this technique may be difficult due to the various APIs that may be used. Telemetry data regarding API use may not be useful depending on how a system is normally used, but may provide context to other potentially malicious activity occurring on a system. Behavior that could indicate technique use include an unknown or unusual process accessing APIs associated with devices or software that interact with the microphone, recording devices, or recording software, and a process periodically writing files to disk that contain audio data.
+
+Procedures:
+
+- [S0143] Flame: Flame can record audio using any existing hardware recording devices.
+- [S0240] ROKRAT: ROKRAT has an audio capture and eavesdropping module.
+- [S0234] Bandook: Bandook has modules that are capable of capturing audio.
+- [S0194] PowerSploit: PowerSploit's Get-MicrophoneAudio Exfiltration module can record system microphone audio.
+- [S0257] VERMIN: VERMIN can perform audio capture.
+- [S0467] TajMahal: TajMahal has the ability to capture VoiceIP application audio on an infected host.
+- [S0192] Pupy: Pupy can record sound with the microphone.
+- [S0152] EvilGrab: EvilGrab has the capability to capture audio from a victim machine.
+- [S1185] LightSpy: LightSpy uses Apple's built-in AVFoundation Framework library to capture and manage audio recordings then transform them to JSON blobs for exfiltration.
+- [S0454] Cadelspy: Cadelspy has the ability to record audio from the compromised host.
+- [S0336] NanoCore: NanoCore can capture audio feeds from the system.
+- [S0115] Crimson: Crimson can perform audio surveillance using microphones.
+- [S1016] MacMa: MacMa has the ability to record audio.
+- [S0098] T9000: T9000 uses the Skype API to record audio and video calls. It writes encrypted data to %APPDATA%\Intel\Skype.
+- [S0409] Machete: Machete captures audio from the computer’s microphone.
+- [S0163] Janicab: Janicab captured audio and sent it out to a C2 server.
+- [S0338] Cobian RAT: Cobian RAT has a feature to perform voice recording on the victim’s machine.
+- [S0260] InvisiMole: InvisiMole can record sound using input audio devices.
+- [S0379] Revenge RAT: Revenge RAT has a plugin for microphone interception.
+- [S0021] Derusbi: Derusbi is capable of performing audio captures.
+- [S0334] DarkComet: DarkComet can listen in to victims' conversations through the system’s microphone.
+- [S0282] MacSpy: MacSpy can record the sounds from microphones on a computer.
+- [S0434] Imminent Monitor: Imminent Monitor has a remote microphone monitoring capability.
+- [S0213] DOGCALL: DOGCALL can capture microphone data from the victim's machine.
+- [S0283] jRAT: jRAT can capture microphone recordings.
+- [S0332] Remcos: Remcos can capture data from the system’s microphone.
+- [S0339] Micropsia: Micropsia can perform microphone recording.
+- [S1090] NightClub: NightClub can load a module to leverage the LAME encoder and `mciSendStringW` to control and capture audio.
+- [G0067] APT37: APT37 has used an audio capturing utility known as SOUNDWAVE that captures microphone input.
+- [S0438] Attor: Attor's has a plugin that is capable of recording audio using available input sound devices.
+- [S1146] MgBot: MgBot can capture input and output audio streams from infected devices.
+
+
+### T1125 - Video Capture
+
+Description:
+
+An adversary can leverage a computer's peripheral devices (e.g., integrated cameras or webcams) or applications (e.g., video call services) to capture video recordings for the purpose of gathering information. Images may also be captured from devices or applications, potentially in specified intervals, in lieu of video files. Malware or scripts may be used to interact with the devices through an available API provided by the operating system or an application to capture video or images. Video or image files may be written to disk and exfiltrated later. This technique differs from Screen Capture due to use of specific devices or applications for video recording rather than capturing the victim's screen. In macOS, there are a few different malware samples that record the user's webcam such as FruitFly and Proton.
+
+Detection:
+
+Detection of this technique may be difficult due to the various APIs that may be used. Telemetry data regarding API use may not be useful depending on how a system is normally used, but may provide context to other potentially malicious activity occurring on a system. Behavior that could indicate technique use include an unknown or unusual process accessing APIs associated with devices or software that interact with the video camera, recording devices, or recording software, and a process periodically writing files to disk that contain video or camera image data.
+
+Procedures:
+
+- [S0363] Empire: Empire can capture webcam data on Windows and macOS systems.
+- [S0660] Clambling: Clambling can record screen content in AVI format.
+- [S0115] Crimson: Crimson can capture webcam video on targeted systems.
+- [S0467] TajMahal: TajMahal has the ability to capture webcam video.
+- [S0338] Cobian RAT: Cobian RAT has a feature to access the webcam on the victim’s machine.
+- [S0336] NanoCore: NanoCore can access the victim's webcam and capture data.
+- [S0283] jRAT: jRAT has the capability to capture video from a webcam.
+- [S0409] Machete: Machete takes photos from the computer’s web camera.
+- [S0379] Revenge RAT: Revenge RAT has the ability to access the webcam.
+- [S0334] DarkComet: DarkComet can access the victim’s webcam to take pictures.
+- [S0385] njRAT: njRAT can access the victim's webcam.
+- [S0331] Agent Tesla: Agent Tesla can access the victim’s webcam and record video.
+- [G1003] Ember Bear: Ember Bear has exfiltrated images from compromised IP cameras.
+- [S0428] PoetRAT: PoetRAT has used a Python tool named Bewmac to record the webcam on compromised hosts.
+- [G0091] Silence: Silence has been observed making videos of victims to observe bank employees day to day activities.
+- [S0434] Imminent Monitor: Imminent Monitor has a remote webcam monitoring capability.
+- [S0591] ConnectWise: ConnectWise can record video on remote hosts.
+- [S0152] EvilGrab: EvilGrab has the capability to capture video from a victim machine.
+- [S0265] Kazuar: Kazuar captures images from the webcam.
+- [S1087] AsyncRAT: AsyncRAT can record screen content on targeted systems.
+- [S0461] SDBbot: SDBbot has the ability to record video on a compromised host.
+- [G0046] FIN7: FIN7 created a custom video recording capability that could be used to monitor operations in the victim's environment.
+- [S1209] Quick Assist: Quick Assist allows for the remote administrator to view the interactive session of the running machine, including full screen activity.
+- [S0412] ZxShell: ZxShell has a command to perform video device spying.
+- [S0670] WarzoneRAT: WarzoneRAT can access the webcam on a victim's machine.
+- [S0192] Pupy: Pupy can access a connected webcam and capture pictures.
+- [S0234] Bandook: Bandook has modules that are capable of capturing video from a victim's webcam.
+- [S0332] Remcos: Remcos can access a system’s webcam and take pictures.
+- [S0260] InvisiMole: InvisiMole can remotely activate the victim’s webcam to capture content.
+- [S0021] Derusbi: Derusbi is capable of capturing video.
+- [S0644] ObliqueRAT: ObliqueRAT can capture images from webcams on compromised hosts.
+- [S0098] T9000: T9000 uses the Skype API to record audio and video calls. It writes encrypted data to %APPDATA%\Intel\Skype.
+- [S0262] QuasarRAT: QuasarRAT can perform webcam viewing.
+- [S1050] PcShare: PcShare can capture camera video as part of its collection process.
+
+
+### T1185 - Browser Session Hijacking
+
+Description:
+
+Adversaries may take advantage of security vulnerabilities and inherent functionality in browser software to change content, modify user-behaviors, and intercept information as part of various browser session hijacking techniques. A specific example is when an adversary injects software into a browser that allows them to inherit cookies, HTTP sessions, and SSL client certificates of a user then use the browser as a way to pivot into an authenticated intranet. Executing browser-based behaviors such as pivoting may require specific process permissions, such as SeDebugPrivilege and/or high-integrity/administrator rights. Another example involves pivoting browser traffic from the adversary's browser through the user's browser by setting up a proxy which will redirect web traffic. This does not alter the user's traffic in any way, and the proxy connection can be severed as soon as the browser is closed. The adversary assumes the security context of whichever browser process the proxy is injected into. Browsers typically create a new process for each tab that is opened and permissions and certificates are separated accordingly. With these permissions, an adversary could potentially browse to any resource on an intranet, such as Sharepoint or webmail, that is accessible through the browser and which the browser has sufficient permissions. Browser pivoting may also bypass security provided by 2-factor authentication.
+
+Detection:
+
+This may be a difficult technique to detect because adversary traffic may be masked by normal user traffic. New processes may not be created and no additional software dropped to disk. Authentication logs can be used to audit logins to specific web applications, but determining malicious logins versus benign logins may be difficult if activity matches typical user behavior. Monitor for Process Injection against browser applications.
+
+Procedures:
+
+- [S0266] TrickBot: TrickBot uses web injects and browser redirection to trick the user into providing their login credentials on a fake or modified web page.
+- [S0384] Dridex: Dridex can perform browser attacks via web injects to steal information such as credentials, certificates, and cookies.
+- [S0484] Carberp: Carberp has captured credentials when a user performs login through a SSL session.
+- [S1201] TRANSLATEXT: TRANSLATEXT has the ability to use form-grabbing and event-listening to extract data from web data forms.
+- [S0530] Melcoz: Melcoz can monitor the victim's browser for online banking sessions and display an overlay window to manipulate the session in the background.
+- [S0331] Agent Tesla: Agent Tesla has the ability to use form-grabbing to extract data from web data forms.
+- [S0531] Grandoreiro: Grandoreiro can monitor browser activity for online banking actions and display full-screen overlay images to block user access to the intended site or present additional data fields.
+- [G0094] Kimsuky: Kimsuky has the ability to use form-grabbing to extract emails and passwords from web data forms.
+- [S1207] XLoader: XLoader can conduct form grabbing, steal cookies, and extract data from HTTP sessions.
+- [S0650] QakBot: QakBot can use advanced web injects to steal web banking credentials.
+- [S0154] Cobalt Strike: Cobalt Strike can perform browser pivoting and inject into a user's browser to inherit cookies, authenticated HTTP sessions, and client SSL certificates.
+- [S0483] IcedID: IcedID has used web injection attacks to redirect victims to spoofed sites designed to harvest banking and other credentials. IcedID can use a self signed TLS certificate in connection with the spoofed site and simultaneously maintains a live connection with the legitimate site to display the correct URL and certificates in the browser.
+- [S0631] Chaes: Chaes has used the Puppeteer module to hook and monitor the Chrome web browser to collect user information from infected hosts.
+- [S0386] Ursnif: Ursnif has injected HTML codes into banking sites to steal sensitive online banking information (ex: usernames and passwords).
+
+
+### T1213.001 - Data from Information Repositories: Confluence
+
+Description:
+
+Adversaries may leverage Confluence repositories to mine valuable information. Often found in development environments alongside Atlassian JIRA, Confluence is generally used to store development-related documentation, however, in general may contain more diverse categories of useful information, such as: * Policies, procedures, and standards * Physical / logical network diagrams * System architecture diagrams * Technical system documentation * Testing / development credentials (i.e., Unsecured Credentials) * Work / project schedules * Source code snippets * Links to network shares and other internal resources
+
+Detection:
+
+Monitor access to Confluence repositories performed by privileged users (for example, Active Directory Domain, Enterprise, or Schema Administrators) as these types of accounts should generally not be used to access information repositories. If the capability exists, it may be of value to monitor and alert on users that are retrieving and viewing a large number of documents and pages; this behavior may be indicative of programmatic means being used to retrieve all data within the repository. In environments with high-maturity, it may be possible to leverage User-Behavioral Analytics (UBA) platforms to detect and alert on user based anomalies. User access logging within Atlassian's Confluence can be configured to report access to certain pages and documents through AccessLogFilter. Additional log storage and analysis infrastructure will likely be required for more robust detection capabilities.
+
+Procedures:
+
+- [G1004] LAPSUS$: LAPSUS$ has searched a victim's network for collaboration platforms like Confluence and JIRA to discover further high-privilege account credentials.
+
+### T1213.002 - Data from Information Repositories: Sharepoint
+
+Description:
+
+Adversaries may leverage the SharePoint repository as a source to mine valuable information. SharePoint will often contain useful information for an adversary to learn about the structure and functionality of the internal network and systems. For example, the following is a list of example information that may hold potential value to an adversary and may also be found on SharePoint: * Policies, procedures, and standards * Physical / logical network diagrams * System architecture diagrams * Technical system documentation * Testing / development credentials (i.e., Unsecured Credentials) * Work / project schedules * Source code snippets * Links to network shares and other internal resources
+
+Detection:
+
+The user access logging within Microsoft's SharePoint can be configured to report access to certain pages and documents. . As information repositories generally have a considerably large user base, detection of malicious use can be non-trivial. At minimum, access to information repositories performed by privileged users (for example, Active Directory Domain, Enterprise, or Schema Administrators) should be closely monitored and alerted upon, as these types of accounts should generally not be used to access information repositories. If the capability exists, it may be of value to monitor and alert on users that are retrieving and viewing a large number of documents and pages; this behavior may be indicative of programmatic means being used to retrieve all data within the repository. In environments with high-maturity, it may be possible to leverage User-Behavioral Analytics (UBA) platforms to detect and alert on user based anomalies.
+
+Procedures:
+
+- [G1024] Akira: Akira has accessed and downloaded information stored in SharePoint instances as part of data gathering and exfiltration activity.
+- [G0125] HAFNIUM: HAFNIUM has abused compromised credentials to exfiltrate data from SharePoint.
+- [G1004] LAPSUS$: LAPSUS$ has searched a victim's network for collaboration platforms like SharePoint to discover further high-privilege account credentials.
+- [S0227] spwebmember: spwebmember is used to enumerate and dump information from Microsoft SharePoint.
+- [G0114] Chimera: Chimera has collected documents from the victim's SharePoint.
+- [G0007] APT28: APT28 has collected information from Microsoft SharePoint services within target networks.
+- [C0027] C0027: During C0027, Scattered Spider accessed victim SharePoint environments to search for VPN and MFA enrollment information, help desk instructions, and new hire guides.
+- [G0004] Ke3chang: Ke3chang used a SharePoint enumeration and data dumping tool known as spwebmember.
+
+### T1213.003 - Data from Information Repositories: Code Repositories
+
+Description:
+
+Adversaries may leverage code repositories to collect valuable information. Code repositories are tools/services that store source code and automate software builds. They may be hosted internally or privately on third party sites such as Github, GitLab, SourceForge, and BitBucket. Users typically interact with code repositories through a web application or command-line utilities such as git. Once adversaries gain access to a victim network or a private code repository, they may collect sensitive information such as proprietary source code or Unsecured Credentials contained within software's source code. Having access to software's source code may allow adversaries to develop Exploits, while credentials may provide access to additional resources using Valid Accounts. **Note:** This is distinct from Code Repositories, which focuses on conducting Reconnaissance via public code repositories.
+
+Detection:
+
+Monitor access to code repositories, especially performed by privileged users such as Active Directory Domain or Enterprise Administrators as these types of accounts should generally not be used to access code repositories. In environments with high-maturity, it may be possible to leverage User-Behavioral Analytics (UBA) platforms to detect and alert on user-based anomalies.
+
+Procedures:
+
+- [G1004] LAPSUS$: LAPSUS$ has searched a victim's network for code repositories like GitLab and GitHub to discover further high-privilege account credentials.
+- [G1015] Scattered Spider: Scattered Spider enumerates data stored within victim code repositories, such as internal GitHub repositories.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 downloaded source code from code repositories.
+- [G0096] APT41: APT41 cloned victim user Git repositories during intrusions.
+
+### T1213.004 - Data from Information Repositories: Customer Relationship Management Software
+
+Description:
+
+Adversaries may leverage Customer Relationship Management (CRM) software to mine valuable information. CRM software is used to assist organizations in tracking and managing customer interactions, as well as storing customer data. Once adversaries gain access to a victim organization, they may mine CRM software for customer data. This may include personally identifiable information (PII) such as full names, emails, phone numbers, and addresses, as well as additional details such as purchase histories and IT support interactions. By collecting this data, an adversary may be able to send personalized Phishing emails, engage in SIM swapping, or otherwise target the organization’s customers in ways that enable financial gain or the compromise of additional organizations. CRM software may be hosted on-premises or in the cloud. Information stored in these solutions may vary based on the specific instance or environment. Examples of CRM software include Microsoft Dynamics 365, Salesforce, Zoho, Zendesk, and HubSpot.
+
+### T1213.005 - Data from Information Repositories: Messaging Applications
+
+Description:
+
+Adversaries may leverage chat and messaging applications, such as Microsoft Teams, Google Chat, and Slack, to mine valuable information. The following is a brief list of example information that may hold potential value to an adversary and may also be found on messaging applications: * Testing / development credentials (i.e., Chat Messages) * Source code snippets * Links to network shares and other internal resources * Proprietary data * Discussions about ongoing incident response efforts In addition to exfiltrating data from messaging applications, adversaries may leverage data from chat messages in order to improve their targeting - for example, by learning more about an environment or evading ongoing incident response efforts.
+
+Procedures:
+
+- [G0117] Fox Kitten: Fox Kitten has accessed victim security and IT environments and Microsoft Teams to mine valuable information.
+- [G1015] Scattered Spider: Scattered Spider threat actors search the victim’s Slack and Microsoft Teams for conversations about the intrusion and incident response.
+- [G1004] LAPSUS$: LAPSUS$ has searched a victim's network for organization collaboration channels like MS Teams or Slack to discover further high-privilege account credentials.
+
+
+### T1530 - Data from Cloud Storage
+
+Description:
+
+Adversaries may access data from cloud storage. Many IaaS providers offer solutions for online data object storage such as Amazon S3, Azure Storage, and Google Cloud Storage. Similarly, SaaS enterprise platforms such as Office 365 and Google Workspace provide cloud-based document storage to users through services such as OneDrive and Google Drive, while SaaS application providers such as Slack, Confluence, Salesforce, and Dropbox may provide cloud storage solutions as a peripheral or primary use case of their platform. In some cases, as with IaaS-based cloud storage, there exists no overarching application (such as SQL or Elasticsearch) with which to interact with the stored objects: instead, data from these solutions is retrieved directly though the Cloud API. In SaaS applications, adversaries may be able to collect this data directly from APIs or backend cloud storage objects, rather than through their front-end application or interface (i.e., Data from Information Repositories). Adversaries may collect sensitive data from these cloud storage solutions. Providers typically offer security guides to help end users configure systems, though misconfigurations are a common problem. There have been numerous incidents where cloud storage has been improperly secured, typically by unintentionally allowing public access to unauthenticated users, overly-broad access by all users, or even access for any anonymous person outside the control of the Identity Access Management system without even needing basic user permissions. This open access may expose various types of sensitive data, such as credit cards, personally identifiable information, or medical records. Adversaries may also obtain then abuse leaked credentials from source repositories, logs, or other means as a way to gain access to cloud storage objects.
+
+Detection:
+
+Monitor for unusual queries to the cloud provider's storage service. Activity originating from unexpected sources may indicate improper permissions are set that is allowing access to data. Additionally, detecting failed attempts by a user for a certain object, followed by escalation of privileges by the same user, and access to the same object may be an indication of suspicious activity.
+
+Procedures:
+
+- [G0117] Fox Kitten: Fox Kitten has obtained files from the victim's cloud storage instances.
+- [S0683] Peirates: Peirates can dump the contents of AWS S3 buckets. It can also retrieve service account tokens from kOps buckets in Google Cloud Storage or S3.
+- [G1044] APT42: APT42 has collected data from Microsoft 365 environments.
+- [G0125] HAFNIUM: HAFNIUM has exfitrated data from OneDrive.
+- [G1015] Scattered Spider: Scattered Spider enumerates data stored in cloud resources for collection and exfiltration purposes.
+- [S1091] Pacu: Pacu can enumerate and download files stored in AWS storage services, such as S3 buckets.
+- [C0027] C0027: During C0027, Scattered Spider accessed victim OneDrive environments to search for VPN and MFA enrollment information, help desk instructions, and new hire guides.
+- [S0677] AADInternals: AADInternals can collect files from a user’s OneDrive.
+
+
+### T1557.001 - Adversary-in-the-Middle: LLMNR/NBT-NS Poisoning and SMB Relay
+
+Description:
+
+By responding to LLMNR/NBT-NS network traffic, adversaries may spoof an authoritative source for name resolution to force communication with an adversary controlled system. This activity may be used to collect or relay authentication materials. Link-Local Multicast Name Resolution (LLMNR) and NetBIOS Name Service (NBT-NS) are Microsoft Windows components that serve as alternate methods of host identification. LLMNR is based upon the Domain Name System (DNS) format and allows hosts on the same local link to perform name resolution for other hosts. NBT-NS identifies systems on a local network by their NetBIOS name. Adversaries can spoof an authoritative source for name resolution on a victim network by responding to LLMNR (UDP 5355)/NBT-NS (UDP 137) traffic as if they know the identity of the requested host, effectively poisoning the service so that the victims will communicate with the adversary controlled system. If the requested host belongs to a resource that requires identification/authentication, the username and NTLMv2 hash will then be sent to the adversary controlled system. The adversary can then collect the hash information sent over the wire through tools that monitor the ports for traffic or through Network Sniffing and crack the hashes offline through Brute Force to obtain the plaintext passwords. In some cases where an adversary has access to a system that is in the authentication path between systems or when automated scans that use credentials attempt to authenticate to an adversary controlled system, the NTLMv1/v2 hashes can be intercepted and relayed to access and execute code against a target system. The relay step can happen in conjunction with poisoning but may also be independent of it. Additionally, adversaries may encapsulate the NTLMv1/v2 hashes into various protocols, such as LDAP, SMB, MSSQL and HTTP, to expand and use multiple services with the valid NTLM response. Several tools may be used to poison name services within local networks such as NBNSpoof, Metasploit, and Responder.
+
+Detection:
+
+Monitor HKLM\Software\Policies\Microsoft\Windows NT\DNSClient for changes to the "EnableMulticast" DWORD value. A value of “0” indicates LLMNR is disabled. Monitor for traffic on ports UDP 5355 and UDP 137 if LLMNR/NetBIOS is disabled by security policy. Deploy an LLMNR/NBT-NS spoofing detection tool. Monitoring of Windows event logs for event IDs 4697 and 7045 may help in detecting successful relay techniques.
+
+Procedures:
+
+- [S0357] Impacket: Impacket modules like ntlmrelayx and smbrelayx can be used in conjunction with Network Sniffing and LLMNR/NBT-NS Poisoning and SMB Relay to gather NetNTLM credentials for Brute Force or relay attacks that can gain code execution.
+- [S0363] Empire: Empire can use Inveigh to conduct name service poisoning for credential theft and associated relay attacks.
+- [S0378] PoshC2: PoshC2 can use Inveigh to conduct name service poisoning for credential theft and associated relay attacks.
+- [G0032] Lazarus Group: Lazarus Group executed Responder using the command [Responder file path] -i [IP address] -rPv on a compromised host to harvest credentials and move laterally.
+- [G0102] Wizard Spider: Wizard Spider has used the Invoke-Inveigh PowerShell cmdlets, likely for name service poisoning.
+- [S0192] Pupy: Pupy can sniff plaintext network credentials and use NBNS Spoofing to poison name services.
+- [S0174] Responder: Responder is used to poison name services to gather hashes and credentials from systems within a local network.
+
+### T1557.002 - Adversary-in-the-Middle: ARP Cache Poisoning
+
+Description:
+
+Adversaries may poison Address Resolution Protocol (ARP) caches to position themselves between the communication of two or more networked devices. This activity may be used to enable follow-on behaviors such as Network Sniffing or Transmitted Data Manipulation. The ARP protocol is used to resolve IPv4 addresses to link layer addresses, such as a media access control (MAC) address. Devices in a local network segment communicate with each other by using link layer addresses. If a networked device does not have the link layer address of a particular networked device, it may send out a broadcast ARP request to the local network to translate the IP address to a MAC address. The device with the associated IP address directly replies with its MAC address. The networked device that made the ARP request will then use as well as store that information in its ARP cache. An adversary may passively wait for an ARP request to poison the ARP cache of the requesting device. The adversary may reply with their MAC address, thus deceiving the victim by making them believe that they are communicating with the intended networked device. For the adversary to poison the ARP cache, their reply must be faster than the one made by the legitimate IP address owner. Adversaries may also send a gratuitous ARP reply that maliciously announces the ownership of a particular IP address to all the devices in the local network segment. The ARP protocol is stateless and does not require authentication. Therefore, devices may wrongly add or update the MAC address of the IP address in their ARP cache. Adversaries may use ARP cache poisoning as a means to intercept network traffic. This activity may be used to collect and/or relay data such as credentials, especially those sent over an insecure, unencrypted protocol.
+
+Detection:
+
+Monitor network traffic for unusual ARP traffic, gratuitous ARP replies may be suspicious. Consider collecting changes to ARP caches across endpoints for signs of ARP poisoning. For example, if multiple IP addresses map to a single MAC address, this could be an indicator that the ARP cache has been poisoned.
+
+Procedures:
+
+- [G0003] Cleaver: Cleaver has used custom tools to facilitate ARP cache poisoning.
+- [G1014] LuminousMoth: LuminousMoth has used ARP spoofing to redirect a compromised machine to an actor-controlled website.
+
+### T1557.003 - Adversary-in-the-Middle: DHCP Spoofing
+
+Description:
+
+Adversaries may redirect network traffic to adversary-owned systems by spoofing Dynamic Host Configuration Protocol (DHCP) traffic and acting as a malicious DHCP server on the victim network. By achieving the adversary-in-the-middle (AiTM) position, adversaries may collect network communications, including passed credentials, especially those sent over insecure, unencrypted protocols. This may also enable follow-on behaviors such as Network Sniffing or Transmitted Data Manipulation. DHCP is based on a client-server model and has two functionalities: a protocol for providing network configuration settings from a DHCP server to a client and a mechanism for allocating network addresses to clients. The typical server-client interaction is as follows: 1. The client broadcasts a `DISCOVER` message. 2. The server responds with an `OFFER` message, which includes an available network address. 3. The client broadcasts a `REQUEST` message, which includes the network address offered. 4. The server acknowledges with an `ACK` message and the client receives the network configuration parameters. Adversaries may spoof as a rogue DHCP server on the victim network, from which legitimate hosts may receive malicious network configurations. For example, malware can act as a DHCP server and provide adversary-owned DNS servers to the victimized computers. Through the malicious network configurations, an adversary may achieve the AiTM position, route client traffic through adversary-controlled systems, and collect information from the client network. DHCPv6 clients can receive network configuration information without being assigned an IP address by sending a INFORMATION-REQUEST (code 11) message to the All_DHCP_Relay_Agents_and_Servers multicast address. Adversaries may use their rogue DHCP server to respond to this request message with malicious network configurations. Rather than establishing an AiTM position, adversaries may also abuse DHCP spoofing to perform a DHCP exhaustion attack (i.e, Service Exhaustion Flood) by generating many broadcast DISCOVER messages to exhaust a network’s DHCP allocation pool.
+
+Detection:
+
+Monitor network traffic for suspicious/malicious behavior involving DHCP, such as changes in DNS and/or gateway parameters. Additionally, monitor Windows logs for Event IDs (EIDs) 1341, 1342, 1020 and 1063, which specify that the IP allocations are low or have run out; these EIDs may indicate a denial of service attack.
+
+### T1557.004 - Adversary-in-the-Middle: Evil Twin
+
+Description:
+
+Adversaries may host seemingly genuine Wi-Fi access points to deceive users into connecting to malicious networks as a way of supporting follow-on behaviors such as Network Sniffing, Transmitted Data Manipulation, or Input Capture. By using a Service Set Identifier (SSID) of a legitimate Wi-Fi network, fraudulent Wi-Fi access points may trick devices or users into connecting to malicious Wi-Fi networks. Adversaries may provide a stronger signal strength or block access to Wi-Fi access points to coerce or entice victim devices into connecting to malicious networks. A Wi-Fi Pineapple – a network security auditing and penetration testing tool – may be deployed in Evil Twin attacks for ease of use and broader range. Custom certificates may be used in an attempt to intercept HTTPS traffic. Similarly, adversaries may also listen for client devices sending probe requests for known or previously connected networks (Preferred Network Lists or PNLs). When a malicious access point receives a probe request, adversaries can respond with the same SSID to imitate the trusted, known network. Victim devices are led to believe the responding access point is from their PNL and initiate a connection to the fraudulent network. Upon logging into the malicious Wi-Fi access point, a user may be directed to a fake login page or captive portal webpage to capture the victim’s credentials. Once a user is logged into the fraudulent Wi-Fi network, the adversary may able to monitor network activity, manipulate data, or steal additional credentials. Locations with high concentrations of public Wi-Fi access, such as airports, coffee shops, or libraries, may be targets for adversaries to set up illegitimate Wi-Fi access points.
+
+Procedures:
+
+- [G0007] APT28: APT28 has used a Wi-Fi Pineapple to set up Evil Twin Wi-Fi Poisoning for the purposes of capturing victim credentials or planting espionage-oriented malware.
+
+
+### T1560.001 - Archive Collected Data: Archive via Utility
+
+Description:
+
+Adversaries may use utilities to compress and/or encrypt collected data prior to exfiltration. Many utilities include functionalities to compress, encrypt, or otherwise package data into a format that is easier/more secure to transport. Adversaries may abuse various utilities to compress or encrypt data before exfiltration. Some third party utilities may be preinstalled, such as tar on Linux and macOS or zip on Windows systems. On Windows, diantz or makecab may be used to package collected files into a cabinet (.cab) file. diantz may also be used to download and compress files from remote locations (i.e. Remote Data Staging). xcopy on Windows can copy files and directories with a variety of options. Additionally, adversaries may use certutil to Base64 encode collected data before exfiltration. Adversaries may use also third party utilities, such as 7-Zip, WinRAR, and WinZip, to perform similar activities.
+
+Detection:
+
+Common utilities that may be present on the system or brought in by an adversary may be detectable through process monitoring and monitoring for command-line arguments for known archival utilities. This may yield a significant number of benign events, depending on how systems in the environment are typically used. Consider detecting writing of files with extensions and/or headers associated with compressed or encrypted file types. Detection efforts may focus on follow-on exfiltration activity, where compressed or encrypted files can be detected in transit with a network intrusion detection or data loss prevention system analyzing file headers.
+
+Procedures:
+
+- [S0538] Crutch: Crutch has used the WinRAR utility to compress and encrypt stolen files.
+- [S0439] Okrum: Okrum was seen using a RAR archiver tool to compress/decompress data.
+- [G0125] HAFNIUM: HAFNIUM has used 7-Zip and WinRAR to compress stolen files for exfiltration.
+- [S0160] certutil: certutil may be used to Base64 encode collected data.
+- [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors used the Makecab utility to compress and a version of WinRAR to create password-protected archives of stolen data prior to exfiltration.
+- [G0045] menuPass: menuPass has compressed files before exfiltration using TAR and RAR.
+- [G0102] Wizard Spider: Wizard Spider has archived data into ZIP files on compromised machines.
+- [G0064] APT33: APT33 has used WinRAR to compress data prior to exfil.
+- [C0051] APT28 Nearest Neighbor Campaign: During APT28 Nearest Neighbor Campaign, APT28 used built-in PowerShell capabilities (Compress-Archive cmdlet) to compress collected data.
+- [S1043] ccf32: ccf32 has used `xcopy \\\c$\users\public\path.7z c:\users\public\bin\.7z /H /Y` to archive collected files.
+- [G0117] Fox Kitten: Fox Kitten has used 7-Zip to archive data.
+- [G0052] CopyKittens: CopyKittens uses ZPP, a .NET console program, to compress files with ZIP.
+- [G1017] Volt Typhoon: Volt Typhoon has archived the ntds.dit database as a multi-volume password-protected archive with 7-Zip.
+- [S0260] InvisiMole: InvisiMole uses WinRAR to compress data that is intended to be exfiltrated.
+- [G0006] APT1: APT1 has used RAR to compress files before moving them outside of the victim network.
+- [G0129] Mustang Panda: Mustang Panda has used RAR to create password-protected archives of collected documents prior to exfiltration.
+- [G1040] Play: Play has used WinRAR to compress files prior to exfiltration.
+- [G0114] Chimera: Chimera has used gzip for Linux OS and a modified RAR software to archive data on Windows hosts.
+- [S0062] DustySky: DustySky can compress files via RAR while staging data to be exfiltrated.
+- [G0084] Gallmaker: Gallmaker has used WinZip, likely to archive data prior to exfiltration.
+- [S0187] Daserf: Daserf hides collected data in password-protected .rar archives.
+- [S1141] LunarWeb: LunarWeb can create a ZIP archive with specified files and directories.
+- [G1041] Sea Turtle: Sea Turtle used the tar utility to create a local archive of email data on a victim system.
+- [G0087] APT39: APT39 has used WinRAR and 7-Zip to compress an archive stolen data.
+- [S0378] PoshC2: PoshC2 contains a module for compressing data using ZIP.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors archived collected files with WinRAR, prior to exfiltration.
+- [S1168] SampleCheck5000: SampleCheck5000 can gzip compress files uploaded to a shared mailbox used for C2 and exfiltration.
+- [G1039] RedCurl: RedCurl has downloaded 7-Zip to decompress password protected archives.
+- [G1023] APT5: APT5 has used the JAR/ZIP file format for exfiltrated files.
+- [G1030] Agrius: Agrius used 7zip to archive extracted data in preparation for exfiltration.
+- [S0196] PUNCHBUGGY: PUNCHBUGGY has Gzipped information and saved it to a random temp file before exfil.
+- [S0458] Ramsay: Ramsay can compress and archive collected files using WinRAR.
+- [C0007] FunnyDream: During FunnyDream, the threat actors used 7zr.exe to add collected files to an archive.
+- [S0647] Turian: Turian can use WinRAR to create a password-protected archive for files of interest.
+- [G0093] GALLIUM: GALLIUM used WinRAR to compress and encrypt stolen data prior to exfiltration.
+- [G0096] APT41: APT41 created a RAR archive of targeted files for exfiltration. Additionally, APT41 used the makecab.exe utility to both download tools, such as NATBypass, to the victim network and to archive a file for exfiltration.
+- [S1022] IceApple: IceApple can encrypt and compress files using Gzip prior to exfiltration.
+- [G0069] MuddyWater: MuddyWater has used the native Windows cabinet creation tool, makecab.exe, likely to compress stolen data to be uploaded.
+- [G0007] APT28: APT28 has used a variety of utilities, including WinRAR, to archive collected data with password protection.
+- [S0278] iKitten: iKitten will zip up the /Library/Keychains directory before exfiltrating it.
+- [S0466] WindTail: WindTail has the ability to use the macOS built-in zip utility to archive files.
+- [C0026] C0026: During C0026, the threat actors used WinRAR to collect documents on targeted systems. The threat actors appeared to only exfiltrate files created after January 1, 2021.
+- [G0010] Turla: Turla has encrypted files stolen from connected USB drives into a RAR file before exfiltration.
+- [S0212] CORALDECK: CORALDECK has created password-protected RAR, WinImage, and zip archives to be exfiltrated.
+- [G0054] Sowbug: Sowbug extracted documents and bundled them into a RAR archive.
+- [S0339] Micropsia: Micropsia creates a RAR archive based on collected files on the victim's machine.
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors uses zip to pack collected files before exfiltration.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has compressed data into password-protected RAR archives prior to exfiltration.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors saved collected data to a tar archive.
+- [S0340] Octopus: Octopus has compressed data before exfiltrating it using a tool called Abbrevia.
+- [G0094] Kimsuky: Kimsuky has used QuickZip to archive stolen files before exfiltration.
+- [G0022] APT3: APT3 has used tools to compress data before exfilling it.
+- [S0264] OopsIE: OopsIE compresses collected files with GZipStream before sending them to its C2 server.
+- [G0061] FIN8: FIN8 has used RAR to compress collected data before exfiltration.
+- [G0004] Ke3chang: Ke3chang is known to use 7Zip and RAR with passwords to encrypt data prior to exfiltration.
+- [C0040] APT41 DUST: APT41 DUST used `rar` to compress data downloaded from internal Oracle databases prior to exfiltration.
+- [G0030] Lotus Blossom: Lotus Blossom has used WinRAR for compressing data in RAR format.
+- [S0274] Calisto: Calisto uses the zip -r command to compress the data collected on the local system.
+- [G1016] FIN13: FIN13 has compressed the dump output of compromised credentials with a 7zip binary.
+- [G1006] Earth Lusca: Earth Lusca has used WinRAR to compress stolen files into an archive prior to exfiltration.
+- [S0192] Pupy: Pupy can compress data with Zip before sending it over C2.
+- [S1040] Rclone: Rclone can compress files using `gzip` prior to exfiltration.
+- [G0059] Magic Hound: Magic Hound has used gzip to archive dumped LSASS process memory and RAR to stage and compress local folders.
+- [S0441] PowerShower: PowerShower has used 7Zip to compress .txt, .pdf, .xls or .doc files prior to exfiltration.
+- [S0622] AppleSeed: AppleSeed can zip and encrypt data collected on a target system.
+- [G0143] Aquatic Panda: Aquatic Panda has used several publicly available tools, including WinRAR and 7zip, to compress collected files and memory dumps prior to exfiltration.
+- [S1210] Sagerunex: Sagerunex has archived collected materials in RAR format.
+- [G1032] INC Ransom: INC Ransom has used 7-Zip and WinRAR to archive collected data prior to exfiltration.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used 7-Zip to compress stolen emails into password-protected archives prior to exfltration; APT29 also compressed text files into zipped archives.
+- [S0428] PoetRAT: PoetRAT has the ability to compress files with zip.
+- [G1024] Akira: Akira uses utilities such as WinRAR to archive data prior to exfiltration.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group archived victim's data into a RAR file.
+- [G1022] ToddyCat: ToddyCat has leveraged xcopy, 7zip, and RAR to stage and compress collected documents prior to exfiltration.
+
+### T1560.002 - Archive Collected Data: Archive via Library
+
+Description:
+
+An adversary may compress or encrypt data that is collected prior to exfiltration using 3rd party libraries. Many libraries exist that can archive data, including Python rarfile , libzip , and zlib . Most libraries include functionality to encrypt and/or compress data. Some archival libraries are preinstalled on systems, such as bzip2 on macOS and Linux, and zip on Windows. Note that the libraries are different from the utilities. The libraries can be linked against when compiling, while the utilities require spawning a subshell, or a similar execution mechanism.
+
+Detection:
+
+Monitor processes for accesses to known archival libraries. This may yield a significant number of benign events, depending on how systems in the environment are typically used. Consider detecting writing of files with extensions and/or headers associated with compressed or encrypted file types. Detection efforts may focus on follow-on exfiltration activity, where compressed or encrypted files can be detected in transit with a network intrusion detection or data loss prevention system analyzing file headers.
+
+Procedures:
+
+- [S0467] TajMahal: TajMahal has the ability to use the open source libraries XZip/Xunzip and zlib to compress files.
+- [S1141] LunarWeb: LunarWeb can zlib-compress data prior to exfiltration.
+- [S0086] ZLib: The ZLib backdoor compresses communications using the standard Zlib compression library.
+- [S0127] BBSRAT: BBSRAT can compress data with ZLIB prior to sending it back to the C2 server.
+- [S0260] InvisiMole: InvisiMole can use zlib to compress and decompress data.
+- [S0053] SeaDuke: SeaDuke compressed data with zlib prior to sending it over C2.
+- [S0354] Denis: Denis compressed collected data using zlib.
+- [S0091] Epic: Epic compresses the collected data with bzip2 before sending it to the C2 server.
+- [S0642] BADFLICK: BADFLICK has compressed data using the aPLib compression library.
+- [S0348] Cardinal RAT: Cardinal RAT applies compression to C2 traffic using the ZLIB library.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D scrambles and encrypts data using AES256 before sending it to the C2 server.
+- [G0032] Lazarus Group: Lazarus Group malware IndiaIndia saves information gathered about the victim to a file that is compressed with Zlib, encrypted, and uploaded to a C2 server.
+- [S0661] FoggyWeb: FoggyWeb can invoke the `Common.Compress` method to compress data with the C# GZipStream compression class.
+- [S1044] FunnyDream: FunnyDream has compressed collected files with zLib.
+- [G0027] Threat Group-3390: Threat Group-3390 has used RAR to compress, encrypt, and password-protect files prior to exfiltration.
+
+### T1560.003 - Archive Collected Data: Archive via Custom Method
+
+Description:
+
+An adversary may compress or encrypt data that is collected prior to exfiltration using a custom method. Adversaries may choose to use custom archival methods, such as encryption with XOR or stream ciphers implemented with no external library or utility references. Custom implementations of well-known compression algorithms have also been used.
+
+Detection:
+
+Custom archival methods can be very difficult to detect, since many of them use standard programming language concepts, such as bitwise operations.
+
+Procedures:
+
+- [S0438] Attor: Attor encrypts collected data with a custom implementation of Blowfish and RSA ciphers.
+- [S0657] BLUELIGHT: BLUELIGHT has encoded data into a binary blob using XOR.
+- [G0037] FIN6: FIN6 has encoded data gathered from the victim with a simple substitution cipher and single-byte XOR using the 0xAA key, and Base64 with character permutation.
+- [S0038] Duqu: Modules can be pushed to and executed by Duqu that copy data to a staging area, compress it, and XOR encrypt it.
+- [S0603] Stuxnet: Stuxnet encrypts exfiltrated data via C2 with static 31-byte long XOR keys.
+- [S0035] SPACESHIP: Data SPACESHIP copies to the staging area is compressed with zlib. Bytes are rotated by four positions and XOR'ed with 0x23.
+- [G0052] CopyKittens: CopyKittens encrypts data with a substitute cipher prior to exfiltration.
+- [S0661] FoggyWeb: FoggyWeb can use a dynamic XOR key and a custom XOR methodology to encode data before exfiltration. Also, FoggyWeb can encode C2 command output within a legitimate WebP file.
+- [S0198] NETWIRE: NETWIRE has used a custom encryption algorithm to encrypt collected data.
+- [S0448] Rising Sun: Rising Sun can archive data using RC4 encryption and Base64 encoding prior to exfiltration.
+- [S0491] StrongPity: StrongPity can compress and encrypt archived files into multiple .sft files with a repeated xor encryption scheme.
+- [S0258] RGDoor: RGDoor encrypts files with XOR before sending them back to the C2 server.
+- [S0169] RawPOS: RawPOS encodes credit card data it collected from the victim with XOR.
+- [S1059] metaMain: metaMain has used XOR-based encryption for collected files before exfiltration.
+- [S0458] Ramsay: Ramsay can store collected documents in a custom container after encrypting and compressing them using RC4 and WinRAR.
+- [G0129] Mustang Panda: Mustang Panda has encrypted documents with RC4 prior to exfiltration.
+- [G0094] Kimsuky: Kimsuky has used RC4 encryption before exfil.
+- [S0264] OopsIE: OopsIE compresses collected files with a simple character replacement scheme before sending them to its C2 server.
+- [S0615] SombRAT: SombRAT has encrypted collected data with AES-256 using a hardcoded key.
+- [S0409] Machete: Machete's collected data is encrypted with AES before exfiltration.
+- [S0172] Reaver: Reaver encrypts collected data with an incremental XOR key prior to exfiltration.
+- [S0391] HAWKBALL: HAWKBALL has encrypted data with XOR before sending it over the C2 channel.
+- [S0072] OwaAuth: OwaAuth DES-encrypts captured credentials using the key 12345678 before writing the credentials to a log file.
+- [S0260] InvisiMole: InvisiMole uses a variation of the XOR cipher to encrypt files before exfiltration.
+- [S0098] T9000: T9000 encrypts collected data using a single byte XOR key.
+- [S0045] ADVSTORESHELL: ADVSTORESHELL compresses output data generated by command execution with a custom implementation of the Lempel–Ziv–Welch (LZW) algorithm.
+- [G0030] Lotus Blossom: Lotus Blossom has used custom tools to compress and archive data on victim systems.
+- [S1030] Squirrelwaffle: Squirrelwaffle has encrypted collected data using a XOR-based algorithm.
+- [S0439] Okrum: Okrum has used a custom implementation of AES encryption to encrypt collected data.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D has used AES in CBC mode to encrypt collected data when saving that data to disk.
+- [S1044] FunnyDream: FunnyDream has compressed collected files with zLib and encrypted them using an XOR operation with the string key from the command line or `qwerasdf` if the command line argument doesn’t contain the key. File names are obfuscated using XOR with the same key as the compressed file content.
+- [S0443] MESSAGETAP: MESSAGETAP has XOR-encrypted and stored contents of SMS messages that matched its target list.
+- [S1042] SUGARDUMP: SUGARDUMP has encrypted collected data using AES CBC mode and encoded it using Base64.
+- [C0017] C0017: During C0017, APT41 hex-encoded PII data prior to exfiltration.
+- [S0503] FrameworkPOS: FrameworkPOS can XOR credit card information before exfiltration.
+- [S0092] Agent.btz: Agent.btz saves system information into an XML file that is then XOR-encoded.
+- [G0032] Lazarus Group: A Lazarus Group malware sample encrypts data using a simple byte based XOR operation prior to exfiltration.
+- [S0036] FLASHFLOOD: FLASHFLOOD employs the same encoding scheme as SPACESHIP for data it stages. Data is compressed with zlib, and bytes are rotated four times before being XOR'ed with 0x23.
+
+
+### T1602.001 - Data from Configuration Repository: SNMP (MIB Dump)
+
+Description:
+
+Adversaries may target the Management Information Base (MIB) to collect and/or mine valuable information in a network managed using Simple Network Management Protocol (SNMP). The MIB is a configuration repository that stores variable information accessible via SNMP in the form of object identifiers (OID). Each OID identifies a variable that can be read or set and permits active management tasks, such as configuration changes, through remote modification of these variables. SNMP can give administrators great insight in their systems, such as, system information, description of hardware, physical location, and software packages. The MIB may also contain device operational information, including running configuration, routing table, and interface details. Adversaries may use SNMP queries to collect MIB content directly from SNMP-managed devices in order to collect network information that allows the adversary to build network maps and facilitate future targeted exploitation.
+
+Detection:
+
+Identify network traffic sent or received by untrusted hosts or networks that expose MIB content or use unauthorized protocols.
+
+### T1602.002 - Data from Configuration Repository: Network Device Configuration Dump
+
+Description:
+
+Adversaries may access network configuration files to collect sensitive data about the device and the network. The network configuration is a file containing parameters that determine the operation of the device. The device typically stores an in-memory copy of the configuration while operating, and a separate configuration on non-volatile storage to load after device reset. Adversaries can inspect the configuration files to reveal information about the target network and its layout, the network device and its software, or identifying legitimate accounts and credentials for later use. Adversaries can use common management tools and protocols, such as Simple Network Management Protocol (SNMP) and Smart Install (SMI), to access network configuration files. These tools may be used to query specific data from a configuration repository or configure the device to export the configuration for later analysis.
+
+Detection:
+
+Identify network traffic sent or received by untrusted hosts or networks. Configure signatures to identify strings that may be found in a network device configuration.
+
+Procedures:
+
+- [G1045] Salt Typhoon: Salt Typhoon has attempted to acquire credentials by dumping network device configurations.
+

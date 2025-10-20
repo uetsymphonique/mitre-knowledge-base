@@ -39,6 +39,22 @@ def select_tactics(data: MitreAttackData, domain: str, mode: str, tactic_names: 
     return selected
 
 
+def sanitize_text(text: str) -> str:
+    if not text:
+        return ""
+    # Remove (Citation: ...)
+    text = re.sub(r"\(Citation:[^)]*\)", "", text)
+    # Remove Markdown links [text](url) -> text
+    text = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", text)
+    # Remove bare URLs
+    text = re.sub(r"https?://\S+", "", text)
+    # Remove HTML tags
+    text = re.sub(r"<[^>]+>", "", text)
+    # Collapse excessive whitespace
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
 def write_tactic_markdown(
     data: MitreAttackData,
     domain: str,
@@ -47,6 +63,8 @@ def write_tactic_markdown(
     include_detection: bool,
     include_procedures: bool,
     procedures_top: int | None,
+    sanitize: bool,
+    flatten: bool,
 ):
     tactic_name = MitreAttackData.get_field(tactic, "name")
     shortname = MitreAttackData.get_field(tactic, "x_mitre_shortname")
@@ -71,65 +89,86 @@ def write_tactic_markdown(
         p_name = MitreAttackData.get_field(parent, "name")
         p_id = MitreAttackData.get_field(parent, "id")
         p_tid = data.get_attack_id(p_id) or ""
-        if p_tid:
-            lines.append(f"### {p_tid} - {p_name}")
-        else:
-            lines.append(f"### {p_name}")
-        lines.append("")
-        # Parent technique description, detection, and procedures (conditional)
-        p_desc = (MitreAttackData.get_field(parent, "description") or "").strip()
-        if p_desc:
-            lines.append("Description:")
-            lines.append("")
-            lines.append(p_desc)
-            lines.append("")
-        if include_detection:
-            p_det = (MitreAttackData.get_field(parent, "x_mitre_detection") or "").strip()
-            if p_det:
-                lines.append("Detection:")
-                lines.append("")
-                lines.append(p_det)
-                lines.append("")
-        if include_procedures:
-            parent_procs = data.get_procedure_examples_by_technique(p_id)
-            if procedures_top is not None and procedures_top > 0:
-                parent_procs = parent_procs[:procedures_top]
-            if parent_procs:
-                lines.append("Procedures:")
-                lines.append("")
-                for r in parent_procs:
-                    src_obj = data.get_object_by_stix_id(r.source_ref)
-                    src_id = data.get_attack_id(src_obj.id) or ""
-                    src_name = MitreAttackData.get_field(src_obj, "name") or ""
-                    desc = (getattr(r, "description", "") or "").strip()
-                    if src_id:
-                        lines.append(f"- [{src_id}] {src_name}: {desc}")
-                    else:
-                        lines.append(f"- {src_name}: {desc}")
-                lines.append("")
 
+        # Determine sub-techniques first (within this tactic)
         sub_entries = data.get_subtechniques_of_technique(p_id)
-        sub_techniques = [e["object"] for e in sub_entries if e.get("object") and e["object"]["id"] in technique_ids]
-        sub_techniques.sort(key=lambda s: (data.get_attack_id(MitreAttackData.get_field(s, "id")) or "", MitreAttackData.get_field(s, "name") or ""))
+        sub_techniques = [
+            e["object"] for e in sub_entries if e.get("object") and e["object"]["id"] in technique_ids
+        ]
+        sub_techniques.sort(
+            key=lambda s: (
+                data.get_attack_id(MitreAttackData.get_field(s, "id")) or "",
+                MitreAttackData.get_field(s, "name") or "",
+            )
+        )
+        has_subs = len(sub_techniques) > 0
+
+        # If not flattening, always include parent technique details.
+        # If flattening, include parent details only when it has no sub-techniques.
+        if (not flatten) or (flatten and not has_subs):
+            if p_tid:
+                lines.append(f"### {p_tid} - {p_name}")
+            else:
+                lines.append(f"### {p_name}")
+            lines.append("")
+
+            # Parent technique description, detection, and procedures (conditional)
+            p_desc_raw = (MitreAttackData.get_field(parent, "description") or "").strip()
+            p_desc = sanitize_text(p_desc_raw) if sanitize else p_desc_raw
+            if p_desc:
+                lines.append("Description:")
+                lines.append("")
+                lines.append(p_desc)
+                lines.append("")
+            if include_detection:
+                p_det_raw = (MitreAttackData.get_field(parent, "x_mitre_detection") or "").strip()
+                p_det = sanitize_text(p_det_raw) if sanitize else p_det_raw
+                if p_det:
+                    lines.append("Detection:")
+                    lines.append("")
+                    lines.append(p_det)
+                    lines.append("")
+            if include_procedures:
+                parent_procs = data.get_procedure_examples_by_technique(p_id)
+                if procedures_top is not None and procedures_top > 0:
+                    parent_procs = parent_procs[:procedures_top]
+                if parent_procs:
+                    lines.append("Procedures:")
+                    lines.append("")
+                    for r in parent_procs:
+                        src_obj = data.get_object_by_stix_id(r.source_ref)
+                        src_id = data.get_attack_id(src_obj.id) or ""
+                        src_name = MitreAttackData.get_field(src_obj, "name") or ""
+                        desc_raw = (getattr(r, "description", "") or "").strip()
+                        desc = sanitize_text(desc_raw) if sanitize else desc_raw
+                        if src_id:
+                            lines.append(f"- [{src_id}] {src_name}: {desc}")
+                        else:
+                            lines.append(f"- {src_name}: {desc}")
+                    lines.append("")
 
         for s in sub_techniques:
             s_name = MitreAttackData.get_field(s, "name")
             s_id = MitreAttackData.get_field(s, "id")
             s_tid = data.get_attack_id(s_id) or ""
             full_sub_name = f"{p_name}: {s_name}" if s_name else p_name
+            # Promote sub-techniques to same header level as techniques when flattening
+            sub_header = "###" if (flatten and has_subs) else "####"
             if s_tid:
-                lines.append(f"#### {s_tid} - {full_sub_name}")
+                lines.append(f"{sub_header} {s_tid} - {full_sub_name}")
             else:
-                lines.append(f"#### {full_sub_name}")
+                lines.append(f"{sub_header} {full_sub_name}")
             lines.append("")
-            s_desc = (MitreAttackData.get_field(s, "description") or "").strip()
+            s_desc_raw = (MitreAttackData.get_field(s, "description") or "").strip()
+            s_desc = sanitize_text(s_desc_raw) if sanitize else s_desc_raw
             if s_desc:
                 lines.append("Description:")
                 lines.append("")
                 lines.append(s_desc)
                 lines.append("")
             if include_detection:
-                s_det = (MitreAttackData.get_field(s, "x_mitre_detection") or "").strip()
+                s_det_raw = (MitreAttackData.get_field(s, "x_mitre_detection") or "").strip()
+                s_det = sanitize_text(s_det_raw) if sanitize else s_det_raw
                 if s_det:
                     lines.append("Detection:")
                     lines.append("")
@@ -146,7 +185,8 @@ def write_tactic_markdown(
                         src_obj = data.get_object_by_stix_id(r.source_ref)
                         src_id = data.get_attack_id(src_obj.id) or ""
                         src_name = MitreAttackData.get_field(src_obj, "name") or ""
-                        desc = (getattr(r, "description", "") or "").strip()
+                        desc_raw = (getattr(r, "description", "") or "").strip()
+                        desc = sanitize_text(desc_raw) if sanitize else desc_raw
                         if src_id:
                             lines.append(f"- [{src_id}] {src_name}: {desc}")
                         else:
@@ -197,6 +237,16 @@ def main():
         default=None,
         help="Limit number of procedure examples per (sub)technique",
     )
+    parser.add_argument(
+        "--sanitize",
+        action="store_true",
+        help="Sanitize text output (remove citations, links, HTML)",
+    )
+    parser.add_argument(
+        "--flatten",
+        action="store_true",
+        help="If a technique has sub-techniques, skip the parent and promote sub-techniques to same header level",
+    )
     args = parser.parse_args()
 
     data = MitreAttackData(args.stix)
@@ -215,6 +265,8 @@ def main():
             include_detection=args.detection,
             include_procedures=args.procedures,
             procedures_top=top_n,
+            sanitize=args.sanitize,
+            flatten=args.flatten,
         )
         written.append(fname)
 
