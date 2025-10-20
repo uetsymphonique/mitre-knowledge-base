@@ -113,10 +113,16 @@ def parse_markdown(path: Path) -> list[dict]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Parse technique Markdown files into JSON (per-file or merged)")
+    parser = argparse.ArgumentParser(description="Parse technique Markdown files into JSON/TXT (per-file or merged)")
     parser.add_argument("inputs", nargs="+", help="Input .md files or directories containing .md")
-    parser.add_argument("--outdir", default="techniques_json", help="Output directory for per-file JSON outputs")
-    parser.add_argument("-o", "--output", default=None, help="If set, write ALL parsed objects into this single JSON file")
+    parser.add_argument("--outdir", default="techniques_json", help="Output directory for per-file outputs")
+    parser.add_argument("-o", "--output", default=None, help="If set, write ALL parsed objects into a single output file")
+    parser.add_argument(
+        "--format",
+        choices=["json", "stringify"],
+        default="json",
+        help="Output format: json (structured) or stringify (human-readable .txt)",
+    )
     args = parser.parse_args()
 
     md_files = collect_md_files(args.inputs)
@@ -165,8 +171,19 @@ def main():
         all_objects = list(aggregated.values())
         out_path = Path(args.output)
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        with out_path.open("w", encoding="utf-8") as f:
-            json.dump(all_objects, f, ensure_ascii=False, indent=2)
+
+        if args.format == "stringify":
+            # Write NDJSON-style: one JSON object per line, compact
+            if out_path.suffix.lower() != ".txt":
+                out_path = out_path.with_suffix(".txt")
+            lines = [
+                json.dumps(obj, ensure_ascii=False, separators=(",", ":")) for obj in all_objects
+            ]
+            out_path.write_text("\n".join(lines), encoding="utf-8")
+        else:
+            # JSON output
+            with out_path.open("w", encoding="utf-8") as f:
+                json.dump(all_objects, f, ensure_ascii=False, indent=2)
         print(f"Saved {len(all_objects)} objects -> {out_path}")
         print(f"Done. Aggregated {len(md_files)} input file(s).")
         return
@@ -179,9 +196,16 @@ def main():
     for md_path in md_files:
         objects = parse_markdown(md_path)
         total_objects += len(objects)
-        out_path = outdir / (md_path.stem + ".json")
-        with out_path.open("w", encoding="utf-8") as f:
-            json.dump(objects, f, ensure_ascii=False, indent=2)
+        if args.format == "stringify":
+            out_path = outdir / (md_path.stem + ".txt")
+            lines = [
+                json.dumps(obj, ensure_ascii=False, separators=(",", ":")) for obj in objects
+            ]
+            out_path.write_text("\n".join(lines), encoding="utf-8")
+        else:
+            out_path = outdir / (md_path.stem + ".json")
+            with out_path.open("w", encoding="utf-8") as f:
+                json.dump(objects, f, ensure_ascii=False, indent=2)
         print(f"Saved {len(objects)} objects -> {out_path}")
 
     print(f"Done. Wrote {len(md_files)} files, {total_objects} objects total.")
