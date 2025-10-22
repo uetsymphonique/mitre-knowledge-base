@@ -200,7 +200,7 @@ def main():
                     if part:
                         paras.append(part)
                 if paras:
-                    lines.append("\n\n".join(paras))
+                    lines.append(".\n\n".join(paras))
                 fpath.write_text("\n".join(lines) + "\n", encoding="utf-8")
             else:
                 with fpath.open("w", encoding="utf-8", newline="") as f:
