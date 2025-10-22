@@ -54,14 +54,24 @@ def main():
     )
     parser.add_argument(
         "--format",
-        choices=["csv", "json"],
+        choices=["csv", "json", "md"],
         default="csv",
-        help="Output format (default: csv)",
+        help="Output format: csv, json, or md (default: csv)",
     )
     parser.add_argument(
         "--tech2tac",
         default=None,
         help="Optional path to tech2tac JSON to append Tactics column based on Technique IDs",
+    )
+    parser.add_argument(
+        "--seperate-by-technique",
+        action="store_true",
+        help="Write one file per technique named <technique>_<timestamp> in --outdir",
+    )
+    parser.add_argument(
+        "--outdir",
+        default=None,
+        help="Output directory when using --seperate-by-technique (default: alongside input)",
     )
     args = parser.parse_args()
 
@@ -70,7 +80,7 @@ def main():
         raise FileNotFoundError(f"Input file not found: {in_path}")
 
     # Choose default extension based on format
-    default_ext = ".json" if args.format == "json" else ".csv"
+    default_ext = ".json" if args.format == "json" else (".md" if args.format == "md" else ".csv")
     out_path = Path(args.output) if args.output else in_path.with_suffix(default_ext)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -109,7 +119,7 @@ def main():
         procedures = normalize_text(get("Procedures"), ";")
         description = normalize_text(get("Description"), ".")
 
-        # Build Behavior: concatenate non-empty segments with labels
+        # Build Behavior (for csv/json): concatenate non-empty segments with labels
         segments = []
         if summary:
             segments.append(f"Summary: {summary}.")
@@ -122,6 +132,10 @@ def main():
         record = {
             "Technique": technique,
             "Behavior": behavior,
+            # keep normalized fields for md generation
+            "_Summary": summary,
+            "_Description": description,
+            "_Procedures": procedures,
         }
 
         # Append Tactics via mapping if provided
@@ -139,23 +153,112 @@ def main():
 
         records.append(record)
 
-    if args.format == "json":
-        import json
-        out_path.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
+    # Separate into per-technique files if requested
+    if args.seperate_by_technique:
+        from datetime import datetime
+
+        def sanitize_filename(name: str) -> str:
+            safe = "".join(ch if ch.isalnum() or ch in ("-", "_", ".") else "_" for ch in name)
+            return safe.strip("._") or "unknown"
+
+        groups: dict[str, list[dict]] = {}
+        for rec in records:
+            tech_key = rec.get("Technique", "").strip() or "unknown"
+            groups.setdefault(tech_key, []).append(rec)
+
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        base_outdir = Path(args.outdir) if args.outdir else in_path.parent
+        base_outdir.mkdir(parents=True, exist_ok=True)
+
+        written_files = 0
+        for tech, recs in groups.items():
+            ext = 'json' if args.format == 'json' else ('md' if args.format == 'md' else 'csv')
+            fname = f"{sanitize_filename(tech)}_{ts}.{ext}"
+            fpath = base_outdir / fname
+            if args.format == "json":
+                import json
+                fpath.write_text(json.dumps(recs, ensure_ascii=False, indent=2), encoding="utf-8")
+            elif args.format == "md":
+                # Build markdown with H3 header: Technique (Tactics) and body: Summary\nDescription\nProcedures
+                lines = []
+                # Collect tactics string if present (records share same Technique, merge their tactics values)
+                tac_set = set()
+                for r in recs:
+                    tval = r.get("Tactics")
+                    if isinstance(tval, list):
+                        tac_set.update(tval)
+                    elif isinstance(tval, str) and tval:
+                        tac_set.update([x.strip() for x in tval.split(";") if x.strip()])
+                tac_str = f" ({', '.join(sorted(tac_set))})" if tac_set else ""
+                lines.append(f"### {tech}{tac_str}")
+                # Merge content: each non-empty on its own line; single newline between blocks
+                merged_parts = []
+                for r in recs:
+                    # Use first non-empty per section if duplicates
+                    s = r.get("_Summary") or ""
+                    d = r.get("_Description") or ""
+                    p = r.get("_Procedures") or ""
+                    if s:
+                        merged_parts.append(s)
+                    if d:
+                        merged_parts.append(d)
+                    if p:
+                        merged_parts.append(p)
+                    # Only take first record's blocks
+                    break
+                body = "\n".join([part for part in merged_parts if part])
+                if body:
+                    lines.append(body)
+                fpath.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            else:
+                with fpath.open("w", encoding="utf-8", newline="") as f:
+                    writer = csv.writer(f)
+                    headers = ["Technique", "Behavior"] + (["Tactics"] if id_to_tactics is not None else [])
+                    writer.writerow(headers)
+                    for r in recs:
+                        row_vals = [r["Technique"], r["Behavior"]]
+                        if id_to_tactics is not None:
+                            row_vals.append(r.get("Tactics", ""))
+                        writer.writerow(row_vals)
+            written_files += 1
+        print(f"Saved {written_files} files to {base_outdir}")
     else:
-        with out_path.open("w", encoding="utf-8", newline="") as f:
-            writer = csv.writer(f)
-            # Output columns: Technique, Behavior (+ optional Tactics)
-            headers = ["Technique", "Behavior"] + (["Tactics"] if id_to_tactics is not None else [])
-            writer.writerow(headers)
-            for rec in records:
-                row_vals = [rec["Technique"], rec["Behavior"]]
-                if id_to_tactics is not None:
-                    row_vals.append(rec.get("Tactics", ""))
-                writer.writerow(row_vals)
+        if args.format == "json":
+            import json
+            out_path.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
+        elif args.format == "md":
+            lines = []
+            for r in records:
+                tech = r.get("Technique", "")
+                tval = r.get("Tactics")
+                tac_list = []
+                if isinstance(tval, list):
+                    tac_list = tval
+                elif isinstance(tval, str) and tval:
+                    tac_list = [x.strip() for x in tval.split(";") if x.strip()]
+                tac_str = f" ({', '.join(sorted(tac_list))})" if tac_list else ""
+                lines.append(f"### {tech}{tac_str}")
+                parts = [r.get("_Summary") or "", r.get("_Description") or "", r.get("_Procedures") or ""]
+                body = "\n".join([p for p in parts if p])
+                if body:
+                    lines.append(body)
+                lines.append("")
+            out_path.write_text("\n".join(lines), encoding="utf-8")
+        else:
+            with out_path.open("w", encoding="utf-8", newline="") as f:
+                writer = csv.writer(f)
+                # Output columns: Technique, Behavior (+ optional Tactics)
+                headers = ["Technique", "Behavior"] + (["Tactics"] if id_to_tactics is not None else [])
+                writer.writerow(headers)
+                for rec in records:
+                    row_vals = [rec["Technique"], rec["Behavior"]]
+                    if id_to_tactics is not None:
+                        row_vals.append(rec.get("Tactics", ""))
+                    writer.writerow(row_vals)
 
     wb.close()
-    print(f"Saved normalized {args.format.upper()} to {out_path}")
+    if not args.seperate_by_technique:
+        print(f"Saved normalized {args.format.upper()} to {out_path}")
 
 
 if __name__ == "__main__":

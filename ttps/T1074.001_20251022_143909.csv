@@ -1,0 +1,2 @@
+Technique,Behavior,Tactics
+T1074.001,"Summary: Query db and dump data into files. Procedures: & 'C:\Program Files\PostgreSQL\13\bin\psql.exe' -U postgres -d postgres -c ""\du"" | Out-File C:\Users\Public\result.txt -Append -Encoding utf8; & 'C:\Program Files\PostgreSQL\13\bin\psql.exe' -U postgres -d postgres -c ""\l"" | Out-File C:\Users\Public\result.txt -Append -Encoding utf8; & 'C:\Program Files\PostgreSQL\13\bin\psql.exe' -U postgres -d postgres -c ""\conninfo"" | Out-File C:\Users\Public\result.txt -Append -Encoding utf8.",TA0009
