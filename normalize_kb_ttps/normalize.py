@@ -106,7 +106,7 @@ def main():
             raise FileNotFoundError(f"tech2tac mapping not found: {map_path}")
         id_to_tactics = _json.loads(map_path.read_text(encoding="utf-8"))
 
-    # Collect normalized rows first (useful for both formats)
+    # Collect normalized rows first (used across formats)
     records = []
     for row in rows_iter:
         cells = list(row)
@@ -132,7 +132,7 @@ def main():
         record = {
             "Technique": technique,
             "Behavior": behavior,
-            # keep normalized fields for md generation
+            # Keep normalized fields for MD rendering
             "_Summary": summary,
             "_Description": description,
             "_Procedures": procedures,
@@ -179,9 +179,8 @@ def main():
                 import json
                 fpath.write_text(json.dumps(recs, ensure_ascii=False, indent=2), encoding="utf-8")
             elif args.format == "md":
-                # Build markdown with H3 header: Technique (Tactics) and body: Summary\nDescription\nProcedures
+                # Header: ### Technique (tactics)
                 lines = []
-                # Collect tactics string if present (records share same Technique, merge their tactics values)
                 tac_set = set()
                 for r in recs:
                     tval = r.get("Tactics")
@@ -191,24 +190,17 @@ def main():
                         tac_set.update([x.strip() for x in tval.split(";") if x.strip()])
                 tac_str = f" ({', '.join(sorted(tac_set))})" if tac_set else ""
                 lines.append(f"### {tech}{tac_str}")
-                # Merge content: each non-empty on its own line; single newline between blocks
-                merged_parts = []
-                for r in recs:
-                    # Use first non-empty per section if duplicates
-                    s = r.get("_Summary") or ""
-                    d = r.get("_Description") or ""
-                    p = r.get("_Procedures") or ""
-                    if s:
-                        merged_parts.append(s)
-                    if d:
-                        merged_parts.append(d)
-                    if p:
-                        merged_parts.append(p)
-                    # Only take first record's blocks
-                    break
-                body = "\n".join([part for part in merged_parts if part])
-                if body:
-                    lines.append(body)
+                # Body: three paragraphs (_Summary, _Description, _Procedures) separated by blank lines
+                paras = []
+                # Use first record's non-empty entries per paragraph
+                s = next((r.get("_Summary") for r in recs if r.get("_Summary")), "")
+                d = next((r.get("_Description") for r in recs if r.get("_Description")), "")
+                p = next((r.get("_Procedures") for r in recs if r.get("_Procedures")), "")
+                for part in [s, d, p]:
+                    if part:
+                        paras.append(part)
+                if paras:
+                    lines.append("\n\n".join(paras))
                 fpath.write_text("\n".join(lines) + "\n", encoding="utf-8")
             else:
                 with fpath.open("w", encoding="utf-8", newline="") as f:
@@ -237,11 +229,12 @@ def main():
                 elif isinstance(tval, str) and tval:
                     tac_list = [x.strip() for x in tval.split(";") if x.strip()]
                 tac_str = f" ({', '.join(sorted(tac_list))})" if tac_list else ""
-                lines.append(f"### {tech}{tac_str}")
+                lines.append(f"### {tech}{tac_str}\n")
+                # Body: three paragraphs from _Summary, _Description, _Procedures
                 parts = [r.get("_Summary") or "", r.get("_Description") or "", r.get("_Procedures") or ""]
-                body = "\n".join([p for p in parts if p])
-                if body:
-                    lines.append(body)
+                paras = [p for p in parts if p]
+                if paras:
+                    lines.append("\n\n".join(paras))
                 lines.append("")
             out_path.write_text("\n".join(lines), encoding="utf-8")
         else:
