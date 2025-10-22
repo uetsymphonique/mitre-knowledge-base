@@ -109,11 +109,19 @@ def main():
         procedures = normalize_text(get("Procedures"), ";")
         description = normalize_text(get("Description"), ".")
 
+        # Build Behavior: concatenate non-empty segments with labels
+        segments = []
+        if summary:
+            segments.append(f"Summary: {summary}.")
+        if description:
+            segments.append(f"Description: {description}.")
+        if procedures:
+            segments.append(f"Procedures: {procedures}.")
+        behavior = " ".join(segments).strip()
+
         record = {
-            "Summary": summary,
             "Technique": technique,
-            "Procedures": procedures,
-            "Description": description,
+            "Behavior": behavior,
         }
 
         # Append Tactics via mapping if provided
@@ -137,11 +145,11 @@ def main():
     else:
         with out_path.open("w", encoding="utf-8", newline="") as f:
             writer = csv.writer(f)
-            # If mapping present, add Tactics column
-            headers = EXPECTED_COLUMNS + (["Tactics"] if id_to_tactics is not None else [])
+            # Output columns: Technique, Behavior (+ optional Tactics)
+            headers = ["Technique", "Behavior"] + (["Tactics"] if id_to_tactics is not None else [])
             writer.writerow(headers)
             for rec in records:
-                row_vals = [rec["Summary"], rec["Technique"], rec["Procedures"], rec["Description"]]
+                row_vals = [rec["Technique"], rec["Behavior"]]
                 if id_to_tactics is not None:
                     row_vals.append(rec.get("Tactics", ""))
                 writer.writerow(row_vals)
