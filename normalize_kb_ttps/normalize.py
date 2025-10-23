@@ -54,9 +54,9 @@ def main():
     )
     parser.add_argument(
         "--format",
-        choices=["csv", "json", "md"],
+        choices=["csv", "json", "oneline"],
         default="csv",
-        help="Output format: csv, json, or md (default: csv)",
+        help="Output format (default: csv). 'oneline' writes NDJSON (one JSON object per line) to .txt",
     )
     parser.add_argument(
         "--tech2tac",
@@ -73,6 +73,12 @@ def main():
         default=None,
         help="Output directory when using --seperate-by-technique (default: alongside input)",
     )
+    parser.add_argument(
+        "--chunk-size",
+        type=int,
+        default=None,
+        help="Split outputs into chunks of at most N records (works with both -o and --seperate-by-technique)",
+    )
     args = parser.parse_args()
 
     in_path = Path(args.input)
@@ -80,7 +86,7 @@ def main():
         raise FileNotFoundError(f"Input file not found: {in_path}")
 
     # Choose default extension based on format
-    default_ext = ".json" if args.format == "json" else (".md" if args.format == "md" else ".csv")
+    default_ext = ".json" if args.format == "json" else (".txt" if args.format == "oneline" else ".csv")
     out_path = Path(args.output) if args.output else in_path.with_suffix(default_ext)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -106,7 +112,7 @@ def main():
             raise FileNotFoundError(f"tech2tac mapping not found: {map_path}")
         id_to_tactics = _json.loads(map_path.read_text(encoding="utf-8"))
 
-    # Collect normalized rows first (used across formats)
+    # Collect normalized rows first (useful for both formats)
     records = []
     for row in rows_iter:
         cells = list(row)
@@ -119,7 +125,7 @@ def main():
         procedures = normalize_text(get("Procedures"), ";")
         description = normalize_text(get("Description"), ".")
 
-        # Build Behavior (for csv/json): concatenate non-empty segments with labels
+        # Build Behavior: concatenate non-empty segments with labels
         segments = []
         if summary:
             segments.append(f"Summary: {summary}.")
@@ -132,10 +138,6 @@ def main():
         record = {
             "Technique": technique,
             "Behavior": behavior,
-            # Keep normalized fields for MD rendering
-            "_Summary": summary,
-            "_Description": description,
-            "_Procedures": procedures,
         }
 
         # Append Tactics via mapping if provided
@@ -172,82 +174,93 @@ def main():
 
         written_files = 0
         for tech, recs in groups.items():
-            ext = 'json' if args.format == 'json' else ('md' if args.format == 'md' else 'csv')
-            fname = f"{sanitize_filename(tech)}_{ts}.{ext}"
-            fpath = base_outdir / fname
-            if args.format == "json":
-                import json
-                fpath.write_text(json.dumps(recs, ensure_ascii=False, indent=2), encoding="utf-8")
-            elif args.format == "md":
-                # Header: ### Technique (tactics)
-                lines = []
-                tac_set = set()
-                for r in recs:
-                    tval = r.get("Tactics")
-                    if isinstance(tval, list):
-                        tac_set.update(tval)
-                    elif isinstance(tval, str) and tval:
-                        tac_set.update([x.strip() for x in tval.split(";") if x.strip()])
-                tac_str = f" ({', '.join(sorted(tac_set))})" if tac_set else ""
-                lines.append(f"### {tech}{tac_str}")
-                # Body: three paragraphs (_Summary, _Description, _Procedures) separated by blank lines
-                paras = []
-                # Use first record's non-empty entries per paragraph
-                s = next((r.get("_Summary") for r in recs if r.get("_Summary")), "")
-                d = next((r.get("_Description") for r in recs if r.get("_Description")), "")
-                p = next((r.get("_Procedures") for r in recs if r.get("_Procedures")), "")
-                for part in [s, d, p]:
-                    if part:
-                        paras.append(part)
-                if paras:
-                    lines.append(".\n\n".join(paras).rstrip(".") + ".")
-                fpath.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            ext = 'json' if args.format == 'json' else ('txt' if args.format == 'oneline' else 'csv')
+            base_name = f"{sanitize_filename(tech)}_{ts}"
+            chunk_size = args.chunk_size if args.chunk_size and args.chunk_size > 0 else None
+
+            def write_one(path: Path, subset: list[dict]):
+                nonlocal written_files
+                if args.format == "json":
+                    import json
+                    path.write_text(json.dumps(subset, ensure_ascii=False, indent=2), encoding="utf-8")
+                elif args.format == "oneline":
+                    import json
+                    lines = [json.dumps(r, ensure_ascii=False, separators=(",", ":")) for r in subset]
+                    path.write_text("\n".join(lines), encoding="utf-8")
+                else:
+                    with path.open("w", encoding="utf-8", newline="") as f:
+                        writer = csv.writer(f)
+                        headers = ["Technique", "Behavior"] + (["Tactics"] if id_to_tactics is not None else [])
+                        writer.writerow(headers)
+                        for r in subset:
+                            row_vals = [r["Technique"], r["Behavior"]]
+                            if id_to_tactics is not None:
+                                row_vals.append(r.get("Tactics", ""))
+                            writer.writerow(row_vals)
+                written_files += 1
+
+            if chunk_size:
+                for i in range(0, len(recs), chunk_size):
+                    part_idx = i // chunk_size + 1
+                    fpath = base_outdir / f"{base_name}.part{part_idx}.{ext}"
+                    write_one(fpath, recs[i : i + chunk_size])
             else:
-                with fpath.open("w", encoding="utf-8", newline="") as f:
+                fpath = base_outdir / f"{base_name}.{ext}"
+                write_one(fpath, recs)
+        print(f"Saved {written_files} files to {base_outdir}")
+    else:
+        chunk_size = args.chunk_size if args.chunk_size and args.chunk_size > 0 else None
+
+        if args.format == "json":
+            import json
+            if chunk_size:
+                base = out_path.parent / out_path.stem
+                for i in range(0, len(records), chunk_size):
+                    part_idx = i // chunk_size + 1
+                    part_path = Path(f"{base}.part{part_idx}.json")
+                    part_path.write_text(json.dumps(records[i : i + chunk_size], ensure_ascii=False, indent=2), encoding="utf-8")
+            else:
+                out_path.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
+        elif args.format == "oneline":
+            import json
+            lines = [json.dumps(r, ensure_ascii=False, separators=(",", ":")) for r in records]
+            # ensure txt extension
+            if out_path.suffix.lower() != ".txt":
+                out_path = out_path.with_suffix(".txt")
+            if chunk_size:
+                base = out_path.parent / out_path.stem
+                for i in range(0, len(lines), chunk_size):
+                    part_idx = i // chunk_size + 1
+                    part_path = Path(f"{base}.part{part_idx}.txt")
+                    part_path.write_text("\n".join(lines[i : i + chunk_size]), encoding="utf-8")
+            else:
+                out_path.write_text("\n".join(lines), encoding="utf-8")
+        else:
+            if chunk_size:
+                base = out_path.parent / out_path.stem
+                for i in range(0, len(records), chunk_size):
+                    part_idx = i // chunk_size + 1
+                    part_path = Path(f"{base}.part{part_idx}.csv")
+                    with part_path.open("w", encoding="utf-8", newline="") as f:
+                        writer = csv.writer(f)
+                        headers = ["Technique", "Behavior"] + (["Tactics"] if id_to_tactics is not None else [])
+                        writer.writerow(headers)
+                        for rec in records[i : i + chunk_size]:
+                            row_vals = [rec["Technique"], rec["Behavior"]]
+                            if id_to_tactics is not None:
+                                row_vals.append(rec.get("Tactics", ""))
+                            writer.writerow(row_vals)
+            else:
+                with out_path.open("w", encoding="utf-8", newline="") as f:
                     writer = csv.writer(f)
                     headers = ["Technique", "Behavior"] + (["Tactics"] if id_to_tactics is not None else [])
                     writer.writerow(headers)
-                    for r in recs:
-                        row_vals = [r["Technique"], r["Behavior"]]
+                    for rec in records:
+                        row_vals = [rec["Technique"], rec["Behavior"]]
                         if id_to_tactics is not None:
-                            row_vals.append(r.get("Tactics", ""))
+                            row_vals.append(rec.get("Tactics", ""))
+                            
                         writer.writerow(row_vals)
-            written_files += 1
-        print(f"Saved {written_files} files to {base_outdir}")
-    else:
-        if args.format == "json":
-            import json
-            out_path.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
-        elif args.format == "md":
-            lines = []
-            for r in records:
-                tech = r.get("Technique", "")
-                tval = r.get("Tactics")
-                tac_list = []
-                if isinstance(tval, list):
-                    tac_list = tval
-                elif isinstance(tval, str) and tval:
-                    tac_list = [x.strip() for x in tval.split(";") if x.strip()]
-                tac_str = f" ({', '.join(sorted(tac_list))})" if tac_list else ""
-                lines.append(f"### {tech}{tac_str}\n")
-                # Body: three paragraphs from _Summary, _Description, _Procedures
-                parts = [r.get("_Summary") or "", r.get("_Description") or "", r.get("_Procedures") or ""]
-                paras = [p for p in parts if p]
-                if paras:
-                    lines.append("\n\n".join(paras))
-                lines.append("")
-            out_path.write_text("\n".join(lines), encoding="utf-8")
-        else:
-            with out_path.open("w", encoding="utf-8", newline="") as f:
-                writer = csv.writer(f)
-                # Output columns: Technique, Behavior (+ optional Tactics)
-                headers = ["Technique", "Behavior"] + (["Tactics"] if id_to_tactics is not None else [])
-                writer.writerow(headers)
-                for rec in records:
-                    row_vals = [rec["Technique"], rec["Behavior"]]
-                    if id_to_tactics is not None:
-                        row_vals.append(rec.get("Tactics", ""))
-                    writer.writerow(row_vals)
 
     wb.close()
     if not args.seperate_by_technique:
