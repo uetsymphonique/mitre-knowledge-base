@@ -177,6 +177,10 @@ Procedures:
 
 ### T1195.003 - Supply Chain Compromise: Compromise Hardware Supply Chain
 
+Procedures:
+
+- Adversaries may manipulate hardware components in products prior to receipt by a final consumer for the purpose of data or system compromise. By modifying hardware or firmware in the supply chain, adversaries can insert a backdoor into consumer networks that may be difficult to detect and give the adversary a high degree of control over the system. Hardware backdoors may be inserted into various devices, such as servers, workstations, network infrastructure, or peripherals.
+
 
 ### T1199 - Trusted Relationship
 
