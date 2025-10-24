@@ -1,164 +1,217 @@
 ### T1047 - Windows Management Instrumentation
 
-Description:
-
-Adversaries may abuse Windows Management Instrumentation (WMI) to execute malicious commands and payloads. WMI is designed for programmers and is the infrastructure for management data and operations on Windows systems. WMI is an administration feature that provides a uniform environment to access Windows system components. The WMI service enables both local and remote access, though the latter is facilitated by Remote Services such as Distributed Component Object Model and Windows Remote Management. Remote WMI over DCOM operates using port 135, whereas WMI over WinRM operates over port 5985 when using HTTP and 5986 for HTTPS. An adversary can use WMI to interact with local and remote systems and use it as a means to execute various behaviors, such as gathering information for Discovery as well as Execution of commands and payloads. For example, `wmic.exe` can be abused by an adversary to delete shadow copies with the command `wmic.exe Shadowcopy Delete` (i.e., Inhibit System Recovery). **Note:** `wmic.exe` is deprecated as of January of 2024, with the WMIC feature being “disabled by default” on Windows 11+. WMIC will be removed from subsequent Windows releases and replaced by PowerShell as the primary WMI interface. In addition to PowerShell and tools like `wbemtool.exe`, COM APIs can also be used to programmatically interact with WMI via C++, .NET, VBScript, etc.
-
 Procedures:
 
 - [S1085] Sardonic: Sardonic can use WMI to execute PowerShell commands on a compromised machine.
 - [S0688] Meteor: Meteor can use `wmic.exe` as part of its effort to delete shadow copies.
 - [G1021] Cinnamon Tempest: Cinnamon Tempest has used Impacket for lateral movement via WMI.
+- [S0270] RogueRobin: RogueRobin uses various WMI queries to check if the sample is running in a sandbox.
+- [G0045] menuPass: menuPass has used a modified version of pentesting script wmiexec.vbs, which logs into a remote machine using WMI.
+- [S0559] SUNBURST: SUNBURST used the WMI query Select * From Win32_SystemDriver to retrieve a driver listing.
+- [C0015] C0015: During C0015, the threat actors used `wmic` and `rundll32` to load Cobalt Strike onto a target host.
+- [G1032] INC Ransom: INC Ransom has used WMIC to deploy ransomware.
+- [S0089] BlackEnergy: A BlackEnergy 2 plug-in uses WMI to gather victim host details.
+- [S1044] FunnyDream: FunnyDream can use WMI to open a Windows command shell on a remote machine.
+- [S0283] jRAT: jRAT uses WMIC to identify anti-virus products installed on the victim’s machine and to obtain firewall details.
+- [S0367] Emotet: Emotet has used WMI to execute powershell.exe.
+- [G0047] Gamaredon Group: Gamaredon Group has used WMI to execute scripts used for discovery and for determining the C2 IP address.
+- [S0618] FIVEHANDS: FIVEHANDS can use WMI to delete files on a target machine.
+- [S0251] Zebrocy: One variant of Zebrocy uses WMI queries to gather information.
 
 
 ### T1053.002 - Scheduled Task/Job: At
-
-Description:
-
-Adversaries may abuse the at utility to perform task scheduling for initial or recurring execution of malicious code. The at utility exists as an executable within Windows, Linux, and macOS for scheduling tasks at a specified time and date. Although deprecated in favor of Scheduled Task's schtasks in Windows environments, using at requires that the Task Scheduler service be running, and the user to be logged on as a member of the local Administrators group. In addition to explicitly running the `at` command, adversaries may also schedule a task with at by directly leveraging the Windows Management Instrumentation `Win32_ScheduledJob` WMI class. On Linux and macOS, at may be invoked by the superuser as well as any users added to the at.allow file. If the at.allow file does not exist, the at.deny file is checked. Every username not listed in at.deny is allowed to invoke at. If the at.deny exists and is empty, global use of at is permitted. If neither file exists (which is often the baseline) only the superuser is allowed to use at. Adversaries may use at to execute programs at system startup or on a scheduled basis for Persistence. at can also be abused to conduct remote Execution as part of Lateral Movement and/or to run a process under the context of a specified account (such as SYSTEM). In Linux environments, adversaries may also abuse at to break out of restricted environments by using a task to spawn an interactive system shell or to run system commands. Similarly, at may also be used for Privilege Escalation if the binary is allowed to run as superuser via sudo.
 
 Procedures:
 
 - [G0027] Threat Group-3390: Threat Group-3390 actors use at to schedule tasks to run self-extracting RAR archives, which install HTTPBrowser or PlugX on other victims on a network.
 - [S0488] CrackMapExec: CrackMapExec can set a scheduled task on the target system to execute commands remotely using at.
 - [G0026] APT18: APT18 actors used the native at Windows task scheduler tool to use scheduled tasks for execution on a victim network.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has used at to register a scheduled task to execute malware during lateral movement.
+- [S0233] MURKYTOP: MURKYTOP has the capability to schedule remote AT jobs.
+- [S0110] at: at can be used to schedule a task on a system to be executed at a specific date or time.
 
 ### T1053.003 - Scheduled Task/Job: Cron
-
-Description:
-
-Adversaries may abuse the cron utility to perform task scheduling for initial or recurring execution of malicious code. The cron utility is a time-based job scheduler for Unix-like operating systems. The crontab file contains the schedule of cron entries to be run and the specified times for execution. Any crontab files are stored in operating system-specific file paths. An adversary may use cron in Linux or Unix environments to execute programs at system startup or on a scheduled basis for Persistence. In ESXi environments, cron jobs must be created directly via the crontab file (e.g., `/var/spool/cron/crontabs/root`).
 
 Procedures:
 
 - [S0374] SpeakUp: SpeakUp uses cron tasks to ensure persistence.
 - [S0504] Anchor: Anchor can install itself as a cron job.
 - [S0163] Janicab: Janicab used a cron job for persistence on Mac devices.
+- [S0468] Skidmap: Skidmap has installed itself via crontab.
+- [G0106] Rocke: Rocke installed a cron job that downloaded and executed files from the C2.
+- [S0341] Xbash: Xbash can create a cronjob for persistence if it determines it is on a Linux system.
+- [S0198] NETWIRE: NETWIRE can use crontabs to establish persistence.
+- [S0588] GoldMax: The GoldMax Linux variant has used a crontab entry with a @reboot line to gain persistence.
+- [S1198] Gomir: Gomir will configure a crontab for process execution to start the backdoor on reboot if it is not initially running under group 0 privileges.
+- [S0587] Penquin: Penquin can use Cron to create periodic and pre-scheduled background jobs.
+- [C0048] Operation MidnightEclipse: During Operation MidnightEclipse, threat actors configured cron jobs to retrieve payloads from actor-controlled infrastructure.
+- [G1023] APT5: APT5 has made modifications to the crontab file including in `/var/cron/tabs/`.
+- [S0599] Kinsing: Kinsing has used crontab to download and run shell scripts every minute to ensure persistence.
+- [G0082] APT38: APT38 has used cron to create pre-scheduled and periodic background jobs on a Linux system.
+- [S0401] Exaramel for Linux: Exaramel for Linux uses crontab for persistence if it does not have root privileges.
 
 ### T1053.005 - Scheduled Task/Job: Scheduled Task
-
-Description:
-
-Adversaries may abuse the Windows Task Scheduler to perform task scheduling for initial or recurring execution of malicious code. There are multiple ways to access the Task Scheduler in Windows. The schtasks utility can be run directly on the command line, or the Task Scheduler can be opened through the GUI within the Administrator Tools section of the Control Panel. In some cases, adversaries have used a .NET wrapper for the Windows Task Scheduler, and alternatively, adversaries have used the Windows netapi32 library and Windows Management Instrumentation (WMI) to create a scheduled task. Adversaries may also utilize the Powershell Cmdlet `Invoke-CimMethod`, which leverages WMI class `PS_ScheduledTask` to create a scheduled task via an XML path. An adversary may use Windows Task Scheduler to execute programs at system startup or on a scheduled basis for persistence. The Windows Task Scheduler can also be abused to conduct remote Execution as part of Lateral Movement and/or to run a process under the context of a specified account (such as SYSTEM). Similar to System Binary Proxy Execution, adversaries have also abused the Windows Task Scheduler to potentially mask one-time execution under signed/trusted system processes. Adversaries may also create "hidden" scheduled tasks (i.e. Hide Artifacts) that may not be visible to defender tools and manual queries used to enumerate tasks. Specifically, an adversary may hide a task from `schtasks /query` and the Task Scheduler by deleting the associated Security Descriptor (SD) registry value (where deletion of this value must be completed using SYSTEM permissions). Adversaries may also employ alternate methods to hide tasks, such as altering the metadata (e.g., `Index` value) within associated registry keys.
 
 Procedures:
 
 - [S0588] GoldMax: GoldMax has used scheduled tasks to maintain persistence.
 - [S0648] JSS Loader: JSS Loader has the ability to launch scheduled tasks to establish persistence.
 - [S0414] BabyShark: BabyShark has used scheduled tasks to maintain persistence.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used `scheduler` and `schtasks` to create new tasks on remote host as part of their lateral movement. They manipulated scheduled tasks by updating an existing legitimate task to execute their tools and then returned the scheduled task to its original configuration. APT29 also created a scheduled task to maintain SUNSPOT persistence when the host booted.
+- [S1014] DanBot: DanBot can use a scheduled task for installation.
+- [S0170] Helminth: Helminth has used a scheduled task for persistence.
+- [G0022] APT3: An APT3 downloader creates persistence by creating the following scheduled task: schtasks /create /tn "mysc" /tr C:\Users\Public\test.exe /sc ONLOGON /ru "System".
+- [S1015] Milan: Milan can establish persistence on a targeted host with scheduled tasks.
+- [S0697] HermeticWiper: HermeticWiper has the ability to use scheduled tasks for execution.
+- [S1166] Solar: Solar can create scheduled tasks named Earth and Venus, which run every 30 and 40 seconds respectively, to support C2 and exfiltration.
+- [S0266] TrickBot: TrickBot creates a scheduled task on the system that provides persistence.
+- [S0335] Carbon: Carbon creates several tasks for later execution to continue persistence on the victim’s machine.
+- [S0126] ComRAT: ComRAT has used a scheduled task to launch its PowerShell loader.
+- [S0044] JHUHUGIT: JHUHUGIT has registered itself as a scheduled task to run each time the current user logs in.
+- [G0080] Cobalt Group: Cobalt Group has created Windows tasks to establish persistence.
 
 ### T1053.006 - Scheduled Task/Job: Systemd Timers
 
-Description:
-
-Adversaries may abuse systemd timers to perform task scheduling for initial or recurring execution of malicious code. Systemd timers are unit files with file extension .timer that control services. Timers can be set to run on a calendar event or after a time span relative to a starting point. They can be used as an alternative to Cron in Linux environments. Systemd timers may be activated remotely via the systemctl command line utility, which operates over SSH. Each .timer file must have a corresponding .service file with the same name, e.g., example.timer and example.service. .service files are Systemd Service unit files that are managed by the systemd system and service manager. Privileged timers are written to /etc/systemd/system/ and /usr/lib/systemd/system while user level are written to ~/.config/systemd/user/. An adversary may use systemd timers to execute malicious code at system startup or on a scheduled basis for persistence. Timers installed using privileged paths may be used to maintain root level persistence. Adversaries may also install user level timers to achieve user level persistence.
-
 ### T1053.007 - Scheduled Task/Job: Container Orchestration Job
-
-Description:
-
-Adversaries may abuse task scheduling functionality provided by container orchestration tools such as Kubernetes to schedule deployment of containers configured to execute malicious code. Container orchestration jobs run these automated tasks at a specific date and time, similar to cron jobs on a Linux system. Deployments of this type can also be configured to maintain a quantity of containers over time, automating the process of maintaining persistence within a cluster. In Kubernetes, a CronJob may be used to schedule a Job that runs one or more containers to perform specific tasks. An adversary therefore may utilize a CronJob to schedule deployment of a Job that executes malicious code in various nodes within a cluster.
 
 
 ### T1059.001 - Command and Scripting Interpreter: PowerShell
-
-Description:
-
-Adversaries may abuse PowerShell commands and scripts for execution. PowerShell is a powerful interactive command-line interface and scripting environment included in the Windows operating system. Adversaries can use PowerShell to perform a number of actions, including discovery of information and execution of code. Examples include the Start-Process cmdlet which can be used to run an executable and the Invoke-Command cmdlet which runs a command locally or on a remote computer (though administrator permissions are required to use PowerShell to connect to remote systems). PowerShell may also be used to download and run executables from the Internet, which can be executed from disk or in memory without touching disk. A number of PowerShell-based offensive testing tools are available, including Empire, PowerSploit, PoshC2, and PSAttack. PowerShell commands/scripts can also be executed without directly invoking the powershell.exe binary through interfaces to PowerShell's underlying System.Management.Automation assembly DLL exposed through the .NET framework and Windows Common Language Interface (CLI).
 
 Procedures:
 
 - [G0090] WIRTE: WIRTE has used PowerShell for script execution.
 - [S1212] RansomHub: RansomHub can use PowerShell to delete volume shadow copies.
 - [G1044] APT42: APT42 has downloaded and executed PowerShell payloads.
+- [G1023] APT5: APT5 has used PowerShell to accomplish tasks within targeted environments.
+- [C0047] RedDelta Modified PlugX Infection Chain Operations: Mustang Panda used LNK files to execute PowerShell commands leading to eventual PlugX installation during RedDelta Modified PlugX Infection Chain Operations.
+- [C0025] 2016 Ukraine Electric Power Attack: During the 2016 Ukraine Electric Power Attack, Sandworm Team used PowerShell scripts to run a credential harvesting tool in memory to evade defenses.
+- [G0108] Blue Mockingbird: Blue Mockingbird has used PowerShell reverse TCP shells to issue interactive commands over a network connection.
+- [S1081] BADHATCH: BADHATCH can utilize `powershell.exe` to execute commands on a compromised host.
+- [S0363] Empire: Empire leverages PowerShell for the majority of its client-side agent tasks. Empire also contains the ability to conduct PowerShell remoting with the Invoke-PSRemoting module.
+- [S0330] Zeus Panda: Zeus Panda uses PowerShell to download and execute the payload.
+- [G0087] APT39: APT39 has used PowerShell to execute malicious code.
+- [G0059] Magic Hound: Magic Hound has used PowerShell for execution and privilege escalation.
+- [S0650] QakBot: QakBot can use PowerShell to download and execute payloads.
+- [G0073] APT19: APT19 used PowerShell commands to execute payloads.
+- [S0622] AppleSeed: AppleSeed has the ability to execute its payload via PowerShell.
 
 ### T1059.002 - Command and Scripting Interpreter: AppleScript
-
-Description:
-
-Adversaries may abuse AppleScript for execution. AppleScript is a macOS scripting language designed to control applications and parts of the OS via inter-application messages called AppleEvents. These AppleEvent messages can be sent independently or easily scripted with AppleScript. These events can locate open windows, send keystrokes, and interact with almost any open application locally or remotely. Scripts can be run from the command-line via osascript /path/to/script or osascript -e "script here". Aside from the command line, scripts can be executed in numerous ways including Mail rules, Calendar.app alarms, and Automator workflows. AppleScripts can also be executed as plain text shell scripts by adding #!/usr/bin/osascript to the start of the script file. AppleScripts do not need to call osascript to execute. However, they may be executed from within mach-O binaries by using the macOS Native APIs NSAppleScript or OSAScript, both of which execute code independent of the /usr/bin/osascript command line utility. Adversaries may abuse AppleScript to execute various behaviors, such as interacting with an open SSH connection, moving to remote machines, and even presenting users with fake dialog boxes. These events cannot start applications remotely (they can start them locally), but they can interact with applications if they're already running remotely. On macOS 10.10 Yosemite and higher, AppleScript has the ability to execute Native APIs, which otherwise would require compilation and execution in a mach-O binary file format. Since this is a scripting language, it can be used to launch more common techniques as well such as a reverse shell via Python.
 
 Procedures:
 
 - [S0281] Dok: Dok uses AppleScript to create a login item for persistence.
 - [S0595] ThiefQuest: ThiefQuest uses AppleScript's osascript -e command to launch ThiefQuest's persistence via Launch Agent and Launch Daemon.
 - [S0482] Bundlore: Bundlore can use AppleScript to inject malicious JavaScript into a browser.
+- [S1153] Cuckoo Stealer: Cuckoo Stealer can use osascript to generate a password-stealing prompt, duplicate files and folders, and set environmental variables.
+- [S1048] macOS.OSAMiner: macOS.OSAMiner has used `osascript` to call itself via the `do shell script` command in the Launch Agent `.plist` file.
 
 ### T1059.003 - Command and Scripting Interpreter: Windows Command Shell
-
-Description:
-
-Adversaries may abuse the Windows command shell for execution. The Windows command shell (cmd) is the primary command prompt on Windows systems. The Windows command prompt can be used to control almost any aspect of a system, with various permission levels required for different subsets of commands. The command prompt can be invoked remotely via Remote Services such as SSH. Batch files (ex: .bat or .cmd) also provide the shell with a list of sequential commands to run, as well as normal scripting operations such as conditionals and loops. Common uses of batch files include long or repetitive tasks, or the need to run the same set of commands on multiple systems. Adversaries may leverage cmd to execute various commands and payloads. Common uses include cmd to execute a single command, or abusing cmd interactively with input and output forwarded over a command and control channel.
 
 Procedures:
 
 - [S0053] SeaDuke: SeaDuke is capable of executing commands.
 - [G0032] Lazarus Group: Lazarus Group malware uses cmd.exe to execute commands on a compromised host. A Destover-like variant used by Lazarus Group uses a batch file mechanism to delete its binaries from the system.
 - [S0259] InnaputRAT: InnaputRAT launches a shell to execute commands on the victim’s machine.
+- [S0187] Daserf: Daserf can execute shell commands.
+- [S0046] CozyCar: A module in CozyCar allows arbitrary commands to be executed by invoking C:\Windows\System32\cmd.exe.
+- [S1017] OutSteel: OutSteel has used `cmd.exe` to scan a compromised host for specific file extensions.
+- [S0229] Orz: Orz can execute shell commands. Orz can execute commands with JavaScript.
+- [S0475] BackConfig: BackConfig can download and run batch files to execute commands on a compromised host.
+- [S0381] FlawedAmmyy: FlawedAmmyy has used `cmd` to execute commands on a compromised host.
+- [S1141] LunarWeb: LunarWeb can run shell commands using a BAT file with a name matching `%TEMP%\.batfile` or through cmd.exe with the `/c` and `/U` option for Unicode output.
+- [S0681] Lizar: Lizar has a command to open the command-line on the infected system.
+- [S0651] BoxCaon: BoxCaon can execute arbitrary commands and utilize the "ComSpec" environment variable.
+- [S0124] Pisloader: Pisloader uses cmd.exe to set the Registry Run key value. It also has a command to spawn a command shell.
+- [S0346] OceanSalt: OceanSalt can create a reverse shell on the infected endpoint using cmd.exe. OceanSalt has been executed via malicious macros.
+- [S0639] Seth-Locker: Seth-Locker can execute commands via the command line shell.
 
 ### T1059.004 - Command and Scripting Interpreter: Unix Shell
-
-Description:
-
-Adversaries may abuse Unix shell commands and scripts for execution. Unix shells are the primary command prompt on Linux, macOS, and ESXi systems, though many variations of the Unix shell exist (e.g. sh, ash, bash, zsh, etc.) depending on the specific OS or distribution. Unix shells can control every aspect of a system, with certain commands requiring elevated privileges. Unix shells also support scripts that enable sequential execution of commands as well as other typical programming operations such as conditionals and loops. Common uses of shell scripts include long or repetitive tasks, or the need to run the same set of commands on multiple systems. Adversaries may abuse Unix shells to execute various commands or payloads. Interactive shells may be accessed through command and control channels or during lateral movement such as with SSH. Adversaries may also leverage shell scripts to deliver and execute multiple commands on victims or as part of payloads used for persistence. Some systems, such as embedded devices, lightweight Linux distributions, and ESXi servers, may leverage stripped-down Unix shells via Busybox, a small executable that contains a variety of tools, including a simple shell.
 
 Procedures:
 
 - [S1184] BOLDMOVE: BOLDMOVE is capable of spawning a remote command shell.
 - [G0143] Aquatic Panda: Aquatic Panda used malicious shell scripts in Linux environments following access via SSH to install Linux versions of Winnti malware.
 - [S0377] Ebury: Ebury can use the commands `Xcsh` or `Xcls` to open a shell with Ebury level permissions and `Xxsh` to open a shell with root level.
+- [S1107] NKAbuse: NKAbuse is initially installed and executed through an initial shell script.
+- [S1163] SnappyTCP: SnappyTCP creates the reverse shell using a pthread spawning a bash shell.
+- [S0647] Turian: Turian has the ability to use /bin/sh to execute commands.
+- [G0139] TeamTNT: TeamTNT has used shell scripts for execution.
+- [C0048] Operation MidnightEclipse: During Operation MidnightEclipse, threat actors piped output from stdout to bash for execution.
+- [S0482] Bundlore: Bundlore has leveraged /bin/sh and /bin/bash to execute commands on the victim machine.
+- [S0587] Penquin: Penquin can execute remote commands using bash scripts.
+- [S0599] Kinsing: Kinsing has used Unix shell scripts to execute commands in the victim environment.
+- [S0641] Kobalos: Kobalos can spawn a new pseudo-terminal and execute arbitrary commands at the command prompt.
+- [G0106] Rocke: Rocke used shell scripts to run commands which would obtain persistence and execute the cryptocurrency mining malware.
+- [S0021] Derusbi: Derusbi is capable of creating a remote Bash shell and executing commands.
+- [G1047] Velvet Ant: Velvet Ant used a custom tool, VELVETSTING, to parse encoded inbound commands to compromised F5 BIG-IP devices and then execute them via the Unix shell.
 
 ### T1059.005 - Command and Scripting Interpreter: Visual Basic
-
-Description:
-
-Adversaries may abuse Visual Basic (VB) for execution. VB is a programming language created by Microsoft with interoperability with many Windows technologies such as Component Object Model and the Native API through the Windows API. Although tagged as legacy with no planned future evolutions, VB is integrated and supported in the .NET Framework and cross-platform .NET Core. Derivative languages based on VB have also been created, such as Visual Basic for Applications (VBA) and VBScript. VBA is an event-driven programming language built into Microsoft Office, as well as several third-party applications. VBA enables documents to contain macros used to automate the execution of tasks and other functionality on the host. VBScript is a default scripting language on Windows hosts and can also be used in place of JavaScript on HTML Application (HTA) webpages served to Internet Explorer (though most modern browsers do not come with VBScript support). Adversaries may use VB payloads to execute malicious commands. Common malicious usage includes automating execution of behaviors with VBScript or embedding VBA content into Spearphishing Attachment payloads (which may also involve Mark-of-the-Web Bypass to enable execution).
 
 Procedures:
 
 - [S0447] Lokibot: Lokibot has used VBS scripts and XLS macros for execution.
 - [G0040] Patchwork: Patchwork used Visual Basic Scripts (VBS) on victim machines.
 - [C0025] 2016 Ukraine Electric Power Attack: During the 2016 Ukraine Electric Power Attack, Sandworm Team created VBScripts to run on an SSH server.
+- [S0531] Grandoreiro: Grandoreiro can use VBScript to execute malicious code.
+- [S0475] BackConfig: BackConfig has used VBS to install its downloader component and malicious documents with VBA macro code.
+- [S1030] Squirrelwaffle: Squirrelwaffle has used malicious VBA macros in Microsoft Word documents and Excel spreadsheets that execute an `AutoOpen` subroutine.
+- [S0250] Koadic: Koadic performs most of its operations using Windows Script Host (VBScript) and runs arbitrary shellcode .
+- [G0126] Higaisa: Higaisa has used VBScript code on the victim's machine.
+- [S0585] Kerrdown: Kerrdown can use a VBS base64 decoder function published by Motobit.
+- [S0477] Goopy: Goopy has the ability to use a Microsoft Outlook backdoor macro to communicate with its C2.
+- [S1149] CHIMNEYSWEEP: CHIMNEYSWEEP has executed a script named cln.vbs on compromised hosts.
+- [G0085] FIN4: FIN4 has used VBA macros to display a dialog box and collect victim credentials.
+- [G0090] WIRTE: WIRTE has used VBScript in its operations.
+- [G0112] Windshift: Windshift has used Visual Basic 6 (VB6) payloads.
+- [G0010] Turla: Turla has used VBS scripts throughout its operations.
 
 ### T1059.006 - Command and Scripting Interpreter: Python
-
-Description:
-
-Adversaries may abuse Python commands and scripts for execution. Python is a very popular scripting/programming language, with capabilities to perform many functions. Python can be executed interactively from the command-line (via the python.exe interpreter) or via scripts (.py) that can be written and distributed to different systems. Python code can also be compiled into binary executables. Python comes with many built-in packages to interact with the underlying system, such as file operations and device I/O. Adversaries can use these libraries to download and execute commands or other scripts as well as perform various malicious behaviors.
 
 Procedures:
 
 - [S0581] IronNetInjector: IronNetInjector can use IronPython scripts to load payloads with the help of a .NET injector.
 - [S0547] DropBook: DropBook is a Python-based backdoor compiled with PyInstaller.
 - [S0196] PUNCHBUGGY: PUNCHBUGGY has used python scripts.
+- [G0067] APT37: APT37 has used Python scripts to execute payloads.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER has made use of Python-based remote access tools.
+- [S0695] Donut: Donut can generate shellcode outputs that execute via Python.
+- [S0374] SpeakUp: SpeakUp uses Python scripts.
+- [G0131] Tonto Team: Tonto Team has used Python-based tools for execution.
+- [S1187] reGeorg: reGeorg is a Python-based web shell.
+- [S1032] PyDCrypt: PyDCrypt, along with its functions, is written in Python.
+- [G0128] ZIRCONIUM: ZIRCONIUM has used Python-based implants to interact with compromised hosts.
+- [S0583] Pysa: Pysa has used Python scripts to deploy ransomware.
+- [S0387] KeyBoy: KeyBoy uses Python scripts for installing files and performing execution.
+- [G0106] Rocke: Rocke has used Python-based malware to install and spread their coinminer.
+- [G0095] Machete: Machete used multiple compiled Python scripts on the victim’s system. Machete's main backdoor Machete is also written in Python.
 
 ### T1059.007 - Command and Scripting Interpreter: JavaScript
-
-Description:
-
-Adversaries may abuse various implementations of JavaScript for execution. JavaScript (JS) is a platform-independent scripting language (compiled just-in-time at runtime) commonly associated with scripts in webpages, though JS can be executed in runtime environments outside the browser. JScript is the Microsoft implementation of the same scripting standard. JScript is interpreted via the Windows Script engine and thus integrated with many components of Windows such as the Component Object Model and Internet Explorer HTML Application (HTA) pages. JavaScript for Automation (JXA) is a macOS scripting language based on JavaScript, included as part of Apple’s Open Scripting Architecture (OSA), that was introduced in OSX 10.10. Apple’s OSA provides scripting capabilities to control applications, interface with the operating system, and bridge access into the rest of Apple’s internal APIs. As of OSX 10.10, OSA only supports two languages, JXA and AppleScript. Scripts can be executed via the command line utility osascript, they can be compiled into applications or script files via osacompile, and they can be compiled and executed in memory of other programs by leveraging the OSAKit Framework. Adversaries may abuse various implementations of JavaScript to execute various behaviors. Common uses include hosting malicious scripts on websites as part of a Drive-by Compromise or downloading and executing these script files as secondary payloads. Since these payloads are text-based, it is also very common for adversaries to obfuscate their content as part of Obfuscated Files or Information.
 
 Procedures:
 
 - [S0622] AppleSeed: AppleSeed has the ability to use JavaScript to execute PowerShell.
 - [S0154] Cobalt Strike: The Cobalt Strike System Profiler can use JavaScript to perform reconnaissance actions.
 - [S0455] Metamorfo: Metamorfo includes payloads written in JavaScript.
+- [G0010] Turla: Turla has used various JavaScript-based backdoors.
+- [S1144] FRP: FRP can support the use of a JSON configuration file.
+- [G0050] APT32: APT32 has used JavaScript for drive-by downloads and C2 communications.
+- [G1031] Saint Bear: Saint Bear has delivered malicious Microsoft Office files containing an embedded JavaScript object that would, on execution, download and execute OutSteel and Saint Bot.
+- [S0228] NanHaiShu: NanHaiShu executes additional Jscript code on the victim's machine.
+- [G0037] FIN6: FIN6 has used malicious JavaScript to steal payment card data from e-commerce sites.
+- [G0121] Sidewinder: Sidewinder has used JavaScript to drop and execute malware loaders.
+- [S0650] QakBot: The QakBot web inject module can inject Java Script into web banking pages visited by the victim.
+- [S1180] BlackByte Ransomware: BlackByte Ransomware is distributed as a JavaScript launcher file.
+- [G1019] MoustachedBouncer: MoustachedBouncer has used JavaScript to deliver malware hosted on HTML pages.
+- [S0640] Avaddon: Avaddon has been executed through a malicious JScript downloader.
+- [G0069] MuddyWater: MuddyWater has used JavaScript files to execute its POWERSTATS payload.
 
 ### T1059.008 - Command and Scripting Interpreter: Network Device CLI
-
-Description:
-
-Adversaries may abuse scripting or built-in command line interpreters (CLI) on network devices to execute malicious command and payloads. The CLI is the primary means through which users and administrators interact with the device in order to view system information, modify device operations, or perform diagnostic and administrative functions. CLIs typically contain various permission levels required for different commands. Scripting interpreters automate tasks and extend functionality beyond the command set included in the network OS. The CLI and scripting interpreter are accessible through a direct console connection, or through remote means, such as telnet or SSH. Adversaries can use the network CLI to change how network devices behave and operate. The CLI may be used to manipulate traffic flows to intercept or manipulate data, modify startup configuration parameters to load malicious system software, or to disable security features or logging to avoid detection.
 
 Procedures:
 
 - [S1186] Line Dancer: Line Dancer can execute native commands in networking device command line interfaces.
 
 ### T1059.009 - Command and Scripting Interpreter: Cloud API
-
-Description:
-
-Adversaries may abuse cloud APIs to execute malicious commands. APIs available in cloud environments provide various functionalities and are a feature-rich method for programmatic access to nearly all aspects of a tenant. These APIs may be utilized through various methods such as command line interpreters (CLIs), in-browser Cloud Shells, PowerShell modules like Azure for PowerShell, or software developer kits (SDKs) available for languages such as Python. Cloud API functionality may allow for administrative access across all major services in a tenant such as compute, storage, identity and access management (IAM), networking, and security policies. With proper permissions (often via use of credentials such as Application Access Token and Web Session Cookie), adversaries may abuse cloud APIs to invoke various functions that execute malicious actions. For example, CLI and PowerShell functionality may be accessed through binaries installed on cloud-hosted or on-premises hosts or accessed through a browser-based cloud shell offered by many cloud platforms (such as AWS, Azure, and GCP). These cloud shells are often a packaged unified environment to use CLI and/or scripting modules hosted as a container in the cloud environment.
 
 Procedures:
 
@@ -168,33 +221,25 @@ Procedures:
 
 ### T1059.010 - Command and Scripting Interpreter: AutoHotKey & AutoIT
 
-Description:
-
-Adversaries may execute commands and perform malicious tasks using AutoIT and AutoHotKey automation scripts. AutoIT and AutoHotkey (AHK) are scripting languages that enable users to automate Windows tasks. These automation scripts can be used to perform a wide variety of actions, such as clicking on buttons, entering text, and opening and closing programs. Adversaries may use AHK (`.ahk`) and AutoIT (`.au3`) scripts to execute malicious code on a victim's system. For example, adversaries have used for AHK to execute payloads and other modular malware such as keyloggers. Adversaries have also used custom AHK files containing embedded malware as Phishing payloads. These scripts may also be compiled into self-contained executable payloads (`.exe`).
-
 Procedures:
 
 - [S1213] Lumma Stealer: Lumma Stealer has utilized AutoIt malware scripts and AutoIt executables.
 - [S0530] Melcoz: Melcoz has been distributed through an AutoIt loader script.
 - [S1207] XLoader: XLoader can use an AutoIT script to decrypt a payload file, load it into victim memory, then execute it on the victim machine.
+- [S1017] OutSteel: OutSteel was developed using the AutoIT scripting language.
+- [G0087] APT39: APT39 has utilized AutoIt malware scripts embedded in Microsoft Office documents or malicious links.
+- [S1111] DarkGate: DarkGate uses AutoIt scripts dropped to a hidden directory during initial installation phases, such as `test.au3`.
 
 ### T1059.011 - Command and Scripting Interpreter: Lua
-
-Description:
-
-Adversaries may abuse Lua commands and scripts for execution. Lua is a cross-platform scripting and programming language primarily designed for embedded use in applications. Lua can be executed on the command-line (through the stand-alone lua interpreter), via scripts (.lua), or from Lua-embedded programs (through the struct lua_State). Lua scripts may be executed by adversaries for malicious purposes. Adversaries may incorporate, abuse, or replace existing Lua interpreters to allow for malicious Lua command execution at runtime.
 
 Procedures:
 
 - [S0396] EvilBunny: EvilBunny has used Lua scripts to execute payloads.
 - [S0125] Remsec: Remsec can use modules written in Lua for execution.
 - [S1188] Line Runner: Line Runner utilizes Lua scripts for command execution.
+- [S0428] PoetRAT: PoetRAT has executed a Lua script through a Lua interpreter for Windows.
 
 ### T1059.012 - Command and Scripting Interpreter: Hypervisor CLI
-
-Description:
-
-Adversaries may abuse hypervisor command line interpreters (CLIs) to execute malicious commands. Hypervisor CLIs typically enable a wide variety of functionality for managing both the hypervisor itself and the guest virtual machines it hosts. For example, on ESXi systems, tools such as `esxcli` and `vim-cmd` allow administrators to configure firewall rules and log forwarding on the hypervisor, list virtual machines, start and stop virtual machines, and more. Adversaries may be able to leverage these tools in order to support further actions, such as File and Directory Discovery or Data Encrypted for Impact.
 
 Procedures:
 
@@ -204,85 +249,120 @@ Procedures:
 
 ### T1072 - Software Deployment Tools
 
-Description:
-
-Adversaries may gain access to and use centralized software suites installed within an enterprise to execute commands and move laterally through the network. Configuration management and software deployment applications may be used in an enterprise network or cloud environment for routine administration purposes. These systems may also be integrated into CI/CD pipelines. Examples of such solutions include: SCCM, HBSS, Altiris, AWS Systems Manager, Microsoft Intune, Azure Arc, and GCP Deployment Manager. Access to network-wide or enterprise-wide endpoint management software may enable an adversary to achieve remote code execution on all connected systems. The access may be used to laterally move to other systems, gather information, or cause a specific effect, such as wiping the hard drives on all endpoints. SaaS-based configuration management services may allow for broad Cloud Administration Command on cloud-hosted instances, as well as the execution of arbitrary commands on on-premises endpoints. For example, Microsoft Configuration Manager allows Global or Intune Administrators to run scripts as SYSTEM on on-premises devices joined to Entra ID. Such services may also utilize Web Protocols to communicate back to adversary owned infrastructure. Network infrastructure devices may also have configuration management tools that can be similarly abused by adversaries. The permissions required for this action vary by system configuration; local credentials may be sufficient with direct access to the third-party system, or specific domain credentials may be required. However, the system may require an administrative account to log in or to access specific functionality.
-
 Procedures:
 
 - [G0050] APT32: APT32 compromised McAfee ePO to move laterally by distributing malware as a software deployment task.
 - [G0034] Sandworm Team: Sandworm Team has used the commercially available tool RemoteExec for agentless remote code execution.
 - [G0091] Silence: Silence has used RAdmin, a remote software tool used to remotely control workstations and ATMs.
+- [S0041] Wiper: It is believed that a patch management system for an anti-virus product commonly installed among targeted companies was used to distribute the Wiper malware.
+- [G0028] Threat Group-1314: Threat Group-1314 actors used a victim's endpoint management platform, Altiris, for lateral movement.
+- [C0018] C0018: During C0018, the threat actors used PDQ Deploy to move AvosLocker and tools across the network.
 
 
 ### T1106 - Native API
-
-Description:
-
-Adversaries may interact with the native OS application programming interface (API) to execute behaviors. Native APIs provide a controlled means of calling low-level OS services within the kernel, such as those involving hardware/devices, memory, and processes. These native APIs are leveraged by the OS during system boot (when other system components are not yet initialized) as well as carrying out tasks and requests during routine operations. Adversaries may abuse these OS API functions as a means of executing behaviors. Similar to Command and Scripting Interpreter, the native API and its hierarchy of interfaces provide mechanisms to interact with and utilize various components of a victimized system. Native API functions (such as NtCreateProcess) may be directed invoked via system calls / syscalls, but these features are also often exposed to user-mode applications via interfaces and libraries. For example, functions such as the Windows API CreateProcess() or GNU fork() will allow programs and scripts to start other processes. This may allow API callers to execute a binary, run a CLI command, load modules, etc. as thousands of similar API functions exist for various system operations. Higher level software frameworks, such as Microsoft .NET and macOS Cocoa, are also available to interact with native APIs. These frameworks typically provide language wrappers/abstractions to API functionalities and are designed for ease-of-use/portability of code. Adversaries may use assembly to directly or in-directly invoke syscalls in an attempt to subvert defensive sensors and detection signatures such as user mode API-hooks. Adversaries may also attempt to tamper with sensors and defensive tools associated with API monitoring, such as unhooking monitored functions via Disable or Modify Tools.
 
 Procedures:
 
 - [S0396] EvilBunny: EvilBunny has used various API calls as part of its checks to see if the malware is running in a sandbox.
 - [S1179] Exbyte: Exbyte calls `ShellExecuteW` with the `IpOperation` parameter `RunAs` to launch `explorer.exe` with elevated privileges.
 - [S0141] Winnti for Windows: Winnti for Windows can use Native API to create a new process and to start services.
+- [S0453] Pony: Pony has used several Windows functions for various purposes.
+- [S0687] Cyclops Blink: Cyclops Blink can use various Linux API functions including those for execution and discovery.
+- [S0268] Bisonal: Bisonal has used the Windows API to communicate with the Service Control Manager to execute a thread.
+- [S0084] Mis-Type: Mis-Type has used Windows API calls, including `NetUserAdd` and `NetUserDel`.
+- [S0678] Torisma: Torisma has used various Windows API calls.
+- [S0627] SodaMaster: SodaMaster can use RegOpenKeyW to access the Registry.
+- [S0629] RainyDay: The file collection tool used by RainyDay can utilize native API including ReadDirectoryChangeW for folder monitoring.
+- [S0154] Cobalt Strike: Cobalt Strike's Beacon payload is capable of running shell commands without cmd.exe and PowerShell commands without powershell.exe
+- [S1013] ZxxZ: ZxxZ has used API functions such as `Process32First`, `Process32Next`, and `ShellExecuteA`.
+- [S0610] SideTwist: SideTwist can use GetUserNameW, GetComputerNameW, and GetComputerNameExW to gather information.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group used Windows API `ObtainUserAgentString` to obtain the victim's User-Agent and used the value to connect to their C2 server.
+- [S1087] AsyncRAT: AsyncRAT has the ability to use OS APIs including `CheckRemoteDebuggerPresent`.
 
 
 ### T1129 - Shared Modules
-
-Description:
-
-Adversaries may execute malicious payloads via loading shared modules. Shared modules are executable files that are loaded into processes to provide access to reusable code, such as specific custom functions or invoking OS API functions (i.e., Native API). Adversaries may use this functionality as a way to execute arbitrary payloads on a victim system. For example, adversaries can modularize functionality of their malware into shared objects that perform various functions such as managing C2 network communications or execution of specific actions on objective. The Linux & macOS module loader can load and execute shared objects from arbitrary local paths. This functionality resides in `dlfcn.h` in functions such as `dlopen` and `dlsym`. Although macOS can execute `.so` files, common practice uses `.dylib` files. The Windows module loader can be instructed to load DLLs from arbitrary local paths and arbitrary Universal Naming Convention (UNC) network paths. This functionality resides in `NTDLL.dll` and is part of the Windows Native API which is called from functions like `LoadLibrary` at run time.
 
 Procedures:
 
 - [S0032] gh0st RAT: gh0st RAT can load DLLs into memory.
 - [S0203] Hydraq: Hydraq creates a backdoor through which remote attackers can load and call DLL functions.
 - [S0196] PUNCHBUGGY: PUNCHBUGGY can load a DLL using the LoadLibrary API.
+- [S0603] Stuxnet: Stuxnet calls LoadLibrary then executes exports from a DLL.
+- [S0373] Astaroth: Astaroth uses the LoadLibraryExW() function to load additional modules.
+- [S1185] LightSpy: LightSpy's main executable and module `.dylib` binaries are loaded using a combination of `dlopen()` to load the library, `_objc_getClass()` to retrieve the class definition, and `_objec_msgSend()` to invoke/execute the specified method in the loaded class.
+- [S0607] KillDisk: KillDisk loads and executes functions from a DLL.
+- [S0455] Metamorfo: Metamorfo had used AutoIt to load and execute the DLL payload.
+- [S0673] DarkWatchman: DarkWatchman can load DLLs.
+- [S0438] Attor: Attor's dispatcher can execute additional plugins by loading the respective DLLs.
+- [S0661] FoggyWeb: FoggyWeb's loader can call the load() function to load the FoggyWeb dll into an Application Domain on a compromised AD FS server.
+- [S1078] RotaJakiro: RotaJakiro uses dynamically linked shared libraries (`.so` files) to execute additional functionality using `dlopen()` and `dlsym()`.
+- [S0520] BLINDINGCAN: BLINDINGCAN has loaded and executed DLLs in memory during runtime on a victim machine.
+- [S1039] Bumblebee: Bumblebee can use `LoadLibrary` to attempt to execute GdiPlus.dll.
+- [S0467] TajMahal: TajMahal has the ability to inject the LoadLibrary call template DLL into running processes.
 
 
 ### T1203 - Exploitation for Client Execution
-
-Description:
-
-Adversaries may exploit software vulnerabilities in client applications to execute code. Vulnerabilities can exist in software due to unsecure coding practices that can lead to unanticipated behavior. Adversaries can take advantage of certain vulnerabilities through targeted exploitation for the purpose of arbitrary code execution. Oftentimes the most valuable exploits to an offensive toolkit are those that can be used to obtain code execution on a remote system because they can be used to gain access to that system. Users will expect to see files related to the applications they commonly used to do work, so they are a useful target for exploit research and development because of their high utility. Several types exist: ### Browser-based Exploitation Web browsers are a common target through Drive-by Compromise and Spearphishing Link. Endpoint systems may be compromised through normal web browsing or from certain users being targeted by links in spearphishing emails to adversary controlled sites used to exploit the web browser. These often do not require an action by the user for the exploit to be executed. ### Office Applications Common office and productivity applications such as Microsoft Office are also targeted through Phishing. Malicious files will be transmitted directly as attachments or through links to download them. These require the user to open the document or file for the exploit to run. ### Common Third-party Applications Other applications that are commonly seen or are part of the software deployed in a target network may also be used for exploitation. Applications such as Adobe Reader and Flash, which are common in enterprise environments, have been routinely targeted by adversaries attempting to gain access to systems. Depending on the software and nature of the vulnerability, some may be exploited in the browser or require the user to open a file. For instance, some Flash exploits have been delivered as objects within Microsoft Office documents.
 
 Procedures:
 
 - [G0121] Sidewinder: Sidewinder has exploited vulnerabilities to gain execution including CVE-2017-11882 and CVE-2020-0674.
 - [G1031] Saint Bear: Saint Bear has leveraged vulnerabilities in client applications such as CVE-2017-11882 in Microsoft Office to enable code execution in victim environments.
 - [G0007] APT28: APT28 has exploited Microsoft Office vulnerability CVE-2017-0262 for execution.
+- [G0027] Threat Group-3390: Threat Group-3390 has exploited CVE-2018-0798 in Equation Editor.
+- [S0331] Agent Tesla: Agent Tesla has exploited Office vulnerabilities such as CVE-2017-11882 and CVE-2017-8570 for execution during delivery.
+- [G0034] Sandworm Team: Sandworm Team has exploited vulnerabilities in Microsoft PowerPoint via OLE objects (CVE-2014-4114) and Microsoft Word via crafted TIFF images (CVE-2013-3906).
+- [G0035] Dragonfly: Dragonfly has exploited CVE-2011-0611 in Adobe Flash Player to gain execution on a targeted system.
+- [G0138] Andariel: Andariel has exploited numerous ActiveX vulnerabilities, including zero-days.
+- [S0239] Bankshot: Bankshot leverages a known zero-day vulnerability in Adobe Flash to execute the implant into the victims’ machines.
+- [S1154] VersaMem: VersaMem was installed through exploitation of CVE-2024-39717 in Versa Director servers.
+- [G0089] The White Company: The White Company has taken advantage of a known vulnerability in Microsoft Word (CVE 2012-0158) to execute code.
+- [G1011] EXOTIC LILY: EXOTIC LILY has used malicious documents containing exploits for CVE-2021-40444 affecting Microsoft MSHTML.
+- [G0032] Lazarus Group: Lazarus Group has exploited Adobe Flash vulnerability CVE-2018-4878 for execution.
+- [G0016] APT29: APT29 has used multiple software exploits for common client software, like Microsoft Word, Exchange, and Adobe Reader, to gain code execution.
+- [S1207] XLoader: XLoader has exploited Office vulnerabilities during local execution such as CVE-2017-11882 and CVE-2018-0798.
 
 
 ### T1204.001 - User Execution: Malicious Link
-
-Description:
-
-An adversary may rely upon a user clicking a malicious link in order to gain execution. Users may be subjected to social engineering to get them to click on a link that will lead to code execution. This user action will typically be observed as follow-on behavior from Spearphishing Link. Clicking on a link may also lead to other execution techniques such as exploitation of a browser or application vulnerability via Exploitation for Client Execution. Links may also lead users to download files that require execution via Malicious File.
 
 Procedures:
 
 - [G0046] FIN7: FIN7 has used malicious links to lure victims into downloading malware.
 - [G0098] BlackTech: BlackTech has used e-mails with malicious links to lure victims into installing malware.
 - [S0531] Grandoreiro: Grandoreiro has used malicious links to gain execution on victim machines.
+- [S0534] Bazar: Bazar can gain execution after a user clicks on a malicious link to decoy landing pages hosted on Google Docs.
+- [C0002] Night Dragon: During Night Dragon, threat actors enticed users to click on links in spearphishing emails to download malware.
+- [G0129] Mustang Panda: Mustang Panda has sent malicious links including links directing victims to a Google Drive folder.
+- [G0021] Molerats: Molerats has sent malicious links via email trick users into opening a RAR archive and running an executable.
+- [G0112] Windshift: Windshift has used links embedded in e-mails to lure victims into executing malicious code.
+- [S1017] OutSteel: OutSteel has relied on a user to click a malicious link within a spearphishing email.
+- [G0094] Kimsuky: Kimsuky has lured victims into clicking malicious links.
+- [G0140] LazyScripter: LazyScripter has relied upon users clicking on links to malicious files.
+- [G0142] Confucius: Confucius has lured victims into clicking on a malicious link sent through spearphishing.
+- [G1031] Saint Bear: Saint Bear has, in addition to email-based phishing attachments, used malicious websites masquerading as legitimate entities to host links to malicious files for user execution.
+- [C0005] Operation Spalax: During Operation Spalax, the threat actors relied on a victim to click on a malicious link distributed via phishing emails.
+- [C0016] Operation Dust Storm: During Operation Dust Storm, the threat actors relied on a victim clicking on a malicious link sent via email.
 
 ### T1204.002 - User Execution: Malicious File
-
-Description:
-
-An adversary may rely upon a user opening a malicious file in order to gain execution. Users may be subjected to social engineering to get them to open a file that will lead to code execution. This user action will typically be observed as follow-on behavior from Spearphishing Attachment. Adversaries may use several types of files that require a user to execute them, including .doc, .pdf, .xls, .rtf, .scr, .exe, .lnk, .pif, .cpl, and .reg. Adversaries may employ various forms of Masquerading and Obfuscated Files or Information to increase the likelihood that a user will open and successfully execute a malicious file. These methods may include using a familiar naming convention and/or password protecting the file and supplying instructions to a user on how to open it. While Malicious File frequently occurs shortly after Initial Access it may occur at other phases of an intrusion, such as when an adversary places a file in a shared directory or on a user's desktop hoping that a user will click on it. This activity may also be seen shortly after Internal Spearphishing.
 
 Procedures:
 
 - [G1026] Malteiro: Malteiro has relied on users to execute .zip file attachments containing malicious URLs.
 - [S0669] KOCTOPUS: KOCTOPUS has relied on victims clicking a malicious document for execution.
 - [C0037] Water Curupira Pikabot Distribution: Water Curupira Pikabot Distribution delivered Pikabot installers as password-protected ZIP files containing heavily obfuscated JavaScript, or IMG files containing an LNK mimicking a Word document and a malicious DLL.
+- [S0356] KONNI: KONNI has relied on a victim to enable malicious macros within an attachment delivered via email.
+- [G0005] APT12: APT12 has attempted to get victims to open malicious Microsoft Word and PDF attachment sent via spearphishing.
+- [S0453] Pony: Pony has attempted to lure targets into downloading an attached executable (ZIP, RAR, or CAB archives) or document (PDF or other MS Office format).
+- [G0094] Kimsuky: Kimsuky has used attempted to lure victims into opening malicious e-mail attachments.
+- [G0095] Machete: Machete has relied on users opening malicious attachments delivered through spearphishing to execute malware.
+- [S0631] Chaes: Chaes requires the user to click on the malicious Word document to execute the next part of the attack.
+- [S1064] SVCReady: SVCReady has relied on users clicking a malicious attachment delivered through spearphishing.
+- [G0066] Elderwood: Elderwood has leveraged multiple types of spearphishing in order to attempt to get a user to open attachments.
+- [G0134] Transparent Tribe: Transparent Tribe has used weaponized documents in e-mail to compromise targeted systems.
+- [G0035] Dragonfly: Dragonfly has used various forms of spearphishing in attempts to get users to open malicious attachments.
+- [G0090] WIRTE: WIRTE has attempted to lure users into opening malicious MS Word and Excel files to execute malicious payloads.
+- [S0670] WarzoneRAT: WarzoneRAT has relied on a victim to open a malicious attachment within an email for execution.
 
 ### T1204.003 - User Execution: Malicious Image
-
-Description:
-
-Adversaries may rely on a user running a malicious image to facilitate execution. Amazon Web Services (AWS) Amazon Machine Images (AMIs), Google Cloud Platform (GCP) Images, and Azure Images as well as popular container runtimes such as Docker can be backdoored. Backdoored images may be uploaded to a public repository via Upload Malware, and users may then download and deploy an instance or container from the image without realizing the image is malicious, thus bypassing techniques that specifically achieve Initial Access. This can lead to the execution of malicious code, such as code that executes cryptocurrency mining, in the instance or container. Adversaries may also name images a certain way to increase the chance of users mistakenly deploying an instance or container from the image (ex: Match Legitimate Resource Name or Location).
 
 Procedures:
 
@@ -290,71 +370,82 @@ Procedures:
 
 ### T1204.004 - User Execution: Malicious Copy and Paste
 
-Description:
-
-An adversary may rely upon a user copying and pasting code in order to gain execution. Users may be subjected to social engineering to get them to copy and paste code directly into a Command and Scripting Interpreter. Malicious websites, such as those used in Drive-by Compromise, may present fake error messages or CAPTCHA prompts that instruct users to open a terminal or the Windows Run Dialog box and execute an arbitrary command. These commands may be obfuscated using encoding or other techniques to conceal malicious intent. Once executed, the adversary will typically be able to establish a foothold on the victim's machine. Adversaries may also leverage phishing emails for this purpose. When a user attempts to open an attachment, they may be presented with a fake error and offered a malicious command to paste as a solution. Tricking a user into executing a command themselves may help to bypass email filtering, browser sandboxing, or other mitigations designed to protect users against malicious downloaded files.
-
 
 ### T1559.001 - Inter-Process Communication: Component Object Model
-
-Description:
-
-Adversaries may use the Windows Component Object Model (COM) for local code execution. COM is an inter-process communication (IPC) component of the native Windows application programming interface (API) that enables interaction between software objects, or executable code that implements one or more interfaces. Through COM, a client object can call methods of server objects, which are typically binary Dynamic Link Libraries (DLL) or executables (EXE). Remote COM execution is facilitated by Remote Services such as Distributed Component Object Model (DCOM). Various COM interfaces are exposed that can be abused to invoke arbitrary execution via a variety of programming languages such as C, C++, Java, and Visual Basic. Specific COM objects also exist to directly perform functions beyond code execution, such as creating a Scheduled Task/Job, fileless download/execution, and other adversary behaviors related to privilege escalation and persistence.
 
 Procedures:
 
 - [S0223] POWERSTATS: POWERSTATS can use DCOM (targeting the 127.0.0.1 loopback address) to execute additional payloads on compromised hosts.
 - [S0266] TrickBot: TrickBot used COM to setup scheduled task for persistence.
 - [S0260] InvisiMole: InvisiMole can use the ITaskService, ITaskDefinition and ITaskSettings COM interfaces to schedule a task.
+- [S1044] FunnyDream: FunnyDream can use com objects identified with `CLSID_ShellLink`(`IShellLink` and `IPersistFile`) and `WScript.Shell`(`RegWrite` method) to enable persistence mechanisms.
+- [G0069] MuddyWater: MuddyWater has used malware that has the capability to execute malicious code via COM, DCOM, and Outlook.
+- [S0386] Ursnif: Ursnif droppers have used COM objects to execute the malware's full executable payload.
+- [S1015] Milan: Milan can use a COM component to generate scheduled tasks.
+- [S1160] Latrodectus: Latrodectus can use the Windows Component Object Model (COM) to set scheduled tasks.
+- [G0047] Gamaredon Group: Gamaredon Group malware can insert malicious macros into documents using a Microsoft.Office.Interop object.
+- [S1130] Raspberry Robin: Raspberry Robin creates an elevated COM object for CMLuaUtil and uses this to set a registry value that points to the malicious LNK file during execution.
+- [S0698] HermeticWizard: HermeticWizard can execute files on remote machines using DCOM.
+- [S1066] DarkTortilla: DarkTortilla has used the `WshShortcut` COM object to create a .lnk shortcut file in the Windows startup folder.
+- [S0691] Neoichor: Neoichor can use the Internet Explorer (IE) COM interface to connect and receive commands from C2.
+- [S0692] SILENTTRINITY: SILENTTRINITY can insert malicious shellcode into Excel.exe using a `Microsoft.Office.Interop` object.
+- [S1039] Bumblebee: Bumblebee can use a COM object to execute queries to gather system information.
 
 ### T1559.002 - Inter-Process Communication: Dynamic Data Exchange
-
-Description:
-
-Adversaries may use Windows Dynamic Data Exchange (DDE) to execute arbitrary commands. DDE is a client-server protocol for one-time and/or continuous inter-process communication (IPC) between applications. Once a link is established, applications can autonomously exchange transactions consisting of strings, warm data links (notifications when a data item changes), hot data links (duplications of changes to a data item), and requests for command execution. Object Linking and Embedding (OLE), or the ability to link data between documents, was originally implemented through DDE. Despite being superseded by Component Object Model, DDE may be enabled in Windows 10 and most of Microsoft Office 2016 via Registry keys. Microsoft Office documents can be poisoned with DDE commands, directly or through embedded files, and used to deliver execution via Phishing campaigns or hosted Web content, avoiding the use of Visual Basic for Applications (VBA) macros. Similarly, adversaries may infect payloads to execute applications and/or commands on a victim device by way of embedding DDE formulas within a CSV file intended to be opened through a Windows spreadsheet program. DDE could also be leveraged by an adversary operating on a compromised machine who does not have direct access to a Command and Scripting Interpreter. DDE execution can be invoked remotely via Remote Services such as Distributed Component Object Model (DCOM).
 
 Procedures:
 
 - [S0458] Ramsay: Ramsay has been delivered using OLE objects in malicious documents.
 - [C0013] Operation Sharpshooter: During Operation Sharpshooter, threat actors sent malicious Word OLE documents to victims.
 - [S0391] HAWKBALL: HAWKBALL has used an OLE object that uses Equation Editor to drop the embedded shellcode.
+- [G0080] Cobalt Group: Cobalt Group has sent malicious Word OLE compound documents to victims.
+- [G0046] FIN7: FIN7 spear phishing campaigns have included malicious Word documents with DDE execution.
+- [G0069] MuddyWater: MuddyWater has used malware that can execute PowerShell scripts via DDE.
+- [G0121] Sidewinder: Sidewinder has used the ActiveXObject utility to create OLE objects to obtain execution through Internet Explorer.
+- [S0148] RTM: RTM can search for specific strings within browser tabs using a Dynamic Data Exchange mechanism.
+- [G0007] APT28: APT28 has delivered JHUHUGIT and Koadic by executing PowerShell commands through DDE in Word documents.
+- [S0476] Valak: Valak can execute tasks via OLE.
+- [S0428] PoetRAT: PoetRAT was delivered with documents using DDE to execute malicious code.
+- [G0067] APT37: APT37 has used Windows DDE for execution of commands and a malicious VBS.
+- [S0223] POWERSTATS: POWERSTATS can use DDE to execute additional payloads on compromised hosts.
+- [G0084] Gallmaker: Gallmaker attempted to exploit Microsoft’s DDE protocol in order to gain access to victim machines and for execution.
+- [G0065] Leviathan: Leviathan has utilized OLE as a method to insert malicious content inside various phishing documents.
 
 ### T1559.003 - Inter-Process Communication: XPC Services
 
-Description:
-
-Adversaries can provide malicious content to an XPC service daemon for local code execution. macOS uses XPC services for basic inter-process communication between various processes, such as between the XPC Service daemon and third-party application privileged helper tools. Applications can send messages to the XPC Service daemon, which runs as root, using the low-level XPC Service C API or the high level NSXPCConnection API in order to handle tasks that require elevated privileges (such as network connections). Applications are responsible for providing the protocol definition which serves as a blueprint of the XPC services. Developers typically use XPC Services to provide applications stability and privilege separation between the application client and the daemon. Adversaries can abuse XPC services to execute malicious content. Requests for malicious execution can be passed through the application's XPC Services handler. This may also include identifying and abusing improper XPC client validation and/or poor sanitization of input parameters to conduct Exploitation for Privilege Escalation.
-
 
 ### T1569.001 - System Services: Launchctl
-
-Description:
-
-Adversaries may abuse launchctl to execute commands or programs. Launchctl interfaces with launchd, the service management framework for macOS. Launchctl supports taking subcommands on the command-line, interactively, or even redirected from standard input. Adversaries use launchctl to execute commands and programs as Launch Agents or Launch Daemons. Common subcommands include: launchctl load,launchctl unload, and launchctl start. Adversaries can use scripts or manually run the commands launchctl load -w "%s/Library/LaunchAgents/%s" or /bin/launchctl load to execute Launch Agents or Launch Daemons.
 
 Procedures:
 
 - [S0451] LoudMiner: LoudMiner launched the QEMU services in the /Library/LaunchDaemons/ folder using launchctl. It also uses launchctl to unload all Launch Daemons when updating to a newer version of LoudMiner.
 - [S1153] Cuckoo Stealer: Cuckoo Stealer can use `launchctl` to load a LaunchAgent for persistence.
 - [S0584] AppleJeus: AppleJeus has loaded a plist file using the launchctl command.
+- [S1048] macOS.OSAMiner: macOS.OSAMiner has used `launchctl` to restart the Launch Agent.
+- [S0658] XCSSET: XCSSET loads a system level launchdaemon using the launchctl load -w command from /System/Librarby/LaunchDaemons/ssh.plist.
+- [S0274] Calisto: Calisto uses launchctl to enable screen sharing on the victim’s machine.
 
 ### T1569.002 - System Services: Service Execution
-
-Description:
-
-Adversaries may abuse the Windows service control manager to execute malicious commands or payloads. The Windows service control manager (services.exe) is an interface to manage and manipulate services. The service control manager is accessible to users via GUI components as well as system utilities such as sc.exe and Net. PsExec can also be used to execute commands or payloads via a temporary Windows service created through the service control manager API. Tools such as PsExec and sc.exe can accept remote servers as arguments and may be used to conduct remote execution. Adversaries may leverage these mechanisms to execute malicious content. This can be done by either executing a new or modified service. This technique is the execution used in conjunction with Windows Service during service persistence or privilege escalation.
 
 Procedures:
 
 - [S0192] Pupy: Pupy uses PsExec to execute a payload or commands on a remote host.
 - [S1111] DarkGate: DarkGate tries to elevate privileges to SYSTEM using PsExec to locally execute as a service, such as cmd /c c:\temp\PsExec.exe -accepteula -j -d -s [Target Binary].
 - [S0154] Cobalt Strike: Cobalt Strike can use PsExec to execute a payload on a remote host. It can also use Service Control Manager to start new services.
+- [S0260] InvisiMole: InvisiMole has used Windows services as a way to execute its malicious payload.
+- [S0203] Hydraq: Hydraq uses svchost.exe to execute a malicious DLL included in a new service group.
+- [S1063] Brute Ratel C4: Brute Ratel C4 can create Windows system services for execution.
+- [S0368] NotPetya: NotPetya can use PsExec to help propagate itself across a network.
+- [G0114] Chimera: Chimera has used PsExec to deploy beacons on compromised systems.
+- [S0166] RemoteCMD: RemoteCMD can execute commands remotely by creating a new service on the remote system.
+- [S0698] HermeticWizard: HermeticWizard can use `OpenRemoteServiceManager` to create a service.
+- [S0668] TinyTurla: TinyTurla can install itself as a service on compromised machines.
+- [S0606] Bad Rabbit: Bad Rabbit drops a file named infpub.datinto the Windows directory and is executed through SCManager and rundll.exe.
+- [S0481] Ragnar Locker: Ragnar Locker has used sc.exe to execute a service that it creates.
+- [G0087] APT39: APT39 has used post-exploitation tools including RemCom and the Non-sucking Service Manager (NSSM) to execute processes.
+- [S0378] PoshC2: PoshC2 contains an implementation of PsExec for remote execution.
 
 ### T1569.003 - System Services: Systemctl
-
-Description:
-
-Adversaries may abuse systemctl to execute commands or programs. Systemctl is the primary interface for systemd, the Linux init system and service manager. Typically invoked from a shell, Systemctl can also be integrated into scripts or applications. Adversaries may use systemctl to execute commands or programs as Systemd Services. Common subcommands include: `systemctl start`, `systemctl stop`, `systemctl enable`, `systemctl disable`, and `systemctl status`.
 
 Procedures:
 
@@ -363,35 +454,26 @@ Procedures:
 
 ### T1609 - Container Administration Command
 
-Description:
-
-Adversaries may abuse a container administration service to execute commands within a container. A container administration service such as the Docker daemon, the Kubernetes API server, or the kubelet may allow remote management of containers within an environment. In Docker, adversaries may specify an entrypoint during container deployment that executes a script or command, or they may use a command such as docker exec to execute a command within a running container. In Kubernetes, if an adversary has sufficient permissions, they may gain remote execution in a container in the cluster via interaction with the Kubernetes API server, the kubelet, or by running a command such as kubectl exec.
-
 Procedures:
 
 - [G0139] TeamTNT: TeamTNT executed Hildegard through the kubelet API run command and by executing commands on running containers.
 - [S0683] Peirates: Peirates can use `kubectl` or the Kubernetes API to run commands.
 - [S0601] Hildegard: Hildegard was executed through the kubelet API run command and by executing commands on running containers.
+- [S0623] Siloscape: Siloscape can send kubectl commands to victim clusters through an IRC channel and can run kubectl locally to spread once within a victim cluster.
+- [S0599] Kinsing: Kinsing was executed with an Ubuntu container entry point that runs shell scripts.
 
 
 ### T1610 - Deploy Container
-
-Description:
-
-Adversaries may deploy a container into an environment to facilitate execution or evade defenses. In some cases, adversaries may deploy a new container to execute processes associated with a particular image or deployment, such as processes that execute or download malware. In others, an adversary may deploy a new container configured without network rules, user limitations, etc. to bypass existing defenses within the environment. In Kubernetes environments, an adversary may attempt to deploy a privileged or vulnerable container into a specific node in order to Escape to Host and access other containers running on the node. Containers can be deployed by various means, such as via Docker's create and start APIs or via a web application such as the Kubernetes dashboard or Kubeflow. In Kubernetes environments, containers may be deployed through workloads such as ReplicaSets or DaemonSets, which can allow containers to be deployed across multiple nodes. Adversaries may deploy containers based on retrieved or built malicious images or from benign images that download and execute malicious payloads at runtime.
 
 Procedures:
 
 - [S0599] Kinsing: Kinsing was run through a deployed Ubuntu container.
 - [G0139] TeamTNT: TeamTNT has deployed different types of containers into victim environments to facilitate execution. TeamTNT has also transferred cryptocurrency mining software to Kubernetes clusters discovered within local IP address ranges.
 - [S0683] Peirates: Peirates can deploy a pod that mounts its node’s root file system, then execute a command to create a reverse shell on the node.
+- [S0600] Doki: Doki was run through a deployed container.
 
 
 ### T1648 - Serverless Execution
-
-Description:
-
-Adversaries may abuse serverless computing, integration, and automation services to execute arbitrary code in cloud environments. Many cloud providers offer a variety of serverless resources, including compute engines, application integration services, and web servers. Adversaries may abuse these resources in various ways as a means of executing arbitrary commands. For example, adversaries may use serverless functions to execute malicious code, such as crypto-mining malware (i.e. Resource Hijacking). Adversaries may also create functions that enable further compromise of the cloud environment. For example, an adversary may use the `IAM:PassRole` permission in AWS or the `iam.serviceAccounts.actAs` permission in Google Cloud to add Additional Cloud Roles to a serverless cloud function, which may then be able to perform actions the original user cannot. Serverless functions can also be invoked in response to cloud events (i.e. Event Triggered Execution), potentially enabling persistent execution over time. For example, in AWS environments, an adversary may create a Lambda function that automatically adds Additional Cloud Credentials to a user and a corresponding CloudWatch events rule that invokes that function whenever a new user is created. This is also possible in many cloud-based office application suites. For example, in Microsoft 365 environments, an adversary may create a Power Automate workflow that forwards all emails a user receives or creates anonymous sharing links whenever a user is granted access to a document in SharePoint. In Google Workspace environments, they may instead create an Apps Script that exfiltrates a user's data when they open a file.
 
 Procedures:
 
@@ -399,10 +481,6 @@ Procedures:
 
 
 ### T1651 - Cloud Administration Command
-
-Description:
-
-Adversaries may abuse cloud management services to execute commands within virtual machines. Resources such as AWS Systems Manager, Azure RunCommand, and Runbooks allow users to remotely run scripts in virtual machines by leveraging installed virtual machine agents. If an adversary gains administrative access to a cloud environment, they may be able to abuse cloud management services to execute commands in the environment’s virtual machines. Additionally, an adversary that compromises a service provider or delegated administrator account may similarly be able to leverage a Trusted Relationship to execute commands in connected virtual machines.
 
 Procedures:
 
@@ -413,18 +491,10 @@ Procedures:
 
 ### T1674 - Input Injection
 
-Description:
-
-Adversaries may simulate keystrokes on a victim’s computer by various means to perform any type of action on behalf of the user, such as launching the command interpreter using keyboard shortcuts, typing an inline script to be executed, or interacting directly with a GUI-based application. These actions can be preprogrammed into adversary tooling or executed through physical devices such as Human Interface Devices (HIDs). For example, adversaries have used tooling that monitors the Windows message loop to detect when a user visits bank-specific URLs. If detected, the tool then simulates keystrokes to open the developer console or select the address bar, pastes malicious JavaScript from the clipboard, and executes it - enabling manipulation of content within the browser, such as replacing bank account numbers during transactions. Adversaries have also used malicious USB devices to emulate keystrokes that launch PowerShell, leading to the download and execution of malware from adversary-controlled servers.
-
 Procedures:
 
 - [G0046] FIN7: FIN7 has used malicious USBs to emulate keystrokes to launch PowerShell to download and execute malware from the adversary's server.
 
 
 ### T1675 - ESXi Administration Command
-
-Description:
-
-Adversaries may abuse ESXi administration services to execute commands on guest machines hosted within an ESXi virtual environment. Persistent background services on ESXi-hosted VMs, such as the VMware Tools Daemon Service, allow for remote management from the ESXi server. The tools daemon service runs as `vmtoolsd.exe` on Windows guest operating systems, `vmware-tools-daemon` on macOS, and `vmtoolsd ` on Linux. Adversaries may leverage a variety of tools to execute commands on ESXi-hosted VMs – for example, by using the vSphere Web Services SDK to programmatically execute commands and scripts via APIs such as `StartProgramInGuest`, `ListProcessesInGuest`, `ListFileInGuest`, and `InitiateFileTransferFromGuest`. This may enable follow-on behaviors on the guest VMs, such as File and Directory Discovery, Data from Local System, or OS Credential Dumping.
 

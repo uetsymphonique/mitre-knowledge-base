@@ -60,6 +60,7 @@ def write_tactic_markdown(
     domain: str,
     tactic,
     outdir: Path,
+    include_description: bool,
     include_detection: bool,
     include_procedures: bool,
     procedures_top: int | None,
@@ -86,12 +87,19 @@ def write_tactic_markdown(
 
     lines = []
 
+    def end_block():
+        # ensure exactly one blank line at the end of a block
+        while lines and lines[-1] == "":
+            lines.pop()
+        lines.append("")
+
     def update_stat(field: str, title: str, content_len: int):
         current_title, current_len = stats.get(field, ("", 0))
         if content_len > current_len:
             stats[field] = (title, content_len)
 
     for parent in parent_techniques:
+        has_sections = include_description or include_detection or include_procedures
         p_name = MitreAttackData.get_field(parent, "name")
         p_id = MitreAttackData.get_field(parent, "id")
         p_tid = data.get_attack_id(p_id) or ""
@@ -123,7 +131,7 @@ def write_tactic_markdown(
             # Parent technique description, detection, and procedures (conditional)
             p_desc_raw = (MitreAttackData.get_field(parent, "description") or "").strip()
             p_desc = sanitize_text(p_desc_raw) if sanitize else p_desc_raw
-            if p_desc:
+            if include_description and p_desc:
                 lines.append("Description:")
                 lines.append("")
                 lines.append(p_desc)
@@ -160,6 +168,18 @@ def write_tactic_markdown(
                         proc_acc_len += len(bullet)
                     lines.append("")
                     update_stat("Procedures", f"{p_tid} - {p_name}" if p_tid else p_name or "", proc_acc_len)
+                else:
+                    # Placeholder with description when no procedure examples are present
+                    if p_desc:
+                        lines.append("Procedures:")
+                        lines.append("")
+                        bullet = f"- {p_desc}"
+                        lines.append(bullet)
+                        lines.append("")
+                        update_stat("Procedures", f"{p_tid} - {p_name}" if p_tid else p_name or "", len(bullet))
+
+            # end of parent block
+            end_block()
 
         for s in sub_techniques:
             s_name = MitreAttackData.get_field(s, "name")
@@ -172,14 +192,15 @@ def write_tactic_markdown(
                 lines.append(f"{sub_header} {s_tid} - {full_sub_name}")
             else:
                 lines.append(f"{sub_header} {full_sub_name}")
-            lines.append("")
+            # end of sub-technique block
+            end_block()
             # update technique name length (sub, uses displayed title "Parent: Sub")
             update_stat("TechniqueName", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", len(full_sub_name or ""))
             s_desc_raw = (MitreAttackData.get_field(s, "description") or "").strip()
             s_desc = sanitize_text(s_desc_raw) if sanitize else s_desc_raw
-            if s_desc:
+            if include_description and s_desc:
                 lines.append("Description:")
-                lines.append("")
+        # do not add extra spacer here; separators handled per-block above
                 lines.append(s_desc)
                 lines.append("")
                 update_stat("Description", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", len(s_desc))
@@ -214,8 +235,20 @@ def write_tactic_markdown(
                         proc_acc_len += len(bullet)
                     lines.append("")
                     update_stat("Procedures", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", proc_acc_len)
-        lines.append("")
-
+                else:
+                    # Placeholder with description when no procedure examples are present
+                    if s_desc:
+                        lines.append("Procedures:")
+                        lines.append("")
+                        bullet = f"- {s_desc}"
+                        lines.append(bullet)
+                        lines.append("")
+                        update_stat("Procedures", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", len(bullet))
+        # Add a separator between this parent's block and the next only if sections are enabled.
+        # When only headers are emitted (no sections), avoid adding an extra trailing blank line here
+        # to keep a single blank line between sibling headers.
+        if has_sections:
+            lines.append("")
     # Filename: prefer ATT&CK ID + shortname
     base = "-".join(filter(None, [tactic_attack_id, shortname or tactic_name]))
     filename = slugify(base) + ".md"
@@ -251,6 +284,7 @@ def main():
     parser.add_argument("--mode", choices=["all", "tactic"], required=True, help="Select all tactics or a provided list")
     parser.add_argument("--tactics", nargs="*", default=[], help="Tactic names or shortnames (for mode=tactic). Accepts multiple or comma-separated.")
     parser.add_argument("--outdir", default="tactics", help="Output directory for Markdown files")
+    parser.add_argument("--description", action="store_true", help="Include Description sections")
     parser.add_argument("--detection", action="store_true", help="Include Detection sections")
     parser.add_argument("--procedures", action="store_true", help="Include Procedures sections")
     parser.add_argument(
@@ -443,10 +477,11 @@ def main():
         # Per-tactic files (existing behavior)
         for tactic in selected:
             fname = write_tactic_markdown(
-                data,
+            data,
                 args.domain,
                 tactic,
                 outdir,
+            include_description=args.description,
                 include_detection=args.detection,
                 include_procedures=args.procedures,
                 procedures_top=top_n,

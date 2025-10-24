@@ -1,109 +1,157 @@
 ### T1078.001 - Valid Accounts: Default Accounts
 
-Description:
-
-Adversaries may obtain and abuse credentials of a default account as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Default accounts are those that are built-into an OS, such as the Guest or Administrator accounts on Windows systems. Default accounts also include default factory/provider set accounts on other types of systems, software, or devices, including the root user account in AWS, the root user account in ESXi, and the default service account in Kubernetes. Default accounts are not limited to client machines; rather, they also include accounts that are preset for equipment such as network devices and computer applications, whether they are internal, open source, or commercial. Appliances that come preset with a username and password combination pose a serious threat to organizations that do not change it post installation, as they are easy targets for an adversary. Similarly, adversaries may also utilize publicly disclosed or stolen Private Keys or credential materials to legitimately connect to remote environments via Remote Services. Default accounts may be created on a system after initial setup by connecting or integrating it with another application. For example, when an ESXi server is connected to a vCenter server, a default privileged account called `vpxuser` is created on the ESXi server. If a threat actor is able to compromise this account’s credentials (for example, via Exploitation for Credential Access on the vCenter host), they will then have access to the ESXi server.
-
 Procedures:
 
 - [G1016] FIN13: FIN13 has leveraged default credentials for authenticating myWebMethods (WMS) and QLogic web management interface to gain initial access.
 - [S0537] HyperStack: HyperStack can use default credentials to connect to IPC$ shares on remote machines.
 - [C0038] HomeLand Justice: During HomeLand Justice, threat actors used the built-in administrator account to move laterally using RDP and Impacket.
+- [G0059] Magic Hound: Magic Hound enabled and used the default system managed account, DefaultAccount, via `"powershell.exe" /c net user DefaultAccount /active:yes` to connect to a targeted Exchange server over RDP.
+- [S0603] Stuxnet: Stuxnet infected WinCC machines via a hardcoded database server password.
+- [G1003] Ember Bear: Ember Bear has abused default user names and passwords in externally-accessible IP cameras for initial access.
 
 ### T1078.002 - Valid Accounts: Domain Accounts
-
-Description:
-
-Adversaries may obtain and abuse credentials of a domain account as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Domain accounts are those managed by Active Directory Domain Services where access and permissions are configured across systems and services that are part of that domain. Domain accounts can cover users, administrators, and services. Adversaries may compromise domain accounts, some with a high level of privileges, through various means such as OS Credential Dumping or password reuse, allowing access to privileged resources of the domain.
 
 Procedures:
 
 - [S1024] CreepySnail: CreepySnail can use stolen credentials to authenticate on target networks.
 - [C0002] Night Dragon: During Night Dragon, threat actors used domain accounts to gain further access to victim systems.
 - [C0023] Operation Ghost: For Operation Ghost, APT29 used stolen administrator credentials for lateral movement on compromised networks.
+- [C0048] Operation MidnightEclipse: During Operation MidnightEclipse, threat actors used a compromised domain admin account to move laterally.
+- [S0154] Cobalt Strike: Cobalt Strike can use known credentials to run commands and spawn processes as a domain user account.
+- [G0019] Naikon: Naikon has used administrator credentials for lateral movement in compromised networks.
+- [C0049] Leviathan Australian Intrusions: Leviathan compromised domain credentials during Leviathan Australian Intrusions.
+- [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors used compromised domain administrator credentials as part of their lateral movement.
+- [G1030] Agrius: Agrius attempted to acquire valid credentials for victim environments through various means to enable follow-on lateral movement.
+- [G0102] Wizard Spider: Wizard Spider has used administrative accounts, including Domain Admin, to move laterally within a victim network.
+- [G0034] Sandworm Team: Sandworm Team has used stolen credentials to access administrative accounts within the domain.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used domain administrators' accounts to help facilitate lateral movement on compromised networks.
+- [S0446] Ryuk: Ryuk can use stolen domain admin accounts to move laterally within a victim domain.
+- [G0049] OilRig: OilRig has used an exfiltration tool named STEALHOOK to retreive valid domain credentials.
+- [S0140] Shamoon: If Shamoon cannot access shares using current privileges, it attempts access using hard coded, domain-specific credentials gathered earlier in the intrusion.
 
 ### T1078.003 - Valid Accounts: Local Accounts
-
-Description:
-
-Adversaries may obtain and abuse credentials of a local account as a means of gaining Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Local accounts are those configured by an organization for use by users, remote support, services, or for administration on a single system or service. Local Accounts may also be abused to elevate privileges and harvest credentials through OS Credential Dumping. Password reuse may allow the abuse of local accounts across a set of machines on a network for the purposes of Privilege Escalation and Lateral Movement.
 
 Procedures:
 
 - [G0094] Kimsuky: Kimsuky has used a tool called GREASE to add a Windows admin account in order to allow them continued access via RDP.
 - [S0367] Emotet: Emotet can brute force a local admin password, then use it to facilitate lateral movement.
 - [S0154] Cobalt Strike: Cobalt Strike can use known credentials to run commands and spawn processes as a local user account.
+- [G0056] PROMETHIUM: PROMETHIUM has created admin accounts on a compromised host.
+- [G0051] FIN10: FIN10 has moved laterally using the Local Administrator account.
+- [G1040] Play: Play has used valid local accounts to gain initial access.
+- [G0050] APT32: APT32 has used legitimate local admin account credentials.
+- [G1041] Sea Turtle: Sea Turtle compromised cPanel accounts in victim environments.
+- [G0081] Tropic Trooper: Tropic Trooper has used known administrator account credentials to execute the backdoor directly.
+- [G0125] HAFNIUM: HAFNIUM has used the NT AUTHORITY\SYSTEM account to create files on Exchange servers.
+- [G0046] FIN7: FIN7 has used compromised credentials for access as SYSTEM on Exchange servers.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used compromised local accounts to access victims' networks.
+- [C0049] Leviathan Australian Intrusions: Leviathan used captured local account information, such as service accounts, for actions during Leviathan Australian Intrusions.
+- [G1047] Velvet Ant: Velvet Ant accessed vulnerable Cisco switch devices using accounts with administrator privileges.
+- [G0016] APT29: APT29 targets dormant or inactive user accounts, accounts belonging to individuals no longer at the organization but whose accounts remain on the system, for access and persistence.
 
 ### T1078.004 - Valid Accounts: Cloud Accounts
-
-Description:
-
-Valid accounts in cloud environments may allow adversaries to perform actions to achieve Initial Access, Persistence, Privilege Escalation, or Defense Evasion. Cloud accounts are those created and configured by an organization for use by users, remote support, services, or for administration of resources within a cloud service provider or SaaS application. Cloud Accounts can exist solely in the cloud; alternatively, they may be hybrid-joined between on-premises systems and the cloud through syncing or federation with other identity sources such as Windows Active Directory. Service or user accounts may be targeted by adversaries through Brute Force, Phishing, or various other means to gain access to the environment. Federated or synced accounts may be a pathway for the adversary to affect both on-premises systems and cloud environments - for example, by leveraging shared credentials to log onto Remote Services. High privileged cloud accounts, whether federated, synced, or cloud-only, may also allow pivoting to on-premises environments by leveraging SaaS-based Software Deployment Tools to run commands on hybrid-joined devices. An adversary may create long lasting Additional Cloud Credentials on a compromised cloud account to maintain persistence in the environment. Such credentials may also be used to bypass security controls such as multi-factor authentication. Cloud accounts may also be able to assume Temporary Elevated Cloud Access or other privileges through various means within the environment. Misconfigurations in role assignments or role assumption policies may allow an adversary to use these mechanisms to leverage permissions outside the intended scope of the account. Such over privileged accounts may be used to harvest sensitive data from online storage accounts and databases through Cloud API or other methods. For example, in Azure environments, adversaries may target Azure Managed Identities, which allow associated Azure resources to request access tokens. By compromising a resource with an attached Managed Identity, such as an Azure VM, adversaries may be able to Steal Application Access Tokens to move laterally across the cloud environment.
 
 Procedures:
 
 - [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used a compromised O365 administrator account to create a new Service Principal.
 - [G0016] APT29: APT29 has gained access to a global administrator account in Azure AD and has used `Service Principal` credentials in Exchange.
 - [G1023] APT5: APT5 has accessed Microsoft M365 cloud environments using stolen credentials.
+- [S0684] ROADTools: ROADTools leverages valid cloud credentials to perform enumeration operations using the internal Azure AD Graph API.
+- [G0007] APT28: APT28 has used compromised Office 365 service accounts with Global Administrator privileges to collect email from user inboxes.
+- [C0027] C0027: During C0027, Scattered Spider leveraged compromised credentials from victim users to authenticate to Azure tenants.
+- [S0683] Peirates: Peirates can use stolen service account tokens to perform its operations.
+- [G0125] HAFNIUM: HAFNIUM has abused service principals in compromised environments to enable data exfiltration.
+- [S1091] Pacu: Pacu leverages valid cloud accounts to perform most of its operations.
+- [G0064] APT33: APT33 has used compromised Office 365 accounts in tandem with Ruler in an attempt to gain control of endpoints.
+- [G1004] LAPSUS$: LAPSUS$ has used compromised credentials to access cloud assets within a target organization.
+- [G0004] Ke3chang: Ke3chang has used compromised credentials to sign into victims’ Microsoft 365 accounts.
 
 
 ### T1091 - Replication Through Removable Media
-
-Description:
-
-Adversaries may move onto systems, possibly those on disconnected or air-gapped networks, by copying malware to removable media and taking advantage of Autorun features when the media is inserted into a system and executes. In the case of Lateral Movement, this may occur through modification of executable files stored on removable media or by copying malware and renaming it to look like a legitimate file to trick users into executing it on a separate system. In the case of Initial Access, this may occur through manual manipulation of the media, modification of systems used to initially format the media, or modification to the media's firmware itself. Mobile devices may also be used to infect PCs with malware if connected via USB. This infection may be achieved using devices (Android, iOS, etc.) and, in some instances, USB charging cables. For example, when a smartphone is connected to a system, it may appear to be mounted similar to a USB-connected disk drive. If malware that is compatible with the connected system is on the mobile device, the malware could infect the machine (especially if Autorun features are enabled).
 
 Procedures:
 
 - [S0143] Flame: Flame contains modules to infect USB sticks and spread laterally to other Windows systems the stick is plugged into using Autorun functionality.
 - [S0028] SHIPSHAPE: APT30 may have used the SHIPSHAPE malware to move onto air-gapped networks. SHIPSHAPE targets removable drives to spread to other systems by modifying the drive to use Autorun to execute or by hiding legitimate document files and copying an executable to the folder with the same name as the legitimate document.
 - [G1014] LuminousMoth: LuminousMoth has used malicious DLLs to spread malware to connected removable USB drives on infected machines.
+- [S0130] Unknown Logger: Unknown Logger is capable of spreading to USB devices.
+- [G1007] Aoqin Dragon: Aoqin Dragon has used a dropper that employs a worm infection strategy using a removable device to breach a secure network environment.
+- [S0062] DustySky: DustySky searches for removable media and duplicates itself onto it.
+- [S0132] H1N1: H1N1 has functionality to copy itself to removable media.
+- [G0012] Darkhotel: Darkhotel's selective infector modifies executables stored on removable media as a method of spreading across computers.
+- [S0603] Stuxnet: Stuxnet can propagate via removable media using an autorun.inf file or the CVE-2010-2568 LNK vulnerability.
+- [G0129] Mustang Panda: Mustang Panda has used a customized PlugX variant which could spread through USB connections.
+- [S1130] Raspberry Robin: Raspberry Robin has historically used infected USB media to spread to new victims.
+- [S0092] Agent.btz: Agent.btz drops itself onto removable media devices and creates an autorun.inf file with an instruction to run that file. When the device is inserted into another system, it opens autorun.inf and loads the malware.
+- [S0385] njRAT: njRAT can be configured to spread via removable drives.
+- [S0452] USBferry: USBferry can copy its installer to attached USB storage devices.
+- [S0023] CHOPSTICK: Part of APT28's operation involved using CHOPSTICK modules to copy itself to air-gapped machines and using files written to USB sticks to transfer data and command traffic.
 
 
 ### T1133 - External Remote Services
-
-Description:
-
-Adversaries may leverage external-facing remote services to initially access and/or persist within a network. Remote services such as VPNs, Citrix, and other access mechanisms allow users to connect to internal enterprise network resources from external locations. There are often remote service gateways that manage connections and credential authentication for these services. Services such as Windows Remote Management and VNC can also be used externally. Access to Valid Accounts to use the service is often a requirement, which could be obtained through credential pharming or by obtaining the credentials from users after compromising the enterprise network. Access to remote services may be used as a redundant or persistent access mechanism during an operation. Access may also be gained through an exposed service that doesn’t require authentication. In containerized environments, this may include an exposed Docker API, Kubernetes API server, kubelet, or web application such as the Kubernetes dashboard.
 
 Procedures:
 
 - [G0139] TeamTNT: TeamTNT has used open-source tools such as Weave Scope to target exposed Docker API ports and gain initial access to victim environments. TeamTNT has also targeted exposed kubelets for Kubernetes environments.
 - [G1016] FIN13: FIN13 has gained access to compromised environments via remote access services such as the corporate virtual private network (VPN).
 - [C0012] Operation CuckooBees: During Operation CuckooBees, the threat actors enabled WinRM over HTTP/HTTPS as a backup persistence mechanism using the following command: `cscript //nologo "C:\Windows\System32\winrm.vbs" set winrm/config/service@{EnableCompatibilityHttpsListener="true"}`.
+- [S0362] Linux Rabbit: Linux Rabbit attempts to gain access to the server via SSH.
+- [C0002] Night Dragon: During Night Dragon, threat actors used compromised VPN accounts to gain access to victim systems.
+- [S1060] Mafalda: Mafalda can establish an SSH connection from a compromised host to a server.
+- [G1003] Ember Bear: Ember Bear have used VPNs both for initial access to victim environments and for persistence within them following compromise.
+- [G0026] APT18: APT18 actors leverage legitimate credentials to log into external remote services.
+- [G0034] Sandworm Team: Sandworm Team has used Dropbear SSH with a hardcoded backdoor password to maintain persistence within the target network. Sandworm Team has also used VPN tunnels established in legitimate software company infrastructure to gain access to internal networks of that software company's users.
+- [G1017] Volt Typhoon: Volt Typhoon has used VPNs to connect to victim environments and enable post-exploitation actions.
+- [G1047] Velvet Ant: Velvet Ant has leveraged access to internet-facing remote services to compromise and retain access to victim environments.
+- [S0601] Hildegard: Hildegard was executed through an unsecure kubelet that allowed anonymous access to the victim environment.
+- [G1015] Scattered Spider: Scattered Spider has leveraged legitimate remote management tools to maintain persistent access.
+- [G0096] APT41: APT41 compromised an online billing/payment service using VPN access between a third-party service provider and the targeted payment service.
+- [G1004] LAPSUS$: LAPSUS$ has gained access to internet-facing systems and applications, including virtual private network (VPN), remote desktop protocol (RDP), and virtual desktop infrastructure (VDI) including Citrix.
 
 
 ### T1189 - Drive-by Compromise
-
-Description:
-
-Adversaries may gain access to a system through a user visiting a website over the normal course of browsing. Multiple ways of delivering exploit code to a browser exist (i.e., Drive-by Target), including: * A legitimate website is compromised, allowing adversaries to inject malicious code * Script files served to a legitimate website from a publicly writeable cloud storage bucket are modified by an adversary * Malicious ads are paid for and served through legitimate ad providers (i.e., Malvertising) * Built-in web application interfaces that allow user-controllable content are leveraged for the insertion of malicious scripts or iFrames (e.g., cross-site scripting) Browser push notifications may also be abused by adversaries and leveraged for malicious code injection via User Execution. By clicking "allow" on browser push notifications, users may be granting a website permission to run JavaScript code on their browser. Often the website used by an adversary is one visited by a specific community, such as government, a particular industry, or a particular region, where the goal is to compromise a specific user or set of users based on a shared interest. This kind of targeted campaign is often referred to a strategic web compromise or watering hole attack. There are several known examples of this occurring. Typical drive-by compromise process: 1. A user visits a website that is used to host the adversary controlled content. 2. Scripts automatically execute, typically searching versions of the browser and plugins for a potentially vulnerable version. The user may be required to assist in this process by enabling scripting, notifications, or active website components and ignoring warning dialog boxes. 3. Upon finding a vulnerable version, exploit code is delivered to the browser. 4. If exploitation is successful, the adversary will gain code execution on the user's system unless other protections are in place. In some cases, a second visit to the website after the initial scan is required before exploit code is delivered. Unlike Exploit Public-Facing Application, the focus of this technique is to exploit software on a client endpoint upon visiting a website. This will commonly give an adversary access to systems on the internal network instead of external systems that may be in a DMZ.
 
 Procedures:
 
 - [G0134] Transparent Tribe: Transparent Tribe has used websites with malicious hyperlinks and iframes to infect targeted victims with Crimson, njRAT, and other malicious tools.
 - [G0048] RTM: RTM has distributed its malware via the RIG and SUNDOWN exploit kits, as well as online advertising network Yandex.Direct.
 - [G0068] PLATINUM: PLATINUM has sometimes used drive-by attacks against vulnerable browser plugins.
+- [G0112] Windshift: Windshift has used compromised websites to register custom URL schemes on a remote system.
+- [S0215] KARAE: KARAE was distributed through torrent file-sharing websites to South Korean victims, using a YouTube video downloader application as a lure.
+- [S0483] IcedID: IcedID has cloned legitimate websites/applications to distribute the malware.
+- [G1006] Earth Lusca: Earth Lusca has performed watering hole attacks.
+- [G0082] APT38: APT38 has conducted watering holes schemes to gain initial access to victims.
+- [S0482] Bundlore: Bundlore has been spread through malicious advertisements on websites.
+- [G0001] Axiom: Axiom has used watering hole attacks to gain access.
+- [G0073] APT19: APT19 performed a watering hole attack on forbes.com in 2014 to compromise targets.
+- [G0012] Darkhotel: Darkhotel used embedded iframes on hotel login portals to redirect selected victims to download malware.
+- [G0138] Andariel: Andariel has used watering hole attacks, often with zero-day exploits, to gain initial access to victims within a specific IP range.
+- [G0007] APT28: APT28 has compromised targets via strategic web compromise utilizing custom exploit kits. APT28 used reflected cross-site scripting (XSS) against government websites to redirect users to phishing webpages.
+- [G0035] Dragonfly: Dragonfly has compromised targets via strategic web compromise (SWC) utilizing a custom exploit kit.
 
 
 ### T1190 - Exploit Public-Facing Application
-
-Description:
-
-Adversaries may attempt to exploit a weakness in an Internet-facing host or system to initially access a network. The weakness in the system can be a software bug, a temporary glitch, or a misconfiguration. Exploited applications are often websites/web servers, but can also include databases (like SQL), standard services (like SMB or SSH), network device administration and management protocols (like SNMP and Smart Install), and any other system with Internet-accessible open sockets. On ESXi infrastructure, adversaries may exploit exposed OpenSLP services; they may alternatively exploit exposed VMware vCenter servers. Depending on the flaw being exploited, this may also involve Exploitation for Defense Evasion or Exploitation for Client Execution. If an application is hosted on cloud-based infrastructure and/or is containerized, then exploiting it may lead to compromise of the underlying instance or container. This can allow an adversary a path to access the cloud or container APIs (e.g., via the Cloud Instance Metadata API), exploit container host access via Escape to Host, or take advantage of weak identity and access management policies. Adversaries may also exploit edge network infrastructure and related appliances, specifically targeting devices that do not support robust host-based defenses. For websites and databases, the OWASP top 10 and CWE top 25 highlight the most common web-based vulnerabilities.
 
 Procedures:
 
 - [C0027] C0027: During C0027, Scattered Spider exploited CVE-2021-35464 in the ForgeRock Open Access Management (OpenAM) application server to gain initial access.
 - [G0106] Rocke: Rocke exploited Apache Struts, Oracle WebLogic (CVE-2017-10271), and Adobe ColdFusion (CVE-2017-3066) vulnerabilities to deliver malware.
 - [C0039] Versa Director Zero Day Exploitation: Versa Director Zero Day Exploitation involved exploitation of a vulnerability in Versa Director servers, since identified as CVE-2024-39717, for initial access and code execution.
+- [C0045] ShadowRay: During ShadowRay, threat actors exploited CVE-2023-48022 on publicly exposed Ray servers to steal computing power and to expose sensitive data.
+- [G0027] Threat Group-3390: Threat Group-3390 has exploited the Microsoft SharePoint vulnerability CVE-2019-0604 and CVE-2021-26855, CVE-2021-26857, CVE-2021-26858, and CVE-2021-27065 in Exchange Server.
+- [G0046] FIN7: FIN7 has compromised targeted organizations through exploitation of CVE-2021-31207 in Exchange.
+- [C0018] C0018: During C0018, the threat actors exploited VMWare Horizon Unified Access Gateways that were vulnerable to several Log4Shell vulnerabilities, including CVE-2021-44228, CVE-2021-45046, CVE-2021-45105, and CVE-2021-44832.
+- [S0623] Siloscape: Siloscape is executed after the attacker gains initial access to a Windows container using a known vulnerability.
+- [G1017] Volt Typhoon: Volt Typhoon has gained initial access through exploitation of multiple vulnerabilities in internet-facing software and appliances such as Fortinet, Ivanti (formerly Pulse Secure), NETGEAR, Citrix, and Cisco.
+- [G0034] Sandworm Team: Sandworm Team exploits public-facing applications for initial access and to acquire infrastructure, such as exploitation of the EXIM mail transfer agent in Linux systems.
+- [G0007] APT28: APT28 has used a variety of public exploits, including CVE 2020-0688 and CVE 2020-17144, to gain execution on vulnerable Microsoft Exchange; they have also conducted SQL injection attacks against external websites.
+- [G0094] Kimsuky: Kimsuky has exploited various vulnerabilities for initial access, including Microsoft Exchange vulnerability CVE-2020-0688.
+- [G1003] Ember Bear: Ember Bear gains initial access to victim environments by exploiting external-facing services. Examples include exploitation of CVE-2021-26084 in Confluence servers; CVE-2022-41040, ProxyShell, and other vulnerabilities in Microsoft Exchange; and multiple vulnerabilities in open-source platforms such as content management systems.
+- [C0014] Operation Wocao: During Operation Wocao, threat actors gained initial access by exploiting vulnerabilities in JBoss webservers.
+- [C0002] Night Dragon: During Night Dragon, threat actors used SQL injection exploits against extranet web servers to gain access.
 
 
 ### T1195.001 - Supply Chain Compromise: Compromise Software Dependencies and Development Tools
-
-Description:
-
-Adversaries may manipulate software dependencies and development tools prior to receipt by a final consumer for the purpose of data or system compromise. Applications often depend on external software to function properly. Popular open source projects that are used as dependencies in many applications may be targeted as a means to add malicious code to users of the dependency. Targeting may be specific to a desired victim set or may be distributed to a broad set of consumers but only move on to additional tactics on specific victims.
 
 Procedures:
 
@@ -111,41 +159,44 @@ Procedures:
 
 ### T1195.002 - Supply Chain Compromise: Compromise Software Supply Chain
 
-Description:
-
-Adversaries may manipulate application software prior to receipt by a final consumer for the purpose of data or system compromise. Supply chain compromise of software can take place in a number of ways, including manipulation of the application source code, manipulation of the update/distribution mechanism for that software, or replacing compiled releases with a modified version. Targeting may be specific to a desired victim set or may be distributed to a broad set of consumers but only move on to additional tactics on specific victims.
-
 Procedures:
 
 - [G0096] APT41: APT41 gained access to production environments where they could inject malicious code into legitimate, signed files and widely distribute them to end users.
 - [G0080] Cobalt Group: Cobalt Group has compromised legitimate web browser updates to deliver a backdoor.
 - [G0115] GOLD SOUTHFIELD: GOLD SOUTHFIELD has distributed ransomware by backdooring software installers via a strategic web compromise of the site hosting Italian WinRAR.
+- [S0493] GoldenSpy: GoldenSpy has been packaged with a legitimate tax preparation software.
+- [S0562] SUNSPOT: SUNSPOT malware was designed and used to insert SUNBURST into software builds of the SolarWinds Orion IT management product.
+- [G0034] Sandworm Team: Sandworm Team has distributed NotPetya by compromising the legitimate Ukrainian accounting software M.E.Doc and replacing a legitimate software update with a malicious one.
+- [S0222] CCBkdr: CCBkdr was added to a legitimate, signed version 5.33 of the CCleaner software and distributed on CCleaner's distribution site.
+- [G0035] Dragonfly: Dragonfly has placed trojanized installers for control system software on legitimate vendor app stores.
+- [G0027] Threat Group-3390: Threat Group-3390 has compromised the Able Desktop installer to gain access to victim's environments.
+- [G1034] Daggerfly: Daggerfly is associated with several supply chain compromises using malicious updates to compromise victims.
+- [G1036] Moonstone Sleet: Moonstone Sleet has distributed a trojanized version of PuTTY software for initial access to victims.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 gained initial network access to some victims via a trojanized update of SolarWinds Orion software.
+- [G0046] FIN7: FIN7 has gained initial access by compromising a victim's software supply chain.
 
 ### T1195.003 - Supply Chain Compromise: Compromise Hardware Supply Chain
 
-Description:
-
-Adversaries may manipulate hardware components in products prior to receipt by a final consumer for the purpose of data or system compromise. By modifying hardware or firmware in the supply chain, adversaries can insert a backdoor into consumer networks that may be difficult to detect and give the adversary a high degree of control over the system. Hardware backdoors may be inserted into various devices, such as servers, workstations, network infrastructure, or peripherals.
-
 
 ### T1199 - Trusted Relationship
-
-Description:
-
-Adversaries may breach or otherwise leverage organizations who have access to intended victims. Access through trusted third party relationship abuses an existing connection that may not be protected or receives less scrutiny than standard mechanisms of gaining access to a network. Organizations often grant elevated access to second or third-party external providers in order to allow them to manage internal systems as well as cloud-based environments. Some examples of these relationships include IT services contractors, managed security providers, infrastructure contractors (e.g. HVAC, elevators, physical security). The third-party provider's access may be intended to be limited to the infrastructure being maintained, but may exist on the same network as the rest of the enterprise. As such, Valid Accounts used by the other party for access to internal network systems may be compromised and used. In Office 365 environments, organizations may grant Microsoft partners or resellers delegated administrator permissions. By compromising a partner or reseller account, an adversary may be able to leverage existing delegated administrator relationships or send new delegated administrator offers to clients in order to gain administrative control over the victim tenant.
 
 Procedures:
 
 - [G0115] GOLD SOUTHFIELD: GOLD SOUTHFIELD has breached Managed Service Providers (MSP's) to deliver malware to MSP customers.
 - [G0007] APT28: Once APT28 gained access to the DCCC network, the group then proceeded to use that access to compromise the DNC network.
 - [G0027] Threat Group-3390: Threat Group-3390 has compromised third party service providers to gain access to victim's environments.
+- [G0034] Sandworm Team: Sandworm Team has used dedicated network connections from one victim organization to gain unauthorized access to a separate organization. Additionally, Sandworm Team has accessed Internet service providers and telecommunication entities that provide mobile connectivity.
+- [G0045] menuPass: menuPass has used legitimate access granted to Managed Service Providers in order to access victims of interest.
+- [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 gained access through compromised accounts at cloud solution partners, and used compromised certificates issued by Mimecast to authenticate to Mimecast customer systems.
+- [G1039] RedCurl: RedCurl has gained access to a contractor to pivot to the victim’s infrastructure.
+- [G0016] APT29: APT29 has compromised IT, cloud services, and managed services providers to gain broad access to multiple customers for subsequent operations.
+- [G1005] POLONIUM: POLONIUM has used compromised credentials from an IT company to target downstream customers including a law firm and aviation company.
+- [G0125] HAFNIUM: HAFNIUM has used stolen API keys and credentials associatd with privilege access management (PAM), cloud app providers, and cloud data management companies to access downstream customer environments.
+- [G1004] LAPSUS$: LAPSUS$ has accessed internet-facing identity providers such as Azure Active Directory and Okta to target specific organizations.
+- [G1041] Sea Turtle: Sea Turtle targeted third-party entities in trusted relationships with primary targets to ultimately achieve access at primary targets. Entities targeted included DNS registrars, telecommunication companies, and internet service providers.
 
 
 ### T1200 - Hardware Additions
-
-Description:
-
-Adversaries may physically introduce computer accessories, networking hardware, or other computing devices into a system or network that can be used as a vector to gain access. Rather than just connecting and distributing payloads via removable storage (i.e. Replication Through Removable Media), more robust hardware additions can be used to introduce new functionalities and/or features into a system that can then be abused. While public references of usage by threat actors are scarce, many red teams/penetration testers leverage hardware additions for initial access. Commercial and open source products can be leveraged with capabilities such as passive network tapping, network traffic modification (i.e. Adversary-in-the-Middle), keystroke injection, kernel memory reading via DMA, addition of new wireless access points to an existing network, and others.
 
 Procedures:
 
@@ -154,45 +205,65 @@ Procedures:
 
 ### T1566.001 - Phishing: Spearphishing Attachment
 
-Description:
-
-Adversaries may send spearphishing emails with a malicious attachment in an attempt to gain access to victim systems. Spearphishing attachment is a specific variant of spearphishing. Spearphishing attachment is different from other forms of spearphishing in that it employs the use of malware attached to an email. All forms of spearphishing are electronically delivered social engineering targeted at a specific individual, company, or industry. In this scenario, adversaries attach a file to the spearphishing email and usually rely upon User Execution to gain execution. Spearphishing may also involve social engineering techniques, such as posing as a trusted source. There are many options for the attachment such as Microsoft Office documents, executables, PDFs, or archived files. Upon opening the attachment (and potentially clicking past protections), the adversary's payload exploits a vulnerability or directly executes on the user's system. The text of the spearphishing email usually tries to give a plausible reason why the file should be opened, and may explain how to bypass system protections in order to do so. The email may also contain instructions on how to decrypt an attachment, such as a zip file password, in order to evade email boundary defenses. Adversaries frequently manipulate file extensions and icons in order to make attached executables appear to be document files, or files exploiting one application appear to be a file for a different one.
-
 Procedures:
 
 - [G0080] Cobalt Group: Cobalt Group has sent spearphishing emails with various attachment types to corporate and personal email accounts of victim organizations. Attachment types have included .rtf, .doc, .xls, archives containing LNK files, and password protected archives containing .exe and .scr executables.
 - [S0669] KOCTOPUS: KOCTOPUS has been distributed via spearphishing emails with malicious attachments.
 - [C0028] 2015 Ukraine Electric Power Attack: During the 2015 Ukraine Electric Power Attack, Sandworm Team obtained their initial foothold into many IT systems using Microsoft Office attachments delivered through phishing emails.
+- [S0447] Lokibot: Lokibot is delivered via a malicious XLS attachment contained within a spearhpishing email.
+- [G0032] Lazarus Group: Lazarus Group has targeted victims with spearphishing emails containing malicious Microsoft Word documents.
+- [G1031] Saint Bear: Saint Bear uses a variety of file formats, such as Microsoft Office documents, ZIP archives, PDF documents, and other items as phishing attachments for initial access.
+- [S0331] Agent Tesla: The primary delivered mechanism for Agent Tesla is through email phishing messages.
+- [G0081] Tropic Trooper: Tropic Trooper sent spearphishing emails that contained malicious Microsoft Office and fake installer file attachments.
+- [G0037] FIN6: FIN6 has targeted victims with e-mails containing malicious attachments.
+- [S1064] SVCReady: SVCReady has been distributed via spearphishing campaigns containing malicious Mircrosoft Word documents.
+- [G0007] APT28: APT28 sent spearphishing emails containing malicious Microsoft Office and RAR attachments.
+- [S1066] DarkTortilla: DarkTortilla has been distributed via spearphishing emails containing archive attachments, with file types such as .iso, .zip, .img, .dmg, and .tar, as well as through malicious documents.
+- [G0018] admin@338: admin@338 has sent emails with malicious Microsoft Office documents attached.
+- [G0112] Windshift: Windshift has sent spearphishing emails with attachment to harvest credentials and deliver malware.
+- [G0060] BRONZE BUTLER: BRONZE BUTLER used spearphishing emails with malicious Microsoft Word attachments to infect victims.
 
 ### T1566.002 - Phishing: Spearphishing Link
-
-Description:
-
-Adversaries may send spearphishing emails with a malicious link in an attempt to gain access to victim systems. Spearphishing with a link is a specific variant of spearphishing. It is different from other forms of spearphishing in that it employs the use of links to download malware contained in email, instead of attaching malicious files to the email itself, to avoid defenses that may inspect email attachments. Spearphishing may also involve social engineering techniques, such as posing as a trusted source. All forms of spearphishing are electronically delivered social engineering targeted at a specific individual, company, or industry. In this case, the malicious emails contain links. Generally, the links will be accompanied by social engineering text and require the user to actively click or copy and paste a URL into a browser, leveraging User Execution. The visited website may compromise the web browser using an exploit, or the user will be prompted to download applications, documents, zip files, or even executables depending on the pretext for the email in the first place. Adversaries may also include links that are intended to interact directly with an email reader, including embedded images intended to exploit the end system directly. Additionally, adversaries may use seemingly benign links that abuse special characters to mimic legitimate websites (known as an "IDN homograph attack"). URLs may also be obfuscated by taking advantage of quirks in the URL schema, such as the acceptance of integer- or hexadecimal-based hostname formats and the automatic discarding of text before an “@” symbol: for example, `hxxp://google.com@1157586937`. Adversaries may also utilize links to perform consent phishing, typically with OAuth 2.0 request URLs that when accepted by the user provide permissions/access for malicious applications, allowing adversaries to Steal Application Access Tokens. These stolen access tokens allow the adversary to perform various actions on behalf of the user via API calls. Adversaries may also utilize spearphishing links to Steal Application Access Tokens that grant immediate access to the victim environment. For example, a user may be lured through “consent phishing” into granting adversaries permissions/access via a malicious OAuth 2.0 request URL . Similarly, malicious links may also target device-based authorization, such as OAuth 2.0 device authorization grant flow which is typically used to authenticate devices without UIs/browsers. Known as “device code phishing,” an adversary may send a link that directs the victim to a malicious authorization page where the user is tricked into entering a code/credentials that produces a device token.
 
 Procedures:
 
 - [G0098] BlackTech: BlackTech has used spearphishing e-mails with links to cloud services to deliver malware.
 - [S0585] Kerrdown: Kerrdown has been distributed via e-mails containing a malicious link.
 - [G0069] MuddyWater: MuddyWater has sent targeted spearphishing e-mails with malicious links.
+- [G1014] LuminousMoth: LuminousMoth has sent spearphishing emails containing a malicious Dropbox download link.
+- [G0142] Confucius: Confucius has sent malicious links to victims through email campaigns.
+- [G0103] Mofang: Mofang delivered spearphishing emails with malicious links included.
+- [G0094] Kimsuky: Kimsuky has sent spearphishing emails containing a link to a document that contained malicious macros or took the victim to an actor-controlled domain.
+- [G0121] Sidewinder: Sidewinder has sent e-mails with malicious links often crafted for specific targets.
+- [S0561] GuLoader: GuLoader has been spread in phishing campaigns using malicious web links.
+- [S1017] OutSteel: OutSteel has been distributed through malicious links contained within spearphishing emails.
+- [C0002] Night Dragon: During Night Dragon, threat actors sent spearphishing emails containing links to compromised websites where malware was downloaded.
+- [S0669] KOCTOPUS: KOCTOPUS has been distributed as a malicious link within an email.
+- [G0066] Elderwood: Elderwood has delivered zero-day exploits and malware to victims via targeted emails containing a link to malicious content hosted on an uncommon Web server.
+- [S0528] Javali: Javali has been delivered via malicious links embedded in e-mails.
+- [S1111] DarkGate: DarkGate is distributed in phishing emails containing links to distribute malicious VBS or MSI files. DarkGate uses applications such as Microsoft Teams for distributing links to payloads.
 
 ### T1566.003 - Phishing: Spearphishing via Service
-
-Description:
-
-Adversaries may send spearphishing messages via third-party services in an attempt to gain access to victim systems. Spearphishing via service is a specific variant of spearphishing. It is different from other forms of spearphishing in that it employs the use of third party services rather than directly via enterprise email channels. All forms of spearphishing are electronically delivered social engineering targeted at a specific individual, company, or industry. In this scenario, adversaries send messages through various social media services, personal webmail, and other non-enterprise controlled services. These services are more likely to have a less-strict security policy than an enterprise. As with most kinds of spearphishing, the goal is to generate rapport with the target or get the target's interest in some way. Adversaries will create fake social media accounts and message employees for potential job opportunities. Doing so allows a plausible reason for asking about services, policies, and software that's running in an environment. The adversary can then send malicious links or attachments through these services. A common example is to build rapport with a target via social media, then send content to a personal webmail service that the target uses on their work computer. This allows an adversary to bypass some email restrictions on the work account, and the target is more likely to open the file since it's something they were expecting. If the payload doesn't work as expected, the adversary can continue normal communications and troubleshoot with the target on how to get it working.
 
 Procedures:
 
 - [G1012] CURIUM: CURIUM has used social media to deliver malicious files to victims.
 - [G0112] Windshift: Windshift has used fake personas on social media to engage and target victims.
 - [G0130] Ajax Security Team: Ajax Security Team has used various social media channels to spearphish victims.
+- [G1011] EXOTIC LILY: EXOTIC LILY has used the e-mail notification features of legitimate file sharing services for spearphishing.
+- [S1100] Ninja: Ninja has been distributed to victims via the messaging app Telegram.
+- [G1022] ToddyCat: ToddyCat has sent loaders configured to run Ninja as zip archives via Telegram.
+- [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group sent victims spearphishing messages via LinkedIn concerning fictitious jobs.
+- [G0037] FIN6: FIN6 has used fake job advertisements sent via LinkedIn to spearphish targets.
+- [G0016] APT29: APT29 has used the legitimate mailing service Constant Contact to send phishing e-mails.
+- [G0049] OilRig: OilRig has used LinkedIn to send spearphishing links.
+- [G0070] Dark Caracal: Dark Caracal spearphished victims via Facebook and Whatsapp.
+- [G0032] Lazarus Group: Lazarus Group has used social media platforms, including LinkedIn and Twitter, to send spearphishing messages.
+- [G1046] Storm-1811: Storm-1811 has used Microsoft Teams to send messages and initiate voice calls to victims posing as IT support personnel.
+- [G0059] Magic Hound: Magic Hound used various social media channels (such as LinkedIn) as well as messaging services (such as WhatsApp) to spearphish victims.
+- [G1036] Moonstone Sleet: Moonstone Sleet has used social media services to spear phish victims to deliver trojainized software.
 
 ### T1566.004 - Phishing: Spearphishing Voice
-
-Description:
-
-Adversaries may use voice communications to ultimately gain access to victim systems. Spearphishing voice is a specific variant of spearphishing. It is different from other forms of spearphishing in that is employs the use of manipulating a user into providing access to systems through a phone call or other forms of voice communications. Spearphishing frequently involves social engineering techniques, such as posing as a trusted source (ex: Impersonation) and/or creating a sense of urgency or alarm for the recipient. All forms of phishing are electronically delivered social engineering. In this scenario, adversaries are not directly sending malware to a victim vice relying on User Execution for delivery and execution. For example, victims may receive phishing messages that instruct them to call a phone number where they are directed to visit a malicious URL, download malware, or install adversary-accessible remote management tools (Remote Access Tools) onto their computer. Adversaries may also combine voice phishing with Multi-Factor Authentication Request Generation in order to trick users into divulging MFA credentials or accepting authentication prompts.
 
 Procedures:
 
@@ -202,10 +273,6 @@ Procedures:
 
 ### T1659 - Content Injection
 
-Description:
-
-Adversaries may gain access and continuously communicate with victims by injecting malicious content into systems through online network traffic. Rather than luring victims to malicious payloads hosted on a compromised website (i.e., Drive-by Target followed by Drive-by Compromise), adversaries may initially access victims through compromised data-transfer channels where they can manipulate traffic and/or inject their own content. These compromised online network channels may also be used to deliver additional payloads (i.e., Ingress Tool Transfer) and other data to already compromised systems. Adversaries may inject content to victim systems in various ways, including: * From the middle, where the adversary is in-between legitimate online client-server communications (**Note:** this is similar but distinct from Adversary-in-the-Middle, which describes AiTM activity solely within an enterprise environment) * From the side, where malicious content is injected and races to the client as a fake response to requests of a legitimate online server Content injection is often the result of compromised upstream communication channels, for example at the level of an internet service provider (ISP) as is the case with "lawful interception."
-
 Procedures:
 
 - [S1088] Disco: Disco has achieved initial access and execution through content injection into DNS, HTTP, and SMB replies to targeted hosts that redirect them to download malicious files.
@@ -213,10 +280,6 @@ Procedures:
 
 
 ### T1669 - Wi-Fi Networks
-
-Description:
-
-Adversaries may gain initial access to target systems by connecting to wireless networks. They may accomplish this by exploiting open Wi-Fi networks used by target devices or by accessing secured Wi-Fi networks — requiring Valid Accounts — belonging to a target organization. Establishing a connection to a Wi-Fi access point requires a certain level of proximity to both discover and maintain a stable network connection. Adversaries may establish a wireless connection through various methods, such as by physically positioning themselves near a Wi-Fi network to conduct close access operations. To bypass the need for physical proximity, adversaries may attempt to remotely compromise nearby third-party systems that have both wired and wireless network connections available (i.e., dual-homed systems). These third-party compromised devices can then serve as a bridge to connect to a target’s Wi-Fi network. Once an initial wireless connection is achieved, adversaries may leverage this access for follow-on activities in the victim network or further targeting of specific devices on the network. Adversaries may perform Network Sniffing or Adversary-in-the-Middle activities for Credential Access or Discovery.
 
 Procedures:
 
