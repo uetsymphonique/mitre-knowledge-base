@@ -55,7 +55,7 @@ def sanitize_text(text: str) -> str:
     return text
 
 
-def write_tactic_markdown(
+def write_tactic_txt(
     data: MitreAttackData,
     domain: str,
     tactic,
@@ -65,8 +65,6 @@ def write_tactic_markdown(
     include_procedures: bool,
     procedures_top: int | None,
     sanitize: bool,
-    flatten: bool,
-    stats: dict[str, tuple[str, int]],
 ):
     tactic_name = MitreAttackData.get_field(tactic, "name")
     shortname = MitreAttackData.get_field(tactic, "x_mitre_shortname")
@@ -88,18 +86,14 @@ def write_tactic_markdown(
     lines = []
 
     def end_block():
-        # ensure exactly one blank line at the end of a block
+        # ensure exactly two blank lines at the end of a block
         while lines and lines[-1] == "":
             lines.pop()
         lines.append("")
+        lines.append("")
 
-    def update_stat(field: str, title: str, content_len: int):
-        current_title, current_len = stats.get(field, ("", 0))
-        if content_len > current_len:
-            stats[field] = (title, content_len)
 
     for parent in parent_techniques:
-        has_sections = include_description or include_detection or include_procedures
         p_name = MitreAttackData.get_field(parent, "name")
         p_id = MitreAttackData.get_field(parent, "id")
         p_tid = data.get_attack_id(p_id) or ""
@@ -117,42 +111,29 @@ def write_tactic_markdown(
         )
         has_subs = len(sub_techniques) > 0
 
-        # If not flattening, always include parent technique details.
-        # If flattening, include parent details only when it has no sub-techniques.
-        if (not flatten) or (flatten and not has_subs):
+        # Flatten is default: include parent details only when it has no sub-techniques.
+        if not has_subs:
             if p_tid:
-                lines.append(f"### {p_tid} - {p_name}")
+                lines.append(f"{p_tid} - {p_name}")
             else:
-                lines.append(f"### {p_name}")
-            lines.append("")
-            # update technique name length (parent)
-            update_stat("TechniqueName", f"{p_tid} - {p_name}" if p_tid else p_name or "", len(p_name or ""))
+                lines.append(f"{p_name}")
 
             # Parent technique description, detection, and procedures (conditional)
             p_desc_raw = (MitreAttackData.get_field(parent, "description") or "").strip()
             p_desc = sanitize_text(p_desc_raw) if sanitize else p_desc_raw
             if include_description and p_desc:
-                lines.append("Description:")
-                lines.append("")
                 lines.append(p_desc)
-                lines.append("")
-                update_stat("Description", f"{p_tid} - {p_name}" if p_tid else p_name or "", len(p_desc))
             if include_detection:
                 p_det_raw = (MitreAttackData.get_field(parent, "x_mitre_detection") or "").strip()
                 p_det = sanitize_text(p_det_raw) if sanitize else p_det_raw
                 if p_det:
-                    lines.append("Detection:")
-                    lines.append("")
                     lines.append(p_det)
-                    lines.append("")
-                    update_stat("Detection", f"{p_tid} - {p_name}" if p_tid else p_name or "", len(p_det))
             if include_procedures:
                 parent_procs = data.get_procedure_examples_by_technique(p_id)
                 if procedures_top is not None and procedures_top > 0:
                     parent_procs = parent_procs[:procedures_top]
                 if parent_procs:
-                    lines.append("Procedures:")
-                    lines.append("")
+                    proc_lines = []
                     proc_acc_len = 0
                     for r in parent_procs:
                         src_obj = data.get_object_by_stix_id(r.source_ref)
@@ -161,22 +142,16 @@ def write_tactic_markdown(
                         desc_raw = (getattr(r, "description", "") or "").strip()
                         desc = sanitize_text(desc_raw) if sanitize else desc_raw
                         if src_id:
-                            bullet = f"- [{src_id}] {src_name}: {desc}"
+                            bullet = f"[{src_id}] {src_name}: {desc}"
                         else:
-                            bullet = f"- {src_name}: {desc}"
-                        lines.append(bullet)
+                            bullet = f"{src_name}: {desc}"
+                        proc_lines.append(bullet)
                         proc_acc_len += len(bullet)
-                    lines.append("")
-                    update_stat("Procedures", f"{p_tid} - {p_name}" if p_tid else p_name or "", proc_acc_len)
+                    lines.append(" ".join(proc_lines))
                 else:
                     # Placeholder with description when no procedure examples are present
                     if p_desc:
-                        lines.append("Procedures:")
-                        lines.append("")
-                        bullet = f"- {p_desc}"
-                        lines.append(bullet)
-                        lines.append("")
-                        update_stat("Procedures", f"{p_tid} - {p_name}" if p_tid else p_name or "", len(bullet))
+                        lines.append(p_desc)
 
             # end of parent block
             end_block()
@@ -186,40 +161,26 @@ def write_tactic_markdown(
             s_id = MitreAttackData.get_field(s, "id")
             s_tid = data.get_attack_id(s_id) or ""
             full_sub_name = f"{p_name}: {s_name}" if s_name else p_name
-            # Promote sub-techniques to same header level as techniques when flattening
-            sub_header = "###" if (flatten and has_subs) else "####"
+            # Plain text format: just the technique name
             if s_tid:
-                lines.append(f"{sub_header} {s_tid} - {full_sub_name}")
+                lines.append(f"{s_tid} - {full_sub_name}")
             else:
-                lines.append(f"{sub_header} {full_sub_name}")
-            # end of sub-technique block
-            end_block()
-            # update technique name length (sub, uses displayed title "Parent: Sub")
-            update_stat("TechniqueName", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", len(full_sub_name or ""))
+                lines.append(f"{full_sub_name}")
             s_desc_raw = (MitreAttackData.get_field(s, "description") or "").strip()
             s_desc = sanitize_text(s_desc_raw) if sanitize else s_desc_raw
             if include_description and s_desc:
-                lines.append("Description:")
-        # do not add extra spacer here; separators handled per-block above
                 lines.append(s_desc)
-                lines.append("")
-                update_stat("Description", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", len(s_desc))
             if include_detection:
                 s_det_raw = (MitreAttackData.get_field(s, "x_mitre_detection") or "").strip()
                 s_det = sanitize_text(s_det_raw) if sanitize else s_det_raw
                 if s_det:
-                    lines.append("Detection:")
-                    lines.append("")
                     lines.append(s_det)
-                    lines.append("")
-                    update_stat("Detection", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", len(s_det))
             if include_procedures:
                 sub_procs = data.get_procedure_examples_by_technique(s_id)
                 if procedures_top is not None and procedures_top > 0:
                     sub_procs = sub_procs[:procedures_top]
                 if sub_procs:
-                    lines.append("Procedures:")
-                    lines.append("")
+                    proc_lines = []
                     proc_acc_len = 0
                     for r in sub_procs:
                         src_obj = data.get_object_by_stix_id(r.source_ref)
@@ -228,30 +189,21 @@ def write_tactic_markdown(
                         desc_raw = (getattr(r, "description", "") or "").strip()
                         desc = sanitize_text(desc_raw) if sanitize else desc_raw
                         if src_id:
-                            bullet = f"- [{src_id}] {src_name}: {desc}"
+                            bullet = f"[{src_id}] {src_name}: {desc}"
                         else:
-                            bullet = f"- {src_name}: {desc}"
-                        lines.append(bullet)
+                            bullet = f"{src_name}: {desc}"
+                        proc_lines.append(bullet)
                         proc_acc_len += len(bullet)
-                    lines.append("")
-                    update_stat("Procedures", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", proc_acc_len)
+                    lines.append(" ".join(proc_lines))
                 else:
                     # Placeholder with description when no procedure examples are present
                     if s_desc:
-                        lines.append("Procedures:")
-                        lines.append("")
-                        bullet = f"- {s_desc}"
-                        lines.append(bullet)
-                        lines.append("")
-                        update_stat("Procedures", f"{s_tid} - {full_sub_name}" if s_tid else full_sub_name or "", len(bullet))
-        # Add a separator between this parent's block and the next only if sections are enabled.
-        # When only headers are emitted (no sections), avoid adding an extra trailing blank line here
-        # to keep a single blank line between sibling headers.
-        if has_sections:
-            lines.append("")
+                        lines.append(s_desc)
+            # end of sub-technique block
+            end_block()
     # Filename: prefer ATT&CK ID + shortname
     base = "-".join(filter(None, [tactic_attack_id, shortname or tactic_name]))
-    filename = slugify(base) + ".md"
+    filename = slugify(base) + ".txt"
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / filename).write_text("\n".join(lines), encoding="utf-8")
     return filename
@@ -273,7 +225,7 @@ def main():
     repo_root = Path(__file__).resolve().parents[1]
     default_stix = str(repo_root / "enterprise-attack.json")
 
-    parser = argparse.ArgumentParser(description="Export techniques per tactic to Markdown files")
+    parser = argparse.ArgumentParser(description="Export techniques per tactic to TXT files")
     parser.add_argument("--stix", default=default_stix, help="Path to ATT&CK STIX bundle (enterprise-attack.json)")
     parser.add_argument(
         "--domain",
@@ -283,7 +235,7 @@ def main():
     )
     parser.add_argument("--mode", choices=["all", "tactic"], required=True, help="Select all tactics or a provided list")
     parser.add_argument("--tactics", nargs="*", default=[], help="Tactic names or shortnames (for mode=tactic). Accepts multiple or comma-separated.")
-    parser.add_argument("--outdir", default="tactics", help="Output directory for Markdown files")
+    parser.add_argument("--outdir", default="tactics", help="Output directory for TXT files")
     parser.add_argument("--description", action="store_true", help="Include Description sections")
     parser.add_argument("--detection", action="store_true", help="Include Detection sections")
     parser.add_argument("--procedures", action="store_true", help="Include Procedures sections")
@@ -298,15 +250,11 @@ def main():
         action="store_true",
         help="Sanitize text output (remove citations, links, HTML)",
     )
-    parser.add_argument(
-        "--flatten",
-        action="store_true",
-        help="If a technique has sub-techniques, skip the parent and promote sub-techniques to same header level",
-    )
+    # Flatten is the default behavior now (sub-techniques are promoted; parents with subs are skipped)
     parser.add_argument(
         "--single-file",
         default=None,
-        help="Aggregate all selected tactics into a single Markdown file (dedupe techniques, add tactics list in headers)",
+        help="Aggregate all selected tactics into a single TXT file (dedupe techniques, add tactics list in headers)",
     )
     args = parser.parse_args()
 
@@ -317,15 +265,8 @@ def main():
     written = []
     top_n = args.procedures_top if args.procedures_top and args.procedures_top > 0 else None
 
-    # Global stats across all tactics in this run
-    global_stats: dict[str, tuple[str, int]] = {
-        "TechniqueName": ("", 0),
-        "Description": ("", 0),
-        "Detection": ("", 0),
-        "Procedures": ("", 0),
-    }
 
-    # Aggregate mode: write one combined Markdown file
+    # Aggregate mode: write one combined TXT file
     if args.single_file:
         # tactic title formatter: "TAxxxx - Name"
         def format_tactic_title(tactic_obj) -> str:
@@ -354,29 +295,13 @@ def main():
                     "procedures": [],
                     "tactics": set([tactic_title] if tactic_title else []),
                 }
-                if display_name:
-                    # update tech name stat
-                    global_stats["TechniqueName"] = (
-                        f"{attack_id} - {display_name}",
-                        max(global_stats["TechniqueName"][1], len(display_name)),
-                    )
-                if desc:
-                    if len(desc) > global_stats["Description"][1]:
-                        global_stats["Description"] = (f"{attack_id} - {display_name}", len(desc))
-                if args.detection and det:
-                    if len(det) > global_stats["Detection"][1]:
-                        global_stats["Detection"] = (f"{attack_id} - {display_name}", len(det))
             else:
                 entry = aggregated[key]
                 # prefer existing non-empty; fill if missing
-                if not entry.get("description") and desc:
+                if args.description and (not entry.get("description") and desc):
                     entry["description"] = desc
-                    if len(desc) > global_stats["Description"][1]:
-                        global_stats["Description"] = (f"{attack_id} - {display_name}", len(desc))
                 if args.detection and (not entry.get("detection") and det):
                     entry["detection"] = det
-                    if len(det) > global_stats["Detection"][1]:
-                        global_stats["Detection"] = (f"{attack_id} - {display_name}", len(det))
                 if tactic_title:
                     entry["tactics"].add(tactic_title)
 
@@ -403,8 +328,6 @@ def main():
                         aggregated[key]["procedures"] = lines_local
                     else:
                         aggregated[key]["procedures"] = existing + [x for x in lines_local if x not in existing]
-                    if acc_len > global_stats["Procedures"][1]:
-                        global_stats["Procedures"] = (f"{attack_id} - {display_name}", acc_len)
 
         # Build aggregated content by iterating selected tactics
         for tactic in selected:
@@ -427,7 +350,7 @@ def main():
                 has_subs = len(subs) > 0
 
                 # include parent depending on flatten flag
-                if (not args.flatten) or (args.flatten and not has_subs):
+                if not has_subs:
                     add_or_merge_tech(parent, p_name or "", tactic_title)
 
                 # add subs
@@ -447,24 +370,18 @@ def main():
             attack_id = item.get("attack_id") or ""
             name = item.get("name") or ""
             tactics_list = sorted(list(item.get("tactics") or []))
-            header = f"### {attack_id} - {name} ({', '.join(tactics_list)})" if tactics_list else f"### {attack_id} - {name}"
+            header = f"{attack_id} - {name} ({', '.join(tactics_list)})" if tactics_list else f"{attack_id} - {name}"
             out_lines.append(header)
-            out_lines.append("")
-            if item.get("description"):
-                out_lines.append("Description:")
-                out_lines.append("")
+            if args.description and item.get("description"):
                 out_lines.append(item["description"])
-                out_lines.append("")
             if args.detection and item.get("detection"):
-                out_lines.append("Detection:")
-                out_lines.append("")
                 out_lines.append(item["detection"])
-                out_lines.append("")
             if args.procedures and item.get("procedures"):
-                out_lines.append("Procedures:")
-                out_lines.append("")
-                out_lines.extend(item["procedures"])
-                out_lines.append("")
+                out_lines.append(" ".join(item["procedures"]))
+            
+            # Add spacing between techniques (2 blank lines like per-tactic mode)
+            out_lines.append("")
+            out_lines.append("")
 
         # Write one file
         out_path = Path(args.single_file)
@@ -476,18 +393,16 @@ def main():
     else:
         # Per-tactic files (existing behavior)
         for tactic in selected:
-            fname = write_tactic_markdown(
-            data,
+            fname = write_tactic_txt(
+                data,
                 args.domain,
                 tactic,
                 outdir,
-            include_description=args.description,
+                include_description=args.description,
                 include_detection=args.detection,
                 include_procedures=args.procedures,
                 procedures_top=top_n,
                 sanitize=args.sanitize,
-                flatten=args.flatten,
-                stats=global_stats,
             )
             written.append(fname)
 
@@ -495,12 +410,6 @@ def main():
         for f in written:
             print(f" - {f}")
 
-    # Print global stats only to stdout
-    print("Max field lengths across all techniques:")
-    for field in ["TechniqueName", "Description", "Detection", "Procedures"]:
-        title, length = global_stats.get(field, ("", 0))
-        if length > 0 and title:
-            print(f"- {field}: {length} chars - {title}")
 
 
 if __name__ == "__main__":

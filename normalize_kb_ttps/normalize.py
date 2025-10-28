@@ -69,17 +69,29 @@ def main():
         help="Write one file per technique named <technique>_<timestamp> in --outdir",
     )
     parser.add_argument(
+        "--seperate-by-tactic",
+        action="store_true",
+        help="Write one file per tactic named <tactic>_<timestamp> in --outdir (requires --tech2tac)",
+    )
+    parser.add_argument(
         "--outdir",
         default=None,
-        help="Output directory when using --seperate-by-technique (default: alongside input)",
+        help="Output directory when using --seperate-by-technique or --seperate-by-tactic (default: alongside input)",
     )
     parser.add_argument(
         "--chunk-size",
         type=int,
         default=None,
-        help="Split outputs into chunks of at most N records (works with both -o and --seperate-by-technique)",
+        help="Split outputs into chunks of at most N records (works with -o, --seperate-by-technique, and --seperate-by-tactic)",
     )
     args = parser.parse_args()
+
+    # Validation
+    if args.seperate_by_technique and args.seperate_by_tactic:
+        raise ValueError("Cannot use both --seperate-by-technique and --seperate-by-tactic together")
+    
+    if args.seperate_by_tactic and not args.tech2tac:
+        raise ValueError("--seperate-by-tactic requires --tech2tac mapping file")
 
     in_path = Path(args.input)
     if not in_path.exists():
@@ -155,8 +167,8 @@ def main():
 
         records.append(record)
 
-    # Separate into per-technique files if requested
-    if args.seperate_by_technique:
+    # Separate into per-technique or per-tactic files if requested
+    if args.seperate_by_technique or args.seperate_by_tactic:
         from datetime import datetime
 
         def sanitize_filename(name: str) -> str:
@@ -164,18 +176,38 @@ def main():
             return safe.strip("._") or "unknown"
 
         groups: dict[str, list[dict]] = {}
-        for rec in records:
-            tech_key = rec.get("Technique", "").strip() or "unknown"
-            groups.setdefault(tech_key, []).append(rec)
+        if args.seperate_by_technique:
+            # Group by technique
+            for rec in records:
+                tech_key = rec.get("Technique", "").strip() or "unknown"
+                groups.setdefault(tech_key, []).append(rec)
+        else:  # args.seperate_by_tactic
+            # Group by individual tactics
+            for rec in records:
+                tactics_field = rec.get("Tactics", "")
+                if args.format == "csv":
+                    # Tactics is a string like "TA0001 - Initial Access; TA0002 - Execution"
+                    tactic_names = [t.strip() for t in str(tactics_field).split(";") if t.strip()]
+                else:
+                    # Tactics is a list
+                    tactic_names = tactics_field if isinstance(tactics_field, list) else []
+                
+                if not tactic_names:
+                    # Records without tactics go to "unknown" group
+                    groups.setdefault("unknown", []).append(rec)
+                else:
+                    # Add record to each tactic group
+                    for tactic in tactic_names:
+                        groups.setdefault(tactic, []).append(rec)
 
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         base_outdir = Path(args.outdir) if args.outdir else in_path.parent
         base_outdir.mkdir(parents=True, exist_ok=True)
 
         written_files = 0
-        for tech, recs in groups.items():
+        for group_key, recs in groups.items():
             ext = 'json' if args.format == 'json' else ('txt' if args.format == 'oneline' else 'csv')
-            base_name = f"{sanitize_filename(tech)}_{ts}"
+            base_name = f"{sanitize_filename(group_key)}_{ts}"
             chunk_size = args.chunk_size if args.chunk_size and args.chunk_size > 0 else None
 
             def write_one(path: Path, subset: list[dict]):
@@ -263,7 +295,7 @@ def main():
                         writer.writerow(row_vals)
 
     wb.close()
-    if not args.seperate_by_technique:
+    if not args.seperate_by_technique and not args.seperate_by_tactic:
         print(f"Saved normalized {args.format.upper()} to {out_path}")
 
 

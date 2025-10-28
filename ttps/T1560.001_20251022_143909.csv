@@ -1,3 +1,0 @@
-Technique,Behavior,Tactics
-T1560.001,Summary: Compress db files with winrar.exe (using cli). Procedures: & 'C:\Program Files\WinRAR\WinRAR.exe' a -afzip C:\Users\Public\archive.zip C:\Users\Public\result.txt -p'123qweA@'.,TA0009
-T1560.001,Summary: Compress db files with 7z.exe (using cli). Procedures: & '#{7z.exe}' a C:\Users\Public\archive.7z C:\Users\Public\result.txt.,TA0009
