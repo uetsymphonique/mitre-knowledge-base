@@ -1,3 +1,7 @@
+T1589 - Gather Victim Identity Information
+[G1004] LAPSUS$: LAPSUS$ has gathered detailed information of target employees to enhance their social engineering lures. [G1001] HEXANE: HEXANE has identified specific potential victims at targeted organizations. [G1016] FIN13: FIN13 has researched employees to target for social engineering attacks. [C0022] Operation Dream Job: For Operation Dream Job, Lazarus Group conducted extensive reconnaissance research on potential targets. [G0050] APT32: APT32 has conducted targeted surveillance against activists and bloggers. [G1033] Star Blizzard: Star Blizzard has identified ways to engage targets by researching potential victims' interests and social or professional contacts. [C0014] Operation Wocao: During Operation Wocao, threat actors targeted people based on their organizational roles and privileges. [G0059] Magic Hound: Magic Hound has acquired mobile phone numbers of potential targets, possibly for mobile malware or additional phishing operations. [G1017] Volt Typhoon: Volt Typhoon has gathered victim identify information during pre-compromise reconnaissance.
+
+
 T1589.001 - Gather Victim Identity Information: Credentials
 [G0007] APT28: APT28 has harvested user's login credentials. [G0059] Magic Hound: Magic Hound gathered credentials from two victims that they then attempted to validate across 75 different websites. Magic Hound has also collected credentials from over 900 Fortinet VPN servers in the US, Europe, and Israel. [G0065] Leviathan: Leviathan has collected compromised credentials to use for targeting efforts. [C0024] SolarWinds Compromise: For the SolarWinds Compromise, APT29 conducted credential theft operations to obtain credentials to be used for access to victim environments. [G1004] LAPSUS$: LAPSUS$ has gathered user identities and credentials to gain initial access to a victim's organization; the group has also called an organization's help desk to reset a target's credentials. [G0114] Chimera: Chimera has collected credentials for the target organization from previous breaches for use in brute force attacks. [C0027] C0027: During C0027, Scattered Spider sent phishing messages via SMS to steal credentials.
 
@@ -8,6 +12,10 @@ T1589.002 - Gather Victim Identity Information: Email Addresses
 
 T1589.003 - Gather Victim Identity Information: Employee Names
 [G0094] Kimsuky: Kimsuky has collected victim employee name information. [G0034] Sandworm Team: Sandworm Team's research of potential victim organizations included the identification and collection of employee information. [G0122] Silent Librarian: Silent Librarian has collected lists of names for individuals from targeted organizations.
+
+
+T1590 - Gather Victim Network Information
+[G1017] Volt Typhoon: Volt Typhoon has conducted extensive pre-compromise reconnaissance to learn about the target organization’s network. [G0119] Indrik Spider: Indrik Spider has downloaded tools, such as the Advanced Port Scanner utility and Lansweeper, to conduct internal reconnaissance of the victim network. Indrik Spider has also accessed the victim’s VMware VCenter, which had information about host configuration, clusters, etc. [G0125] HAFNIUM: HAFNIUM gathered the fully qualified domain names (FQDNs) for targeted Exchange servers in the victim's environment.
 
 
 T1590.001 - Gather Victim Network Information: Domain Properties
@@ -34,6 +42,10 @@ T1590.006 - Gather Victim Network Information: Network Security Appliances
 [G1017] Volt Typhoon: Volt Typhoon has identified target network security measures as part of pre-compromise reconnaissance.
 
 
+T1591 - Gather Victim Org Information
+[G0007] APT28: APT28 has used large language models (LLMs) to gather information about satellite capabilities. [G0032] Lazarus Group: Lazarus Group has studied publicly available information about a targeted organization to tailor spearphishing efforts against specific departments and/or individuals. [G1036] Moonstone Sleet: Moonstone Sleet has gathered information on victim organizations through email and social media interaction. [C0022] Operation Dream Job: For Operation Dream Job, Lazarus Group gathered victim organization information to identify specific targets. [G0094] Kimsuky: Kimsuky has collected victim organization information including but not limited to organization hierarchy, functions, press releases, and others. Kimsuky has also used large language models (LLMs) to gather information about potential targets of interest. [G1017] Volt Typhoon: Volt Typhoon has conducted extensive reconnaissance pre-compromise to gain information about the targeted organization.
+
+
 T1591.001 - Gather Victim Org Information: Determine Physical Locations
 [G0059] Magic Hound: Magic Hound has collected location information from visitors to their phishing sites.
 
@@ -48,6 +60,10 @@ Adversaries may gather information about the victim's business tempo that can be
 
 T1591.004 - Gather Victim Org Information: Identify Roles
 [G1017] Volt Typhoon: Volt Typhoon has identified key network and IT staff members pre-compromise at targeted organizations. [G1004] LAPSUS$: LAPSUS$ has gathered detailed knowledge of team structures within a target organization. [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group targeted specific individuals within an organization with tailored job vacancy announcements. [G1001] HEXANE: HEXANE has identified executives, HR, and IT staff at victim organizations for further targeting.
+
+
+T1592 - Gather Victim Host Information
+[G1017] Volt Typhoon: Volt Typhoon has conducted pre-compromise reconnaissance for victim host information.
 
 
 T1592.001 - Gather Victim Host Information: Hardware
@@ -66,6 +82,10 @@ T1592.004 - Gather Victim Host Information: Client Configurations
 [G0125] HAFNIUM: HAFNIUM has interacted with Office 365 tenants to gather details regarding target's environments.
 
 
+T1593 - Search Open Websites/Domains
+[G1017] Volt Typhoon: Volt Typhoon has conducted pre-compromise web searches for victim information. [G0094] Kimsuky: Kimsuky has used LLMs to identify think tanks, government organizations, etc. that have information. [G0034] Sandworm Team: Sandworm Team researched Ukraine's unique legal entity identifier (called an "EDRPOU" number), including running queries on the EDRPOU website, in preparation for the NotPetya attack. Sandworm Team has also researched third-party websites to help it craft credible spearphishing emails. [G1033] Star Blizzard: Star Blizzard has used open-source research to identify information about victims to use in targeting.
+
+
 T1593.001 - Search Open Websites/Domains: Social Media
 [G0094] Kimsuky: Kimsuky has used Twitter to monitor potential victims and to prepare targeted phishing e-mails. [G1011] EXOTIC LILY: EXOTIC LILY has copied data from social media sites to impersonate targeted individuals. [C0022] Operation Dream Job: For Operation Dream Job, Lazarus Group used LinkedIn to identify and target employees within a chosen organization.
 
@@ -82,6 +102,10 @@ T1594 - Search Victim-Owned Websites
 [G0122] Silent Librarian: Silent Librarian has searched victim's websites to identify the interests and academic areas of targeted individuals and to scrape source code, branding, and organizational contact information for phishing pages. [C0029] Cutting Edge: During Cutting Edge, threat actors peformed reconnaissance of victims' internal websites via proxied connections. [G0094] Kimsuky: Kimsuky has searched for information on the target company's website. [G1017] Volt Typhoon: Volt Typhoon has conducted pre-compromise reconnaissance on victim-owned sites. [G1011] EXOTIC LILY: EXOTIC LILY has used contact forms on victim websites to generate phishing e-mails. [C0049] Leviathan Australian Intrusions: Leviathan enumerated compromised web application resources to identify additional endpoints and resources linkd to the website for follow-on access during Leviathan Australian Intrusions. [G0034] Sandworm Team: Sandworm Team has conducted research against potential victim websites as part of its operational planning. [G1038] TA578: TA578 has filled out contact forms on victims' websites to direct them to adversary-controlled URLs. [C0040] APT41 DUST: APT41 DUST involved access of external victim websites for target development.
 
 
+T1595 - Active Scanning
+[C0030] Triton Safety Instrumented System Attack: In the Triton Safety Instrumented System Attack, TEMP.Veles engaged in network reconnaissance against targets of interest.
+
+
 T1595.001 - Active Scanning: Scanning IP Blocks
 [G1003] Ember Bear: Ember Bear has targeted IP ranges for vulnerability scanning related to government and critical infrastructure organizations. [G0139] TeamTNT: TeamTNT has scanned specific lists of target IP addresses.
 
@@ -92,6 +116,10 @@ T1595.002 - Active Scanning: Vulnerability Scanning
 
 T1595.003 - Active Scanning: Wordlist Scanning
 [G0096] APT41: APT41 leverages various tools and frameworks to brute-force directories on web servers. [G0123] Volatile Cedar: Volatile Cedar has used DirBuster and GoBuster to brute force web directories and DNS subdomains.
+
+
+T1596 - Search Open Technical Databases
+[G0007] APT28: APT28 has used large language models (LLMs) to assist in script development and deployment. [G0094] Kimsuky: Kimsuky has used LLMs to better understand publicly reported vulnerabilities.
 
 
 T1596.001 - Search Open Technical Databases: DNS/Passive DNS
@@ -114,12 +142,20 @@ T1596.005 - Search Open Technical Databases: Scan Databases
 [G0096] APT41: APT41 uses the Chinese website fofa.su, similar to the Shodan scanning service, for passive scanning of victims. [C0040] APT41 DUST: APT41 DUST used internet scan data for target development. [G1017] Volt Typhoon: Volt Typhoon has used FOFA, Shodan, and Censys to search for exposed victim infrastructure.
 
 
+T1597 - Search Closed Sources
+[G1011] EXOTIC LILY: EXOTIC LILY has searched for information on targeted individuals on business databases including RocketReach and CrunchBase.
+
+
 T1597.001 - Search Closed Sources: Threat Intel Vendors
 Adversaries may search private data from threat intelligence vendors for information that can be used during targeting. Threat intelligence vendors may offer paid feeds or portals that offer more data than what is publicly reported. Although sensitive details (such as customer names and other identifiers) may be redacted, this information may contain trends regarding breaches such as target industries, attribution claims, and successful TTPs/countermeasures. Adversaries may search in private threat intelligence vendor data to gather actionable information. Threat actors may seek information/indicators gathered about their own campaigns, as well as those conducted by other adversaries that may align with their target industries, capabilities/objectives, or other operational concerns. Information reported by vendors may also reveal opportunities other forms of reconnaissance (ex: Search Open Websites/Domains), establishing operational resources (ex: Develop Capabilities or Obtain Capabilities), and/or initial access (ex: Exploit Public-Facing Application or External Remote Services).
 
 
 T1597.002 - Search Closed Sources: Purchase Technical Data
 [G1004] LAPSUS$: LAPSUS$ has purchased credentials and session tokens from criminal underground forums.
+
+
+T1598 - Phishing for Information
+[G1015] Scattered Spider: Scattered Spider has used a combination of credential phishing and social engineering to capture one-time-password (OTP) codes. [G0128] ZIRCONIUM: ZIRCONIUM targeted presidential campaign staffers with credential phishing e-mails. [G0094] Kimsuky: Kimsuky has used tailored spearphishing emails to gather victim information including contat lists to identify additional targets. [G0007] APT28: APT28 has used spearphishing to compromise credentials. [G1036] Moonstone Sleet: Moonstone Sleet has interacted with victims to gather information via email.
 
 
 T1598.001 - Phishing for Information: Spearphishing Service

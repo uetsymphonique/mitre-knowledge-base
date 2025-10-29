@@ -109,52 +109,50 @@ def write_tactic_txt(
                 MitreAttackData.get_field(s, "name") or "",
             )
         )
-        has_subs = len(sub_techniques) > 0
+        
+        # Always include parent technique (even if it has sub-techniques)
+        if p_tid:
+            lines.append(f"{p_tid} - {p_name}")
+        else:
+            lines.append(f"{p_name}")
 
-        # Flatten is default: include parent details only when it has no sub-techniques.
-        if not has_subs:
-            if p_tid:
-                lines.append(f"{p_tid} - {p_name}")
+        # Parent technique description, detection, and procedures (conditional)
+        p_desc_raw = (MitreAttackData.get_field(parent, "description") or "").strip()
+        p_desc = sanitize_text(p_desc_raw) if sanitize else p_desc_raw
+        if include_description and p_desc:
+            lines.append(p_desc)
+        if include_detection:
+            p_det_raw = (MitreAttackData.get_field(parent, "x_mitre_detection") or "").strip()
+            p_det = sanitize_text(p_det_raw) if sanitize else p_det_raw
+            if p_det:
+                lines.append(p_det)
+        if include_procedures:
+            parent_procs = data.get_procedure_examples_by_technique(p_id)
+            if procedures_top is not None and procedures_top > 0:
+                parent_procs = parent_procs[:procedures_top]
+            if parent_procs:
+                proc_lines = []
+                proc_acc_len = 0
+                for r in parent_procs:
+                    src_obj = data.get_object_by_stix_id(r.source_ref)
+                    src_id = data.get_attack_id(src_obj.id) or ""
+                    src_name = MitreAttackData.get_field(src_obj, "name") or ""
+                    desc_raw = (getattr(r, "description", "") or "").strip()
+                    desc = sanitize_text(desc_raw) if sanitize else desc_raw
+                    if src_id:
+                        bullet = f"[{src_id}] {src_name}: {desc}"
+                    else:
+                        bullet = f"{src_name}: {desc}"
+                    proc_lines.append(bullet)
+                    proc_acc_len += len(bullet)
+                lines.append(" ".join(proc_lines))
             else:
-                lines.append(f"{p_name}")
+                # Placeholder with description when no procedure examples are present
+                if p_desc:
+                    lines.append(p_desc)
 
-            # Parent technique description, detection, and procedures (conditional)
-            p_desc_raw = (MitreAttackData.get_field(parent, "description") or "").strip()
-            p_desc = sanitize_text(p_desc_raw) if sanitize else p_desc_raw
-            if include_description and p_desc:
-                lines.append(p_desc)
-            if include_detection:
-                p_det_raw = (MitreAttackData.get_field(parent, "x_mitre_detection") or "").strip()
-                p_det = sanitize_text(p_det_raw) if sanitize else p_det_raw
-                if p_det:
-                    lines.append(p_det)
-            if include_procedures:
-                parent_procs = data.get_procedure_examples_by_technique(p_id)
-                if procedures_top is not None and procedures_top > 0:
-                    parent_procs = parent_procs[:procedures_top]
-                if parent_procs:
-                    proc_lines = []
-                    proc_acc_len = 0
-                    for r in parent_procs:
-                        src_obj = data.get_object_by_stix_id(r.source_ref)
-                        src_id = data.get_attack_id(src_obj.id) or ""
-                        src_name = MitreAttackData.get_field(src_obj, "name") or ""
-                        desc_raw = (getattr(r, "description", "") or "").strip()
-                        desc = sanitize_text(desc_raw) if sanitize else desc_raw
-                        if src_id:
-                            bullet = f"[{src_id}] {src_name}: {desc}"
-                        else:
-                            bullet = f"{src_name}: {desc}"
-                        proc_lines.append(bullet)
-                        proc_acc_len += len(bullet)
-                    lines.append(" ".join(proc_lines))
-                else:
-                    # Placeholder with description when no procedure examples are present
-                    if p_desc:
-                        lines.append(p_desc)
-
-            # end of parent block
-            end_block()
+        # end of parent block
+        end_block()
 
         for s in sub_techniques:
             s_name = MitreAttackData.get_field(s, "name")
@@ -250,7 +248,7 @@ def main():
         action="store_true",
         help="Sanitize text output (remove citations, links, HTML)",
     )
-    # Flatten is the default behavior now (sub-techniques are promoted; parents with subs are skipped)
+    # Default behavior: include all parent techniques and sub-techniques
     parser.add_argument(
         "--single-file",
         default=None,
@@ -347,11 +345,9 @@ def main():
                 sub_entries = data.get_subtechniques_of_technique(p_id)
                 subs = [e["object"] for e in sub_entries if e.get("object") and e["object"]["id"] in tech_ids]
                 subs.sort(key=lambda s: (data.get_attack_id(MitreAttackData.get_field(s, "id")) or "", MitreAttackData.get_field(s, "name") or ""))
-                has_subs = len(subs) > 0
 
-                # include parent depending on flatten flag
-                if not has_subs:
-                    add_or_merge_tech(parent, p_name or "", tactic_title)
+                # Always include parent technique (even if it has sub-techniques)
+                add_or_merge_tech(parent, p_name or "", tactic_title)
 
                 # add subs
                 for s in subs:

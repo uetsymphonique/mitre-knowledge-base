@@ -1,3 +1,7 @@
+T1021 - Remote Services
+[G0102] Wizard Spider: Wizard Spider has used the WebDAV protocol to execute Ryuk payloads hosted on network file shares. [S1016] MacMa: MacMa can manage remote screen sessions. [S1063] Brute Ratel C4: Brute Ratel C4 has the ability to use RPC for lateral movement. [S0437] Kivars: Kivars has the ability to remotely trigger keyboard input and mouse clicks. [G0143] Aquatic Panda: Aquatic Panda used remote scheduled tasks to install malicious software on victim systems during lateral movement actions. [S0603] Stuxnet: Stuxnet can propagate via peer-to-peer communication and updates using RPC. [G1003] Ember Bear: Ember Bear uses valid network credentials gathered through credential harvesting to move laterally within victim networks, often employing the Impacket framework to do so.
+
+
 T1021.001 - Remote Services: Remote Desktop Protocol
 [G0094] Kimsuky: Kimsuky has used RDP for direct remote point-and-click access. [G1032] INC Ransom: INC Ransom has used RDP to move laterally. [S0154] Cobalt Strike: Cobalt Strike can start a VNC-based remote desktop server and tunnel the connection through the already established C2 channel. [S0262] QuasarRAT: QuasarRAT has a module for performing remote desktop access. [G1017] Volt Typhoon: Volt Typhoon has moved laterally to the Domain Controller via RDP using a compromised account with domain administrator privileges. [G1023] APT5: APT5 has moved laterally throughout victim environments using RDP. [S0350] zwShell: zwShell has used RDP for lateral movement. [G0049] OilRig: OilRig has used Remote Desktop Protocol for lateral movement. The group has also used tunneling tools to tunnel RDP into the environment. [G0040] Patchwork: Patchwork attempted to use RDP to move laterally. [G0061] FIN8: FIN8 has used RDP for lateral movement. [G1043] BlackByte: BlackByte has used RDP to access other hosts within victim networks. [S0434] Imminent Monitor: Imminent Monitor has a module for performing remote desktop access. [S0670] WarzoneRAT: WarzoneRAT has the ability to control an infected PC using RDP. [G0087] APT39: APT39 has been seen using RDP for lateral movement and persistence, in some cases employing the rdpwinst tool for mangement of multiple sessions. [G0059] Magic Hound: Magic Hound has used Remote Desktop Services to copy tools on targeted systems.
 
@@ -50,6 +54,10 @@ T1534 - Internal Spearphishing
 [G0047] Gamaredon Group: Gamaredon Group has used an Outlook VBA module on infected systems to send phishing emails with malicious attachments to other employees within the organization. [G0094] Kimsuky: Kimsuky has sent internal spearphishing emails for lateral movement after stealing victim information. [C0022] Operation Dream Job: During Operation Dream Job, Lazarus Group conducted internal spearphishing from within a compromised organization. [G0065] Leviathan: Leviathan has conducted internal spearphishing within the victim's environment for lateral movement. [G1001] HEXANE: HEXANE has conducted internal spearphishing attacks against executives, HR, and IT personnel to gain information and access.
 
 
+T1550 - Use Alternate Authentication Material
+[C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used forged SAML tokens that allowed the actors to impersonate users and bypass MFA, enabling APT29 to access enterprise cloud applications and services. [S0661] FoggyWeb: FoggyWeb can allow abuse of a compromised AD FS server's SAML token.
+
+
 T1550.001 - Use Alternate Authentication Material: Application Access Token
 [S0683] Peirates: Peirates can use stolen service account tokens to perform its operations. It also enables adversaries to switch between valid service accounts. [S1023] CreepyDrive: CreepyDrive can use legitimate OAuth refresh tokens to authenticate with OneDrive. [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used compromised service principals to make changes to the Office 365 environment. [G0007] APT28: APT28 has used several malicious applications that abused OAuth access tokens to gain access to target email accounts, including Gmail and Yahoo Mail. [G0125] HAFNIUM: HAFNIUM has abused service principals with administrative permissions for data exfiltration.
 
@@ -64,6 +72,10 @@ T1550.003 - Use Alternate Authentication Material: Pass the Ticket
 
 T1550.004 - Use Alternate Authentication Material: Web Session Cookie
 [G1033] Star Blizzard: Star Blizzard has bypassed multi-factor authentication on victim email accounts by using session cookies stolen using EvilGinx. [C0024] SolarWinds Compromise: During the SolarWinds Compromise, APT29 used stolen cookies to access cloud resources and a forged `duo-sid` cookie to bypass MFA set on an email account.
+
+
+T1563 - Remote Service Session Hijacking
+Adversaries may take control of preexisting sessions with remote services to move laterally in an environment. Users may use valid credentials to log into a service specifically designed to accept remote connections, such as telnet, SSH, and RDP. When a user logs into a service, a session will be established that will allow them to maintain a continuous interaction with that service. Adversaries may commandeer these sessions to carry out actions on remote systems. Remote Service Session Hijacking differs from use of Remote Services because it hijacks an existing session rather than creating a new session using Valid Accounts.
 
 
 T1563.001 - Remote Service Session Hijacking: SSH Hijacking

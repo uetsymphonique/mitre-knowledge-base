@@ -1,3 +1,7 @@
+T1583 - Acquire Infrastructure
+[G0094] Kimsuky: Kimsuky has used funds from stolen and laundered cryptocurrency to acquire operational infrastructure. [G1041] Sea Turtle: Sea Turtle accessed victim networks from VPN service provider networks. [G1003] Ember Bear: Ember Bear uses services such as IVPN, SurfShark, and Tor to add anonymization to operations. [G0119] Indrik Spider: Indrik Spider has purchased access to victim VPNs to facilitate access to victim environments. [G1030] Agrius: Agrius typically uses commercial VPN services for anonymizing last-hop traffic to victim networks, such as ProtonVPN. [G0034] Sandworm Team: Sandworm Team used various third-party email campaign management services to deliver phishing emails. [G1033] Star Blizzard: Star Blizzard has used HubSpot and MailerLite marketing platform services to hide the true sender of phishing emails.
+
+
 T1583.001 - Acquire Infrastructure: Domains
 [C0021] C0021: For C0021, the threat actors registered domains for use in C2. [G0007] APT28: APT28 registered domains imitating NATO, OSCE security websites, Caucasus information resources, and other organizations. [G0092] TA505: TA505 has registered domains to impersonate services such as Dropbox to distribute malware. [C0005] Operation Spalax: For Operation Spalax, the threat actors registered hundreds of domains using Duck DNS and DNS Exit. [G1046] Storm-1811: Storm-1811 has created domains for use with RMM tools. [G1001] HEXANE: HEXANE has registered and operated domains for campaigns, often using a security or web technology theme or impersonating the targeted organization. [G1033] Star Blizzard: Star Blizzard has registered domains using randomized words and with names resembling legitimate organizations. [C0043] Indian Critical Infrastructure Intrusions: During Indian Critical Infrastructure Intrusions, RedEcho registered domains spoofing Indian critical infrastructure entities. [G1044] APT42: APT42 has registered domains, several of which masqueraded as news outlets and login services, for use in operations. [G0006] APT1: APT1 has registered hundreds of domains for use in operations. [C0006] Operation Honeybee: During Operation Honeybee, threat actors registered domains for C2. [G0050] APT32: APT32 has set up and operated websites to gather information and deliver malware. [G0136] IndigoZebra: IndigoZebra has established domains, some of which were designed to look like official government domains, for their operations. [C0016] Operation Dust Storm: For Operation Dust Storm, the threat actors established domains as part of their operational infrastructure. [G0065] Leviathan: Leviathan has established domains that impersonate legitimate entities to use for targeting efforts.
 
@@ -28,6 +32,10 @@ T1583.007 - Acquire Infrastructure: Serverless
 
 T1583.008 - Acquire Infrastructure: Malvertising
 [G1020] Mustard Tempest: Mustard Tempest has posted false advertisements including for software packages and browser updates in order to distribute malware. [S1130] Raspberry Robin: Raspberry Robin variants have been delivered via malicious advertising items that, when interacted with, download a malicious archive file containing the initial payload, hosted on services such as Discord.
+
+
+T1584 - Compromise Infrastructure
+[C0043] Indian Critical Infrastructure Intrusions: Indian Critical Infrastructure Intrusions included the use of compromised infrastructure, such as DVR and IP camera devices, for command and control purposes in ShadowPad activity. [C0051] APT28 Nearest Neighbor Campaign: During APT28 Nearest Neighbor Campaign, APT28 compromised third-party infrastructure in physical proximity to targets of interest for follow-on activities.
 
 
 T1584.001 - Compromise Infrastructure: Domains
@@ -62,6 +70,10 @@ T1584.008 - Compromise Infrastructure: Network Devices
 [C0053] FLORAHOX Activity: FLORAHOX Activity has compromised network routers and IoT devices for the ORB network. [G1017] Volt Typhoon: Volt Typhoon has compromised small office and home office (SOHO) network edge devices, many of which were located in the same geographic area as the victim, to proxy network traffic. [G0007] APT28: APT28 compromised Ubiquiti network devices to act as collection devices for credentials compromised via phishing webpages. [G0128] ZIRCONIUM: ZIRCONIUM has compromised network devices such as small office and home office (SOHO) routers and IoT devices for ORB (operational relay box) Proxy networks. [C0035] KV Botnet Activity: KV Botnet Activity focuses on compromise of small office-home office (SOHO) network devices to build the subsequent botnet. [C0039] Versa Director Zero Day Exploitation: Versa Director Zero Day Exploitation used compromised small office/home office (SOHO) devices to interact with vulnerable Versa Director servers. [C0029] Cutting Edge: During Cutting Edge, threat actors used compromised and out-of-support Cyberoam VPN appliances for C2. [G0065] Leviathan: Leviathan has used compromised networking devices, such as small office/home office (SOHO) devices, as operational command and control infrastructure.
 
 
+T1585 - Establish Accounts
+[G0117] Fox Kitten: Fox Kitten has created KeyBase accounts to communicate with ransomware victims. [G0094] Kimsuky: Kimsuky has leveraged stolen PII to create accounts. [G1003] Ember Bear: Ember Bear has created accounts on dark web forums to obtain various tools and malware. [G0025] APT17: APT17 has created and cultivated profile pages in Microsoft TechNet. To make profile pages appear more legitimate, APT17 has created biographical sections and posted in forum threads.
+
+
 T1585.001 - Establish Accounts: Social Media Accounts
 [G0034] Sandworm Team: Sandworm Team has established social media accounts to disseminate victim internal-only documents and other sensitive data. [C0022] Operation Dream Job: For Operation Dream Job, Lazarus Group created fake LinkedIn accounts for their targeting efforts. [G1011] EXOTIC LILY: EXOTIC LILY has established social media profiles to mimic employees of targeted companies. [G1001] HEXANE: HEXANE has established fraudulent LinkedIn accounts impersonating HR department employees to target potential victims with fake job offers. [G0094] Kimsuky: Kimsuky has created social media accounts to monitor news and security trends as well as potential targets. [G0065] Leviathan: Leviathan has created new social media accounts for targeting efforts. [G1012] CURIUM: CURIUM has established a network of fictitious social media accounts, including on Facebook and LinkedIn, to establish relationships with victims, often posing as an attractive woman. [G0003] Cleaver: Cleaver has created fake LinkedIn profiles that included profile photos, details, and connections. [C0023] Operation Ghost: For Operation Ghost, APT29 registered Twitter accounts to host C2 nodes. [G0032] Lazarus Group: Lazarus Group has created new Twitter accounts to conduct social engineering against potential victims. [G0050] APT32: APT32 has set up Facebook pages in tandem with fake websites. [G0117] Fox Kitten: Fox Kitten has used a Twitter account to communicate with ransomware victims. [G0059] Magic Hound: Magic Hound has created fake LinkedIn and other social media accounts to contact targets and convince them--through messages and voice communications--to open malicious links. [G1033] Star Blizzard: Star Blizzard has established fraudulent profiles on professional networking sites to conduct reconnaissance. [G1036] Moonstone Sleet: Moonstone Sleet has created social media accounts to interact with victims.
 
@@ -74,6 +86,10 @@ T1585.003 - Establish Accounts: Cloud Accounts
 [G1046] Storm-1811: Storm-1811 has created malicious accounts to enable activity via Microsoft Teams, typically spoofing various IT support and helpdesk themes. [C0042] Outer Space: During Outer Space, OilRig created M365 email accounts to be used as part of C2.
 
 
+T1586 - Compromise Accounts
+Adversaries may compromise accounts with services that can be used during targeting. For operations incorporating social engineering, the utilization of an online persona may be important. Rather than creating and cultivating accounts (i.e. Establish Accounts), adversaries may compromise existing accounts. Utilizing an existing persona may engender a level of trust in a potential victim if they have a relationship, or knowledge of, the compromised persona. A variety of methods exist for compromising accounts, such as gathering credentials via Phishing for Information, purchasing credentials from third-party sites, brute forcing credentials (ex: password reuse from breach credential dumps), or paying employees, suppliers or business partners for access to credentials. Prior to compromising accounts, adversaries may conduct Reconnaissance to inform decisions about which accounts to compromise to further their operation. Personas may exist on a single site or across multiple sites (ex: Facebook, LinkedIn, Twitter, Google, etc.). Compromised accounts may require additional development, this could include filling out or modifying profile information, further developing social networks, or incorporating photos. Adversaries may directly leverage compromised email accounts for Phishing for Information or Phishing.
+
+
 T1586.001 - Compromise Accounts: Social Media Accounts
 [G0034] Sandworm Team: Sandworm Team creates credential capture webpages to compromise existing, legitimate social media accounts. [G0065] Leviathan: Leviathan has compromised social media accounts to conduct social engineering attacks.
 
@@ -84,6 +100,10 @@ T1586.002 - Compromise Accounts: Email Accounts
 
 T1586.003 - Compromise Accounts: Cloud Accounts
 [C0040] APT41 DUST: APT41 DUST used compromised Google Workspace accounts for command and control. [G0016] APT29: APT29 has used residential proxies, including Azure Virtual Machines, to obfuscate their access to victim environments.
+
+
+T1587 - Develop Capabilities
+[G0094] Kimsuky: Kimsuky created and used a mailing toolkit to use in spearphishing attacks. [G1036] Moonstone Sleet: Moonstone Sleet developed malicious npm packages for delivery to or retrieval by victims.
 
 
 T1587.001 - Develop Capabilities: Malware
@@ -100,6 +120,10 @@ T1587.003 - Develop Capabilities: Digital Certificates
 
 T1587.004 - Develop Capabilities: Exploits
 [G1017] Volt Typhoon: Volt Typhoon has exploited zero-day vulnerabilities for initial access. [G0065] Leviathan: Leviathan has rapidly transformed and adapted public exploit proof-of-concept code for new vulnerabilities and utilized them against target networks.
+
+
+T1588 - Obtain Capabilities
+Adversaries may buy and/or steal capabilities that can be used during targeting. Rather than developing their own capabilities in-house, adversaries may purchase, freely download, or steal them. Activities may include the acquisition of malware, software (including licenses), exploits, certificates, and information relating to vulnerabilities. Adversaries may obtain capabilities to support their operations throughout numerous phases of the adversary lifecycle. In addition to downloading free malware, software, and exploits from the internet, adversaries may purchase these capabilities from third-party entities. Third-party entities can include technology companies that specialize in malware and exploits, criminal marketplaces, or from individuals. In addition to purchasing capabilities, adversaries may steal capabilities from third-party entities (including other adversaries). This can include stealing software licenses, malware, SSL/TLS and code-signing certificates, or raiding closed databases of vulnerabilities or exploits.
 
 
 T1588.001 - Obtain Capabilities: Malware
@@ -128,6 +152,10 @@ T1588.006 - Obtain Capabilities: Vulnerabilities
 
 T1588.007 - Obtain Capabilities: Artificial Intelligence
 Adversaries may obtain access to generative artificial intelligence tools, such as large language models (LLMs), to aid various techniques during targeting. These tools may be used to inform, bolster, and enable a variety of malicious tasks, including conducting Reconnaissance, creating basic scripts, assisting social engineering, and even developing payloads. For example, by utilizing a publicly available LLM an adversary is essentially outsourcing or automating certain tasks to the tool. Using AI, the adversary may draft and generate content in a variety of written languages to be used in Phishing/Phishing for Information campaigns. The same publicly available tool may further enable vulnerability or other offensive research supporting Develop Capabilities. AI tools may also automate technical tasks by generating, refining, or otherwise enhancing (e.g., Obfuscated Files or Information) malicious scripts and payloads. Finally, AI-generated text, images, audio, and video may be used for fraud, Impersonation, and other malicious activities.
+
+
+T1608 - Stage Capabilities
+[G0129] Mustang Panda: Mustang Panda has used servers under their control to validate tracking pixels sent to phishing victims.
 
 
 T1608.001 - Stage Capabilities: Upload Malware
