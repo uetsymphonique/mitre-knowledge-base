@@ -19,15 +19,20 @@ def get_tactics_in_order(data: MitreAttackData, domain: str):
     return filtered
 
 
-def build_tactic_to_techniques(data: MitreAttackData, domain: str, exclude_subtech: bool = False) -> dict[str, list[str]]:
+def build_tactic_to_techniques(data: MitreAttackData, domain: str, exclude_subtech: bool = False, full_name: bool = False) -> dict[str, list[str]]:
     mapping: dict[str, list[str]] = {}
     tactics = get_tactics_in_order(data, domain)
 
     for tactic in tactics:
         shortname = MitreAttackData.get_field(tactic, "x_mitre_shortname")
-        tactic_id = data.get_attack_id(MitreAttackData.get_field(tactic, "id") or "") or (
-            MitreAttackData.get_field(tactic, "id") or ""
-        )
+        tactic_stix_id = MitreAttackData.get_field(tactic, "id") or ""
+        tactic_id = data.get_attack_id(tactic_stix_id) or tactic_stix_id
+        
+        if full_name:
+            tactic_name = MitreAttackData.get_field(tactic, "name") or ""
+            tactic_key = f"{tactic_id} - {tactic_name}" if tactic_id else tactic_name
+        else:
+            tactic_key = tactic_id
 
         techniques = data.get_techniques_by_tactic(shortname, domain, remove_revoked_deprecated=True)
 
@@ -41,24 +46,49 @@ def build_tactic_to_techniques(data: MitreAttackData, domain: str, exclude_subte
                     continue  # Skip sub-techniques only
             
             attack_id = data.get_attack_id(stix_id) or stix_id
-            selected_attack_ids.append(attack_id)
+            
+            if full_name:
+                tech_name = MitreAttackData.get_field(tech, "name") or ""
+                is_sub = bool(MitreAttackData.get_field(tech, "x_mitre_is_subtechnique", False))
+                
+                if is_sub:
+                    # For sub-techniques, format as "Parent: Sub" like get_techniques_of_tactic.py
+                    parents = data.get_parent_technique_of_subtechnique(stix_id)
+                    if parents:
+                        parent_obj = parents[0]["object"]
+                        parent_name = MitreAttackData.get_field(parent_obj, "name") or ""
+                        full_tech_name = f"{parent_name}: {tech_name}" if parent_name else tech_name
+                    else:
+                        full_tech_name = tech_name
+                    entry = f"{attack_id} - {full_tech_name}" if attack_id else full_tech_name
+                else:
+                    # For parent techniques, just use the name
+                    entry = f"{attack_id} - {tech_name}" if attack_id else tech_name
+                selected_attack_ids.append(entry)
+            else:
+                selected_attack_ids.append(attack_id)
 
         # sort by ATT&CK ID then value
         selected_attack_ids = sorted(selected_attack_ids)
-        mapping[tactic_id] = selected_attack_ids
+        mapping[tactic_key] = selected_attack_ids
 
     return mapping
 
 
-def build_technique_to_tactics(data: MitreAttackData, domain: str, exclude_subtech: bool = False) -> dict[str, list[str]]:
+def build_technique_to_tactics(data: MitreAttackData, domain: str, exclude_subtech: bool = False, full_name: bool = False) -> dict[str, list[str]]:
     mapping_sets: dict[str, set[str]] = {}
     tactics = get_tactics_in_order(data, domain)
 
     for tactic in tactics:
         shortname = MitreAttackData.get_field(tactic, "x_mitre_shortname")
-        tactic_id = data.get_attack_id(MitreAttackData.get_field(tactic, "id") or "") or (
-            MitreAttackData.get_field(tactic, "id") or ""
-        )
+        tactic_stix_id = MitreAttackData.get_field(tactic, "id") or ""
+        tactic_id = data.get_attack_id(tactic_stix_id) or tactic_stix_id
+        
+        if full_name:
+            tactic_name = MitreAttackData.get_field(tactic, "name") or ""
+            tactic_key = f"{tactic_id} - {tactic_name}" if tactic_id else tactic_name
+        else:
+            tactic_key = tactic_id
 
         techniques = data.get_techniques_by_tactic(shortname, domain, remove_revoked_deprecated=True)
 
@@ -71,9 +101,30 @@ def build_technique_to_tactics(data: MitreAttackData, domain: str, exclude_subte
                     continue  # Skip sub-techniques only
             
             attack_id = data.get_attack_id(stix_id) or stix_id
-            if attack_id not in mapping_sets:
-                mapping_sets[attack_id] = set()
-            mapping_sets[attack_id].add(tactic_id)
+            
+            if full_name:
+                tech_name = MitreAttackData.get_field(tech, "name") or ""
+                is_sub = bool(MitreAttackData.get_field(tech, "x_mitre_is_subtechnique", False))
+                
+                if is_sub:
+                    # For sub-techniques, format as "Parent: Sub" like get_techniques_of_tactic.py
+                    parents = data.get_parent_technique_of_subtechnique(stix_id)
+                    if parents:
+                        parent_obj = parents[0]["object"]
+                        parent_name = MitreAttackData.get_field(parent_obj, "name") or ""
+                        full_tech_name = f"{parent_name}: {tech_name}" if parent_name else tech_name
+                    else:
+                        full_tech_name = tech_name
+                    key = f"{attack_id} - {full_tech_name}" if attack_id else full_tech_name
+                else:
+                    # For parent techniques, just use the name
+                    key = f"{attack_id} - {tech_name}" if attack_id else tech_name
+            else:
+                key = attack_id
+                
+            if key not in mapping_sets:
+                mapping_sets[key] = set()
+            mapping_sets[key].add(tactic_key)
 
     # Convert sets to sorted lists
     return {tech_id: sorted(list(tactic_ids)) for tech_id, tactic_ids in mapping_sets.items()}
@@ -102,15 +153,20 @@ def main():
         action="store_true",
         help="Exclude sub-techniques, keep parent techniques (even if they have sub-techniques)",
     )
+    parser.add_argument(
+        "--full-name",
+        action="store_true",
+        help="Include full technique names in format 'ID - Name' (sub-techniques as 'ID - Parent: Sub')",
+    )
     parser.add_argument("--output", "-o", default="mitre_dictionary.json", help="Output JSON file path")
     args = parser.parse_args()
 
     data = MitreAttackData(args.stix)
 
     if args.mapping == "tactic-to-techniques":
-        result = build_tactic_to_techniques(data, args.domain, args.exclude_subtech)
+        result = build_tactic_to_techniques(data, args.domain, args.exclude_subtech, args.full_name)
     else:
-        result = build_technique_to_tactics(data, args.domain, args.exclude_subtech)
+        result = build_technique_to_tactics(data, args.domain, args.exclude_subtech, args.full_name)
 
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
