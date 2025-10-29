@@ -65,6 +65,7 @@ def write_tactic_txt(
     include_procedures: bool,
     procedures_top: int | None,
     sanitize: bool,
+    output_format: str = "txt",
 ):
     tactic_name = MitreAttackData.get_field(tactic, "name")
     shortname = MitreAttackData.get_field(tactic, "x_mitre_shortname")
@@ -111,10 +112,16 @@ def write_tactic_txt(
         )
         
         # Always include parent technique (even if it has sub-techniques)
-        if p_tid:
-            lines.append(f"{p_tid} - {p_name}")
+        if output_format == "markdown":
+            if p_tid:
+                lines.append(f"### {p_tid} - {p_name}")
+            else:
+                lines.append(f"### {p_name}")
         else:
-            lines.append(f"{p_name}")
+            if p_tid:
+                lines.append(f"{p_tid} - {p_name}")
+            else:
+                lines.append(f"{p_name}")
 
         # Parent technique description, detection, and procedures (conditional)
         p_desc_raw = (MitreAttackData.get_field(parent, "description") or "").strip()
@@ -145,7 +152,12 @@ def write_tactic_txt(
                         bullet = f"{src_name}: {desc}"
                     proc_lines.append(bullet)
                     proc_acc_len += len(bullet)
-                lines.append(" ".join(proc_lines))
+                if output_format == "markdown":
+                    # Format as markdown bullet points
+                    md_bullets = [f"- {line}" for line in proc_lines]
+                    lines.extend(md_bullets)
+                else:
+                    lines.append(" ".join(proc_lines))
             else:
                 # Placeholder with description when no procedure examples are present
                 if p_desc:
@@ -159,11 +171,17 @@ def write_tactic_txt(
             s_id = MitreAttackData.get_field(s, "id")
             s_tid = data.get_attack_id(s_id) or ""
             full_sub_name = f"{p_name}: {s_name}" if s_name else p_name
-            # Plain text format: just the technique name
-            if s_tid:
-                lines.append(f"{s_tid} - {full_sub_name}")
+            # Format technique header based on output format
+            if output_format == "markdown":
+                if s_tid:
+                    lines.append(f"### {s_tid} - {full_sub_name}")
+                else:
+                    lines.append(f"### {full_sub_name}")
             else:
-                lines.append(f"{full_sub_name}")
+                if s_tid:
+                    lines.append(f"{s_tid} - {full_sub_name}")
+                else:
+                    lines.append(f"{full_sub_name}")
             s_desc_raw = (MitreAttackData.get_field(s, "description") or "").strip()
             s_desc = sanitize_text(s_desc_raw) if sanitize else s_desc_raw
             if include_description and s_desc:
@@ -192,7 +210,12 @@ def write_tactic_txt(
                             bullet = f"{src_name}: {desc}"
                         proc_lines.append(bullet)
                         proc_acc_len += len(bullet)
-                    lines.append(" ".join(proc_lines))
+                    if output_format == "markdown":
+                        # Format as markdown bullet points
+                        md_bullets = [f"- {line}" for line in proc_lines]
+                        lines.extend(md_bullets)
+                    else:
+                        lines.append(" ".join(proc_lines))
                 else:
                     # Placeholder with description when no procedure examples are present
                     if s_desc:
@@ -201,7 +224,8 @@ def write_tactic_txt(
             end_block()
     # Filename: prefer ATT&CK ID + shortname
     base = "-".join(filter(None, [tactic_attack_id, shortname or tactic_name]))
-    filename = slugify(base) + ".txt"
+    ext = ".md" if output_format == "markdown" else ".txt"
+    filename = slugify(base) + ext
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / filename).write_text("\n".join(lines), encoding="utf-8")
     return filename
@@ -248,11 +272,17 @@ def main():
         action="store_true",
         help="Sanitize text output (remove citations, links, HTML)",
     )
+    parser.add_argument(
+        "--format",
+        choices=["txt", "markdown"],
+        default="txt",
+        help="Output format: txt (plain text) or markdown (with H3 headers)",
+    )
     # Default behavior: include all parent techniques and sub-techniques
     parser.add_argument(
         "--single-file",
         default=None,
-        help="Aggregate all selected tactics into a single TXT file (dedupe techniques, add tactics list in headers)",
+        help="Aggregate all selected tactics into a single file (dedupe techniques, add tactics list in headers)",
     )
     args = parser.parse_args()
 
@@ -316,7 +346,10 @@ def main():
                     src_name = MitreAttackData.get_field(src_obj, "name") or ""
                     proc_desc_raw = (getattr(r, "description", "") or "").strip()
                     proc_desc = sanitize_text(proc_desc_raw) if args.sanitize else proc_desc_raw
-                    bullet = f"- [{src_id}] {src_name}: {proc_desc}" if src_id else f"- {src_name}: {proc_desc}"
+                    if args.format == "markdown":
+                        bullet = f"- [{src_id}] {src_name}: {proc_desc}" if src_id else f"- {src_name}: {proc_desc}"
+                    else:
+                        bullet = f"[{src_id}] {src_name}: {proc_desc}" if src_id else f"{src_name}: {proc_desc}"
                     lines_local.append(bullet)
                     acc_len += len(bullet)
                 if lines_local:
@@ -367,13 +400,20 @@ def main():
             name = item.get("name") or ""
             tactics_list = sorted(list(item.get("tactics") or []))
             header = f"{attack_id} - {name} ({', '.join(tactics_list)})" if tactics_list else f"{attack_id} - {name}"
-            out_lines.append(header)
+            if args.format == "markdown":
+                out_lines.append(f"### {header}")
+            else:
+                out_lines.append(header)
             if args.description and item.get("description"):
                 out_lines.append(item["description"])
             if args.detection and item.get("detection"):
                 out_lines.append(item["detection"])
             if args.procedures and item.get("procedures"):
-                out_lines.append(" ".join(item["procedures"]))
+                if args.format == "markdown":
+                    # Procedures are already formatted as "- [ID] Name: desc"
+                    out_lines.extend(item["procedures"])
+                else:
+                    out_lines.append(" ".join(item["procedures"]))
             
             # Add spacing between techniques (2 blank lines like per-tactic mode)
             out_lines.append("")
@@ -381,6 +421,11 @@ def main():
 
         # Write one file
         out_path = Path(args.single_file)
+        # Auto-adjust extension based on format if not explicitly provided
+        if args.format == "markdown" and not out_path.suffix:
+            out_path = out_path.with_suffix(".md")
+        elif args.format == "txt" and not out_path.suffix:
+            out_path = out_path.with_suffix(".txt")
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text("\n".join(out_lines), encoding="utf-8")
         written.append(str(out_path))
@@ -399,6 +444,7 @@ def main():
                 include_procedures=args.procedures,
                 procedures_top=top_n,
                 sanitize=args.sanitize,
+                output_format=args.format,
             )
             written.append(fname)
 
