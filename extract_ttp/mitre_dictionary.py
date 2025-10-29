@@ -19,7 +19,7 @@ def get_tactics_in_order(data: MitreAttackData, domain: str):
     return filtered
 
 
-def build_tactic_to_techniques(data: MitreAttackData, domain: str) -> dict[str, list[str]]:
+def build_tactic_to_techniques(data: MitreAttackData, domain: str, exclude_subtech: bool = False) -> dict[str, list[str]]:
     mapping: dict[str, list[str]] = {}
     tactics = get_tactics_in_order(data, domain)
 
@@ -30,21 +30,16 @@ def build_tactic_to_techniques(data: MitreAttackData, domain: str) -> dict[str, 
         )
 
         techniques = data.get_techniques_by_tactic(shortname, domain, remove_revoked_deprecated=True)
-        technique_ids_in_tactic = {MitreAttackData.get_field(t, "id") for t in techniques}
 
         selected_attack_ids: list[str] = []
         for tech in techniques:
             stix_id = MitreAttackData.get_field(tech, "id")
-            is_sub = bool(MitreAttackData.get_field(tech, "x_mitre_is_subtechnique", False))
-            if not is_sub:
-                # Exclude parent if it has sub-techniques present in this tactic
-                subs = data.get_subtechniques_of_technique(stix_id)
-                subs_in_tactic = [
-                    e for e in subs if e.get("object") and e["object"]["id"] in technique_ids_in_tactic
-                ]
-                if subs_in_tactic:
-                    continue
-
+            
+            if exclude_subtech:
+                is_sub = bool(MitreAttackData.get_field(tech, "x_mitre_is_subtechnique", False))
+                if is_sub:
+                    continue  # Skip sub-techniques only
+            
             attack_id = data.get_attack_id(stix_id) or stix_id
             selected_attack_ids.append(attack_id)
 
@@ -55,7 +50,7 @@ def build_tactic_to_techniques(data: MitreAttackData, domain: str) -> dict[str, 
     return mapping
 
 
-def build_technique_to_tactics(data: MitreAttackData, domain: str) -> dict[str, list[str]]:
+def build_technique_to_tactics(data: MitreAttackData, domain: str, exclude_subtech: bool = False) -> dict[str, list[str]]:
     mapping_sets: dict[str, set[str]] = {}
     tactics = get_tactics_in_order(data, domain)
 
@@ -66,19 +61,15 @@ def build_technique_to_tactics(data: MitreAttackData, domain: str) -> dict[str, 
         )
 
         techniques = data.get_techniques_by_tactic(shortname, domain, remove_revoked_deprecated=True)
-        technique_ids_in_tactic = {MitreAttackData.get_field(t, "id") for t in techniques}
 
         for tech in techniques:
             stix_id = MitreAttackData.get_field(tech, "id")
-            is_sub = bool(MitreAttackData.get_field(tech, "x_mitre_is_subtechnique", False))
-            if not is_sub:
-                subs = data.get_subtechniques_of_technique(stix_id)
-                subs_in_tactic = [
-                    e for e in subs if e.get("object") and e["object"]["id"] in technique_ids_in_tactic
-                ]
-                if subs_in_tactic:
-                    continue
-
+            
+            if exclude_subtech:
+                is_sub = bool(MitreAttackData.get_field(tech, "x_mitre_is_subtechnique", False))
+                if is_sub:
+                    continue  # Skip sub-techniques only
+            
             attack_id = data.get_attack_id(stix_id) or stix_id
             if attack_id not in mapping_sets:
                 mapping_sets[attack_id] = set()
@@ -106,15 +97,20 @@ def main():
         choices=["tactic-to-techniques", "technique-to-tactics"],
         help="Mapping direction to generate",
     )
+    parser.add_argument(
+        "--exclude-subtech",
+        action="store_true",
+        help="Exclude sub-techniques, keep parent techniques (even if they have sub-techniques)",
+    )
     parser.add_argument("--output", "-o", default="mitre_dictionary.json", help="Output JSON file path")
     args = parser.parse_args()
 
     data = MitreAttackData(args.stix)
 
     if args.mapping == "tactic-to-techniques":
-        result = build_tactic_to_techniques(data, args.domain)
+        result = build_tactic_to_techniques(data, args.domain, args.exclude_subtech)
     else:
-        result = build_technique_to_tactics(data, args.domain)
+        result = build_technique_to_tactics(data, args.domain, args.exclude_subtech)
 
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)

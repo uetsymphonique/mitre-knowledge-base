@@ -159,8 +159,9 @@ def main():
             tech_ids = _re.findall(r"T\d{4}(?:\.\d{3})?", technique)
             tactics_set: set[str] = set()
             for tid in tech_ids:
-                if tid in id_to_tactics and id_to_tactics[tid]:
-                    for tac in id_to_tactics[tid]:
+                key = tid.split(".")[0]
+                if key in id_to_tactics and id_to_tactics[key]:
+                    for tac in id_to_tactics[key]:
                         tactics_set.add(str(tac))
             tactics_list = sorted(tactics_set)
             record["Tactics"] = "; ".join(tactics_list) if args.format == "csv" else tactics_list
