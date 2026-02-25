@@ -16,7 +16,7 @@ def has_subtechniques(data: MitreAttackData, technique_stix_id: str, include_onl
 
 def main():
     repo_root = Path(__file__).resolve().parents[1]
-    default_stix = str(repo_root / "enterprise-attack.json")
+    default_stix = str(repo_root / "enterprise-attack-v18-1.json")
 
     parser = argparse.ArgumentParser(description="List ATT&CK techniques (ID - name) to a TXT file")
     parser.add_argument("--stix", default=default_stix, help="Path to ATT&CK STIX bundle (enterprise-attack.json)")

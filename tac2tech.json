@@ -43,7 +43,8 @@
     "T1598.001 - Phishing for Information: Spearphishing Service",
     "T1598.002 - Phishing for Information: Spearphishing Attachment",
     "T1598.003 - Phishing for Information: Spearphishing Link",
-    "T1598.004 - Phishing for Information: Spearphishing Voice"
+    "T1598.004 - Phishing for Information: Spearphishing Voice",
+    "T1681 - Search Threat Vendor Data"
   ],
   "TA0042 - Resource Development": [
     "T1583 - Acquire Infrastructure",
@@ -139,6 +140,7 @@
     "T1059.010 - Command and Scripting Interpreter: AutoHotKey & AutoIT",
     "T1059.011 - Command and Scripting Interpreter: Lua",
     "T1059.012 - Command and Scripting Interpreter: Hypervisor CLI",
+    "T1059.013 - Command and Scripting Interpreter: Container CLI/API",
     "T1072 - Software Deployment Tools",
     "T1106 - Native API",
     "T1129 - Shared Modules",
@@ -148,6 +150,7 @@
     "T1204.002 - User Execution: Malicious File",
     "T1204.003 - User Execution: Malicious Image",
     "T1204.004 - User Execution: Malicious Copy and Paste",
+    "T1204.005 - User Execution: Malicious Library",
     "T1559 - Inter-Process Communication",
     "T1559.001 - Inter-Process Communication: Component Object Model",
     "T1559.002 - Inter-Process Communication: Dynamic Data Exchange",
@@ -161,7 +164,8 @@
     "T1648 - Serverless Execution",
     "T1651 - Cloud Administration Command",
     "T1674 - Input Injection",
-    "T1675 - ESXi Administration Command"
+    "T1675 - ESXi Administration Command",
+    "T1677 - Poisoned Pipeline Execution"
   ],
   "TA0003 - Persistence": [
     "T1037 - Boot or Logon Initialization Scripts",
@@ -247,6 +251,7 @@
     "T1546.015 - Event Triggered Execution: Component Object Model Hijacking",
     "T1546.016 - Event Triggered Execution: Installer Packages",
     "T1546.017 - Event Triggered Execution: Udev Rules",
+    "T1546.018 - Event Triggered Execution: Python Startup Hooks",
     "T1547 - Boot or Logon Autostart Execution",
     "T1547.001 - Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder",
     "T1547.002 - Boot or Logon Autostart Execution: Authentication Package",
@@ -363,6 +368,7 @@
     "T1546.015 - Event Triggered Execution: Component Object Model Hijacking",
     "T1546.016 - Event Triggered Execution: Installer Packages",
     "T1546.017 - Event Triggered Execution: Udev Rules",
+    "T1546.018 - Event Triggered Execution: Python Startup Hooks",
     "T1547 - Boot or Logon Autostart Execution",
     "T1547.001 - Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder",
     "T1547.002 - Boot or Logon Autostart Execution: Authentication Package",
@@ -433,6 +439,7 @@
     "T1036.009 - Masquerading: Break Process Trees",
     "T1036.010 - Masquerading: Masquerade Account Name",
     "T1036.011 - Masquerading: Overwrite Process Arguments",
+    "T1036.012 - Masquerading: Browser Fingerprint",
     "T1055 - Process Injection",
     "T1055.001 - Process Injection: Dynamic-link Library Injection",
     "T1055.002 - Process Injection: Portable Executable Injection",
@@ -513,7 +520,7 @@
     "T1497 - Virtualization/Sandbox Evasion",
     "T1497.001 - Virtualization/Sandbox Evasion: System Checks",
     "T1497.002 - Virtualization/Sandbox Evasion: User Activity Based Checks",
-    "T1497.003 - Virtualization/Sandbox Evasion: Time Based Evasion",
+    "T1497.003 - Virtualization/Sandbox Evasion: Time Based Checks",
     "T1535 - Unused/Unsupported Cloud Regions",
     "T1542 - Pre-OS Boot",
     "T1542.001 - Pre-OS Boot: System Firmware",
@@ -562,6 +569,7 @@
     "T1562.010 - Impair Defenses: Downgrade Attack",
     "T1562.011 - Impair Defenses: Spoof Security Alerting",
     "T1562.012 - Impair Defenses: Disable or Modify Linux Audit System",
+    "T1562.013 - Impair Defenses: Disable or Modify Network Device Firewall",
     "T1564 - Hide Artifacts",
     "T1564.001 - Hide Artifacts: Hidden Files and Directories",
     "T1564.002 - Hide Artifacts: Hidden Users",
@@ -611,7 +619,9 @@
     "T1647 - Plist File Modification",
     "T1656 - Impersonation",
     "T1666 - Modify Cloud Resource Hierarchy",
-    "T1672 - Email Spoofing"
+    "T1672 - Email Spoofing",
+    "T1678 - Delay Execution",
+    "T1679 - Selective Exclusion"
   ],
   "TA0006 - Credential Access": [
     "T1003 - OS Credential Dumping",
@@ -642,7 +652,7 @@
     "T1552 - Unsecured Credentials",
     "T1552.001 - Unsecured Credentials: Credentials In Files",
     "T1552.002 - Unsecured Credentials: Credentials in Registry",
-    "T1552.003 - Unsecured Credentials: Bash History",
+    "T1552.003 - Unsecured Credentials: Shell History",
     "T1552.004 - Unsecured Credentials: Private Keys",
     "T1552.005 - Unsecured Credentials: Cloud Instance Metadata API",
     "T1552.006 - Unsecured Credentials: Group Policy Preferences",
@@ -715,9 +725,10 @@
     "T1497 - Virtualization/Sandbox Evasion",
     "T1497.001 - Virtualization/Sandbox Evasion: System Checks",
     "T1497.002 - Virtualization/Sandbox Evasion: User Activity Based Checks",
-    "T1497.003 - Virtualization/Sandbox Evasion: Time Based Evasion",
+    "T1497.003 - Virtualization/Sandbox Evasion: Time Based Checks",
     "T1518 - Software Discovery",
     "T1518.001 - Software Discovery: Security Software Discovery",
+    "T1518.002 - Software Discovery: Backup Software Discovery",
     "T1526 - Cloud Service Discovery",
     "T1538 - Cloud Service Dashboard",
     "T1580 - Cloud Infrastructure Discovery",
@@ -729,7 +740,8 @@
     "T1622 - Debugger Evasion",
     "T1652 - Device Driver Discovery",
     "T1654 - Log Enumeration",
-    "T1673 - Virtual Machine Discovery"
+    "T1673 - Virtual Machine Discovery",
+    "T1680 - Local Storage Discovery"
   ],
   "TA0008 - Lateral Movement": [
     "T1021 - Remote Services",
@@ -784,6 +796,7 @@
     "T1213.003 - Data from Information Repositories: Code Repositories",
     "T1213.004 - Data from Information Repositories: Customer Relationship Management Software",
     "T1213.005 - Data from Information Repositories: Messaging Applications",
+    "T1213.006 - Data from Information Repositories: Databases",
     "T1530 - Data from Cloud Storage",
     "T1557 - Adversary-in-the-Middle",
     "T1557.001 - Adversary-in-the-Middle: LLMNR/NBT-NS Poisoning and SMB Relay",

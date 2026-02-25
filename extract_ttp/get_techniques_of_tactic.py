@@ -55,6 +55,91 @@ def sanitize_text(text: str) -> str:
     return text
 
 
+def get_detection_text(
+    data: MitreAttackData,
+    stix_id: str,
+    sanitize: bool,
+    output_format: str = "txt",
+    include_logsources: bool = False,
+    include_mutable: bool = False,
+) -> str:
+    """Get detection guidance for a technique from DetectionStrategy → Analytic chain (v18+).
+
+    In ATT&CK v18+, x_mitre_detection was removed from technique objects. Detection
+    guidance now lives in DetectionStrategy objects (one per technique) which reference
+    Analytic objects that each carry a description field with the actual detection logic.
+    Each analytic is listed separately with its ATT&CK ID and platform(s).
+    Optionally includes log source references and mutable elements per analytic.
+    """
+    det_strats = data.get_detection_strategies_detecting_technique(stix_id)
+    parts = []
+    for entry in det_strats:
+        det_obj = entry["object"]
+        det_id = MitreAttackData.get_field(det_obj, "id")
+        analytics = data.get_analytics_by_detection_strategy(det_id, remove_revoked_deprecated=True)
+        for analytic in analytics:
+            desc_raw = (MitreAttackData.get_field(analytic, "description") or "").strip()
+            if not desc_raw:
+                continue
+            desc = sanitize_text(desc_raw) if sanitize else desc_raw
+            an_id = data.get_attack_id(MitreAttackData.get_field(analytic, "id")) or ""
+            platforms = MitreAttackData.get_field(analytic, "x_mitre_platforms") or []
+            plat_str = ", ".join(platforms) if platforms else ""
+
+            analytic_lines = []
+            if output_format == "markdown":
+                prefix = f"- [{an_id}]" if an_id else "-"
+                plat_part = f" **[{plat_str}]**" if plat_str else ""
+                analytic_lines.append(f"{prefix}{plat_part} {desc}")
+            else:
+                prefix = f"[{an_id}]" if an_id else ""
+                plat_part = f" [{plat_str}]" if plat_str else ""
+                analytic_lines.append(f"{prefix}{plat_part} {desc}".strip())
+
+            if include_logsources:
+                log_refs = MitreAttackData.get_field(analytic, "x_mitre_log_source_references") or []
+                if log_refs:
+                    ls_items = []
+                    for r in log_refs:
+                        if not r.get("name"):
+                            continue
+                        dc_ref = r.get("x_mitre_data_component_ref", "")
+                        dc_name = ""
+                        if dc_ref:
+                            try:
+                                dc_obj = data.get_object_by_stix_id(dc_ref)
+                                dc_name = MitreAttackData.get_field(dc_obj, "name") or ""
+                            except Exception:
+                                pass
+                        dc_part = f" [{dc_name}]" if dc_name else ""
+                        if output_format == "markdown":
+                            ls_items.append(f"`{r.get('name', '')}` ({r.get('channel', '')}){dc_part}")
+                        else:
+                            ls_items.append(f"{r.get('name', '')} ({r.get('channel', '')}){dc_part}")
+                    if ls_items:
+                        if output_format == "markdown":
+                            analytic_lines.append(f"  - **Log sources:** {', '.join(ls_items)}")
+                        else:
+                            analytic_lines.append(f"  Log sources: {' | '.join(ls_items)}")
+
+            if include_mutable:
+                mutable = MitreAttackData.get_field(analytic, "x_mitre_mutable_elements") or []
+                if mutable:
+                    mut_items = [
+                        f"`{m.get('field', '')}` - {m.get('description', '')}" if output_format == "markdown"
+                        else f"{m.get('field', '')} - {m.get('description', '')}"
+                        for m in mutable if m.get("field")
+                    ]
+                    if mut_items:
+                        if output_format == "markdown":
+                            analytic_lines.append(f"  - **Mutable elements:** {' | '.join(mut_items)}")
+                        else:
+                            analytic_lines.append(f"  Mutable elements: {' | '.join(mut_items)}")
+
+            parts.append("\n".join(analytic_lines))
+    return "\n".join(parts)
+
+
 def write_tactic_txt(
     data: MitreAttackData,
     domain: str,
@@ -66,6 +151,8 @@ def write_tactic_txt(
     procedures_top: int | None,
     sanitize: bool,
     output_format: str = "txt",
+    detection_logsources: bool = False,
+    detection_mutable: bool = False,
 ):
     tactic_name = MitreAttackData.get_field(tactic, "name")
     shortname = MitreAttackData.get_field(tactic, "x_mitre_shortname")
@@ -129,8 +216,7 @@ def write_tactic_txt(
         if include_description and p_desc:
             lines.append(p_desc)
         if include_detection:
-            p_det_raw = (MitreAttackData.get_field(parent, "x_mitre_detection") or "").strip()
-            p_det = sanitize_text(p_det_raw) if sanitize else p_det_raw
+            p_det = get_detection_text(data, p_id, sanitize, output_format, detection_logsources, detection_mutable)
             if p_det:
                 lines.append(p_det)
         if include_procedures:
@@ -187,8 +273,7 @@ def write_tactic_txt(
             if include_description and s_desc:
                 lines.append(s_desc)
             if include_detection:
-                s_det_raw = (MitreAttackData.get_field(s, "x_mitre_detection") or "").strip()
-                s_det = sanitize_text(s_det_raw) if sanitize else s_det_raw
+                s_det = get_detection_text(data, s_id, sanitize, output_format, detection_logsources, detection_mutable)
                 if s_det:
                     lines.append(s_det)
             if include_procedures:
@@ -245,7 +330,7 @@ def parse_tactics_arg(values: list[str]) -> list[str]:
 
 def main():
     repo_root = Path(__file__).resolve().parents[1]
-    default_stix = str(repo_root / "enterprise-attack.json")
+    default_stix = str(repo_root / "enterprise-attack-v18-1.json")
 
     parser = argparse.ArgumentParser(description="Export techniques per tactic to TXT files")
     parser.add_argument("--stix", default=default_stix, help="Path to ATT&CK STIX bundle (enterprise-attack.json)")
@@ -260,6 +345,16 @@ def main():
     parser.add_argument("--outdir", default="tactics", help="Output directory for TXT files")
     parser.add_argument("--description", action="store_true", help="Include Description sections")
     parser.add_argument("--detection", action="store_true", help="Include Detection sections")
+    parser.add_argument(
+        "--detection-logsources",
+        action="store_true",
+        help="Include log source references per analytic (requires --detection)",
+    )
+    parser.add_argument(
+        "--detection-mutable",
+        action="store_true",
+        help="Include mutable elements per analytic (requires --detection)",
+    )
     parser.add_argument("--procedures", action="store_true", help="Include Procedures sections")
     parser.add_argument(
         "--procedures-top",
@@ -311,8 +406,7 @@ def main():
             key = stix_id
             desc_raw = (MitreAttackData.get_field(tech, "description") or "").strip()
             desc = sanitize_text(desc_raw) if args.sanitize else desc_raw
-            det_raw = (MitreAttackData.get_field(tech, "x_mitre_detection") or "").strip()
-            det = sanitize_text(det_raw) if args.sanitize else det_raw
+            det = get_detection_text(data, stix_id, args.sanitize, args.format, args.detection_logsources, args.detection_mutable)
 
             if key not in aggregated:
                 aggregated[key] = {
@@ -445,6 +539,8 @@ def main():
                 procedures_top=top_n,
                 sanitize=args.sanitize,
                 output_format=args.format,
+                detection_logsources=args.detection_logsources,
+                detection_mutable=args.detection_mutable,
             )
             written.append(fname)
 

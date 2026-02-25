@@ -132,7 +132,7 @@ def build_technique_to_tactics(data: MitreAttackData, domain: str, exclude_subte
 
 def main():
     repo_root = Path(__file__).resolve().parents[1]
-    default_stix = str(repo_root / "enterprise-attack.json")
+    default_stix = str(repo_root / "enterprise-attack-v18-1.json")
 
     parser = argparse.ArgumentParser(description="Build MITRE ATT&CK dictionaries (IDs only)")
     parser.add_argument("--stix", default=default_stix, help="Path to ATT&CK STIX bundle (enterprise-attack.json)")
