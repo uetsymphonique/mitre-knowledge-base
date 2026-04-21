@@ -218,12 +218,16 @@ def write_tactic_txt(
         if include_detection:
             p_det = get_detection_text(data, p_id, sanitize, output_format, detection_logsources, detection_mutable)
             if p_det:
+                if output_format == "markdown":
+                    lines.append("**Detection**")
                 lines.append(p_det)
         if include_procedures:
             parent_procs = data.get_procedure_examples_by_technique(p_id)
             if procedures_top is not None and procedures_top > 0:
                 parent_procs = parent_procs[:procedures_top]
             if parent_procs:
+                if output_format == "markdown":
+                    lines.append("**Procedure Examples**")
                 proc_lines = []
                 proc_acc_len = 0
                 for r in parent_procs:
@@ -275,18 +279,24 @@ def write_tactic_txt(
             if include_detection:
                 s_det = get_detection_text(data, s_id, sanitize, output_format, detection_logsources, detection_mutable)
                 if s_det:
+                    if output_format == "markdown":
+                        lines.append("**Detection**")
                     lines.append(s_det)
             if include_procedures:
                 sub_procs = data.get_procedure_examples_by_technique(s_id)
                 if procedures_top is not None and procedures_top > 0:
                     sub_procs = sub_procs[:procedures_top]
                 if sub_procs:
+                    if output_format == "markdown":
+                        lines.append("**Procedure Examples**")
                     proc_lines = []
                     proc_acc_len = 0
                     for r in sub_procs:
                         src_obj = data.get_object_by_stix_id(r.source_ref)
                         src_id = data.get_attack_id(src_obj.id) or ""
                         src_name = MitreAttackData.get_field(src_obj, "name") or ""
+                        proc_desc_raw = (getattr(r, "description", "") or "").strip()
+                        proc_desc = sanitize_text(proc_desc_raw) if sanitize else proc_desc_raw
                         desc_raw = (getattr(r, "description", "") or "").strip()
                         desc = sanitize_text(desc_raw) if sanitize else desc_raw
                         if src_id:
@@ -501,9 +511,12 @@ def main():
             if args.description and item.get("description"):
                 out_lines.append(item["description"])
             if args.detection and item.get("detection"):
+                if args.format == "markdown":
+                    out_lines.append("**Detection**")
                 out_lines.append(item["detection"])
             if args.procedures and item.get("procedures"):
                 if args.format == "markdown":
+                    out_lines.append("**Procedure Examples**")
                     # Procedures are already formatted as "- [ID] Name: desc"
                     out_lines.extend(item["procedures"])
                 else:
