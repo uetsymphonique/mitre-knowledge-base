@@ -34,7 +34,7 @@ def main():
     # Get all techniques (including sub-techniques), filter revoked/deprecated
     techniques = data.get_techniques(include_subtechniques=True, remove_revoked_deprecated=True)
 
-    # Prepare selection: include all sub-techniques, and parent techniques only if they have no subs
+    # Include all techniques: parent techniques and sub-techniques
     lines = []
     seen = set()
     for t in techniques:
@@ -44,10 +44,6 @@ def main():
         seen.add(stix_id)
 
         is_sub = t.get("x_mitre_is_subtechnique", False) is True
-        if not is_sub:
-            # Skip parent techniques that have sub-techniques
-            if has_subtechniques(data, stix_id):
-                continue
 
         attack_id = data.get_attack_id(stix_id) or ""
         name = t.get("name") or ""
