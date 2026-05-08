@@ -1,0 +1,25 @@
+group,count,platforms,dc_names,members
+Application,1,Linux,Application Log Content,Application:Mail
+ApplicationLog,2,Linux,Application Log Content,"ApplicationLog:MailServer, ApplicationLog:WebServer"
+ApplicationLogs,1,Linux,Script Execution,ApplicationLogs:SQL
+EDR,1,Linux,Application Log Content,EDR:detection
+NSM,2,Linux,"Application Log Content, File Metadata, Host Status, Logon Session Creation, Logon Session Metadata, Network Connection Creation, Network Share Access, Network Traffic Content, Network Traffic Flow, OS API Execution, Response Metadata, User Account Authentication","NSM:Connections, NSM:Flow"
+NetFlow,1,Linux,Network Traffic Flow,NetFlow:Flow
+Netfilter/iptables,1,Linux,Network Traffic Content,Netfilter/iptables
+WinEventLog,1,Linux,"File Creation, Network Connection Creation, Network Traffic Content",WinEventLog:Sysmon
+apache,1,Linux,Network Traffic Content,apache:access_log
+auditd,12,Linux,"Command Execution, Drive Access, Drive Creation, File Access, File Creation, File Deletion, File Metadata, File Modification, Firmware Modification, Host Status, Logon Session Metadata, Module Load, Network Connection Creation, Network Traffic Content, Network Traffic Flow, OS API Execution, Process Access, Process Creation, Process Metadata, Process Modification, Process Termination, Scheduled Job Modification, Script Execution, Service Creation, Service Metadata, User Account Authentication, User Account Creation, User Account Metadata, User Account Modification","auditd:AUTH, auditd:CONFIG_CHANGE, auditd:EXECVE, auditd:FILE, auditd:FS, auditd:MMAP, auditd:PATH, auditd:PROCTITLE, auditd:SYSCALL, auditd:USER_LOGIN, auditd:file-events, auditd:memprotect"
+containerd,1,Linux,Image Creation,containerd:events
+desktop,1,Linux,File Access,desktop:file_manager
+ebpf,2,Linux,"File Access, Process Modification","ebpf:syscalls, ebpf:tracepoints"
+fs,1,Linux,File Creation,fs:fileevents
+fwupd,1,Linux,File Metadata,fwupd:logs
+iptables,1,Linux,Network Traffic Flow,iptables:LOG
+journald,3,Linux,"Application Log Content, Drive Creation, File Metadata","journald:Application, journald:package, journald:systemd"
+kubernetes,2,Linux,"Container Creation, Container Start","kubernetes:audit, kubernetes:events"
+linus,1,Linux,Command Execution,linus:syslog
+linux,8,Linux,"Active Directory Credential Request, Application Log Content, Command Execution, Drive Access, Drive Creation, Drive Modification, Driver Load, File Access, File Creation, File Metadata, File Modification, Firewall Rule Modification, Host Status, Logon Session Creation, Logon Session Metadata, Module Load, Network Connection Creation, Network Traffic Content, Network Traffic Flow, OS API Execution, Process Access, Process Creation, Process Metadata, Process Modification, Process Termination, Scheduled Job Creation, Scheduled Job Metadata, Script Execution, Service Creation, Service Metadata, User Account Authentication, User Account Metadata, User Account Modification","linux:Sysmon, linux:auth, linux:cli, linux:cron, linux:osquery, linux:procfs, linux:shell, linux:syslog"
+linuxsyslog,1,Linux,Command Execution,linuxsyslog
+networkconfig ,1,Linux,Network Traffic Content,networkconfig 
+networkdevice,1,Linux,Application Log Content,networkdevice:syslog
+sar,1,Linux,Host Status,sar:network

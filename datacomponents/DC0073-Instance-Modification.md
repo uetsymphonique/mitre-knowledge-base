@@ -1,0 +1,23 @@
+# DC0073 - Instance Modification
+
+## Description
+
+Changes made to a virtual machine (VM) or compute instance, including alterations to its configuration, metadata, attached policies, or operational state. Such modifications can include updating metadata, attaching or detaching resource policies, resizing instances, or modifying network configurations. Examples:
+
+- AWS: instance modifications include API actions like `ModifyInstanceAttribute`, `ModifyInstanceMetadataOptions`, or `RebootInstances`.
+- Azure: modifications can be tracked through operations like `Microsoft.Compute/virtualMachines/write`.
+- GCP: instance modification events include operations like `instances.setMetadata`, `instances.addResourcePolicies`, or `instances.resize`.
+
+*Data Collection Measures:*
+
+- AWS CloudTrail: Log Location: Stored in S3 or forwarded to CloudWatch.
+- Azure Activity Logs: Log Location: Accessible via Azure Monitor or exported to a storage account.
+- GCP Audit Logs: Log Location: Logs Explorer or BigQuery.
+
+## Log Sources
+
+| Log Source | Channel |
+|------------|---------|
+| `AWS:CloudTrail` | RevertSnapshot |
+| `azure:activity` | MICROSOFT.COMPUTE/VIRTUALMACHINES/RESTORE |
+| `gcp:audit` | compute.instances.restore |

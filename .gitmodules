@@ -1,0 +1,3 @@
+[submodule "mitreattack-python"]
+	path = mitreattack-python
+	url = https://github.com/mitre-attack/mitreattack-python
